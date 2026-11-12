@@ -1,0 +1,15 @@
+usercontrol: TaxConcessionForm
+title: Tax concession form control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded tax concession form detail of orders and bills.
+purpose: |
+  Captures the statutory tax concession form expected or received for the document (TaxConcessionFormFillValues / LoadData).
+functional_description: |
+  Embedded in: fPurchaseBill, fPurchaseOrder.
+method_notes:
+  DocumentNosLoadData: Loads the selected record through masterdata.TaxConcessionFormDocumentNosLoadData.
+  FillValues: Fills the lookup lists through masterdata.TaxConcessionFormFillValues.
+  LoadData: Loads the selected record through masterdata.TaxConcessionFormLoadData.

@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------- tokens (light / dark) */
+:root {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #eef0f6;
+  --border: #e1e4ee;
+  --fg: #151a2d;
+  --muted: #5b6279;
+  --primary: #4f46e5;
+  --primary-strong: #4338ca;
+  --primary-soft: #eceeff;
+  --on-primary: #ffffff;
+  --success: #15803d;
+  --success-soft: #e6f6ec;
+  --danger: #dc2626;
+  --danger-soft: #fdecec;
+  --warning: #b45309;
+  --warning-soft: #fff3df;
+  --ring: rgb(79 70 229 / 0.35);
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.05), 0 12px 32px -12px rgb(16 24 40 / 0.18);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0f1d;
+    --surface: #151a2c;
+    --surface-2: #1c2237;
+    --border: #2a3150;
+    --fg: #e7e9f4;
+    --muted: #9aa1bc;
+    --primary: #8f8aff;
+    --primary-strong: #aaa6ff;
+    --primary-soft: #24274a;
+    --on-primary: #0c0f1d;
+    --success: #4ade80;
+    --success-soft: #10291b;
+    --danger: #f87171;
+    --danger-soft: #301517;
+    --warning: #fbbf24;
+    --warning-soft: #2d2310;
+    --ring: rgb(143 138 255 / 0.45);
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -16px rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0f1d;
+  --surface: #151a2c;
+  --surface-2: #1c2237;
+  --border: #2a3150;
+  --fg: #e7e9f4;
+  --muted: #9aa1bc;
+  --primary: #8f8aff;
+  --primary-strong: #aaa6ff;
+  --primary-soft: #24274a;
+  --on-primary: #0c0f1d;
+  --success: #4ade80;
+  --success-soft: #10291b;
+  --danger: #f87171;
+  --danger-soft: #301517;
+  --warning: #fbbf24;
+  --warning-soft: #2d2310;
+  --ring: rgb(143 138 255 / 0.45);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -16px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+  --shadow-card: var(--shadow-card);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+body {
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "cv11", "ss01";
+}
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- components */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition select-none
+      disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98];
+  }
+  .btn-lg {
+    @apply min-h-12 px-5 text-base;
+  }
+  .btn-primary {
+    @apply bg-primary text-on-primary shadow-sm hover:bg-primary-strong;
+  }
+  .btn-outline {
+    @apply border border-border bg-surface text-fg hover:bg-surface-2;
+  }
+  .btn-ghost {
+    @apply text-muted hover:bg-surface-2 hover:text-fg;
+  }
+  .btn-success {
+    @apply bg-success-soft text-success ring-1 ring-success/30 ring-inset hover:bg-success hover:text-on-primary;
+  }
+  .btn-danger {
+    @apply bg-danger-soft text-danger ring-1 ring-danger/30 ring-inset hover:bg-danger hover:text-on-primary;
+  }
+  .btn-warning {
+    @apply bg-warning-soft text-warning ring-1 ring-warning/30 ring-inset hover:bg-warning hover:text-on-primary;
+  }
+  .panel {
+    @apply rounded-2xl border border-border bg-surface;
+  }
+  .input {
+    @apply w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-[15px] text-fg placeholder:text-muted/70
+      focus:border-primary focus:ring-4 focus:ring-[var(--ring)] focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-fg;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-muted;
+  }
+  .kbd {
+    @apply rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[11px] text-muted;
+  }
+  .tbl {
+    @apply w-full border-collapse text-sm;
+  }
+  .tbl th {
+    @apply border-b border-border px-3 py-2.5 text-left text-xs font-semibold tracking-wide text-muted uppercase;
+  }
+  .tbl td {
+    @apply border-b border-border/70 px-3 py-2.5 align-top;
+  }
+  .tbl tbody tr:hover {
+    @apply bg-surface-2/60;
+  }
+}
+
+/* ---------------------------------------------------------------- flashcard 3D */
+.perspective {
+  perspective: 1400px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+}
+@media (hover: none) {
+  .hide-touch {
+    display: none !important;
+  }
+}
+@media (hover: hover) {
+  .hide-mouse {
+    display: none !important;
+  }
+}

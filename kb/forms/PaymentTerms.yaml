@@ -1,0 +1,17 @@
+usercontrol: PaymentTerms
+title: Payment terms control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded payment terms grid of a purchase order.
+purpose: |
+  Picks a payment terms group and captures the payment terms of the order (PaymentTermsFillValues / LoadData / Save).
+functional_description: |
+  Embedded in: fPurchaseOrder.
+  On-screen fields: Payment Group, Payment Terms.
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.PaymentTermsFillValues.
+  PaymentTermsLoadData: Loads the selected record through masterdata.PaymentTermsLoadData.
+  PaymentTermsSave: Saves the record through masterdata.PaymentTermsSave.
+  ucmbPaymentGroup_ValueChanged: Fills the lookup lists through masterdata.PaymentTermsFillValues.

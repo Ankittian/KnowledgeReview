@@ -1,0 +1,61 @@
+form: fQCParameter
+title: QC Parameter Master
+module: MM
+kind: master
+users:
+- Quality controller (inferred)
+summary: The QC Parameter Master screen maintains the quality parameters checked on incoming material (for example moisture
+  or purity), each with a unit, one or two standard values, a tolerance and the rules for computing a price or quantity deduction
+  when the measured value falls outside tolerance.
+purpose: |
+  What it is: A list of measurable quality characteristics with standards, tolerance and deduction rules. When it applies: When a new quality check is introduced for purchased material. Business outcome: Uniform acceptance limits and deductions across receipts.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Window titled "QC Parameter Master" with one panel of fields.
+  - Code Field: Read-only text box.
+  - Parameter Name Field: Text box, mandatory, maximum 30 characters (BR-01).
+  - QC Para. Sequence Field: Dropdown, mandatory when visible (BR-08).
+  - Unit Field: Dropdown (Unit, Code), mandatory (BR-02).
+  - Standard Value1 and Standard Value2 Fields: Numeric boxes, up to 3 decimals, maximum 10 characters; Value1 mandatory and non-zero, Value2 optional (BR-03).
+  - Tolerance Value, Tolerance Unit and Tolerance Type Fields: Numeric box (3 decimals, 10 characters) and two dropdowns, all mandatory (BR-04).
+  - Deduction On, Formula Type, Deduction Rate, Deduction Type Fields: Dropdowns, mandatory when shown (BR-05).
+  - Double Decution From Field: Numeric box (on-screen label spelled "Double Decution From"), mandatory when Deduction Type is Double (BR-07).
+  - Deduction Calculation On Field: Dropdown On % Basis / On Value Difference, mandatory when Deduction On is selected (BR-05).
+  - Inactive Field: Checkbox, always disabled.
+  - Other Toolbar Actions (Print, Preview, Email, Export): Not enabled.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with columns Code, Parameter Name, Unit, Inactive, Created By, Created Date.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last enabled on the toolbar.
+validations:
+- Enter Parameter Name.
+- Select QC Para. Sequence.
+- Duplicate QC Parameter not allowed.
+- Two QC can not have same QC Para. Sequence.
+- Lot exists against this QC Para. Sequence No.
+- Select valid Unit.
+- Standard Value1 can't be empty or zero.
+- Enter Tolerance Value.
+- Select valid Tolerance Unit.
+- Select valid Tolerance Type.
+- Select valid Deduction On.
+- Select valid Formula Type.
+- Select valid Deduction Rate.
+- Select valid Deduction Type.
+- Enter Double Deduction From.
+- Select Valid Deduction Calculation On.
+- Permission denied to delete QC Parameter.
+manages:
+- qc-parameter
+uses_concepts:
+- company
+- unit-of-measure
+method_notes:
+  Delete: Deletes the record through masterdata.MDQCDelete.
+  FillValues: Fills the lookup lists through masterdata.MDQCFillValues.
+  LoadData: Loads the selected record through masterdata.MDQCLoadData.
+  Open: Searches records through masterdata.MDQCSearchData.
+  Save: Saves the record through masterdata.MDQCSave.
+  ValidateForm: Validates the entry through masterdata.MDQCValidate.

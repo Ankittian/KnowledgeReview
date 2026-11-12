@@ -1,0 +1,26 @@
+usercontrol: Voucher
+title: Voucher control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded accounting voucher entry (debit / credit lines, TDC rule, narration).
+purpose: |
+  Captures and saves the accounting voucher of a payment: main, detail, cost center, quantity, reference and payment lines (VoucherSaveMain and related SPs).
+functional_description: |
+  Embedded in: fPaymentVoucher.
+  On-screen fields: Narration, Reversal Date, TDC Rule Description, Voucher Type, VoucherCrAmt, VoucherDrAmt.
+uses_concepts:
+- accounting-voucher
+- ledger-account
+method_notes:
+  FillValues: Fills the lookup lists through Finance.VoucherFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.VoucherFillValuesDependent.
+  FillValuesForTDCRule: Fills the lookup lists through Finance.VoucherFillValuesForTDCRule.
+  GetAccountBalance: Runs through Finance.AccountOpening.
+  LoadData: Loads the selected record through Finance.VoucherFillValuesDependent, Finance.VoucherLoadData.
+  Save: Saves the record through Finance.VoucherSaveMain.
+  SaveCostCenterDetail: Saves the record through Finance.VoucherSaveCostCenterDetail.
+  SaveDetail: Saves the record through Finance.VoucherSaveDetail.
+  SaveFinal: Saves the record through Finance.VoucherSaveAfterInsert.
+  SavePaymentDetail: Saves the record through Finance.VoucherSavePaymentDetail.

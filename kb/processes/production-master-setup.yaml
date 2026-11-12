@@ -1,0 +1,21 @@
+key: production-master-setup
+name: Production Master Data Setup
+module: PP
+status: active
+summary: Production units and production activities are set up for process plans.
+description: 'Evidence: code + ERP domain (inferred)
+
+  Production units are linked to companies and divisions; activities (operations) carry resources, items, cost elements and
+  unit conversions used by process plans.
+
+  '
+steps:
+- order: 1
+  name: Define production units
+  form: fProductionUnit
+- order: 2
+  name: Define production activities
+  form: fActivityMaster
+concepts:
+- production-unit
+- production-activity

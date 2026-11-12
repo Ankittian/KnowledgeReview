@@ -1,0 +1,17 @@
+usercontrol: MultiAuthorization
+title: Multi-level authorization control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded approval panel for documents with several approval levels.
+purpose: |
+  Shows the authorization group and approval levels of a document, records each user's approval and sends the approval mail (MultiAuthorizationFillValues, TANRSaveUserApproval, MultiAuthorizationMail).
+functional_description: |
+  Embedded in: fGRN, fIndent.
+  On-screen fields: Authorization Group.
+method_notes:
+  FillValues: Fills the lookup lists through Notifications.MultiAuthorizationFillValues.
+  GetAuthorizationDetail: Runs through Notifications.GetTATDetail.
+  SaveTATDetail: Saves the record through Notifications.TANRSaveAuthorizationDetail, Notifications.TANRSaveUserApproval.
+  ugdAuthorizationGroup_ClickCellButton: Runs through Notifications.MultiAuthorizationMail.

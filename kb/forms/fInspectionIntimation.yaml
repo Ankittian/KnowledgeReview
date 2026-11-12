@@ -1,0 +1,61 @@
+form: fInspectionIntimation
+title: Inspection Intimation
+module: MM
+kind: transaction
+users:
+- Storekeeper (inferred)
+- Quality controller (inferred)
+summary: The Inspection Intimation screen prepares an intimation letter that tells the inspecting department which received
+  items are waiting for quality inspection.
+purpose: |
+  What it is: A numbered letter listing GRN item lines (including indent and lot level lines) sent to departments for inspection. When it applies: After material is received on a GRN that is flagged as requiring inspection, before the GRN is authorized. Business outcome: Inspection requests are formally raised and tracked, and a GRN cannot be authorized until its lines are covered by an authorized intimation (Inferred from downstream GRN checks).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Header: Shared document number control: document number, date, division (if applicable) and status.
+  - General Detail Tab: Tab "General Detail" with From Date, To Date, Show, Remarks, notes and the GRN grid.
+  - Custom Field Tab: Tab "Custom Field" hosting the shared custom field control.
+  - From Date Field: Date picker, highlighted as mandatory.
+  - To Date Field: Date picker, highlighted as mandatory.
+  - Show Button: Button "Show".
+  - Remarks Field: Text box, optional, max 1000 characters, trimmed on save.
+  - Notes Control: Shared notes control with Print Area, Notes and Default.
+  - GRN Grid: Grid with columns Select (editable), GRN No., GRN Date, PO/ST No., Vendor Name, Gate Entry No., Indent No./ SO No., Indent Date/ SO Date, Item Code, Item Description, Make, Unit Name, Tech.
+  - Other Toolbar Actions (Print, Print Preview, Export, Email): Print, preview, export and email of the inspection intimation print layout.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open with the search window.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last enabled on the toolbar.
+validations:
+- To date can't be less than From Date.
+- Select atleast one Item.
+- Select valid Department in row N .
+- Document Date can't be less than GRN Date in row N .
+- Authorized Inspection Intimation can't be updated.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- some GRN is Authorized,so you can't delete this entry
+manages:
+- inspection-intimation
+uses_concepts:
+- company
+- cost-center
+- gate-entry
+- goods-receipt-note
+- make
+- material-item
+- purchase-order
+- purchase-request
+- unit-of-measure
+- vendor
+- vendor-location
+method_notes:
+  Delete: Deletes the record through Inventory.GRIIDelete.
+  FillValues: Fills the lookup lists through Inventory.GRIIFillValues.
+  FillvaluesDependent: Fills the lookup lists through Inventory.GRIIFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.GRIILoadData.
+  Open: Searches records through Inventory.GRIISearchData.
+  Save: Saves the record through Inventory.GRIISave.
+  SaveGRN: Saves the record through Inventory.GRIISaveIntimationLetterDetail.
+  SaveNotesDetail: Saves the record through Inventory.GRIISaveNotesDetials.

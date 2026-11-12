@@ -1,0 +1,91 @@
+form: fActivityMaster
+title: Activity Master
+module: PP
+kind: master
+users:
+- Production planner (inferred)
+summary: The Activity Master screen defines the production activities (operations) that process plans, bills of material and
+  work orders use.
+purpose: |
+  What it is: A master record describing one production operation with its standard times, resources, costs, applicable items and unit conversions. When it applies: When production engineering introduces a new operation or changes the standard time, resource or cost of an existing one. Business outcome: Process plans, BOMs and work orders use consistent operation definitions for scheduling and costing (BR-05 to BR-20).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Top panel with identification, classification and flags.
+  - Code Field: Read-only text box, up to 10 characters.
+  - Activity Name Field: Text box, mandatory, up to 50 characters (BR-01, BR-05).
+  - Alias Field: Text box, mandatory, up to 5 characters (BR-01, BR-05).
+  - Activity Category Field: Optional dropdown with category name and code (BR-03).
+  - Activity Type Field: Dropdown, mandatory (BR-06).
+  - Activity Basis Field: Dropdown, mandatory (BR-06).
+  - Sequence No. Field: Numeric text box, mandatory, up to 3 digits (BR-01, BR-05).
+  - Activity Unit Field: Dropdown with unit alias and code, mandatory (BR-07).
+  - Inspection Required Checkbox: Optional flag.
+  - Aggregate Activity Checkbox: Optional flag.
+  - Assembling Activity Checkbox: Optional flag.
+  - Inactive Checkbox: Display-only flag, always disabled at start.
+  - Details Tabs Area: Tabs "Sub Activity Details", "Aggregate Activity Details", "Resource Details", "Cost Element", "Item Details", "Unit Conversion".
+  - Sub Activity Details Grid: One fixed row per sub activity: "Sub Activity" (read-only), "Duration (Hrs)" (up to 5 characters, 2 decimals), "Batch Qty." (up to 7 characters, 3 decimals).
+  - Aggregate Activity Details Grid: "Activity Code" and "Activity Name" dropdowns kept in step with each other; a new row is added automatically.
+  - Resource Details Grid: "Sub Activity Name", "Assign To" ("Resource" or "Category"), "Resource/Category", "Resource Type", "Capacity" and "Capacity Unit" (read-only), "Resource Qty." (up to 11 characters, 3 decimals).
+  - Cost Element Grid: "Cost Element", "Rate Unit", "Standard Rate" (up to 10 characters, 2 decimals), "Unit" (read-only).
+  - Item Details Grid: Pre-listed items with an unlabelled select checkbox, "Group", "Sub Group", "Item Code", "Item Description" (read-only) and "Set Default".
+  - Unit Conversion Grid: "Unit Value", "Base Unit" (read-only, shows the activity unit), "Conversion Value", "Unit" (each value up to 11 characters, 3 decimals).
+  - Other Toolbar Actions (Print, Preview, Email, Export): Not enabled on this screen's toolbar; handlers are empty.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with columns "Code", "Activity Name", "Alias", "Activity Category", "Activity Type", "Activity
+    Basis", "Sequence", "Inspection Required", "Assembly Activity", "Inactive", "Created By", "Created Date".
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last enabled on the toolbar.
+validations:
+- Enter Activity Name.
+- Duplicate Activity Name is not allowed.
+- Enter Alias.
+- Duplicate Alias is not allowed.
+- Duplicate Sequence No. is not allowed.
+- Duplicate Cost Element is not allowed.
+- Select valid Activity Type.
+- Select valid Activity Basis.
+- Enter Sequence No.
+- Select valid Activity/Unit.
+- Enter Details for atleast one Sub Activity.
+- 'Enter Duartion (Hrs) in row '
+- 'Invalid Time : minute should be less than 60.'
+- 'Enter Details for atleast one Resource in row '
+- 'Select valid Assign To in row '
+- 'Select valid Resource/Category in row '
+- 'Select valid Resource Type in row '
+- 'Resource Qty. can''t be empty or zero in row '
+- 'Enter atleast one Resource Details For '
+- Atleast one Sub Activity should be Primary Type in Resource Details.
+- Only one Sub Activity can be Primary Type in Resource Requirement.
+- Select at least one cost element.
+- 'Select valid Rate Unit in row '
+- Duplicate Activity is not allowed.
+- 'Can''t select Resource of category '
+- ',because category is already selected..'
+- Duplicate Sub Activity Name,Assign To and Resource/Category is not allowed.
+- 'Enter Standard Rate in row '
+- 'Enter Conversion Value in row '
+- 'Enter Unit in row '
+- Duplicate Unit is not allowed.
+manages:
+- production-activity
+uses_concepts:
+- company
+- cost-center
+- material-group
+- material-sub-group
+- unit-of-measure
+method_notes:
+  Delete: Deletes the record through masterdata.PPAMDelete.
+  FillValues: Fills the lookup lists through masterdata.PPAMFillValues.
+  LoadData: Loads the selected record through masterdata.PPAMLoadData.
+  Open: Searches records through masterdata.PPAMSearchData.
+  Save: Saves the record through masterdata.PPAMSave.
+  SaveActivityDetails: Saves the record through masterdata.PPAMSaveActivityDetail.
+  SaveConversionFactor: Saves the record through masterdata.PPAMSaveUnitConversionDetail.
+  SaveCostElement: Saves the record through masterdata.PPAMSaveCostElement.
+  SaveItemDetails: Saves the record through masterdata.PPAMSaveItemDetail.
+  SaveResourceDetails: Saves the record through masterdata.PPAMSaveResourceDetail.

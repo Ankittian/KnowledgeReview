@@ -1,0 +1,55 @@
+form: fAccountGroupMaster
+title: Account Group Master
+module: FI
+kind: master
+users:
+- Accounts officer (inferred)
+summary: The Account Group Master screen maintains the hierarchy of account groups within each Chart of Accounts (COA).
+purpose: |
+  What it is: A tree of named groups per COA used to classify ledger accounts. When it applies: When the chart of accounts structure is set up or extended. Business outcome: Accounts roll up consistently into reporting groups, with the nature (asset, liability, income, expense and so on) inherited through the tree.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Window titled "Account Group Master" with a header panel of group fields.
+  - Group Code Link and Code Field: A hyperlink label "Group Code" (tooltip "Switch to fast entry mode.") and a read-only code box, maximum 12 characters.
+  - COA Field: Dropdown (COA Name, COA Type), mandatory (BR-02).
+  - Group Name Field: Text box, mandatory, maximum 100 characters on screen (BR-03, BR-04).
+  - Parent Group Field: Dropdown (Group Name, Parent Group Name), mandatory (BR-05).
+  - Alternate Group Field: Dropdown (Group Name, Parent Group Name), optional.
+  - Nature Field: Read-only dropdown, mandatory (BR-08).
+  - Maintain Reference and Maintain Cost Center Fields: Checkboxes.
+  - Fast Entry Grid Container: Grid with COA, Group Name, Parent Group, Alternate Group, Maintain Reference, Maintain Cost Center and read-only Remarks; an Import button.
+  - Other Toolbar Actions (Print, Preview, Email, Export): Not enabled for this screen.
+actions:
+  Back Link: A link on the Fast Entry panel that returns to the main layout.
+  Import: Import button in Fast Entry; reads an Excel sheet with columns COA, Group Name, Parent Group, Alternate Group, Maintain
+    Reference, Maintain Cost Center.
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with columns Group Code, COA Name, Group Name, Under Group, Alternate Group, Nature, Inactive,
+    Created By, Created Date.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last are enabled on the toolbar.
+validations:
+- Select valid COA.
+- Enter Group Name.
+- Duplicate Group Name not allowed.
+- Select valid Parent Group.
+- Select valid Nature.
+- Successfully Created.
+- Refer remarks for saved status.
+- Your excel should consists of sheet with name AIAG. Do you want to continue?
+- Default Account Group can't deleted.
+- Permission denied to save.
+- Permission denied to delete.
+manages:
+- account-group
+uses_concepts:
+- chart-of-accounts
+method_notes:
+  Delete: Deletes the record through masterdata.AIAGDelete.
+  FillValues: Fills the lookup lists through masterdata.AIAGFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.AIAGFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.AIAGLoadData.
+  Open: Searches records through masterdata.AIAGSearchData.
+  SaveMain: Saves the record through masterdata.AIAGSave.
+  ValidateForm: Validates the entry through masterdata.AIAGValidate.

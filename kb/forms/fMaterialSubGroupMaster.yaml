@@ -1,0 +1,90 @@
+form: fMaterialSubGroupMaster
+title: Material Sub Group
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: The Material Sub Group screen maintains material sub groups, the third level of the material classification (Category,
+  then Group, then Sub Group, then Item).
+purpose: |
+  What it is: A central list of sub groups under material groups, each with tax, unit, warehouse, make, supplier and bin defaults. When it applies: When a new family of items is introduced under a group, or when the defaults for the items of a sub group change. Business outcome: Consistent item codes and consistent defaults (tax, units, warehouses, approved makes and suppliers) for every item created under the sub group.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Sub Group Header Area: The top panel with Sub Group Code, Category Name, Group Name, the code boxes, Code, Sub Group Name, Dispatch -ve Tolerance, BIN Applicable and Inactive, followed by a tab area.
+  - Sub Group Code Field: Read-only text box with a hyperlink label "Sub Group Code" (tooltip "Switch to fast entry mode.") (BR-05).
+  - Category Name Field: Mandatory dropdown of active categories for the login company, showing name and code (BR-02).
+  - Group Name Field: Mandatory dropdown of groups of the selected category, showing name and code (BR-02).
+  - Group Code Row (Category Code and Group Code): Two read-only boxes on the row labelled "Group Code": the first shows the category code, the second the group code.
+  - Code Field: Mandatory text box, maximum 2 characters, trimmed on save (BR-03).
+  - Sub Group Name Field: Mandatory text box, maximum 100 characters, trimmed on save (BR-06).
+  - Receipt Tolerance and Shipment Tolerance Fields: Numeric boxes (2 decimals, maximum 5 characters) with "%" labels.
+  - Dispatch -ve Tolerance Field: Optional numeric box (2 decimals, maximum 6 characters) with a "%" label (BR-11).
+  - BIN Applicable Field: Checkbox "BIN Applicable" (BR-17).
+  - Inactive Field: Checkbox "Inactive", always disabled (BR-10).
+  - GST Detail Tab: GST Category dropdown, HSN /SAC Code dropdown (code and description), and read-only CGST Rate, SGST Rate, IGST Rate and UTGST Rate (BR-12).
+  - Warehouse Detail Tab: Grid with Select checkbox, Warehouse, Division and Company; rows cannot be deleted (BR-14).
+  - Make Detail Tab: Grid with Make Name (dropdown) and Code (read-only, filled from the make) (BR-13).
+  - UOM Tab: Grid with one fixed row per Unit Type (read-only) and a Unit Name dropdown; rows cannot be deleted (BR-15).
+  - Vendor Detail Tab: Grid with Vendor Name (supplier dropdown) and Location (filtered to the vendor's locations) (BR-16).
+  - QC Detail Tab: The shared quality-control component (QC Group selector and QC parameter grid) (BR-19).
+  - Bin Detail Tab: Grid with a select checkbox (with a select-all header checkbox), Bin Card No., Location and WareHouse (BR-17).
+  - Fast Entry Grid Container: Grid with Category Name, Group Name (filtered to the row's category), Code (maximum 2), Sub Group Name (maximum 100) and Remarks (read-only).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  Switch back to detail mode.: Hyperlink "Switch back to detail mode." in the fast entry container.
+  Import: '"Import" button in fast entry that loads an Excel sheet with Category Name, Group Name, Code and Sub Group Name
+    (BR-22).'
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with the configured search list.
+  Delete: Standard toolbar Delete.
+  Navigation: Standard First / Previous / Next / Last.
+validations:
+- Duplicate Sub Group Code is not allowed.
+- Duplicate Sub Group Name is not allowed.
+- Select valid Category Name.
+- Select valid Group Name.
+- Enter Code.
+- Enter Sub Group Name.
+- Select valid Location
+- Permission denied to delete Material Sub Group.
+- Standard Value can't be empty or zero
+- Enter Tolerance Value
+- Select valid Deduction Rate
+- Select valid Deduction Type
+- Enter Double Deduction From
+- Duplicate Make Name not allowed.
+- Duplicate Vendor Name and Location not allowed.
+- Successfully Created.
+- Refer remarks for saved status.
+- Your excel should consists of sheet with name MSGM. Do you want to continue?
+- Select atleast one QC Parameter.
+manages:
+- material-sub-group
+uses_concepts:
+- bin
+- company
+- gst-category
+- item-technical-grade
+- make
+- material-category
+- material-group
+- material-item
+- qc-parameter
+- tdc-charge
+- unit-of-measure
+- unit-type
+- vendor
+- vendor-location
+- warehouse
+method_notes:
+  Delete: Deletes the record through masterdata.MSGMDelete.
+  FillValues: Fills the lookup lists through masterdata.MSGMFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.MSGMFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.MSGMLoadData.
+  Open: Searches records through masterdata.MSGMSearchData.
+  SaveBinDetail: Saves the record through masterdata.MSGMSaveBinDetail.
+  SaveDivision: Saves the record through masterdata.MSGMSaveDivision.
+  SaveMain: Saves the record through masterdata.MSGMSaveMain.
+  SaveMake: Saves the record through masterdata.MSGMSaveMake.
+  SaveQC: Saves the record through masterdata.MSGMSaveQC.

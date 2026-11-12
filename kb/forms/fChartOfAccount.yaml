@@ -1,0 +1,44 @@
+form: fChartOfAccount
+title: Chart Of Account
+module: FI
+kind: master
+users:
+- Finance controller (inferred)
+summary: The Chart Of Account screen maintains the charts of accounts (COA) of the enterprise.
+purpose: |
+  What it is: A named account structure of reporting or operative type with its own account group tree. When it applies: When a new accounting structure is needed, for example for a new finance book or reporting view. Business outcome: Accounts can be classified per chart (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields, a COA Structure grid and a Finance Book grid.
+  - COA Code Field: Read-only text box.
+  - COA Name Field: Mandatory text box, up to 50 characters (BR-01, BR-02, BR-03).
+  - COA Type Field: Mandatory dropdown (BR-01).
+  - Import COA Field: Optional dropdown with chart name and code (BR-05).
+  - Copy Option: Option set Copy With Ledgers (default) or Copy With Structure.
+  - Inactive Field: Checkbox.
+  - COA Structure Grid: Read-only Particular (indented) and Type columns; level hidden.
+  - Finance Book Grid: Read-only FB Code, FB Name, FB Type.
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the chart.
+  Search: Standard search with Code, COA Name, COA Type, Inactive, Created By, Created Date, newest first.
+  Delete: Deletes the loaded chart after confirmation (MSG-07).
+validations:
+- Enter COA Name .
+- Select valid COA Type.
+- Duplicate COA Name is not allowed.
+manages:
+- chart-of-accounts
+uses_concepts:
+- account-group
+- finance-book
+- ledger-account
+method_notes:
+  Delete: Deletes the record through masterdata.FCOADelete.
+  FillValues: Fills the lookup lists through masterdata.FCOAFillValues.
+  LoadData: Loads the selected record through masterdata.FCOALoadData.
+  Open: Searches records through masterdata.FCOASearchData.
+  Save: Saves the record through masterdata.FCOASave.
+  ValidateForm: Validates the entry through masterdata.FCOAValidate.
+  ucmbCOAType_ValueChanged: Fills the lookup lists through masterdata.FCOAFillValues.

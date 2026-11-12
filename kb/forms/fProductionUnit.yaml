@@ -1,0 +1,41 @@
+form: fProductionUnit
+title: Production Unit
+module: PP
+kind: master
+users:
+- Production planner (inferred)
+summary: The Production Unit screen maintains the production units of the group and their link to companies and divisions.
+purpose: |
+  What it is: A two-level structure of planning units and production units mapped to companies and divisions. When it applies: When a plant or production area is set up or reorganised. Business outcome: Production data can be planned and reported by unit (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and a company/division grid.
+  - Production Unit Code Field: Read-only text box.
+  - Production Unit Field: Mandatory text box, up to 50 characters (BR-01).
+  - Is Planning Unit Field: Checkbox.
+  - Planning Unit Field: Dropdown of planning units; mandatory when Is Planning Unit is not ticked (BR-03).
+  - Inactive Field: Checkbox.
+  - Division Grid: Select checkbox, read-only Company Name and Division Name; hidden company and division identifiers; rows cannot be deleted.
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the unit and its coverage.
+  Search: Standard search with Production Unit Code, Production Unit, Is Planning Unit, Planning Unit, Unit (company alias
+    and division code list), Inactive, Created By.
+  Delete: Deletes the loaded unit after confirmation (MSG-07).
+validations:
+- Enter Production Unit.
+- Select valid Planning Unit.
+- Select atleast one Company Name.
+manages:
+- production-unit
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MDPUDelete.
+  FillValues: Fills the lookup lists through masterdata.MDPUFillValues.
+  LoadData: Loads the selected record through masterdata.MDPULoadData.
+  Open: Searches records through masterdata.MDPUSearchData.
+  Save: Saves the record through masterdata.MDPUSave.
+  SaveDivision: Saves the record through masterdata.MDPUSaveDivisionDetail.
+  ucmbPlanningUnit_ValueChanged: Fills the lookup lists through masterdata.MDPUFillValues.

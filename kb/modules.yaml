@@ -1,0 +1,38 @@
+modules:
+- code: FI
+  name: Finance
+  status: active
+  summary: Ledger, books, taxes and charges, and the supplier bill to payment flow.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Chart of accounts, finance books, account determination, tax and charge set-up, and accounts payable (document receipt,
+    purchase bill, payment request, plan, advice, voucher).
+
+    '
+- code: MM
+  name: Material Management
+  status: active
+  summary: Materials, purchasing, stores, quality inspection and the masters they use.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Master data for materials, units, vendors and storage, and the procure-to-pay and stores flows built on it.
+
+    '
+- code: PM
+  name: Plant Maintenance
+  status: active
+  summary: Maintenance (EAM) master data and maintenance consumption of stores material.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Work permit templates and maintenance flows that draw spares from MM stores.
+
+    '
+- code: PP
+  name: Production Planning
+  status: active
+  summary: Production units and production activities used by process plans.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Production master data maintained by the in-scope forms.
+
+    '

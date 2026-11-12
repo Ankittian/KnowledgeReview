@@ -1,0 +1,20 @@
+key: preventive-maintenance
+name: Preventive & Breakdown Maintenance (PM)
+module: PM
+status: active
+summary: Maintenance work is planned under permits and consumes spares issued from MM stores.
+description: 'Evidence: code + ERP domain (inferred)
+
+  Equipment and permit templates are set up, work orders are raised and spares are issued from stores against them.
+
+  '
+steps:
+- order: 1
+  name: Define work permit templates
+  form: fPermitMaster
+- order: 2
+  name: Issue spares
+  form: fMaterialIssue
+concepts:
+- work-permit
+- material-issue

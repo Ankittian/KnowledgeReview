@@ -1,0 +1,16 @@
+usercontrol: CustomField
+title: Custom fields control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded grid for configurable extra fields of a document.
+purpose: |
+  Loads the custom fields configured for the host form (CustomFieldsFillValues / LoadData) and saves or deletes their values (CustomFieldsSave / Delete).
+functional_description: |
+  Embedded in: fDocumentReceipt, fGRN, fGateEntry, fIndent, fIndentRequisition, fInspectionEntry, fInspectionIntimation, fPurchaseBill, fPurchaseOrder, fQuotation, fRequestforQuotation, fVendorCard, fVendorLocation.
+method_notes:
+  ControlFillValues: Fills the lookup lists through masterdata.CustomFieldsFillValues.
+  LoadData: Loads the selected record through masterdata.CustomFieldsLoadData.
+  Save: Saves the record through masterdata.CustomFieldsDelete, masterdata.CustomFieldsSave.
+  ugdCustomField_ClickCellButton: Fills the lookup lists through masterdata.CustomFieldsFillValuesDependent.

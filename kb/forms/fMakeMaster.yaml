@@ -1,0 +1,47 @@
+form: fMakeMaster
+title: Make Master
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: The Make Master screen maintains the list of manufacturer makes (brands) used to describe items.
+purpose: |
+  What it is: A central list of makes (brands) with a system code and an optional mapping to the items supplied under that make. When it applies: When a new brand is introduced, a make name must be corrected, or the items sold under a make change. Business outcome: One consistent make list across all companies, free of near-duplicate names, so that items and transactions can be analysed by make.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Make Details Area: The default workspace with Code, Make Name, Inactive and Is Tyre Make, and the item tree below.
+  - Code Field: Read-only text display, maximum 12 characters, not in the tab order.
+  - Make Name Field: Text box, mandatory (highlighted as compulsory), maximum 50 characters.
+  - Inactive Field: Check box, disabled (display only).
+  - Is Tyre Make Field: Check box, optional.
+  - Item Tree Grid: Shared three-level grid: item groups, their sub groups and their items, each with a Select tick box.
+  - Fast Entry Grid Container: A grid with columns Make Name (maximum 100 characters), Is Tyre Make and Remarks (read only), plus an Import button.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled for this screen; their handlers are empty.
+actions:
+  Switch back to detail mode.: Link at the top of the Fast Entry container.
+  Import: The Import button in Fast Entry mode; reads an Excel workbook.
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open, showing the shared search list.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last, enabled for this screen through the toolbar.
+validations:
+- Enter Make Name.
+- Duplicate Make Name not allowed.
+- Successfully Created.
+- Refer remarks for saved status.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+manages:
+- make
+uses_concepts:
+- company
+- material-item
+method_notes:
+  Delete: Deletes the record through masterdata.MMMKDelete.
+  FillValues: Fills the lookup lists through masterdata.MMMKFillValues.
+  LoadData: Loads the selected record through masterdata.MMMKLoadData.
+  Open: Searches records through masterdata.MMMKSearchData.
+  SaveItemDetail: Saves the record through masterdata.MMMKItemDetailSave.
+  SaveMain: Saves the record through masterdata.MMMKSave.
+  ValidateForm: Validates the entry through masterdata.MMMKValidation.

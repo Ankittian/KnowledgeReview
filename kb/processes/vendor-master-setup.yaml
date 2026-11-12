@@ -1,0 +1,40 @@
+key: vendor-master-setup
+name: Vendor Master Data Setup
+module: MM
+status: active
+summary: Business partners, their locations and contacts are set up before purchasing or billing.
+description: 'Evidence: code + ERP domain (inferred)
+
+  A vendor card is created, then its addresses (locations, with city, tax registration and accounts) and contact persons.
+  Currencies and exchange rates support foreign vendors.
+
+  '
+steps:
+- order: 1
+  name: Define cities
+  form: fCityMaster
+- order: 2
+  name: Define currencies
+  form: fCurrencyMaster
+- order: 3
+  name: Maintain exchange rates
+  form: fCurrencyConversion
+- order: 4
+  name: Create vendor cards
+  form: fVendorCard
+- order: 5
+  name: Add vendor locations
+  form: fVendorLocation
+- order: 6
+  name: Add vendor contact persons
+  form: fVendorContactPerson
+concepts:
+- vendor
+- vendor-location
+- vendor-contact-person
+- city
+- currency
+- currency-exchange-rate
+leads_to:
+- procure-to-pay
+- payment-flow

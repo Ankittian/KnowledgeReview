@@ -1,0 +1,1574 @@
+concepts:
+- key: account-determination-rule
+  name: Account Determination Rule
+  module: FI
+  synonyms:
+  - Account Rule
+  summary: The Account Rule Definition screen tells the system which ledger account to use when a business document is posted
+    to finance.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Account Rule Definition screen tells the system which ledger account to use when a business document is posted to
+    finance. The user picks one posting account and then ties it to the business objects that should post to it: sale posting
+    rules, tax and miscellaneous charge rules, supplier and customer locations, items and item sub groups, payroll components,
+    finance books, employees, and intermediate posting bases such as expense heads or service items. Which of these lists
+    is offered depends on the type of the selected account, so a sales revenue account is linked to sale rules and items,
+    a tax account to tax charge rules, and a supplier control account to supplier locations. The screen prevents the same
+    object from being mapped twice to accounts of the same type, so that posting is unambiguous. Rules are defined centrally
+    at head office; when the screen is used from another company an opened rule is shown locked (see Section 13 for gaps).
+    Finance posting of purchase, sales, inventory, payroll and voucher documents relies on these rules downstream.
+
+    '
+  related_to:
+  - concept: ledger-account
+    how: account chosen by the rule
+  tables:
+  - Finance.ARDFinanceBookRule
+  - Finance.ARDImprestRule
+  - Finance.ARDIntermediatePostingAccountRule
+  - Finance.ARDItemRule
+  - Finance.ARDItemSubGroupRule
+  - Finance.ARDMain
+  - Finance.ARDPayrollComponentRule
+  - Finance.ARDSaleAccountRule
+  - Finance.ARDTDCAccountRule
+  - Finance.ARDVendorLocationRule
+- key: account-group
+  name: Account Group
+  module: FI
+  synonyms:
+  - Ledger Group
+  summary: The Account Group Master screen maintains the hierarchy of account groups within each Chart of Accounts (COA).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Account Group Master screen maintains the hierarchy of account groups within each Chart of Accounts (COA). Each group
+    belongs to one COA, sits under a parent group, may point to an alternate group, and inherits its nature (and its default
+    reference and cost center settings) from the parent. Groups can be created one at a time, in a fast entry grid, or by
+    importing an Excel sheet into that grid. Maintenance is reserved for the head office company; other companies can only
+    view groups. System default groups and groups of reporting-type COAs are protected from key changes. Ledger accounts and
+    financial statements downstream depend on this hierarchy for classification.
+
+    '
+  parent_of:
+  - ledger-account
+  tables:
+  - masterdata.mAccountGroup
+- key: accounting-period
+  name: Accounting Period Mapping
+  module: FI
+  synonyms:
+  - Calendar Period Mapping
+  summary: The FB Period Mapping screen (menu caption "Calendar Period Mapping") links accounting periods to a finance book
+    or to a depreciation book.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The FB Period Mapping screen (menu caption "Calendar Period Mapping") links accounting periods to a finance book or to
+    a depreciation book. The user picks a calendar type, then a finance book or depreciation book, ticks the financial years
+    that apply, and for each period of those years sets Open or Close status and marks exactly one beginning period. The beginning
+    period also sets the book''s opening date. Years and beginning periods that already carry vouchers, references, opening
+    balances or depreciation cannot be unticked. Finance and fixed asset users rely on these period statuses and the opening
+    date when posting and depreciating (Inferred).
+
+    '
+  related_to:
+  - concept: finance-book
+    how: periods of the book
+  tables:
+  - masterdata.mDBPeriodDetail
+  - masterdata.mFBPeriodDetail
+- key: accounting-voucher
+  name: Accounting Voucher
+  module: FI
+  synonyms:
+  - Journal
+  - Voucher
+  summary: Ledger posting (debit / credit lines) created by finance posting from transactions.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Ledger posting (debit / credit lines) created by finance posting from transactions. Looked up by the in-scope forms through
+    Finance.accVoucherDetail, Finance.accVoucherMain.
+
+    '
+  tables:
+  - Finance.accVoucherDetail
+  - Finance.accVoucherMain
+- key: bin
+  name: Bin Card
+  module: MM
+  synonyms:
+  - Storage Bin
+  summary: The BIN Card screen maintains storage bins inside warehouses for the login company.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The BIN Card screen maintains storage bins inside warehouses for the login company. Each bin has a BIN Card No., a physical
+    location description, a warehouse, an optional division, an optional maximum capacity and an inactive flag. The user also
+    states which items may be stored in the bin, either by ticking whole sub groups (and their items) or by ticking individual
+    items. Bins can be created singly, in a fast entry grid, or by importing an Excel sheet. Bins cannot be created while
+    logged into the head office. Stores users and stock transactions that record bin-level placement depend on this data (Inferred).
+
+    '
+  related_to:
+  - concept: warehouse
+    how: warehouse that holds the bin
+  tables:
+  - masterdata.mBinCard
+  - masterdata.mBinCardItemDetail
+  - masterdata.mBinCardSubgroupDetail
+- key: chapter-heading
+  name: Chapter Heading
+  module: MM
+  synonyms:
+  - Tariff Chapter
+  summary: The Chapter Heading screen maintains chapter headings, the tariff chapter numbers under which items are classified
+    for excise and customs purposes (Inferred from the term), and the items that belong to each heading.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Chapter Heading screen maintains chapter headings, the tariff chapter numbers under which items are classified for
+    excise and customs purposes (Inferred from the term), and the items that belong to each heading. The user enters the chapter
+    number and a description, and ticks the applicable items in a group, subgroup and item tree. Headings must be unique after
+    ignoring punctuation and spaces. Besides single entry, the screen offers a fast entry grid and an Excel import for creating
+    many headings at once. Only the head office can edit; new headings are made available to every company and saved directly
+    as authorised. Item masters and tax documents that print or use the chapter heading rely on this list (Inferred).
+
+    '
+  tables:
+  - masterdata.mChapterHeading
+  - masterdata.mChapterHeadingCompanyDetail
+  - masterdata.mItemChapterDetail
+- key: chart-of-accounts
+  name: Chart of Accounts
+  module: FI
+  synonyms:
+  - COA
+  summary: The Chart Of Account screen maintains the charts of accounts (COA) of the enterprise.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Chart Of Account screen maintains the charts of accounts (COA) of the enterprise. Each chart has an automatic code,
+    a name and a type: Reporting or Operative. When a new chart is created, its account group tree is built automatically,
+    either from the system default account groups or by copying the groups of an existing chart of the same type, optionally
+    including its account placements ("Copy With Ledgers"). The screen also shows which finance books use the chart and previews
+    the group and account structure of a chart being imported. Charts are enterprise-wide. Account masters, finance books,
+    the Reporting COA Setup screen and all finance reporting rely on these charts (Inferred).
+
+    '
+  parent_of:
+  - account-group
+  tables:
+  - masterdata.COAAccountGroupDetail
+  - masterdata.COAMain
+- key: city
+  name: City
+  module: MM
+  synonyms:
+  - District
+  summary: The City Master screen maintains cities within states and countries, and lets a city be flagged as a district or
+    be linked to a district city of the same state.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The City Master screen maintains cities within states and countries, and lets a city be flagged as a district or be linked
+    to a district city of the same state. The system assigns a city code and makes each new city available to all companies.
+    When a city is first saved and no location exists for it, a location of the same name is created automatically. Cities
+    are entered at head office; other companies view them read-only after a record is loaded or cleared. A Fast Entry mode
+    with Excel import supports bulk creation. Customer, supplier, company and location addresses rely on these cities downstream
+    (Inferred).
+
+    '
+  tables:
+  - masterdata.mCityMaster
+  - masterdata.mCityMasterCompanyDetail
+- key: company
+  name: Company
+  module: MM
+  summary: Legal company under which masters are activated and documents are recorded.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Legal company under which masters are activated and documents are recorded. Looked up by the in-scope forms through masterdata.mCompanyMaster.
+
+    '
+  tables:
+  - masterdata.mCompanyMaster
+- key: comparative-statement
+  name: Comparative Statement
+  module: MM
+  synonyms:
+  - CS
+  - Quote Comparison
+  summary: The CS screen builds a side-by-side comparative statement for one authorized material Request For Quotation (RFQ).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The CS screen builds a side-by-side comparative statement for one authorized material Request For Quotation (RFQ). For
+    every RFQ item it lays out, vendor by vendor, the quoted quantity, rate, delivery date, item-level taxes, total amount,
+    GST, landed rate, HSN/SAC code, optional item remarks and technical parameters, together with the last purchase price
+    of the item; it also shows document-level net amount, GST, landed rate and the vendors'' terms and conditions. Authorized
+    quotations (latest authorized revision) and currently valid vendor rate agreements that cover RFQ items are both included
+    as columns. The screen highlights the lowest landed rate per item, the earliest delivery and the lowest overall landed
+    value, and colour-codes booking progress. From the grid the buyer books a quantity and rate against a chosen vendor for
+    purchase-order creation, edits or cancels bookings; the comparative statement itself is not saved, only the bookings are.
+    The statement can be printed, previewed and exported to Excel or PDF with a subject line and signature blocks.
+
+    '
+  related_to:
+  - concept: vendor-quotation
+    how: quotations compared side by side
+- key: cost-center
+  name: Cost Center
+  module: FI
+  summary: The Cost Center Master screen maintains the hierarchy of cost centers to which costs, stock lots, vouchers and
+    maintenance assets are charged.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Cost Center Master screen maintains the hierarchy of cost centers to which costs, stock lots, vouchers and maintenance
+    assets are charged. A user enters a Cost Center Name and an optional Parent Cost Center; the system assigns a code. Cost
+    centers are created centrally at head office and are made available to every company; in a multi-company setup head office
+    also decides in which companies each cost center is inactive. Once a cost center is used in stock lots, finance vouchers,
+    equipment or functional locations, its name and parent are locked. A Fast Entry mode with Excel import supports bulk creation.
+
+    '
+  tables:
+  - masterdata.mCostCenterMaster
+  - masterdata.mCostCenterMasterCompanyDetail
+- key: currency
+  name: Currency
+  module: FI
+  summary: The Currency Master screen maintains the currencies used across the enterprise.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Currency Master screen maintains the currencies used across the enterprise. For each currency the user records its
+    name, fractional currency name (for example paise or cents), notation, symbol and translation type (exchange rate or inverse
+    rate), and ticks the countries that use it. Codes are generated automatically and new currencies become available in every
+    company. Only the head office can edit; other companies see the screen locked. Foreign currency documents, exchange rate
+    entry and party masters rely on these currencies (Inferred).
+
+    '
+  tables:
+  - masterdata.mCurrencyCountryDetail
+  - masterdata.mCurrencyMaster
+  - masterdata.mCurrencyMasterCompanyDetail
+- key: currency-exchange-rate
+  name: Currency Exchange Rate
+  module: FI
+  synonyms:
+  - Conversion Rate
+  summary: The Currency Conversion screen records exchange rates between the company's base currency and foreign currencies
+    for a validity period.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Currency Conversion screen records exchange rates between the company''s base currency and foreign currencies for
+    a validity period. For each exchange rate type (Standard, Buying, Selling) and exchange currency the user enters either
+    an exchange rate or an inverse rate, depending on the translation type, and an optional tolerance band in percentage or
+    amount. The screen prevents overlapping validity periods for the same currency and rate type and automatically closes
+    the previous open-ended rate when a newer one is saved. Rates are maintained centrally at head office; other companies
+    view them read-only. Purchase, sales and finance documents in foreign currency use these rates and tolerance bands (Inferred).
+
+    '
+  related_to:
+  - concept: currency
+    how: rates of the currency
+  tables:
+  - masterdata.mCurrencyConversion
+- key: document-receipt
+  name: Document Receipt
+  module: FI
+  synonyms:
+  - Bill Inward
+  summary: The Document Receipt screen records the arrival of a party document, such as a purchase invoice, debit/credit note
+    or subcontract bill, before Finance processes it.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Document Receipt screen records the arrival of a party document, such as a purchase invoice, debit/credit note or
+    subcontract bill, before Finance processes it. The user captures who sent the document (party and location), the party''s
+    own document number, date, amount and tax amount, how it arrived, who received it and which module it was forwarded to.
+    Optionally the receipt is tied to one or more source documents (GRN, Gate Pass, MRA or SIN) of the same party, so that
+    Finance knows which receipts and goods the bill covers. Each receipt gets an automatic yearly Receipt Entry No. per company
+    and financial year. The screen prevents the same party document number from being recorded twice for the same party in
+    the same financial year, and blocks changes once a Purchase Bill, Service Bill or Debit/Credit Note has been prepared
+    against the receipt. Accounts payable staff who later prepare bills benefit from a single register of received documents.
+
+    '
+  tables:
+  - Finance.DocumentReceiptCustomFieldDetail
+  - Finance.DocumentReceiptMain
+  - Finance.DocumentReceiptNotesDetail
+  - Finance.DocumentReceiptReferenceDetail
+- key: expense-head
+  name: Expense Head
+  module: FI
+  summary: The Expense Head screen maintains the list of expense heads used to classify service, conversion, charges and production
+    expenses.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Expense Head screen maintains the list of expense heads used to classify service, conversion, charges and production
+    expenses. A user enters the Expense Head name and its Nature, may link an HSN / SAC code and GST category for tax purposes,
+    and, for heads of nature Charges, ticks the tax charges that apply. The system assigns a code and makes each new head
+    available in every company. Heads are created at head office only; other companies view them read-only. A Fast Entry mode
+    with Excel import supports bulk creation. Finance and purchasing documents that book expenses use these heads (Inferred).
+
+    '
+  tables:
+  - masterdata.mExpenseHead
+  - masterdata.mExpenseHeadCompanyDetail
+  - masterdata.mExpenseHeadTaxDetail
+- key: finance-book
+  name: Finance Book
+  module: FI
+  synonyms:
+  - Book
+  summary: The Finance Book screen maintains the books under which accounting is recorded and reported.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Finance Book screen maintains the books under which accounting is recorded and reported. Each book is one of three
+    types: a Transaction book that vouchers are posted to, a Unit Level book that groups transaction books of one company,
+    or a Consolidate book that combines selected transaction books. For each book the user links the Chart of Accounts it
+    uses (with exactly one operative account for transaction books), and for transaction books also the tax books and divisions
+    it covers. The screen enforces a unique book name, a consistent operative account between parent and child books, and
+    one book per division. Books are central, enterprise-wide master data; finance users and every finance transaction and
+    report that selects a finance book depend on it.
+
+    '
+  related_to:
+  - concept: chart-of-accounts
+    how: chart used by the book
+  tables:
+  - masterdata.mFBCOADetail
+  - masterdata.mFBDivisionDetail
+  - masterdata.mFBMain
+  - masterdata.mFBTaxBookDetail
+  - masterdata.mFBTransactionFBDetail
+- key: gate-entry
+  name: Gate Entry
+  module: MM
+  synonyms:
+  - Gate Inward
+  summary: The Gate Entry screen records every inward vehicle and consignment that arrives at the factory gate before it is
+    received into stores.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Gate Entry screen records every inward vehicle and consignment that arrives at the factory gate before it is received
+    into stores. Security or stores staff identify the source of the material (Purchase Order, Stock Transfer, Inter Unit
+    Dispatch Challan, Subcontract Order, Sales Return or Direct), pick the reference documents and the items on the vehicle,
+    and capture the supplier challan, transporter, driver, vehicle, lorry receipt, eWay-Bill and weighbridge details. The
+    screen checks challan quantities against the open balance and tolerance of the reference order, blocks duplicate challans
+    from the same supplier location, refuses blacklisted vehicles, and applies company-configurable checks on driver and vehicle
+    data. Each gate entry carries a yearly document number and a document status (Initial, Release, Authorized); once authorized
+    it can no longer be changed. The saved gate entry is the starting point for goods receipt (GRN), weighment, freight invoicing
+    and vehicle gate-out, and it can be linked to an approved mobile gate-in record.
+
+    '
+  related_to:
+  - concept: purchase-order
+    how: order the inward consignment refers to
+  tables:
+  - GateEntry.InvGateEntryItemDetail
+  - GateEntry.InvGateEntryMain
+  - GateEntry.InvGateEntryNotesDetail
+  - GateEntry.InvGateEntryOrderDetail
+- key: goods-receipt-note
+  name: Goods Receipt Note
+  module: MM
+  synonyms:
+  - GRN
+  - Material Receipt Note
+  summary: The GRN screen records the physical receipt of material at a company warehouse and turns it into usable stock.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The GRN screen records the physical receipt of material at a company warehouse and turns it into usable stock. A receipt
+    can be made directly or against a reference document: a purchase order, a gate entry, a stock transfer, a subcontract
+    order and, where enabled, an inter-unit dispatch challan or a sales order. A second document type, MRA, records material
+    receipt advice, including drop-shipment receipts delivered to a consignee. The screen captures the vendor and vendor location,
+    bill, challan, transport, freight and e-way bill details, then the item lines with challan, received, accepted, rejected,
+    free-of-charge and replaceable quantities, plus indent allocation, reservation, serial numbers, batch, expiry, heat-wise
+    lots and attribute-wise rates. It enforces quantity balance, purchase order tolerance, inspection and multi-level approval
+    rules, many of which a company switches on through configurable validations. On authorization, the receipt posts inward
+    stock lots, updates the status of the source documents, creates the finance voucher and, for legacy excise set-ups, the
+    excise register entries. Purchase billing, inspection, stock issue, finance and purchase follow-up all depend on the data
+    saved here.
+
+    '
+  related_to:
+  - concept: purchase-order
+    how: order the material is received against
+  - concept: gate-entry
+    how: gate inward the receipt follows
+  tables:
+  - Inventory.GRNIndentReserveDetail
+  - Inventory.GRNItemAttributeIskcon
+  - Inventory.GRNItemDetail
+  - Inventory.GRNItemIndentDetail
+  - Inventory.GRNItemLotAdditionalDetail
+  - Inventory.GRNItemSerialDetail
+  - Inventory.GRNItemTaxDetail
+  - Inventory.GRNMain
+  - Inventory.GRNNotesDetail
+  - Inventory.GRNRefDocDetail
+  - Inventory.GRNTaxDetail
+- key: gst-category
+  name: GST Category
+  module: FI
+  summary: GST classification of goods and services used for tax determination.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    GST classification of goods and services used for tax determination. Looked up by the in-scope forms through GlobalData.GSTCategory.
+
+    '
+  tables:
+  - GlobalData.GSTCategory
+- key: hsn-sac-code
+  name: HSN / SAC Code
+  module: MM
+  synonyms:
+  - HSN
+  - SAC
+  summary: The HSN SAC Master screen maintains HSN codes for goods and SAC codes for services, as used under GST.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The HSN SAC Master screen maintains HSN codes for goods and SAC codes for services, as used under GST. For each code the
+    user records the type (Goods or Service), the code itself, a two-character chapter, a description, the default CGST, SGST,
+    IGST and UTGST rates, and the items that carry the code. Codes are unique across the enterprise. Only the head office
+    can edit; other companies see the screen locked. Purchase and sales documents that determine GST by item rely on the code
+    and its default rates (Inferred).
+
+    '
+  tables:
+  - masterdata.HSNSACCode
+  - masterdata.mItemHSNDetail
+- key: inspection-intimation
+  name: Inspection Intimation
+  module: MM
+  synonyms:
+  - Intimation Letter
+  summary: The Inspection Intimation screen prepares an intimation letter that tells the inspecting department which received
+    items are waiting for quality inspection.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Inspection Intimation screen prepares an intimation letter that tells the inspecting department which received items
+    are waiting for quality inspection. The user enters a GRN date range, lists the goods receipt lines that require inspection
+    and are not yet authorized, ticks the lines to be intimated and assigns the department responsible for each. Each intimation
+    carries a yearly document number, a date and a document status (Initial, Release, Authorized); once authorized it can
+    no longer be changed. An authorized intimation is a precondition for authorizing an inspection-required GRN and is the
+    source from which the Inspection Entry screen picks lines to inspect. The screen is used by stores at company or division
+    level; quality staff and stores management benefit downstream.
+
+    '
+  related_to:
+  - concept: goods-receipt-note
+    how: receipt sent for inspection
+  tables:
+  - Inventory.IntimationLetterDetail
+  - Inventory.IntimationLetterMain
+  - Inventory.IntimationLetterNotesDetail
+- key: item-attribute-value
+  name: Item Attribute Standard Value
+  module: MM
+  synonyms:
+  - Attribute Combination
+  summary: The Attribute Standard Value screen defines the standard values that item attributes (for example size, grade or
+    colour) may take, either for a whole item sub group or for a single item, and generates the attribute combinations (variants)
+    of an item from those values.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Attribute Standard Value screen defines the standard values that item attributes (for example size, grade or colour)
+    may take, either for a whole item sub group or for a single item, and generates the attribute combinations (variants)
+    of an item from those values. In All Combination mode the user lists attribute values, marks one base value per attribute
+    and generates every combination, then sets combinations inactive where needed. In Single Combination mode the user adds
+    one specific combination for an item, with optional width, thickness or size for coil and piece-wise items. Each generation
+    is versioned so that earlier combinations are kept as history. Inventory, purchase and sales documents that select item
+    variants rely on the latest combinations (Inferred).
+
+    '
+  related_to:
+  - concept: material-item
+    how: attribute values of the item variant
+  tables:
+  - masterdata.mAttributeCombination
+  - masterdata.mAttributeCombinationDetail
+  - masterdata.mItemAttributeStandValueDetail
+- key: item-technical-grade
+  name: Item Technical Grade
+  module: MM
+  synonyms:
+  - Technical Grade Mapping
+  summary: The Item Tech Grade Mapping screen records which technical grades apply to an item or to a whole item subgroup.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Item Tech Grade Mapping screen records which technical grades apply to an item or to a whole item subgroup. The user
+    first chooses the mapping level (item or subgroup), then the item or subgroup, and then lists the technical grades in
+    a grid. Saving replaces the previous list of grades for that item or subgroup. When the mapping is done at subgroup level,
+    the grades are also written to every item of that subgroup. The item and subgroup lists are limited to the user''s current
+    company, but the stored grades are not company specific. Downstream screens that ask for a technical grade against an
+    item rely on this list (Inferred).
+
+    '
+  related_to:
+  - concept: material-item
+    how: grades applicable to the item
+  tables:
+  - masterdata.mItemTechnicalGrade
+  - masterdata.mSubgroupTechnicalGrade
+- key: item-unit-weight
+  name: Item Unit Weight
+  module: MM
+  synonyms:
+  - Item Weight
+  summary: The Item Change Unit Weight screen is a utility that corrects weight and dimension settings of an existing item
+    without reopening the full item master.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Item Change Unit Weight screen is a utility that corrects weight and dimension settings of an existing item without
+    reopening the full item master. The user picks an item and can change whether item dimensions are maintained, the measurement
+    type (1-D, 2-D, 3-D) and its unit, the unit weight and its unit, the production stock unit conversion formula, and the
+    production unit conversion. The latest bills of material that use the item are shown for reference. Each save writes the
+    new values straight onto the item and keeps a change record. Only the head office can make changes. Stock, production
+    and dispatch functions that convert quantities or compute weights rely on these values (Inferred).
+
+    '
+  related_to:
+  - concept: material-item
+    how: weight and dimension settings of the item
+  tables:
+  - masterdata.ChangeItemUnitWeight
+  - masterdata.ChangeItemUnitWeightDetail
+  - masterdata.mItemUnitConversionDetail
+- key: ledger-account
+  name: Ledger Account
+  module: FI
+  synonyms:
+  - GL Account
+  - Account
+  summary: The Account Master screen creates and maintains general ledger accounts.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Account Master screen creates and maintains general ledger accounts. Each account belongs to a chart of accounts (COA),
+    has an account type and an account group, and carries control settings such as reference (bill-wise) tracking, cost center
+    tracking, quantity tracking, currency, HSN/SAC code and a fund flow flag. Bank accounts additionally hold bank details
+    and interest rates. Accounts of the "Additional Accounts" type can be marked as a party account, in which case the screen
+    also creates a party card, a party location with GST, PAN and MSME details, and the account rule that links the party
+    to this account. Accounts in a reporting chart roll up selected operative accounts through account mapping, and every
+    account can be mapped to groups in other charts. A fast entry grid with Excel import allows bulk creation. Creation and
+    deletion are restricted to head office; other companies can only view and update. Vouchers, financial statements, bank
+    payments and finance posting rely on these accounts downstream.
+
+    '
+  related_to:
+  - concept: cost-center
+    how: cost centers booked with the account
+  tables:
+  - masterdata.COAAccountGroupDetail
+  - masterdata.FSLayoutDesignAccountDetail
+  - masterdata.mAccountBankDetail
+  - masterdata.mAccountBankInterestDetail
+  - masterdata.mAccountMaster
+- key: make
+  name: Make / Brand
+  module: MM
+  synonyms:
+  - Brand
+  - Manufacturer
+  summary: The Make Master screen maintains the list of manufacturer makes (brands) used to describe items.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Make Master screen maintains the list of manufacturer makes (brands) used to describe items. A user records a Make
+    Name, the system assigns a code, and the user can tick the items that belong to the make in an item tree grouped by item
+    group and sub group. A make can optionally be flagged as a tyre make when the tyre management screen is enabled. Makes
+    are created and changed centrally from the head office; other companies see the screen read-only. Every new make is made
+    available to all companies at once. Purchasing, inventory, sales and reporting screens read the make and its item mapping
+    downstream.
+
+    '
+  tables:
+  - masterdata.mItemMakeDetail
+  - masterdata.mMakeMaster
+  - masterdata.mMakeMasterCompanyDetail
+- key: material-category
+  name: Material Category
+  module: MM
+  synonyms:
+  - Category
+  summary: Top level of the material classification (Category > Group > Sub Group > Item).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Top level of the material classification (Category > Group > Sub Group > Item). Looked up by the in-scope forms through
+    masterdata.mCategoryMaster.
+
+    '
+  parent_of:
+  - material-group
+  tables:
+  - masterdata.mCategoryMaster
+- key: material-group
+  name: Material Group
+  module: MM
+  synonyms:
+  - Item Group
+  summary: The Material Group screen maintains material groups, the second level of the material classification (Category,
+    then Group, then Sub Group, then Item).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Material Group screen maintains material groups, the second level of the material classification (Category, then Group,
+    then Sub Group, then Item). Each group belongs to one material category and carries a 2-character code that becomes the
+    middle part of every item code built beneath it. The screen captures the category, the group code and the group name,
+    shows the combined Group Code, and supports single-record entry, a grid-based fast entry mode and an Excel import. Groups
+    are maintained centrally: only the head-office company can edit them, and every new group is made available to all companies
+    at once and is authorised on save. Sub group, item master, material request, production and KPI processes depend on the
+    groups defined here.
+
+    '
+  parent_of:
+  - material-sub-group
+  related_to:
+  - concept: qc-parameter
+    how: group level default QC parameters
+  tables:
+  - masterdata.mGroupMaster
+  - masterdata.mGroupMasterCompanyDetail
+  - masterdata.mGroupQCParameterDetail
+- key: material-issue
+  name: Material Issue
+  module: MM
+  synonyms:
+  - Stores Issue
+  - Issue Slip
+  summary: The Material Issue screen records the issue of materials from a warehouse to an employee, a contractor or shop
+    floor, or a vendor.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Material Issue screen records the issue of materials from a warehouse to an employee, a contractor or shop floor,
+    or a vendor. An issue can be made directly or against a source document such as a Subcontract Order, Job Card, Material
+    Request, Maintenance Order, Customer Service Order, Batch Order or Packing Order, and the screen checks quantities against
+    the balance of that document. For every item the user picks the stock lots (and serial numbers where the item is serial-controlled)
+    from which the quantity is drawn, so the issue reduces stock at lot level and carries the lot cost into the issue value.
+    The screen governs the issue type (Capital, Revenue, RawMaterial, Reusable, Repairable), returnable and chargeable status,
+    department and cost centre, and, for authorised own-stock issues, builds a finance journal voucher that debits the consumption
+    or work-in-progress account. Issues move through Initial, Release and Authorized statuses; an authorised issue can no
+    longer be edited. Stores, production, maintenance, subcontracting, service and finance users depend on the stock movements,
+    requisition status updates and vouchers this screen produces.
+
+    '
+  related_to:
+  - concept: warehouse
+    how: store the material is issued from
+  - concept: material-request
+    how: request the issue is made against
+  - concept: cost-center
+    how: cost center charged with the consumption
+  tables:
+  - Inventory.InvLotItemSerialNoDetail
+  - Inventory.InvUnAuthorizedIssueDetail
+  - Inventory.MaterialIssueItemDetail
+  - Inventory.MaterialIssueMain
+  - Inventory.MaterialIssueItemSerialDetail
+  - Inventory.MaterialIssueLotDetail
+  - Inventory.MaterialIssueNotesDetail
+- key: material-item
+  name: Material / Item
+  module: MM
+  synonyms:
+  - Item
+  - Material Master
+  summary: 'The Item Master screen creates and maintains the enterprise material (item) master: every raw material, consumable,
+    finished good, service, spare and other stocked or non-stocked item used across purchasing, inventory, production and
+    sales.'
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Item Master screen creates and maintains the enterprise material (item) master: every raw material, consumable, finished
+    good, service, spare and other stocked or non-stocked item used across purchasing, inventory, production and sales. Each
+    item is classified under a Category, Group and Subgroup, receives a four-digit Item Code that the system proposes automatically,
+    and gets a unique Full Code and Item Description. Beyond identity, the screen captures stock and valuation behaviour (material
+    type, units of measure and conversion factors, stock levels, serial/batch/expiry control, dimensions, bins), tax classification
+    (GST Category, HSN/SAC Code), and item-level mappings to makes, warehouses, vendors, substitute materials, supplementary
+    fields and companies. Maintenance is governed by the head office: branch companies see the screen read-only. Items can
+    be entered one at a time, in a Fast Entry grid, by Excel import, by copying an existing item or from an open Material
+    Master Request. Downstream, every transaction screen that buys, stores, produces, sells or accounts for material relies
+    on the records maintained here.
+
+    '
+  related_to:
+  - concept: unit-of-measure
+    how: stock and purchase units of the item
+  - concept: make
+    how: makes allowed for the item
+  - concept: chapter-heading
+    how: tariff chapter of the item
+  - concept: hsn-sac-code
+    how: GST HSN / SAC of the item
+  tables:
+  - Finance.ARDItemRule
+  - masterdata.mBinCardItemDetail
+  - masterdata.mItemChapterDetail
+  - masterdata.mItemHSNDetail
+  - masterdata.mItemMakeDetail
+  - masterdata.mItemMaster
+  - masterdata.mItemMasterCompanyDetail
+  - masterdata.mItemOtherInformation
+  - masterdata.mItemQCParameterDetail
+  - masterdata.mItemSubstituteMaterialDetail
+  - masterdata.mItemSupplementaryFieldsDetail
+  - masterdata.mItemTechnicalGrade
+  - masterdata.mItemUnitConversionDetail
+  - masterdata.mItemVendorPartDetail
+  - masterdata.mItemWarehouseDetail
+- key: material-request
+  name: Material Request
+  module: MM
+  synonyms:
+  - Indent Requisition
+  summary: The Material Request screen lets a department raise an internal request for stock items, either for issue from
+    the store or as the first step towards procurement.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Material Request screen lets a department raise an internal request for stock items, either for issue from the store
+    or as the first step towards procurement. Each request carries a document number and date, a Request Type (Capital, Revenue
+    or RawMaterial), the requesting Department and person, an optional Cost Center, and a list of items with make, unit, required
+    quantity, delivery schedule and optional size, quality, specification and technical parameter details. A request can be
+    raised directly or against an authorised Maintenance Order, in which case the item list is taken from the order''s balance.
+    When the request is for a material issue, the screen also records whether the material is returnable and chargeable, and
+    to whom it will be issued (employee, contractor or vendor). The request moves through Initial, Release and Authorized
+    stages; once authorised it can no longer be changed. Stores and purchase users downstream rely on the request to prepare
+    purchase indents and material issues, and deletion is blocked once either exists.
+
+    '
+  tables:
+  - Inventory.IndentRequisitionItemDetail
+  - Inventory.IndentRequisitionItemQCDetail
+  - Inventory.IndentRequisitionItemScheduleDetail
+  - Inventory.IndentRequisitionItemSpecificationDetail
+  - Inventory.IndentRequisitionItemTechSpecificationDetail
+  - Inventory.IndentRequisitionMain
+  - Inventory.IndentRequisitionNotesDetail
+  - Inventory.IndentRequistionItemSizeDetail
+- key: material-sub-group
+  name: Material Sub Group
+  module: MM
+  synonyms:
+  - Item Sub Group
+  summary: The Material Sub Group screen maintains material sub groups, the third level of the material classification (Category,
+    then Group, then Sub Group, then Item).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Material Sub Group screen maintains material sub groups, the third level of the material classification (Category,
+    then Group, then Sub Group, then Item). Each sub group belongs to one material group and carries a 2-character code that,
+    together with the category and group codes, forms the first six characters of every item code beneath it. Beyond the name
+    and code, the screen captures default GST category and HSN/SAC code, bin applicability, an optional dispatch negative
+    tolerance, and several default lists for the items of the sub group: the warehouses where they are held, approved makes,
+    the stock, purchase, sales and production units, approved suppliers and bin cards. Sub groups are governed centrally:
+    existing sub groups can only be changed or deleted from the head-office company, and every new sub group is made available
+    to all companies and authorised on save. The item master and inventory, purchasing and planning processes rely on these
+    defaults.
+
+    '
+  parent_of:
+  - material-item
+  related_to:
+  - concept: vendor
+    how: approved vendors of the sub group
+  - concept: make
+    how: approved makes of the sub group
+  - concept: unit-of-measure
+    how: units allowed for items of the sub group
+  - concept: hsn-sac-code
+    how: HSN / SAC code that drives GST of the sub group
+  - concept: qc-parameter
+    how: sub group level QC parameters
+  tables:
+  - masterdata.mBinCardSubgroupDetail
+  - masterdata.mSubGroupDivisionDetail
+  - masterdata.mSubGroupMakeDetail
+  - masterdata.mSubGroupMaster
+  - masterdata.mSubGroupMasterCompanyDetail
+  - masterdata.mSubGroupQCParameterDetail
+  - masterdata.mSubGroupUnitDetail
+  - masterdata.mSubGroupVendorDetail
+- key: payment-advice
+  name: Payment Advice
+  module: FI
+  summary: The Payment Advice screen records an approved instruction stating how much may be paid against a ledger account,
+    either as a direct amount or broken down by open payable references or sundry payments.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Payment Advice screen records an approved instruction stating how much may be paid against a ledger account, either
+    as a direct amount or broken down by open payable references or sundry payments. The user chooses a Source Document (Direct,
+    Sundry Payment or Reference), the Account Name and the Payment Mode; for Direct the user types a reference number, date
+    and amount, and for the other sources the user ticks items in a grid and sets passing amounts. Each advice has a document
+    number, date, finance book and approval status (Initial, Release, Authorized) through the shared document numbering control,
+    and authorised advices are locked. When the company setting requires it, Payment Plan only accepts reference and sundry
+    payment items covered by authorised advices and consumes their balances. Finance controllers benefit from an explicit
+    approval step before items reach the payment plan.
+
+    '
+  related_to:
+  - concept: payment-plan
+    how: planned payments released
+  tables:
+  - Finance.PaymentAdviceDetail
+  - Finance.PaymentAdviceMain
+- key: payment-plan
+  name: Payment Plan
+  module: FI
+  summary: The Payment Plan screen lets Finance decide, for a given due date, which outstanding payables will be paid, how
+    much of each, and by which payment mode.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Payment Plan screen lets Finance decide, for a given due date, which outstanding payables will be paid, how much of
+    each, and by which payment mode. The user filters open items by Source Document, Payee Type and Payee Name, ticks the
+    items to pay (open references, sundry payments, supplier advances, freight invoices, TDS and other statutory payables),
+    sets the passing amount and splits it across payment modes such as cheque, DD, RTGS/NEFT or cash. Direct account payments
+    can be added in a separate account grid. The plan then groups amounts per payee, mode and currency on the Cheque, DD,
+    RTGS/NEFT, RTGS/NEFT Through Cheque and Cash tabs, where bank and instrument details are completed. Each plan has a document
+    number, date, finance book and approval status; authorising the plan locks it and posts cash lines to the cash counter.
+    Saving reserves the planned amounts against the open references and, where the company uses payment advices, consumes
+    payment advice balances. Treasury and payment teams benefit downstream because bank payment, cash payment, DD posting
+    and cheque printing work from the authorised plan.
+
+    '
+  tables:
+  - Finance.CashCounterMain
+  - Finance.PaymentPlanAccountReferenceDetail
+  - Finance.PaymentPlanMain
+  - Finance.PaymentPlanPaymentAdviceDetail
+  - Finance.PaymentPlanPaymentDetail
+  - Finance.PaymentPlanReferenceDetail
+  - Finance.ReferenceDetail
+  related_to:
+  - concept: payment-request
+    how: requests planned for payment
+- key: payment-request
+  name: Payment Request
+  module: FI
+  summary: The Payment Request screen records a request to pay a party, an employee or an ad hoc payee before the payment
+    itself is made.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Payment Request screen records a request to pay a party, an employee or an ad hoc payee before the payment itself
+    is made. The requester captures the request type (Imprest or Others), the payee and payee location, an optional bill reference,
+    the amount with any applicable taxes, cost center, payment mode, due date and who requested it. Each request carries a
+    document number, date, finance book and approval status (Initial, Release, Authorized) through the shared document numbering
+    control. Authorised requests are locked against change. Accounts and treasury staff benefit downstream because authorised
+    requests become available as source documents for sundry payments and appear in payment plan selection and registers.
+
+    '
+  related_to:
+  - concept: purchase-bill
+    how: bill whose payment is requested
+  tables:
+  - Finance.PaymentRequestMain
+  - Finance.PaymentRequestTaxDetail
+- key: payment-voucher
+  name: Payment Voucher
+  module: FI
+  synonyms:
+  - Bank Payment
+  - Cash Payment
+  summary: The Payment Voucher screen records money paid out of a cash or bank account.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Payment Voucher screen records money paid out of a cash or bank account. The user enters a document number, date,
+    finance book and approval status (Initial, Release, Authorized), chooses the Voucher Type (Regular or Inter FB) and currency,
+    and fills a voucher grid of debit lines for the accounts being paid and credit lines for the cash or bank account used.
+    Each line can carry a reference breakdown, cost center split, quantity detail and TDC rule. When a bank account is on
+    the voucher a payment detail grid appears for cheque, DD or UTR particulars. The screen keeps debits equal to credits,
+    builds a narration automatically, checks finance book periods, account rules and authorisation limits, and after saving
+    can print the voucher and a cheque payment advice. Vouchers created from Bank Journal with bank commission are locked
+    here until authorised, and on save the bank commission GST is posted. Finance teams get one place to record, approve and
+    print payments.
+
+    '
+  related_to:
+  - concept: payment-advice
+    how: advice the payment is made against
+  - concept: accounting-voucher
+    how: ledger posting of the payment
+- key: production-activity
+  name: Production Activity
+  module: PP
+  synonyms:
+  - Operation
+  summary: The Activity Master screen defines the production activities (operations) that process plans, bills of material
+    and work orders use.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Activity Master screen defines the production activities (operations) that process plans, bills of material and work
+    orders use. For each activity the user records its name, alias, sequence, type, basis and unit, then the standard time
+    for each sub activity (setup, run and batch time), the resources or resource categories required, the cost elements with
+    standard rates, the items the activity applies to, and alternative units of measure. An activity can also be an aggregate
+    of other activities and can inherit its type, basis and unit from an activity category. The screen enforces unique names,
+    aliases and sequence numbers within the company, a single primary resource, and complete cost and resource data. Activities
+    are maintained at head office; other companies see the screen locked. Production planning, BOM costing and work order
+    routing rely on these definitions downstream.
+
+    '
+  tables:
+  - masterdata.mActivityCostElement
+  - masterdata.mActivityDetail
+  - masterdata.mActivityItemDetail
+  - masterdata.mActivityMaster
+  - masterdata.mActivityMasterCompanyDetail
+  - masterdata.mActivityResourceDetail
+  - masterdata.mActivitySubActivityDetail
+  - masterdata.mActivityUnitConversionDetail
+- key: production-unit
+  name: Production Unit
+  module: PP
+  synonyms:
+  - Plant
+  summary: The Production Unit screen maintains the production units of the group and their link to companies and divisions.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Production Unit screen maintains the production units of the group and their link to companies and divisions. A production
+    unit is either a planning unit (a top-level unit where production is planned) or a unit that belongs to a planning unit.
+    Each unit is assigned the companies, or company divisions, it covers; a company or division can be covered by only one
+    unit, except that a planning unit''s units can be passed down to the units beneath it. Codes are generated automatically.
+    The head office creates and changes units; other companies can only change the **Inactive** flag. Production planning
+    and production transactions rely on this structure (Inferred).
+
+    '
+  tables:
+  - masterdata.mProductionUnit
+  - masterdata.mProductionUnitDivisionDetail
+- key: purchase-bill
+  name: Purchase Bill
+  module: FI
+  synonyms:
+  - Purchase Invoice
+  - Supplier Invoice
+  summary: The Purchase Bill screen (also called Purchase Invoice) records a supplier's invoice and passes it for payment.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Purchase Bill screen (also called Purchase Invoice) records a supplier''s invoice and passes it for payment. A bill
+    is raised either directly, with items keyed in by the user, or against goods already received, by selecting authorized
+    Material Receipt Notes (GRNs) and inward notes of the supplier location so that quantities and rates are pulled from the
+    receipt. The screen captures the vendor and pay-to party, the vendor bill number, date and amount, item lines with HSN
+    and GST details, taxes and charges, shipping parties, e-Way bill, payment terms, advance adjustment and imprest settlement,
+    and custom fields. On authorization it produces the purchase journal voucher (supplier payable, GR suspense or purchase
+    accounts, taxes and price differences), an optional advance adjustment voucher, GST posting detail, stock lots for direct
+    bills that update stock, and lot bill mapping for receipt-based bills. Each bill belongs to one company, financial year
+    and finance book; numbering, statuses and posting rules come from central settings. Accounts payable, payments, GST compliance,
+    inventory valuation and TDS threshold tracking all rely on the data written here.
+
+    '
+  related_to:
+  - concept: goods-receipt-note
+    how: receipt the supplier bill is booked against
+  - concept: document-receipt
+    how: inward bill document
+  tables:
+  - Finance.CashCounterMain
+  - Finance.PurchaseBillAdvanceDetail
+  - Finance.PurchaseBillItemDetail
+  - Finance.PurchaseBillItemSerialDetail
+  - Finance.PurchaseBillItemTaxDetail
+  - Finance.PurchaseBillMain
+  - Finance.PurchaseBillNotesDetail
+  - Finance.PurchaseBillSummary
+  - Finance.PurchaseBillTaxConcessionFormDetail
+- key: purchase-order
+  name: Purchase Order
+  module: MM
+  synonyms:
+  - PO
+  - Letter of Intent
+  summary: The Purchase Order screen creates, amends, releases and authorizes purchase documents issued to vendors.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Purchase Order screen creates, amends, releases and authorizes purchase documents issued to vendors. A document can
+    be a Letter of Intent (LOI), a Purchase Order (PO) or a Rate Order (RO), and it can be raised directly or against a quotation,
+    purchase contract (agreement), purchase request (indent), LOI, sales order, GRC, booking or delivery order. The screen
+    captures the vendor and location, item lines with quantity, rate, tolerance, schedule, size, technical specification,
+    QC and taxes, shipping and freight terms, an optional multi-leg transportation route, other expenses, payment terms, account
+    assignment, advance adjustment and custom fields. It enforces stock-type consistency, balance checks against indents and
+    agreements, GST state rules, budgets and a configurable set of company-specific validations. Authorization runs either
+    directly, within a per-user amount limit, or through a multi-level authorization group chosen by the net amount. Every
+    authorized PO is amended through a copy, so the live order changes only when the amendment is authorized. Gate entry,
+    goods receipt, purchase billing, advances and the vendor portal all rely on the authorized order (Inferred).
+
+    '
+  related_to:
+  - concept: vendor
+    how: supplier the order is placed on
+  - concept: purchase-request
+    how: requested lines ordered
+  tables:
+  - Purchase.FreightOrderOrderDetail
+  - Purchase.POAdvanceDetail
+  - Purchase.POAmendmentAdvanceDetail
+  - Purchase.POAmendmentConsigneeDetail
+  - Purchase.POAmendmentExpenseHead
+  - Purchase.POAmendmentExpenseHeadOutputDetail
+  - Purchase.POAmendmentIndentDetail
+  - Purchase.POAmendmentIndentReserveDetail
+  - Purchase.POAmendmentItemConsigneeDetail
+  - Purchase.POAmendmentItemDetail
+  - Purchase.POAmendmentItemQCParameterDetail
+  - Purchase.POAmendmentItemScheduleDetail
+  - Purchase.POAmendmentItemSizeDetail
+  - Purchase.POAmendmentItemTaxDetail
+  - Purchase.POAmendmentItemTechSpecificationDetail
+  - Purchase.POAmendmentMain
+  - Purchase.POAmendmentNotesDetail
+  - Purchase.POAmendmentTaxConcessionFormDetail
+  - Purchase.POAmendmentTaxDetail
+  - Purchase.POAmendmentTermsNConditionDetail
+  - Purchase.POAmendmentTransportationRoute
+  - Purchase.POConsigneeDetail
+  - Purchase.POExpenseHead
+  - Purchase.POExpenseHeadOutputDetail
+  - Purchase.POIndentDetail
+  - Purchase.POIndentReserveDetail
+  - Purchase.POItemConsigneeDetail
+  - Purchase.POItemDetail
+  - Purchase.POItemQCParameterDetail
+  - Purchase.POItemScheduleDetail
+  - Purchase.POItemSizeDetail
+  - Purchase.POItemTaxDetail
+  - Purchase.POItemTechSpecificationDetail
+  - Purchase.POMain
+  - Purchase.PONotesDetail
+  - Purchase.POTaxConcessionFormDetail
+  - Purchase.POTaxDetail
+  - Purchase.POTermsNConditionDetail
+  - Purchase.POTransportationRoute
+- key: purchase-organization
+  name: Purchase Organization
+  module: MM
+  synonyms:
+  - Buying Unit
+  summary: 'The Purchase Organization screen maintains purchase organizations: named buying units that group one or more companies,
+    and divisions where they apply.'
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Purchase Organization screen maintains purchase organizations: named buying units that group one or more companies,
+    and divisions where they apply. For each organization the user selects the participating companies or divisions and marks
+    exactly one of them as the execution unit. A company or division can belong to only one purchase organization at a time.
+    The code is generated automatically. The head office creates and changes organizations; other companies can only view
+    them and change the **Inactive** flag. Procurement processes that buy centrally on behalf of several units rely on this
+    grouping (Inferred).
+
+    '
+  tables:
+  - masterdata.mPurchaseOrganization
+  - masterdata.mPurchaseOrganizationCompanyDetail
+- key: purchase-request
+  name: Purchase Request
+  module: MM
+  synonyms:
+  - Indent
+  - Purchase Indent
+  summary: The Purchase Request screen (window caption "Indent") records a department's formal request to buy stock items,
+    which the purchase team later converts into purchase orders.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Purchase Request screen (window caption "Indent") records a department''s formal request to buy stock items, which
+    the purchase team later converts into purchase orders. A request is raised directly or against an authorised Material
+    Request, a material plan or an automatic procurement run, and carries a Source Document, Indent Type, Department, Requested
+    By, optional Warehouse and external reference, and a priced item list with required and indent quantities, rate, amount,
+    cost center, schedule and optional size, quality, specification, technical parameter and stock reservation details. The
+    screen checks the requested value against division, department, item and cost center budgets, totals the Net Amount, and
+    lets the user name the people to be informed. Approval runs either through the document status (Initial, Release, Authorized)
+    or, where configured, through a multi-level authorisation workflow with notification mails. Once authorised the request
+    is locked. Purchase, stores and project users rely on the request as the demand basis for RFQs and purchase orders, and
+    Material Request balances are reduced by the quantities indented here.
+
+    '
+  related_to:
+  - concept: material-request
+    how: material requests converted into a purchase request
+  tables:
+  - Inventory.IndentContactPersonDetail
+  - Inventory.IndentItemDetail
+  - Inventory.IndentItemQCDetail
+  - Inventory.IndentItemReserveDetail
+  - Inventory.IndentItemScheduleDetail
+  - Inventory.IndentItemSizeDetail
+  - Inventory.IndentItemSpecificationDetail
+  - Inventory.IndentItemTechSpecificationDetail
+  - Inventory.IndentMain
+  - Inventory.IndentNotesDetail
+- key: qc-group
+  name: QC Group
+  module: MM
+  summary: Named set of QC parameters applied together to a material or document line.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Named set of QC parameters applied together to a material or document line. Looked up by the in-scope forms through masterdata.mQCGroup.
+
+    '
+  tables:
+  - masterdata.mQCGroup
+- key: qc-parameter
+  name: QC Parameter
+  module: MM
+  synonyms:
+  - Quality Deduction Parameter
+  summary: The QC Parameter Master screen maintains the quality parameters checked on incoming material (for example moisture
+    or purity), each with a unit, one or two standard values, a tolerance and the rules for computing a price or quantity
+    deduction when the measured value falls outside tolerance.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The QC Parameter Master screen maintains the quality parameters checked on incoming material (for example moisture or
+    purity), each with a unit, one or two standard values, a tolerance and the rules for computing a price or quantity deduction
+    when the measured value falls outside tolerance. Where the company stores QC results lot-wise, each parameter also receives
+    a fixed QC parameter sequence that maps it to a lot QC column. The deduction fields can be hidden by a database-wide setting,
+    in which case fixed defaults are saved. A new parameter is made available to every company; only the head office can delete
+    parameters, and other companies see loaded parameters read-only. Quality inspection and purchase settlement downstream
+    rely on these values (Inferred).
+
+    '
+  tables:
+  - masterdata.mQCParameters
+  - masterdata.mQCParametersCompanyDetail
+- key: quality-inspection
+  name: Quality Inspection
+  module: MM
+  synonyms:
+  - Inspection Entry
+  summary: The Inspection Entry screen records the result of quality inspection on received goods.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Inspection Entry screen records the result of quality inspection on received goods. The inspecting department selects
+    itself, sees the GRN lines that were sent to it through authorized inspection intimations, ticks the lines inspected,
+    enters the accepted quantity (the rejected quantity is derived), the rejection reason, rejected serial numbers for serial-tracked
+    items, width and thickness for coil items, and the measured quality parameter values. Each inspection carries a yearly
+    document number and status (Initial, Release, Authorized). When the inspection is authorized, the rejected quantity is
+    written back to the GRN and reduces the accepted and stock quantities there; deleting an authorized inspection reverses
+    that write-back. The screen controls the quality gate between receipt and GRN authorization, and its results drive the
+    quantity that finally enters stock and is paid for.
+
+    '
+  related_to:
+  - concept: goods-receipt-note
+    how: receipt whose lines are inspected
+  - concept: quality-specification
+    how: specification the readings are compared with
+  tables:
+  - Inventory.InspectionItemDetail
+  - Inventory.InspectionItemQCParameterDetail
+  - Inventory.InspectionMain
+  - Inventory.InspectionNotesDetail
+  - Inventory.InspectionSerialDetail
+- key: quality-parameter
+  name: Quality Test Parameter
+  module: MM
+  synonyms:
+  - Test Characteristic
+  summary: The Quality Parameter screen defines the characteristics that quality tests measure, such as moisture or colour.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Quality Parameter screen defines the characteristics that quality tests measure, such as moisture or colour. Each
+    parameter has a description, a type, a data type (Numeric, Alpha Numeric or Date), a reporting length, a decimal precision,
+    a unit and a method (Fixed, Variable or Algorithm). A parameter can carry a list of standard values. A standard value
+    is either a Normal value, which for numeric data can have lower and upper tolerances, or a Range with lower and upper
+    limits, and one value can be marked as the default. A parameter that uses the Algorithm method is linked to an algorithm
+    and its variables. When a parameter is already used by specifications, quality tests, instruments or inspections, its
+    definition is locked and the standard values in use cannot be changed. New parameters get an automatic code and are copied
+    to every company. A database setting can also keep the older QC Parameter master in step with this screen.
+
+    '
+  tables:
+  - masterdata.mQualityParameter
+  - masterdata.mQualityParameterCompanyDetail
+  - masterdata.mQualityParameterStandardValue
+  - masterdata.mQualityParameterVariableDetail
+- key: quality-specification
+  name: Quality Specification
+  module: MM
+  synonyms:
+  - Specification
+  summary: 'The Specification screen maintains quality specifications: named sets of quality parameters with expected values
+    or ranges, applied to items, item sub groups or grades, and optionally restricted to particular customers or suppliers.'
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Specification screen maintains quality specifications: named sets of quality parameters with expected values or ranges,
+    applied to items, item sub groups or grades, and optionally restricted to particular customers or suppliers. The specification
+    type (Item, Customer or Supplier) decides whether a customer or supplier list is required. Expected values are entered
+    per parameter as a list choice, free value, date or a lower/upper range, depending on how the quality parameter is defined.
+    The screen prevents the same item, sub group or grade being covered by two general specifications, and the same customer
+    and item combination being covered twice. A new specification is made available to every company and is saved as authorized.
+    Quality inspection and sales or purchase quality checks downstream use these specifications (Inferred).
+
+    '
+  related_to:
+  - concept: quality-parameter
+    how: parameters that make up the specification
+  tables:
+  - masterdata.mSpecification
+  - masterdata.mSpecificationCompanyDetail
+  - masterdata.mSpecificationItemDetail
+  - masterdata.mSpecificationQPDetail
+  - masterdata.mSpecificationVendorDetail
+- key: reporting-coa-mapping
+  name: Reporting COA Mapping
+  module: FI
+  synonyms:
+  - Reporting Chart Mapping
+  summary: The Reporting COA Setup screen links the posting accounts of the transaction charts of accounts to the accounts
+    of a reporting chart of accounts.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Reporting COA Setup screen links the posting accounts of the transaction charts of accounts to the accounts of a reporting
+    chart of accounts. The user selects a reporting chart of accounts (COA), and the screen shows the finance books that are
+    connected to it together with the transaction charts of accounts behind those books. It then lists every posting account
+    used in those transaction charts and lets the user choose the reporting account each one rolls up into. The account group
+    and parent group of both sides are shown for reference. The mapping is saved as a full replacement for the selected reporting
+    COA. Finance reporting that consolidates figures across finance books relies on this mapping (Inferred).
+
+    '
+  related_to:
+  - concept: chart-of-accounts
+    how: transaction and reporting charts linked
+- key: rfq
+  name: Request for Quotation
+  module: MM
+  synonyms:
+  - RFQ
+  - Enquiry
+  summary: The Request For Quotation screen creates and maintains the material RFQ document that a buying company sends to
+    one or more vendors to invite prices for goods.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Request For Quotation screen creates and maintains the material RFQ document that a buying company sends to one or
+    more vendors to invite prices for goods. An RFQ can be raised directly, or against approved purchase requests (indents),
+    project gross requirements (GRC) or customer sales orders, in which case the requested items and quantities are pulled
+    from the selected source lines and consolidated by item, make and unit. The screen captures submission, opening and validity
+    dates, the vendors invited (chosen from all vendors, from item-vendor mappings or from a vendor group), the items with
+    quantities, units, delivery dates, HSN/SAC codes, technical specification and size details, plus notes and company-defined
+    custom fields. Numbering, document date, division and status (Initial, Release, Authorized) come from the shared document-number
+    control, and an authorized RFQ is locked against change. The RFQ is printed, exported or e-mailed once per invited vendor.
+    Downstream, vendor quotations are entered against the RFQ and compared in the comparative statement, from which purchase
+    bookings and purchase orders follow.
+
+    '
+  related_to:
+  - concept: purchase-request
+    how: purchase request lines sent out for quotation
+  tables:
+  - Purchase.RFQItemDetail
+  - Purchase.RFQItemSizeDetail
+  - Purchase.RFQItemTechSpecificationDetail
+  - Purchase.RFQMain
+  - Purchase.RFQNotesDetail
+  - Purchase.RFQVendorDetail
+  - Purchase.rfqIndentDetail
+- key: single-field-list
+  name: Single Field List
+  module: MM
+  synonyms:
+  - Simple Master
+  - Code List
+  summary: The Single Field Master screen is one generic screen that maintains many simple code-and-name lists, such as Location
+    Master, Technical Grade, Category, Tech Specification Master and Quality Parameter Type.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Single Field Master screen is one generic screen that maintains many simple code-and-name lists, such as Location
+    Master, Technical Grade, Category, Tech Specification Master and Quality Parameter Type. Each menu entry opens the same
+    screen with a different screen configuration (form code), which decides the window caption, the label of the name field,
+    whether the user types the code, the allowed name length, whether an Is Default option is offered and which list is read
+    and written. Users capture a name (and for Category also a two-character code), search existing entries, correct names
+    and delete entries, either one at a time or through a fast entry grid that also accepts an Excel import. Creation and
+    deletion are reserved to the head office company, and most lists are made available to every company automatically when
+    an entry is created. The lists maintained here feed purchasing, inventory, quality, sales and maintenance transactions
+    that pick these values from drop-downs.
+
+    '
+- key: tdc-account-rule
+  name: TDC Account Rule
+  module: FI
+  synonyms:
+  - Tax Code
+  summary: The TDC Account Rule screen defines tax, duty and charge rules that group miscellaneous charges of one tax category
+    under a single description, with an account basis (item basis or tax basis), an optional account type and an effective
+    date.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The TDC Account Rule screen defines tax, duty and charge rules that group miscellaneous charges of one tax category under
+    a single description, with an account basis (item basis or tax basis), an optional account type and an effective date.
+    For tax categories it also records which tax attributes, natures and assessee types the rule covers, and for every rule
+    it lists the screens on which the rule applies. The system assigns a TC code. Once charges are linked, the rule header
+    becomes read-only, and charges used in an account rule definition cannot be unticked. Finance account rule definitions
+    and tax-applicable purchase, sales and finance screens rely on these rules (Inferred).
+
+    '
+  related_to:
+  - concept: tdc-charge
+    how: charges grouped by the rule
+  tables:
+  - masterdata.mTaxCode
+  - masterdata.mTaxCodeDetail
+  - masterdata.mTaxCodeFormDetail
+  - masterdata.mTaxCodeMiscChargesDetail
+- key: tdc-charge
+  name: Tax / Duty / Charge
+  module: FI
+  synonyms:
+  - TDC
+  - Misc Charge
+  summary: The TDC Master screen maintains miscellaneous charges and tax charges (TDC, read as taxes, duties and charges (Inferred))
+    that are added to, subtracted from or shown alongside purchase and sales documents.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The TDC Master screen maintains miscellaneous charges and tax charges (TDC, read as taxes, duties and charges (Inferred))
+    that are added to, subtracted from or shown alongside purchase and sales documents. Each charge belongs to a tax group
+    and carries a default value, a charge nature (Misc Charge or Taxes), a calculation nature (Add, Subtract, Neutral), a
+    display name and flags saying whether it forms part of the basic sales or basic purchase value. The user can also reuse
+    account posting rules already defined for other charges of the same tax group. Charges can be entered one at a time, in
+    a fast entry grid, or imported from Excel. A new charge is made available to every company; the basic sales and purchase
+    flags are kept per company but are updated for all companies together.
+
+    '
+  tables:
+  - Finance.ARDTDCAccountRule
+  - masterdata.mMiscCharges
+  - masterdata.mMiscChargesCompanyDetail
+  - masterdata.mTaxCodeMiscChargesDetail
+- key: tdc-group
+  name: Tax / Duty / Charge Group
+  module: FI
+  synonyms:
+  - TDC Group
+  - Tax Group
+  summary: The TDC Group screen maintains groups of taxes, duties and charges (TDC, Inferred expansion).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The TDC Group screen maintains groups of taxes, duties and charges (TDC, Inferred expansion). Each group has a six-character
+    code, a name, a tax category (for example VAT, TDS, GST, Freight or Other Charges) and a rounding method. Groups are shared
+    across the whole enterprise; codes and names must be unique. Groups that belong to system-controlled tax categories are
+    locked against changes to code, category and name, while the rounding method stays editable. Tax and charge masters and
+    documents that apply taxes or charges group their lines by these groups (Inferred).
+
+    '
+  related_to:
+  - concept: tdc-charge
+    how: charges in the group
+  tables:
+  - masterdata.mtaxgroup
+- key: tech-specification-head
+  name: Technical Specification Head
+  module: MM
+  synonyms:
+  - Tech Spec Head
+  summary: 'The Technical Specification Head Master screen maintains specification heads: named technical attributes (for
+    example a dimension or property) grouped under a technical specification category, together with the list of items the
+    head applies to.'
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Technical Specification Head Master screen maintains specification heads: named technical attributes (for example
+    a dimension or property) grouped under a technical specification category, together with the list of items the head applies
+    to. Each head receives an automatic code. The user enters the head name, picks a category and ticks the applicable items
+    of the current company. New heads are made available to every company and are saved directly as authorised. Item technical
+    specification entry relies on these heads to know which attributes apply to which items (Inferred).
+
+    '
+  tables:
+  - masterdata.mTechSpecificationHeadCompanyDetail
+  - masterdata.mTechSpecificationHeadItemDetail
+  - masterdata.mTechSpecificationHeadMaster
+- key: unit-of-measure
+  name: Unit of Measure
+  module: MM
+  synonyms:
+  - UOM
+  - Unit
+  summary: The Unit Master screen maintains the units of measure used across the application, such as kilograms, litres or
+    pieces.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Unit Master screen maintains the units of measure used across the application, such as kilograms, litres or pieces.
+    For each unit it captures a name, a short alias, a unit category (weight, volume, area, time, length or others) and an
+    optional GST unit quantity code (UQC) used for tax reporting. It also records standard conversion factors between this
+    unit and other units, and which material sub groups use this unit as their stock, purchase, sales or production unit.
+    Units are shared by every company: a new unit is made available to all companies at once and is authorised on save. Items,
+    sub groups and practically every inventory, purchase, sales, production and finance document depend on the units defined
+    here.
+
+    '
+  related_to:
+  - concept: unit-type
+    how: the type each unit belongs to
+  tables:
+  - masterdata.mSubGroupUnitDetail
+  - masterdata.mUnitConversionDetail
+  - masterdata.mUnitMaster
+  - masterdata.mUnitMasterCompanyDetail
+- key: unit-type
+  name: Unit Type
+  module: MM
+  synonyms:
+  - Unit Category
+  summary: Classification of units of measure (for example weight, length, count).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    Classification of units of measure (for example weight, length, count). Looked up by the in-scope forms through GlobalData.UnitType.
+
+    '
+  tables:
+  - GlobalData.UnitType
+- key: vendor
+  name: Vendor / Business Partner
+  module: MM
+  synonyms:
+  - Supplier
+  - Customer
+  - Party
+  summary: 'The Vendor Card screen maintains the party master used across the application: transporters, agents, customers,
+    suppliers, contractors and group companies are all created here as "vendors", each with one primary location.'
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Vendor Card screen maintains the party master used across the application: transporters, agents, customers, suppliers,
+    contractors and group companies are all created here as "vendors", each with one primary location. A single save captures
+    the party header (type, name, alias, mailing name, currency), the communication address and statutory registrations (GST,
+    PAN, MSME, sales tax), contact persons, bank accounts, item part numbers, custom fields, vendor group membership and,
+    where configured, Tally ledger names, divisions and company-wise inactive status. The screen enforces name uniqueness
+    within the company, GST and PAN format checks, and a set of configurable mandatory-field checks that each installation
+    can switch on as a warning or a hard stop. For new parties it automatically creates the linked ledger accounts and account
+    rules from the vendor-type account mapping, so finance can post against the party at once. The head office governs the
+    master: branch companies see the screen locked and cannot delete. Purchase, sales, dispatch and finance documents downstream
+    rely on the party, its location, its tax registrations and its bank details.
+
+    '
+  parent_of:
+  - vendor-location
+  tables:
+  - masterdata.mVendorCard
+  - masterdata.mVendorCardCompanyDetail
+  - masterdata.mVendorLocationDetail
+  - masterdata.mVendorLocationDetailCompanyDetail
+  - masterdata.mVendorLocationInformation
+- key: vendor-contact-person
+  name: Vendor Contact Person
+  module: MM
+  synonyms:
+  - Contact Person
+  summary: The Vendor Contact Person screen records the people to contact at a vendor location.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Vendor Contact Person screen records the people to contact at a vendor location. Each contact belongs to one vendor
+    and one of that vendor''s locations, and carries a name, designation, own address, phone, mobile, fax, e-mail, birth date
+    and anniversary date. Contacts are given an automatic code and are made available to every company of the group on creation.
+    A Fast Entry grid, with an Excel import, lets many contacts be keyed or loaded at once. Only the head office maintains
+    contacts; other companies see a locked screen.
+
+    '
+  tables:
+  - masterdata.mVendorLocationContactDetail
+  - masterdata.mVendorLocationContactDetailCompanyDetail
+- key: vendor-location
+  name: Vendor Location
+  module: MM
+  synonyms:
+  - Party Address
+  - Location Detail
+  summary: The Location Detail screen maintains the addresses (locations) of business partners already set up as vendor cards,
+    such as suppliers, customers, contractors, transporters, agents and group companies.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Location Detail screen maintains the addresses (locations) of business partners already set up as vendor cards, such
+    as suppliers, customers, contractors, transporters, agents and group companies. For each location it captures the communication
+    address, tax registrations (GST, PAN, TAN, MSME and older excise and sales tax numbers), payment and tax defaults, contact
+    persons, bank accounts, custom fields, vendor groups, per-company availability, Tally account names and, for inter-company
+    partners, applicable divisions. Locations can be entered one at a time, copied from an existing location, created from
+    an open vendor master request, or bulk-loaded through a fast entry grid and Excel import. Each new location receives a
+    system code and is made available to all companies; deletion is reserved to the head office. Purchase, sales, logistics
+    and finance documents select these locations as bill-to, ship-to, consignee and party locations, and some of them lock
+    the location''s identity once used.
+
+    '
+  tables:
+  - Finance.ARDVendorLocationRule
+  - masterdata.mVendorGroupDetail
+  - masterdata.mVendorLocationBankDetail
+  - masterdata.mVendorLocationBankDetailCompanyDetail
+  - masterdata.mVendorLocationContactDetail
+  - masterdata.mVendorLocationContactDetailCompanyDetail
+  - masterdata.mVendorLocationCustomFieldDetail
+  - masterdata.mVendorLocationDetail
+  - masterdata.mVendorLocationDetailCompanyDetail
+  - masterdata.mVendorLocationDivisionDetail
+  - masterdata.mVendorLocationInformation
+  parent_of:
+  - vendor-contact-person
+  related_to:
+  - concept: city
+    how: city of the address
+- key: vendor-quotation
+  name: Vendor Quotation
+  module: MM
+  synonyms:
+  - Quotation
+  - Offer
+  summary: The Quotation screen records a vendor's priced offer against an authorized material Request For Quotation (RFQ).
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Quotation screen records a vendor''s priced offer against an authorized material Request For Quotation (RFQ). The
+    user picks the RFQ, one of the vendors and vendor locations invited on it, and enters the vendor''s quotation number and
+    date, validity, freight type, payment mode, credit days and currency; for each RFQ item the user ticks the quoted lines
+    and enters quantity, rate and delivery days, with item-level and document-level taxes calculated by the shared tax control.
+    Terms and conditions, custom fields, item sizes and technical parameters are captured with the quotation. Every save writes
+    both the quotation and its base revision record, so later revisions (made on a separate revision screen) and the comparative
+    statement can work from a consistent revision history. Saving also moves the RFQ to "partly quoted" or "completed" depending
+    on whether every invited vendor location has quoted. The quotation is then compared on the Comparative Statement screen,
+    booked, and converted into a purchase order.
+
+    '
+  related_to:
+  - concept: rfq
+    how: quotation received against the RFQ
+  tables:
+  - Purchase.QuotationCustomFieldDetail
+  - Purchase.QuotationItemDetail
+  - Purchase.QuotationItemSizeDetail
+  - Purchase.QuotationItemTaxDetail
+  - Purchase.QuotationItemTechSpecificationDetail
+  - Purchase.QuotationMain
+  - Purchase.QuotationTaxDetail
+  - Purchase.QuotationTermsNConditionDetail
+  - Purchase.RevisedQuotationCustomFieldDetail
+  - Purchase.RevisedQuotationItemDetail
+  - Purchase.RevisedQuotationItemSizeDetail
+  - Purchase.RevisedQuotationItemTaxDetail
+  - Purchase.RevisedQuotationItemTechSpecificationDetail
+  - Purchase.RevisedQuotationMain
+  - Purchase.RevisedQuotationTaxDetail
+  - Purchase.RevisedQuotationTermsNConditionDetail
+- key: warehouse
+  name: Warehouse / Store
+  module: MM
+  synonyms:
+  - Store
+  - Warehouse
+  summary: The Warehouse screen maintains the stores in which inventory is held.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Warehouse screen maintains the stores in which inventory is held. Each warehouse has a name, a location description,
+    a type (Inhouse or External), an ownership (Own or Party, with the owning party), an address and an inactive flag. The
+    user assigns the warehouse to one or more companies and divisions of the group and selects which item groups, sub groups
+    and items may be stocked there. Warehouse names are unique across the enterprise, and type and ownership are locked once
+    goods receipts or stock transfers exist. Saving also prepares stock valuation settings for each assigned company and division.
+    Stores, purchasing and inventory transactions depend on this master.
+
+    '
+  tables:
+  - masterdata.MAPValuationSetting
+  - masterdata.MAPValuationSettingDetail
+  - masterdata.mItemWarehouseDetail
+  - masterdata.mWarehouse
+  - masterdata.mWarehouseDivisionDetail
+- key: work-permit
+  name: Work Permit Template
+  module: PM
+  synonyms:
+  - Permit to Work
+  summary: The Permit Master screen maintains work permit templates used in plant maintenance.
+  description: 'Evidence: code + ERP domain (inferred)
+
+    The Permit Master screen maintains work permit templates used in plant maintenance. Each permit has a name, description,
+    permit type, a LOTO method (Lockout, Tagout or Other) and an authorized person, plus five lists: tasks, equipment or functional
+    locations, safety instructions, maintenance categories and free-text check list items. A permit can be started by copying
+    an existing one. Permits are saved directly in authorized status and are made available to every company. Maintenance
+    planners and the work order process downstream rely on these templates to standardise safe work (Inferred).
+
+    '
+  tables:
+  - masterdata.mPermitMaster
+  - masterdata.mPermitMasterCheckList
+  - masterdata.mPermitMasterCompanyDetail
+  - masterdata.mPermitMasterEquipmentDetail
+  - masterdata.mPermitMasterMaintenanceCategory
+  - masterdata.mPermitMasterSafetyInstructions
+  - masterdata.mPermitMasterTaskDetail

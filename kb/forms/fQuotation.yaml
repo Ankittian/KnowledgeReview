@@ -1,0 +1,91 @@
+form: fQuotation
+title: Quotation
+module: MM
+kind: transaction
+users:
+- Purchase officer (inferred)
+summary: The Quotation screen records a vendor's priced offer against an authorized material Request For Quotation (RFQ).
+purpose: |
+  What it is: The vendor's commercial offer (prices, taxes, delivery days, terms) for items requested in an RFQ. When it applies: When a vendor invited on an authorized RFQ submits its quotation. Business outcome: Offers are captured in one structured format per RFQ, enabling comparison, booking and ordering at the quoted rates.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Shared document control with document number, date, division and status; information display enabled.
+  - Tabbed Header Area: Tabs "General Information", "Tax Details", "Terms Condition", "Custom Field".
+  - Item Details Area: Item grid below the tabs.
+  - RFQ No. Field: Dropdown, mandatory, showing RFQ No.
+  - RFQ Date Field: Read-only display of the RFQ document date.
+  - Vendor Name Field: Dropdown, mandatory, listing RFQ vendors not yet quoted.
+  - Location Field: Dropdown, mandatory, the vendor's RFQ locations without a quotation.
+  - Vendor Quotation No. Field: Text box, mandatory, screen limit 30 characters, trimmed.
+  - Vendor Quotation Date Field: Date picker, mandatory.
+  - Validity Date Field: Date picker, mandatory.
+  - Freight Type Field: Dropdown, mandatory; defaults to the purchase-default freight type on a new record.
+  - Payment Mode Field: Dropdown, mandatory.
+  - Credit Days Field: Text box, optional, 3 characters.
+  - Currency Control: Shared currency selector with conversion rate.
+  - Remark Field: Multi-line text box, optional, 1000 characters, trimmed.
+  - Tax Details Tab: Shared tax control for tax group, document-level charges and net amount.
+  - Terms Condition Tab: Shared terms and conditions control, editable.
+  - Custom Field Tab: Shared custom-field control for the quotation form.
+  - Item Details Grid: Grid with Select (no caption), Item Code, Item Description, information icon, Make, HSN & SAC Code, Tech.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled for this screen; their routines are empty.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open with the shared search list.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last.
+validations:
+- Authorized Quotation can't be updated.
+- Authorized Quotation No. can't be Update.
+- Duplicate Quotation No. is not allowed.
+- Select valid RFQ No.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Enter Vendor Quotation No.
+- Vendor Quotation Date can't be greater than Document Date.
+- Vendor Quotation Date can't be less than RFQ Date.
+- Validity Date can't be less than Document Date.
+- Select valid Frieght Type.
+- Select valid Payment Mode.
+- Select atleast one Item.
+- Quantity can't be empty or zero in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Delivery Days can't be empty in row <n>.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- PO is Prepared against this quoation,so you can't save this entry.
+- Financial Year is not defined for selected document date.
+- Can't be deleted as some record exist against this entry.
+- PO is Prepared against this quoation,so you can't delete this entry.
+- Item Information
+- Vendor Information
+manages:
+- vendor-quotation
+uses_concepts:
+- company
+- currency
+- currency-exchange-rate
+- hsn-sac-code
+- make
+- material-item
+- purchase-order
+- rfq
+- tdc-charge
+- tdc-group
+- tech-specification-head
+- unit-of-measure
+- vendor
+- vendor-contact-person
+- vendor-location
+method_notes:
+  Delete: Deletes the record through Purchase.POMQDelete.
+  FillValueDependent: Fills the lookup lists through Purchase.POMQFillValuesDependent.
+  FillValues: Fills the lookup lists through Purchase.POMQFillValues.
+  GetItemInfo: Runs through Purchase.POMQGetItemInfo.
+  GetVendorInfo: Runs through Purchase.POMQGetVendorInfo.
+  LoadData: Loads the selected record through Purchase.POMQLoadData.
+  Open: Searches records through Purchase.POMQSearchData.
+  Save: Saves the record through Purchase.POMQSave.
+  SaveCustomFields: Saves the record through Purchase.POMQSaveCustomFieldDetail.
+  SaveItemDetails: Saves the record through Purchase.POMQSaveItemDetail.

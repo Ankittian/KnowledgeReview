@@ -1,0 +1,59 @@
+form: fItemStandardAttributeValue
+title: Attribute Standard Value
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: The Attribute Standard Value screen defines the standard values that item attributes (for example size, grade or
+  colour) may take, either for a whole item sub group or for a single item, and generates the attribute combinations (variants)
+  of an item from those values.
+purpose: |
+  What it is: The allowed values per attribute for a sub group or item, and the resulting item variants. When it applies: When a new item or sub group is set up with attributes, or a new size, grade or variant is introduced. Business outcome: Controlled, consistent variant lists instead of free-text descriptions.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Selection Area: Type, Subgroup Name, Item Name and, in single mode, Combination Name, Thickness, Width, Size.
+  - Type Field: Dropdown (Type, Description), marked mandatory.
+  - Subgroup Name Field: Dropdown (Subgroup Name, Code), marked mandatory.
+  - Item Name Field: Dropdown (Item Description, Code), optional when a sub group is chosen.
+  - Combination Name Field: Read-only text, built from the entered attribute values.
+  - Thickness, Width and Size Fields: Thickness and Width numeric with three decimals, 7 characters; Size text up to 200 characters.
+  - Attribute & Standard Value Grid: Columns Attribute Name, Value (list with free entry, 25 characters), Base Attribute Value.
+  - Attribute Combination Grid: Group "Attribute Combination" with Attribute Combination (read only), Inactive, Base Attribute (read only).
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Handlers are empty; the screen declares no toolbar options.
+actions:
+  Generate Combination: Button "Generate Combination".
+  Import: Import button reading "Attribute Name", "Value" and "Base Attribute Value" from a sheet named "Sheet1".
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open.
+  Delete: Standard toolbar Delete.
+validations:
+- Select valid Type.
+- Select valid Subgroup Name or Item Name.
+- Width can't be zero.
+- Thickness can't be zero.
+- No attribute name selected,do you want to continue.
+- 'Enter Value in row '
+- 'Value should not contain ''^'' and ''_'' character in row '
+- Duplicate Attribute Name and Value not allowed.
+- 'Select Base Attribute Value for Attribute '
+- 'More than one Base Attribute Value not allowed for Attribute '
+- Click on Generate Combination.
+manages:
+- item-attribute-value
+uses_concepts:
+- material-category
+- material-group
+- material-item
+- material-sub-group
+method_notes:
+  Delete: Deletes the record through masterdata.MSAVDelete.
+  FillGrid: Fills the lookup lists through masterdata.MSAVFillValues.
+  FillValues: Fills the lookup lists through masterdata.MSAVFillValues.
+  GenerateCombination: Runs through masterdata.MSAVGenerateAttributeCombination.
+  LoadData: Loads the selected record through masterdata.MSAVLoadData.
+  Open: Searches records through masterdata.MSAVSearchData.
+  Save: Saves the record through masterdata.MSAVDelete.
+  SaveAttributeCombination: Saves the record through masterdata.MSAVSaveAttributeCombination.
+  SaveItemAttributeDetail: Saves the record through masterdata.MMMMSaveAttributeStandardValue, masterdata.MSGMSaveAttributeStandardValue.
+  SaveSubGroupAttributeForItem: Saves the record through masterdata.MSAVSaveSubGroupDetail.

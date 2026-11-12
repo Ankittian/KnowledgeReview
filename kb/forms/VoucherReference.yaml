@@ -1,0 +1,17 @@
+usercontrol: VoucherReference
+title: Voucher reference control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded bill-wise reference of a voucher line.
+purpose: |
+  Allocates a voucher line amount against open references (bills, advances) of the account (VoucherReferenceFillValues / FillValuesDependent).
+functional_description: |
+  Embedded in: Voucher, fPaymentPlan.
+  On-screen fields: Account Name, Amount, Currency.
+uses_concepts:
+- ledger-account
+method_notes:
+  FillValues: Fills the lookup lists through Finance.VoucherReferenceFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.VoucherReferenceFillValuesDependent.

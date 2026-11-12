@@ -1,0 +1,71 @@
+form: fPaymentRequest
+title: Payment Request
+module: FI
+kind: transaction
+users:
+- Accounts officer (inferred)
+summary: The Payment Request screen records a request to pay a party, an employee or an ad hoc payee before the payment itself
+  is made.
+purpose: |
+  What it is: A formal, approvable request for a payment to a named payee for a stated amount and due date. When it applies: When a department or employee needs money paid (for example an imprest advance or a bill) and Finance must approve it first. Business outcome: Payments are made only against recorded and authorised requests, with tax and cost center captured up front.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: The shared document numbering control at the top with document number, date, finance book, prefix and status.
+  - General Details Area: The main panel with request and payee fields on the left and payment fields on the right.
+  - Request Type Field: Dropdown, mandatory (highlighted as compulsory).
+  - Payee Type Field: Dropdown, mandatory; list in system order, excluding Company and Account (BR-04).
+  - Payee Name Field: Editable dropdown, mandatory, up to 100 characters.
+  - Payee Location Field: Dropdown of party locations, captioned Payee Location; read-only by default.
+  - Bill No. Field: Text box, optional, up to 50 characters.
+  - Bill Date Field: Date picker with tick box.
+  - Amount Field: Numeric text box, two decimals, mandatory, up to 12 characters.
+  - Due Date Field: Date picker, always has a value.
+  - Remarks Field: Text box, optional, up to 1000 characters; trimmed on save.
+  - Cost Center Field: Dropdown with Cost Center Name and Code, optional.
+  - Payment Mode Field: Dropdown, mandatory.
+  - Requested By Field: Text box, mandatory, up to 50 characters.
+  - Passed Detail Panel (Passed Status, Passed Amount, Paid Amount): Disabled panel of three read-only displays.
+  - Tax Control: Shared tax-on-amount control below the main panel, with tax group selection and a charges grid (charge name, type, nature, charge on, value, total).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with the standard search window.
+  Delete: Standard toolbar Delete.
+validations:
+- Authorized Payment Request can't be updated.
+- Authorized entry can't be updated.
+- Select valid Request Type.
+- Select valid Payee Type.
+- Enter Payee Name.
+- Select valid Payee Name.
+- Select valid Payee Location.
+- Select Bill Date.
+- Amount can't be empty or zero.
+- Select valid Payment Mode.
+- Enter Requested By.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- payment-request
+uses_concepts:
+- company
+- cost-center
+- finance-book
+- material-item
+- tdc-charge
+- tdc-group
+- unit-of-measure
+- vendor
+- vendor-location
+method_notes:
+  Delete: Deletes the record through Finance.FIPRDelete.
+  FillValues: Fills the lookup lists through Finance.FIPRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FIPRFillValuesDependent.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FIPRLoadData.
+  Open: Searches records through Finance.FIPRSearchData.
+  Save: Saves the record through Finance.FIPRSaveMain.
+  SaveTaxDetail: Saves the record through Finance.FIPRSaveTaxDetail.
+  ValidateForm: Validates the entry through Finance.FIPRValidate.

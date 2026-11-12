@@ -1,0 +1,13 @@
+usercontrol: Notes
+title: Notes control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded notes grid of a document.
+purpose: |
+  Captures free-text notes of a document; the note types come from NotesFillValues.
+functional_description: |
+  Embedded in: fDocumentReceipt, fGRN, fGateEntry, fIndent, fIndentRequisition, fInspectionEntry, fInspectionIntimation, fPurchaseBill, fPurchaseOrder, fRequestforQuotation.
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.NotesFillValues.

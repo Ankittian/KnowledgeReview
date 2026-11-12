@@ -1,0 +1,34 @@
+form: fItemTechGradeMapping
+title: Item Tech Grade Mapping
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: The Item Tech Grade Mapping screen records which technical grades apply to an item or to a whole item subgroup.
+purpose: |
+  What it is: A list of allowed technical grades per item or per item subgroup. When it applies: When an item or subgroup is introduced, or its permitted grades change. Business outcome: Grade selection on item-related documents can be limited to valid grades (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header with Mapping and Item Description / SubGroup, and a grade grid below.
+  - Mapping Field: Mandatory dropdown of mapping levels (BR-01).
+  - Item Description / SubGroup Field: Mandatory dropdown; shows item description and code, or subgroup name and code (BR-01, BR-03).
+  - Technical Grade Detail Grid: Grid with a read-only Item Description or Subgroup column (only the one matching the mapping level is visible) and an editable Technical Grade dropdown.
+  - Other Toolbar Actions (Open, Delete, Navigation, Print, Preview, Export, Email): Not enabled; the screen enables only New and Save.
+actions:
+  New: Standard toolbar New.
+  Save: Saves the grade list.
+validations:
+- Select valid Mapping.
+- Select valid Item Description.
+- Select valid Subgroup.
+- Select atleast one Technical Grade.
+- Duplicate Technical Grade is not allowed.
+manages:
+- item-technical-grade
+uses_concepts:
+- material-item
+- material-sub-group
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.ITGMFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.ITGMFillValuesDependent.
+  Save: Saves the record through masterdata.ITGMDelete, masterdata.ITGMSave.
