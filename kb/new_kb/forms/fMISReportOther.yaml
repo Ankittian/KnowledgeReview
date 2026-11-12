@@ -1,0 +1,47 @@
+form: fMISReportOther
+title: MIS Report
+module: RPT
+kind: transaction
+summary: The MIS Report screen is a generic report viewer.
+purpose: |
+  What it is: A single viewer that runs a configured management report for the logged-in company and presents the rows with the formatting, hidden columns, renamed headings, merged cells and parent-child bands that the report setup defines [fMISReportOther.vb:271-503]. When it applies: When a user runs a report of the "MIS" kind from the report-selection screen, or views the rows of an imported sheet [fMISReportOther.vb:294-301]. Business outcome: Users get on-screen management information, and can analyse, chart, print and export it, without a separate screen being built for each report (BR-01; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "MIS Report" holding the result grid, with collapsible panels for Filter Criteria, Analysis Report, Graph and Setting.
+  - Result Grid: A read-only grid: no editing and no row deletion, header-click multi-column sorting, "contains" filtering, alternating row colours, a row selector showing the visible row number and a column chooser button, and rows of a report marked BoldThisRow shown in bold [fMISReportOther.vb:173-203; 257; 2192-2199].
+  - Filter Criteria Grid: Columns Filter (And / Or), Field, Operation, Criteria and a small button column.
+  - Multiple-Selection Dialog: A row-edit panel with a Select tick column and a name column, opened when the Criteria cell of a multi-select field is activated; Ok joins the chosen names for display and the chosen ids for the query; Cancel closes without change [fMISReportOther.vb:2932-2981; 2950-2969].
+  - Run Button: The "&Run" button of the Filter Criteria panel, with "Cance&l" next to it [fMISReportOther.vb:2565-2637; 2768-2770].
+  - Analysis Report Panel: Options "&Summary", "&Pivot" and "Period &Wise Analysis"; a Period drop-down (Monthly, Daily, Yearly, Quaterly); Column X, Column Y and Column Z selectors (labels change with the option); "Null Value", "Non &Zero" and "&Summary Required" settings; the buttons "Pivot", "Unpivot", "&Get Default Setting" and "&Set As Default Setting" [fMISReportOther.vb:152-159; 2809-2911; 1174-1307; 3202-3360].
+  - Analysis Column Selectors: Two small grids listing the report columns with a Select tick: the Y grid (names only) and the Z grid (names plus an Aggregate drop-down) [fMISReportOther.vb:365-407; 1309-1340].
+  - Graph Panel: Graph Type (Column, Bar, Area, Line, Pie, 3-D Bar, 3-D Column, 3-D Line, 3-D Pie, Composite), Column X, Column Y, aggregate (Sum, Count, Avg, Min, Max), Group By (enabled for Composite only), "&Legend" and "&Rounding" ticks, "&Generate", "&Preview", "&Set as Default Param" and "&Close" [fMISReportOther.vb:127-150; 1865-1877; 1796-1863; 1748-1784; 1879-1926; 2928-2930].
+  - Setting Panel: Ticks "&Fit To Page In Print/Preview", "Adjust Column &Width" and "&Remove Child" [fMISReportOther.vb:2113-2190].
+  - Column Display Selection (hidden): A panel with a Select tick per column, opened by a button that is hidden by default and toggled with Ctrl+Alt+D.
+actions:
+  Preview Column: Double-clicking the picture cell in a column named "Preview" [fMISReportOther.vb:789-830].
+  New: The New toolbar action [fMISReportOther.vb:565-574].
+  Print and Preview: Toolbar Print and Preview (enabled) print or preview the grid in landscape A4 with a heading of company
+    details, report name and criteria text, and "Page n of m" in the header [fMISReportOther.vb:546-547; 581-660; 861-868;
+    2257-2271].
+  Export: Toolbar Export with a save dialog offering Excel (*.xls), Excel (*.xlsx), pdf, XPS and CSV [fMISReportOther.vb:549;
+    702-787].
+  Email: Toolbar Mail [fMISReportOther.vb:550; 678-700].
+validations:
+- Select valid Graph Type.
+- Select valid Group By
+- Select valid Column X.
+- Select valid Column Y.
+- default Parameter set successfully.
+- Can't be deleted as this report is based on fixed parameters.
+- Select valid Operation in row n.
+- Enter Criteria in row n.
+- 'Avg/Sum can''t be selected for date Type Column '
+- Avg/Sum can't be selected for string Type Column
+- Select atleast one aggregate.
+- 'Select valid '
+- Only Date Type Columns can be selected.
+- Select valid Period.
+- ' in Relation '
+- Select valid Field in row n.
+manages:
+- mis-report

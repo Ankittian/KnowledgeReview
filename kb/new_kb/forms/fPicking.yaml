@@ -1,0 +1,91 @@
+form: fPicking
+title: Picking
+module: SD
+kind: transaction
+summary: 'The Picking screen records the warehouse pick for customer orders: which items, in what quantity, from which stock
+  lots, are set aside against a sales order or a dispatch plan before they are packed and dispatched.'
+purpose: |
+  What it is: A transaction document that commits specific stock lots of a warehouse to specific order lines and, on authorization, takes that stock out of the warehouse. When it applies: After a sales order is authorized or a dispatch plan is authorized, when the warehouse prepares the goods for packing and dispatch. Business outcome: Stock is reserved against the right order lines before packing, the same lot cannot be promised twice, quantities already picked are visible to the next picker, and the inventory value is moved to a picking suspense account when finance is applicable.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "Picking" with a document header control at the top, then a tab strip with Document Detail, Item Detail, Component Detail, Custom Field and Finance Posting tabs [fPicking.Designer.vb:731-746; fPicking.Designer.vb:776].
+  - Document No., Date, Division and Status: The shared document control: yearly document number (generated from a prefix or typed manually), date, division and status (Initial, Release, Authorized).
+  - Warehouse Field: A mandatory dropdown "Warehouse" listing the warehouses of the company, filtered by the chosen division [fPicking.Designer.vb:173-189; fPicking.vb:81-90; fPicking.vb:269].
+  - Source Document Field: A mandatory dropdown "Source Document" with Dispatch Planning and Sales Order; Sales Order is preselected [fPicking.Designer.vb:190-208; fPicking.vb:382-384; Sales.SDPSFillValues:141-143].
+  - Remarks Field: A free-text box "Remarks" of up to 1000 characters; trimmed when saved [fPicking.Designer.vb:210-227; fPicking.vb:1545].
+  - Notes Control: A notes button beside the remarks with print-area selection [fPicking.Designer.vb:232-236].
+  - Reference Document Grid: A grid listing the reference documents with Select, Ref.
+  - Item Detail Grid: A grid with Select, Ref.
+  - Planned Qty. Dialog: A read-only pop-up with Schedule Date and Quantity rows of the plan for the clicked item, with Ok and Cancel buttons [fPicking.vb:1475-1495; fPicking.vb:2237-2267].
+  - Lot Detail Dialog: A pop-up listing available lots of the item with Select, Item Description, LOT No., Received Doc No., Received Doc Date, PO No., Bill No., Bill Date, Size, Wt.
+  - Serial Dialog: A pop-up with Select, Item Description and Serial Number, with Ok and Cancel [fPicking.vb:3018-3034; Sales.SDPSItemLotDetail:166-186].
+  - Component Detail Grid and Dialogs: A grid with Select, Ref.
+  - Custom Field Tab: The shared custom-fields grid of the company for this form [fPicking.vb:386; fPicking.Designer.vb:655-663].
+  - Finance Posting Tab: The shared finance posting control showing the journal to be posted, with a basic amount equal to the value of the picked lots.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Toolbar entries that exist on the form but have empty bodies [fPicking.vb:509-541].
+actions:
+  New: Clears the screen for a new picking.
+  Save: Validates and stores the picking.
+  Search: Opens the company search list of pickings for the current financial year.
+  Delete: Deletes the loaded picking after confirmation.
+validations:
+- Authorized Picking can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Warehouse.
+- Select valid Source Document.
+- Select atleast one Ref. Doc. Detail.
+- Document date can't be less than Ref. Doc. date.
+- Select atleast one Item Detail for Order No.
+- Qty. can't be empty or zero in row n.
+- Qty. can't be greater than Current Stock x in row n.
+- Qty. can't be greater than On Date Stock x in row n.
+- Stock Qty. should be equal to q in row n.
+- Issue Pcs can't be zero in row n.
+- No. Of Serial Number should be equal to q in row n.
+- Qty. can't be greater than Balance Qty. in row n.
+- 'Select atleast one component detail for Ref. Doc. '
+- ', Item - '
+- Stock Qty. can't be empty or zero in row n.
+- You don't have permission to authorize in case of partial item selection.
+- Quantity can't be greater than Stock Qty.
+- Issue Pcs can't be empty  in row n.
+- Qty can't be greater than stock Qty. x in row n.
+- 'Document No. '
+- ' saved successfully.'
+- Do you want to continue?
+- Pack Slip already exists for this picking.
+- 'insufficient Stock '
+- ' warehouse house mismatch '
+- ' Balance Qty '
+- ' Lot Balance Qty '
+- 'Lot is reserved for item '
+- 'Lot is reserved by some other user for item '
+- 'Bill '
+- ' is prepared against this Lot.,So you Can''t Delete this Entry'
+- 'Difference in Voucher and Lot -- '
+- Not found in Voucher
+- 'Dispatch payment not received for Sales Order '
+- 'Picking is exceeding No. of Lots Limit for following Sales Order(s) '
+- 'DRR not triggered for Sales Order '
+manages:
+- picking
+uses_concepts:
+- accounting-voucher
+- company
+- dispatch-planning
+- inter-unit-stock-transfer
+- pack-slip
+- single-item-opening
+- stock-transfer
+method_notes:
+  ComponentLotDetail: Runs through Sales.SDPSComponentLotDetail.
+  CustomValidation: Validates the entry through ODTDispatchPlanning.ProcedureName.
+  Delete: Deletes the record through Sales.SDPSDelete.
+  FillComponentDetail: Runs through Sales.SDPSFillComponentDetail.
+  FillItemDetail: Runs through Sales.SDPSFillItemDetail.
+  FillValues: Fills the lookup lists through Sales.SDPSFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDPSFillValuesDependent.
+  ItemLotDetail: Runs through Sales.SDPSItemLotDetail.
+  LoadData: Loads the selected record through Sales.SDPSLoadData.
+  Open: Searches records through Sales.SDPSSearchData.

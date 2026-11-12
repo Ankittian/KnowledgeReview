@@ -1,0 +1,85 @@
+form: fMeterReading
+title: Meter Reading
+module: PM
+kind: transaction
+summary: The Meter Reading screen records dated readings of measurement parameters (for example running hours, kilometres
+  or fuel) for equipment or for functional locations.
+purpose: |
+  What it is: A document that captures, for a stated date and time, the current reading of each selected measurement parameter of one or more pieces of equipment or locations [fMeterReading.vb:1226-1363; fMeterReading.vb:1366-1423]. When it applies: Whenever a meter is read on the shop floor (daily, per shift, or because a Maintenance Order requires it). Business outcome: Maintenance planning works from dated, validated readings with a running total per parameter, and cannot receive a reading older than one already recorded (BR-09; BR-10; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "MeterReading" with the document number, status and division control at the top and two tabs: "GeneralDetail" (header fields plus the Object Detail grid) and "Parameter Detail" (Measurement Date plus the Measurement Detail grid) [fMeterReading.Designer.vb:516; fMeterReading.Designer.vb:519; fMeterReading.Designer.vb:543; fMeterReading.Designer.vb:498].
+  - Document Number, Date, Status and Division Control: The shared document control that holds Document No., Document Date, Document Status, prefix and Division [fMeterReading.vb:344; fMeterReading.vb:1250-1274].
+  - Source Document Field: Mandatory dropdown "Source Document" [fMeterReading.Designer.vb:269; fMeterReading.vb:634-641].
+  - Ref. Doc. No. and Ref Doc. Date Fields: A dropdown "Ref Doc.
+  - Measurement Object Field: Mandatory dropdown "Measurement Object" with Equipment and Location [fMeterReading.vb:55; fMeterReading.Designer.vb:365; fMeterReading.vb:655-661].
+  - Take Measurement Of / Multiple Objects Field: Checkbox "Multiple Objects" under the label "Take Measurement Of" [fMeterReading.Designer.vb:393; fMeterReading.Designer.vb:403].
+  - Location Name Field: Dropdown "Location Name" [fMeterReading.Designer.vb:374].
+  - Equipment Name Field: Dropdown "Equipment Name" [fMeterReading.Designer.vb:423].
+  - Measurement Taken By Field: An editable dropdown "Measurement Taken By", up to 100 characters; the list holds names used on earlier readings [fMeterReading.Designer.vb:334; fMeterReading.Designer.vb:342; EAM.EAMRFillValues:107-109].
+  - Shift Field: Optional dropdown "Shift" of the company's active shifts [fMeterReading.Designer.vb:288; EAM.EAMRFillValues:134-138].
+  - Remarks Field: Optional text box "Remarks" limited to 1000 characters, trimmed on save [fMeterReading.Designer.vb:441; fMeterReading.vb:325; fMeterReading.vb:1320].
+  - Measurement Date Field: Date and time picker "Measurement Date" on the "Parameter Detail" tab; defaults to the application default date [fMeterReading.Designer.vb:476; fMeterReading.vb:374; fMeterReading.vb:565].
+  - Object Detail Grid: Grid listing equipment (columns Select, Equipment Name, Code, Alias, Equipment Type, Equipment Category, Utalization Detail) or locations (Select, Location Name, Code, Alias, Location Type) [fMeterReading.vb:919-968; EAM.EAMRFillValuesDependent:326-401].
+  - Measurement Detail Grid: Grid of readings: Select, Equipment Name or Location Name, Measurement Parameter, Unit, Fuel, Issued Fuel Qty., Previous Reading Date, Previous Reading Value, Previous Total Reading, Reading Type, Current Reading Value, Net Reading Value, Current Total Reading Value, Remarks [fMeterReading.vb:1105-1225; EAM.EAMRFillValues:36-62].
+  - Utalization Detail Pop-up: A row-edit pop-up with the columns Description, Code, Unit, Value, On Date, Operator and buttons "Ok" and "Cancel" [fMeterReading.vb:1680-1704; fMeterReading.Designer.vb:232; fMeterReading.Designer.vb:241].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fMeterReading.vb:510-542].
+actions:
+  New: Starts a fresh document [fMeterReading.vb:469-477; fMeterReading.vb:544-571].
+  Save: Validates and saves the document with its readings in one transaction [fMeterReading.vb:1226-1363].
+  Search: Opens the standard search window for Meter Readings of the company, year and user [fMeterReading.vb:479-508].
+  Delete: Deletes the open document after confirmation [fMeterReading.vb:62-101].
+validations:
+- Authorized MeterReading can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Entry already exists on same Measurement Date.
+- Unable to save, some unauthorized entry exists for selected equipments.
+- Unable to save, some entry exists after selected date.
+- Select valid source document No.
+- Select valid Ref. Doc. No.
+- Select valid Measurement Object.
+- Select valid Location.
+- Select valid Equipment.
+- Select valid Measurement Taken By.
+- Value can't be empty or blank for row <n>.
+- Operator can't be empty or blank for row <n>.
+- Select atleast one Object Detail.
+- Issued Fuel Quantity in row <n> is zero or empty. Do you want to continue?
+- Issued Fuel Quantity in row <n> can not be zero or empty.
+- Select valid Reading Type in row <n>.
+- Select valid Reading Date in row <n>.
+- Unable to save,some entry exists for parameter <parameter> of equipment <name> after measurement date.
+- Enter Current Reading Value in row <n>.
+- Current Reading Value in row <n> can not exceed the Per Day Max Limit (<limit>).
+- Difference between Current Reading Value and Previous Total Reading  in row <n> can not exceed the Per Day Max Limit (<limit>).
+- Current Reading Value can't be less then Previous Reading Value in row <n>.
+- Unable to save,some unauthorized entry exist against <equipment or location>.
+- Select atleast one Measurement Detail.
+- 'Invalid Time : minute should be less than 60 in row <n>.'
+- Measurement date is not same as document date, do you want to change it?
+- Utalization date is not same as document date, do you want to change it?
+- Document No. <number> saved successfully.
+- Meter Reading Date can't be less than Opening Reading Date (<date>).
+- Duplicate utalization description not allowed.
+- Do you want to delete ?
+- Maintenance Schedule Occurrence is generated against this meter reading. Do you want to continue ?
+- 'Selected Maintenance Order is closed,So cannot be deleted. '
+manages:
+- meter-reading
+uses_concepts:
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-schedule
+- maintenance-schedule-occurrence
+- tripsheet
+- utalization-description
+method_notes:
+  Delete: Deletes the record through EAM.EAMRDelete.
+  FillValues: Fills the lookup lists through EAM.EAMRFillValues.
+  LoadData: Loads the selected record through EAM.EAMRLoadData.
+  Open: Searches records through EAM.EAMRSearchData.
+  Save: Saves the record through EAM.EAMRSave.
+  ValidateForm: Validates the entry through EAM.EAMRValidate.

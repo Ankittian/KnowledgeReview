@@ -1,0 +1,42 @@
+key: p2-master-entry-masters
+name: Master data set-up (Phase 2)
+module: MD
+status: active
+summary: Phase 2 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 2 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Pin To Pin Distance, Terms & Condition, Tax Book, State Master, Stock Item Group, Bank Detail, Authorization Group, Task Master.
+steps:
+- order: 1
+  name: Maintain Pin To Pin Distance
+  form: fPinToPinDistance
+- order: 2
+  name: Maintain Terms & Condition
+  form: fTermsNCondition
+- order: 3
+  name: Maintain Tax Book
+  form: fTaxBook
+- order: 4
+  name: Maintain State Master
+  form: fStateMaster
+- order: 5
+  name: Maintain Stock Item Group
+  form: fExciseItemGroup
+- order: 6
+  name: Maintain Bank Detail
+  form: fVendorLocationBank
+- order: 7
+  name: Maintain Authorization Group
+  form: fAuthorizationGroup
+- order: 8
+  name: Maintain Task Master
+  form: fTaskMaster
+concepts:
+- pin-to-pin-distance
+- terms-condition
+- tax-book
+- state-master
+- stock-item-group
+- bank-detail
+- authorization-group
+- task-master

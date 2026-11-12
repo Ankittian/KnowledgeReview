@@ -1,0 +1,82 @@
+form: fMaterialReturnDRM
+title: Material Return (Discrete Raw Material)
+module: DRM
+kind: transaction
+summary: The Material Return screen records raw material that comes back to the store from a department, contractor or vendor
+  after it was issued for production.
+purpose: |
+  What it is: A document that brings issued discrete raw material back into stock, by lot, with quantity, rate, amount, dimensions and job card split [fMateriaReturnDRM.vb:909-1009]. When it applies: When a production department, contractor or vendor hands unused or leftover material back to the store, or hands back scrap. Business outcome: Stock, lot cost and issue balances stay correct, and returns cannot exceed what was issued (BR-07; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header group, an item grid, a Lot Summary group and a tab control with "General Detail", "Custom Field" and "Finance Posting" tabs.
+  - Document No., Date, Division and Status Controls: The shared document number control: document number (with optional prefix numbering), date, division where applicable and status [fMateriaReturnDRM.vb:160; fMateriaReturnDRM.vb:296-308].
+  - Ownership Field: Drop-down "Ownership", mandatory [fMateriaReturnDRM.vb:26; fMateriaReturnDRM.vb:116].
+  - Warehouse Field: Drop-down "Warehouse" with code and division, mandatory [fMateriaReturnDRM.vb:26; fMateriaReturnDRM.vb:137-138].
+  - Source Document Field: Drop-down "Source Document", mandatory, default Direct [fMateriaReturnDRM.vb:143-149].
+  - Issue No. and Issue Date Fields: Drop-down "Issue No." (number, date) with a search button, and read-only "Issue Date" [fMateriaReturnDRM.vb:154; fMateriaReturnDRM.Designer.vb:320; fMateriaReturnDRM.vb:2021-2043].
+  - Department Field: Drop-down "Department" with code, mandatory [fMateriaReturnDRM.vb:26; fMateriaReturnDRM.vb:177].
+  - Return By and Name Fields: Drop-down "Return By" (Employee, Contractor, Vendor) and a "Name" drop-down whose label reads "Employee &Name", "Contractor &Name" or "Vendor &Name"; both mandatory [fMateriaReturnDRM.vb:1112-1132; fMateriaReturnDRM.vb:26].
+  - Person Name Field: Editable drop-down "Person Name" listing earlier person names, filled from the chosen name [fMateriaReturnDRM.vb:164; fMateriaReturnDRM.vb:1526-1530].
+  - Reference No. & Date and Remark Fields: Text box "Reference No.
+  - Scrap Return Field: Check box "Scrap Return" [fMateriaReturnDRM.Designer.vb:311].
+  - Item Lot Grid: Editable grid with Item Description (with an info button), Unit, Lot No.
+  - Lot Summary Grid: The read-only "Lot Summary" grid, no edit or delete [fMateriaReturnDRM.vb:1564-1584].
+  - Dimension Pop-up: A row-edit template with Length and Width rows and buttons "O&k" and "&Cancel" [fMateriaReturnDRM.vb:1639-1689; fMateriaReturnDRM.Designer.vb:1188-1197].
+  - Job Card Pop-up: A row-edit template with Select, Job Card No., Return Pcs and Return Qty.
+  - Custom Field Tab and Notes: The shared custom field control and the shared notes control (print area, notes, default) [fMateriaReturnDRM.vb:172-173; fMateriaReturnDRM.vb:887-906].
+  - Finance Posting Tab: The shared finance posting control [fMateriaReturnDRM.Designer.vb:1118].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard toolbar actions.
+actions:
+  New: Toolbar action starting a blank return [fMateriaReturnDRM.vb:368-378].
+  Save: Validates then saves [fMateriaReturnDRM.vb:739-885].
+  Search: Opens a search dialog of returns for the company and year [fMateriaReturnDRM.vb:380-407; DiscreteRM.DRMRSearchData:20-40].
+  Delete: Deletes the loaded return [fMateriaReturnDRM.vb:38-72].
+validations:
+- Authorized Material Return can't be updated.
+- Select valid Ownership.
+- Select valid Warehouse.
+- Select valid Source Document.
+- Select valid Issue No.
+- Select valid Department.
+- Select valid Return By.
+- Select valid <Employee Name, Contractor Name or Vendor Name>.
+- Select atleast one Item Description
+- Select atleast one Lot No.
+- Select valid Lot No. in row <n>.
+- Return Qty should be equal to <qty> in row <n>.
+- Select valid Cost Center in row <n>.
+- Width can't be zero or empty in row <n>.
+- Return Pcs can't be zero or empty in row <n>.
+- Return Qty. can't be empty or zero in row <n>.
+- Rate can't be empty in row <n>.
+- Balance Qty. can't be less than 0 in row <n>.
+- Return Qty. can't be greater than Balance Qty. in row <n>.
+- Width can't be empty or zero.
+- Return Pcs. can't be zero or empty in row <n>.
+- Return Qty. can't be zero or empty in row <n>.
+- Return Qty. should be equal to <qty>
+- Document No. <number> saved successfully.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Return Qty. can't be less than production Qty.
+- No scrap Setting is found for <item description>
+manages:
+- material-return
+uses_concepts:
+- accounting-voucher
+- company
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- rawmaterial-opening
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRMRDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRMRFillValues.
+  FillValuesDependent1: Fills the lookup lists through DiscreteRM.DRMRFillValuesDependent1.
+  FillValuesDependent2: Fills the lookup lists through DiscreteRM.DRMRFillValuesDependent2.
+  FillValuesIssueWise: Fills the lookup lists through DiscreteRM.DRMRFillValuesIssueWise.
+  LoadData: Loads the selected record through DiscreteRM.DRMRLoadData.
+  Open: Searches records through DiscreteRM.DRMRSearchData.
+  Save: Saves the record through DiscreteRM.DRMRAuthorize, DiscreteRM.DRMRSaveMain, Inventory.VoucherVsLotValidation.
+  SaveDimentionDetail: Saves the record through DiscreteRM.DRMRSaveDimensionDetail.
+  SaveJobCard: Saves the record through DiscreteRM.DRMRSaveJobCardDetail.

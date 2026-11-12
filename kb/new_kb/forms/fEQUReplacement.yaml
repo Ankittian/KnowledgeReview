@@ -1,0 +1,57 @@
+form: fEQUReplacement
+title: Equipment Replacement
+module: PM
+kind: transaction
+summary: The Equipment Replacement screen records the actual replacement of one equipment by another, following an authorized
+  replacement request.
+purpose: |
+  What it is: A numbered, approvable record that one equipment has taken the place of another. When it applies: After a replacement request is authorized and the new equipment is installed. Business outcome: Equipment locations and custody stay correct, and each replacement is traceable to its request.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: The document header control, a header area (Replacement Time, Equipment Description, Request No., Request Date, Responsible Person, Remarks), an "Old Equipment Detail" block and a "New Equipment Detail" block, each with a location sub-block.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Replacement Time Field: Time picker (spin buttons), defaulting to the current time.
+  - Equipment Description Field (Old Equipment): Dropdown (Equipment Description, Code), mandatory.
+  - Request No. Field: Dropdown (Request No, Request Date), mandatory.
+  - Responsible Person Field: Editable dropdown (max 100 characters), mandatory; the list holds names used on earlier authorized replacements.
+  - Remarks Field: Text box, optional, maximum 1000 characters.
+  - Old Equipment Detail Block: A read-only Equipment Description (300 characters) and a sub-block holding "New Custodian Name", "Custodian Contact No.", "New Location", Address1, Address2, Address3, City, State and Country for the old equipment.
+  - Equipment Description Field (New Equipment): Dropdown (Equipment, Code), mandatory.
+  - New Equipment Detail Block: "New Custodian Name", "Custodian Contact No.", "New Location", Address1, Address2, Address3, City, State and Country for the new equipment, prefilled from the old equipment's current values.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the document.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened document.
+validations:
+- Select valid Equipment Description.
+- Select valid Request No..
+- Select valid Responsible Person.
+- Select valid NewEquipment.
+- Duplicate Equipment Description not allow,
+- Unable to save,unathorized entry exists for equipment,
+- Document Date can't be less than Request Date.
+- Authorized EQUReplacement can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Unable to save,unathorized entry exists for equipment '
+- Unable to delete,some entry already exists.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- equipment-replacement
+uses_concepts:
+- change-equipment-location
+- company
+- equipment-master
+- equipment-replacement-request
+- functional-location
+method_notes:
+  Delete: Deletes the record through EAM.EQURDelete.
+  FillValueDependent: Fills the lookup lists through EAM.EQURFillValuesDependent.
+  FillValues: Fills the lookup lists through EAM.EQURFillValues.
+  LoadData: Loads the selected record through EAM.EQURLoadData.
+  Open: Searches records through EAM.EQURSearchData.
+  Save: Saves the record through EAM.EQURSave.
+  ValidateForm: Validates the entry through EAM.EQURValidate.

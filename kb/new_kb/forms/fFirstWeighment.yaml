@@ -1,0 +1,86 @@
+form: fFirstWeighment
+title: First Weighment
+module: WB
+kind: transaction
+summary: The First Weighment screen records the first weight of a vehicle at the weigh bridge and creates the Weighment Slip
+  that the Second Weighment screen later completes.
+purpose: |
+  What it is: The record of the first weight taken when a vehicle arrives on the weigh bridge, together with who and what the vehicle is for [fFirstWeighment.vb:551-695]. When it applies: When a loaded or empty vehicle enters the weigh bridge for the first time on a trip. Business outcome: Every trip has a numbered slip with a machine-read weight and optional camera evidence, so the second weight and the net quantity can be derived without re-entering vehicle and party details (BR-06; BR-12; BR-18).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single page titled "FirstWeighment" holding the header fields on the left, the weight block (Machine Weight, Capture, Weight) in the lower part and the Image Capture group at the far right [fFirstWeighment.Designer.vb:831; fFirstWeighment.Designer.vb:765].
+  - Machine Name Field: Read-only text showing the default weighing machine for this PC [fFirstWeighment.Designer.vb:130; fFirstWeighment.vb:159].
+  - Wt. Slip No. Field: Read-only display with the label "Wt.
+  - Weighment Type Field: Dropdown, mandatory [fFirstWeighment.vb:79; fFirstWeighment.vb:458-462].
+  - Entry Date Field: Date and time picker with a check box; it must be ticked [fFirstWeighment.vb:464-469].
+  - Source Document Field: Dropdown, mandatory [fFirstWeighment.vb:79; fFirstWeighment.vb:471-476].
+  - Ref. Document No. Field: Dropdown showing the document number, date, party, vehicle and transporter; its column caption changes with the Source Document (for example "Gate Entry No.") [fFirstWeighment.vb:757-762; fFirstWeighment.vb:1009-1041].
+  - Ref. Document Date Field: Read-only date in dd/MM/yyyy [fFirstWeighment.Designer.vb:227; fFirstWeighment.vb:845].
+  - Vendor Type Field: Dropdown limited to vendor types 5, 6 and 11 (Customer, Supplier and Others, named from the code comments, Inferred) [WeighBridge.WBFWFillValues:49-53]; mandatory [fFirstWeighment.vb:79].
+  - Vendor Name Field: Dropdown filtered by Vendor Type (the filter also keeps vendor type 8 rows), or, for vendor type Others, a free-text box [fFirstWeighment.vb:866-890].
+  - Transporter Name Field: Optional dropdown of the company's transporters [WeighBridge.WBFWFillValues:66-72].
+  - Vehicle No. Field: Text box, maximum 15 characters, mandatory [fFirstWeighment.Designer.vb:284; fFirstWeighment.vb:506-511].
+  - Last Tare Weight Field: Read-only number with the weight unit [fFirstWeighment.Designer.vb:303; fFirstWeighment.vb:943-965].
+  - Driver Name Field: Editable dropdown, up to 50 characters, listing driver names used before; optional [fFirstWeighment.Designer.vb:323; fFirstWeighment.vb:608-612].
+  - Driver Contact No. Field: Text box, up to 25 characters, optional [fFirstWeighment.Designer.vb:638; fFirstWeighment.vb:614].
+  - Weight Type Field: Dropdown, mandatory [fFirstWeighment.vb:79; fFirstWeighment.vb:513-518].
+  - Item Name, Make and Item Attribute Fields: Item Name is a dropdown of weigh bridge items (or the document's items); Make and Item Attribute are dropdowns narrowed to the chosen item [fFirstWeighment.vb:701-718].
+  - Machine Weight Field and Capture Button: Machine Weight is a read-only number (3 decimals, up to 10 characters) updated from the serial port; Capture is disabled until a new reading differs from the current Weight [fFirstWeighment.Designer.vb:498-500; fFirstWeighment.Designer.vb:519-524; fFirstWeighment.vb:996-1003].
+  - Weight Field: Read-only number with 3 decimals [fFirstWeighment.Designer.vb:362; fFirstWeighment.vb:126].
+  - Party Tare Weight Field: Optional number, 3 decimals, up to 10 characters [fFirstWeighment.Designer.vb:458; fFirstWeighment.vb:128; fFirstWeighment.vb:649-653].
+  - W.B. Clerk Name Field: Read-only display of the logged-in user's printing name; for a saved slip it shows the creator [fFirstWeighment.vb:173-177; fFirstWeighment.vb:273].
+  - Remarks Field: Free text, up to 1000 characters, optional [fFirstWeighment.vb:129; fFirstWeighment.vb:655].
+  - Print and Copy / Copies Fields: A "Print" check box (ticked by default) and a number box "Copy / Copies" (default 1, up to 2 digits) [fFirstWeighment.Designer.vb:534; fFirstWeighment.Designer.vb:541; fFirstWeighment.vb:186-188].
+  - Cancel Weighment Field: Check box "Cancel Weighment" [fFirstWeighment.Designer.vb:562; fFirstWeighment.vb:657].
+  - Image Capture Group: A group at the far right holding the "Capture Image" button and a notice line [fFirstWeighment.Designer.vb:747; fFirstWeighment.Designer.vb:765].
+  - Hidden Diagnostic Fields: Two read-only boxes "FillValues Time Stamp" and "Capture Button Time Stamp", normally hidden; Ctrl+Shift+Alt+V shows or hides them [fFirstWeighment.Designer.vb:774-812; fFirstWeighment.vb:61-73].
+  - Manual Weight Override Shortcut: Pressing Ctrl+Shift+I enables the Capture button and makes Machine Weight editable and white [fFirstWeighment.vb:52-59].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): The handlers for Print, Preview, Export and Email are empty [fFirstWeighment.vb:344-376].
+actions:
+  New: Standard toolbar New; asks the main window to open a fresh record [fFirstWeighment.vb:307-314].
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open; shows a search window of earlier slips and loads the one chosen [fFirstWeighment.vb:316-342].
+  Delete: Standard toolbar Delete for the loaded slip.
+validations:
+- Default Machine is not set for this system.
+- Select valid Weighment Type.
+- Select valid Entry Date.
+- Select valid Source Document.
+- Select valid Ref. Document No..
+- Select valid Vendor Type.
+- Select valid Vendor Name.
+- Enter Vendor Name.
+- Enter Vehicle No..
+- Select valid Weight Type.
+- Select valid Item Name.
+- Invalid weight.
+- Weight can not be 0.
+- Enter print copy.
+- Zero Weight is not allowed
+- Unable to save Weighment Entry, The same vehicle cannot be entered within 6 hours from the exist entry.
+- Unable to save, Weighment already exists for this <Source Document name>.
+- Unable to delete,Second Weighment exists.
+- Image Capture is necessary for this Weighment.
+- Image is not captured for this weighment. Do you want to continue?
+- <n> image is captured, out of <m> image, Do you want to continue?
+- IPCamera application not found in the required path. The path should be \IPCamera\IPCamera.exe .
+- Unable to show, Camera setup not found.
+- Captured Image may be found in Document attachment Section.
+manages:
+- first-weighment
+uses_concepts:
+- company
+- second-weighment
+- weigh-bridge-item-setting
+- weighment-machine-master
+- weighment-setting
+method_notes:
+  CaptureImage: Runs through Utility.FetchIPCameraSetup.
+  Delete: Deletes the record through WeighBridge.WBFWDelete.
+  FillValues: Fills the lookup lists through WeighBridge.WBFWFillValues.
+  FillValuesDependent: Fills the lookup lists through WeighBridge.WBFWFillValuesDependent.
+  GetLastTareWeight: Runs through WeighBridge.WBFWGetLastTareWeight.
+  LoadData: Loads the selected record through WeighBridge.WBFWLoadData.
+  Open: Searches records through WeighBridge.WBFWSearchData.
+  Save: Saves the record through WeighBridge.WBFWSave.
+  ValidateForm: Validates the entry through WeighBridge.WBFWValidate.

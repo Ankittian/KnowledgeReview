@@ -1,0 +1,44 @@
+form: fOtherInformation
+title: Other Information
+module: MD
+kind: master
+summary: 'The Other Information screen defines reusable "Other Information" headers: free-form tables that can be attached
+  to a sales document, such as a block of terms or notes.'
+purpose: |
+  What it is: A template for a small text table: header, description, column names (up to four) and default rows of text [masterdata.MOIFSave:41-58; masterdata.MOIFSaveColumnDetail:18-27; masterdata.MOIFSaveDefaultValue:21-36]. When it applies: When the business wants a standard block of information, for example terms and conditions, to be attachable to sales documents with consistent wording. Business outcome: Sales documents carry standard, pre-filled additional information without re-typing.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Detail Panel: The top group box with Code, Header Name, Description, No.
+  - Code Field: A read-only text box [fOtherInformation.Designer.vb:144-149].
+  - Header Name Field: A mandatory text box, marked as compulsory, allowing 100 characters on screen; trimmed on save [fOtherInformation.vb:45; fOtherInformation.Designer.vb:63; fOtherInformation.vb:416].
+  - Description Field: A mandatory multi-line text box, 100 characters, trimmed [fOtherInformation.Designer.vb:134-139; fOtherInformation.vb:417].
+  - No. Of Columns Field: A mandatory drop-down offering One, Two, Three and Four [masterdata.MOIFFillValues:15-18; fOtherInformation.vb:45].
+  - Inactive Field: A disabled tick box, not focusable [fOtherInformation.Designer.vb:96-104].
+  - Column Name Grid: A grid in the "Column Name" group box with S No.
+  - Default Value Grid: A grid in the "Default Value" group box with S No.
+  - Cell Text Editor Popup: A small pop-up with a multi-line text box (1000 characters) and Ok and Cancel buttons, used to edit a default cell [fOtherInformation.Designer.vb:204-244; fOtherInformation.vb:577-603].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard actions with empty handlers [fOtherInformation.vb:185-217].
+actions:
+  New: The toolbar action that starts a blank record [fOtherInformation.vb:151-158].
+  Save: The toolbar action that validates and stores the header [fOtherInformation.vb:398-452].
+  Search: The toolbar action that lists headers available to the logged-in company with Code, Header, Description, No.
+  Delete: The toolbar action that removes the open header [fOtherInformation.vb:51-75].
+validations:
+- Enter Header Name.
+- Enter Description.
+- Select valid No. Of Columns.
+- Enter Column Name in row <n>.
+- Duplicate Description not allowed.
+manages:
+- other-information
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MOIFDelete.
+  FillValues: Fills the lookup lists through masterdata.MOIFFillValues.
+  LoadData: Loads the selected record through masterdata.MOIFLoadData.
+  Open: Searches records through masterdata.MOIFSearchData.
+  Save: Saves the record through masterdata.MOIFSave.
+  SaveColumnCaption: Saves the record through masterdata.MOIFSaveColumnDetail.
+  SaveDetaultValue: Saves the record through masterdata.MOIFSaveDefaultValue.
+  ValidateForm: Validates the entry through masterdata.MOIFValidate.

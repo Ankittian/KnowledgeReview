@@ -1,0 +1,97 @@
+form: fRevisedSalesQuotation
+title: Revised Quotation
+module: SD
+kind: transaction
+summary: The Revised Quotation screen creates and maintains revisions of an authorized sales quotation.
+purpose: |
+  What it is: A new numbered version of an authorized quotation that replaces the offer once it is authorized. When it applies: When an authorized offer must change (price, quantity, delivery, terms) before or while it is being converted to sales orders. Business outcome: A history of offers per quotation, with the authorized latest revision as the binding offer (BR-02, BR-22).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header with "Quotation No.", "Quotation Date", revision number, "Revision Date", "Document Status" and "Division Name", the same tabs as the base screen ("General Detail", "Lift Detail", "Shipment Detail", "Tax Detail", "Payment Terms", "Export Detail", "Cost Detail", "Terms & Condition", "Custom Field") and the item grid.
+  - Quotation No. Field: Mandatory dropdown (Quotation No, Quotation Date).
+  - Quotation Date, Revision No. and Division Name Fields: Read-only displays of the quotation date, revision number and division.
+  - Revision Date Field: Date picker.
+  - Document Status Field: Mandatory dropdown of document statuses, defaulted to Initial.
+  - Fixed Header Fields: "Source Document", "Ref.
+  - Editable General Fields: "Contact Person Name", "Delivery Date", "Valid Until", "Booking Time", "Sales Person Name" (locked for Customer Enquiry), currency control, "Remark", "EMD Applicable", cost sheet displays, notes.
+  - Item Detail Grid: Same columns, pop-ups (Item Information, Tech.
+  - Shipment Detail, Payment Terms, Tax Detail, Terms & Condition and Custom Field Tabs: Same controls and grids as the base screen.
+  - Export Detail and Cost Detail Tabs: Same export fields, Inco Terms and cost grid as the base screen.
+  - Lift Detail Tab: Lift grid of the customer location with the revision's selected lifts.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard actions whose handlers are empty on this screen.
+actions:
+  New: Standard New.
+  Save: Standard Save.
+  Search (Open): Standard Open with the shared search window.
+  Delete: Standard Delete.
+validations:
+- Select valid Quotation No.
+- Revision Date can't be less than Quotation Date.
+- Select valid Document Status.
+- Delivery Date can't be less than Revision Date.
+- Valid untill can't be less than Revision Date.
+- Select valid Freight type.
+- Select valid Ref Doc. No.
+- Freight Type should be FOR.
+- Cost Sheet is not created against this Enquiry.
+- Taxes are not applicable in case of Export.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row <n>.
+- Freight Rate can't be empty or zero in row <n>.
+- Freight Rate Type should be Per Unit in row <n>.
+- Freight Rate in row <n> should be equal to Local Freight Rate in Cost Detail Tab.
+- Select atleast one Payment Term.
+- Select/Enter valid Payment Description in row <n>.
+- Credit Days can't be empty or zero in row <n>.
+- Select valid Item Description in row <n>.
+- Select valid Unit in row <n>.
+- Select valid Attribute Value in row <n>
+- Enter value for mandatory quality parameter  in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Select valid Delivery Date in row <n>.
+- Delivery Date can't be less than Quotation Date in row <n>.
+- Enter value for atleast one quality parameter in row <n>.
+- Select valid Inco Term.
+- Select valid Country Of Origin.
+- Select Unit in row <n>.
+- Select Currency in row <n>.
+- For same currency, Exchange Rate (General Detail) should be equal to Exchange Rate of Cost Head in row <n>.
+- Value can't be empty or zero  in row <n>.
+- Enter lower limit  in row <n>.
+- Enter upper limit  in row <n>.
+- Select valid Attribute.
+- Duplicate Item,Make and Attributes not allowed.
+- Duplicate Item Code,Make and Item Information is not allowed.
+- Duplicate Consignee Name and Consignee Location is not allowed.
+- Document No. <quotation number> saved successfully.
+- Authorized Entry can't be updated.
+- Sales Order is prepared against this Quotation
+- <description>,Do you want to continue?
+manages:
+- revised-quotation
+uses_concepts:
+- attribute-master
+- company
+- cost-group
+- cost-head
+- customer-enquiry
+- enquiry-type
+- inco-terms-master
+- quotation
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-organization
+- sales-person
+method_notes:
+  BeforeRowEditDisplayItemInformation: Runs through Sales.SDQEGetItemAttributePriceDetail.
+  CustomValidation: Validates the entry through ODTSalesQuotation.ProcedureName.
+  Delete: Deletes the record through Sales.SDQEDelete.
+  FillRefDoc: Runs through Sales.SDQEFillRefDoc.
+  FillValues: Fills the lookup lists through Sales.SDQEFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDQEFillValuesDependent.
+  GetItemPriceSetting: Runs through Sales.SDQEGetItemAttributePriceDetail.
+  GetSpecificationDetail: Runs through Sales.SDQEGetSpecificationDetail.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through Sales.SDQESearchData.

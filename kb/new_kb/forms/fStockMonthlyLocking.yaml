@@ -1,0 +1,47 @@
+form: fStockMonthlyLocking
+title: Stock Monthly Locking
+module: FI
+kind: transaction
+summary: The Stock Monthly Locking screen closes a month for one stock account.
+purpose: |
+  What it is: A month-end document that fixes the valuation of the items behind one stock account, by warehouse and division [Finance.ISMLStockItemDetail:222-245; Finance.ISMLAuthorize:18-22]. When it applies: At the end of each month, per stock account. Business outcome: Stock value is corrected for the month; later months continue from the locked rate (BR-04; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared document control carrying Document Status, Finance Book, Document Date, Document No.
+  - Stock Account Field: Dropdown labelled "Stock Account", mandatory [fStockMonthlyLocking.Designer.vb:181; fStockMonthlyLocking.vb:308-312].
+  - Locking Month Field: Month-year date picker labelled "Locking Month" [fStockMonthlyLocking.Designer.vb:185-200].
+  - Last Locking Month Field: Read-only box labelled "Last Locking Month" [fStockMonthlyLocking.Designer.vb:149; fStockMonthlyLocking.Designer.vb:161].
+  - Show Button: Button labelled "Show" [fStockMonthlyLocking.Designer.vb:140; fStockMonthlyLocking.vb:552-554].
+  - Item Detail Grid: Tab "General Detail" holding a read-only grid with Warehouse, Division, Closing Stock, Closing Amount, Actual Closing and Difference; row additions, deletions and edits are off [fStockMonthlyLocking.Designer.vb:228-230; fStockMonthlyLocking.vb:334-372].
+  - Posting Tab: Tab "Posting" holding the embedded posting control; hidden unless finance applies, the status is Authorized and a stock account is chosen [fStockMonthlyLocking.Designer.vb:231-233; fStockMonthlyLocking.vb:566-581].
+actions:
+  New: Resets the form through the main window; also after Save and Delete [fStockMonthlyLocking.vb:160-167; fStockMonthlyLocking.vb:230-244].
+  Save: Validates, confirms and saves the locking; on authorization it recomputes the detail, posts the journal and re-prices
+    the lots.
+  Search: Opens the common list of lockings for the company and year [fStockMonthlyLocking.vb:169-194].
+  Delete: Deletes the open locking.
+validations:
+- Document Date should be last date of selected Month
+- Select valid stock Account.
+- No Item Detail found.
+- Authorized Stock Locking can't be updated.
+- Document No. <number> saved successfully.
+- Only last entry against this stock account can be deleted
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Duplicate Entry for selected Account and Month.
+- Locking Month can't be less than <date>
+manages:
+- stock-monthly-locking
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.ISMLDelete.
+  FillValues: Fills the lookup lists through Finance.ISMLFillValues.
+  LoadData: Loads the selected record through Finance.ISMLLoadData.
+  Open: Searches records through Finance.ISMLSearchData.
+  Save: Saves the record through Finance.ISMLAuthorize, Finance.ISMLSave.
+  SaveItemDetail: Saves the record through Finance.ISMLSaveItemDetail.
+  StockItemDetail: Runs through Finance.ISMLStockItemDetail.
+  ValidateForm: Validates the entry through Finance.ISMLValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through Finance.ISMLFillValuesDependent.

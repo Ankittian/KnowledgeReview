@@ -1,0 +1,48 @@
+form: fAutogenerateServiceCallEquipment
+title: Autogenerate Service Call Equipment
+module: PM
+kind: transaction
+summary: The Autogenerate Service Call Equipment screen creates equipment records in bulk for service calls that were raised
+  for an item but have no equipment attached.
+purpose: |
+  What it is: A bulk action that turns service calls raised against an item and serial number into equipment master records and attaches the equipment to each call [fAutogenerateServiceCallEquipment.vb:244-370; CustomerService.ESCEGenerateEquipment:71-142]. When it applies: When service calls exist for customer items that have not yet been registered as equipment. Business outcome: Calls get an equipment record, with optional contract setup and spare parts, so that later service work and contract checks have an equipment to work on (BR-01; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A top area with From Date, To Date and the Show button, a "Generate Equipment" button, the service call grid, and a hidden pop-up panel for BOM Detail [fAutogenerateServiceCallEquipment.Designer.vb:61-65; fAutogenerateServiceCallEquipment.Designer.vb:129-156; fAutogenerateServiceCallEquipment.Designer.vb:75].
+  - From Date and To Date Fields: Two date pickers shown as dd/MM/yyyy [fAutogenerateServiceCallEquipment.Designer.vb:114-116; fAutogenerateServiceCallEquipment.Designer.vb:133-135].
+  - Show Button: The "&Show" button [fAutogenerateServiceCallEquipment.Designer.vb:65].
+  - Service Call Grid: A grid with Select, Service Call Id, Service Call Date, Customer Name, Customer Location, Invoice No., Invoice Date, Subject, Description, Item Description, Serial No., Service Contract Setup, Service Contract Date, BOM Detail and Remarks [CustomerService.ESCEFillValuesDependent:19-42].
+  - BOM Detail Pop-up: A pop-up with a grid of Alias, Item Code, Item Description, Unit, Make, Serial No.
+  - Generate Equipment Button: The "&Generate Equipment" button [fAutogenerateServiceCallEquipment.Designer.vb:156].
+  - Other Toolbar Actions (Save, Open, Delete, Print, Preview, Export, Email, Navigation): All are empty or not implemented [fAutogenerateServiceCallEquipment.vb:41-43; fAutogenerateServiceCallEquipment.vb:94-136; fAutogenerateServiceCallEquipment.vb:234-241].
+actions:
+  New: Asks the main window to open a blank screen [fAutogenerateServiceCallEquipment.vb:85-92].
+validations:
+- Select at least one row.
+- Serial No. can not be empty.
+- Service Contract Setup can not be empty.
+- Select valid Service Contract Date.
+- Select at least one BOM Detail.
+- Invoice No. can not be empty.
+- Duplicate Equipment Name not allowed.
+- Equipment already exists for same Item and Serial No.
+- Select valid Invoice Date.
+- Service Call Date can not be less than Invoice Date.
+- Service Contract Date can not be less than Invoice Date.
+- Select valid Quantity in row N.
+- Duplicate Item not allowed.
+- 'Equipment generated successfully - '
+- Refer remarks for saved status.
+manages:
+- autogenerate-service-call-equipment
+uses_concepts:
+- equipment-category
+- equipment-master
+- maintenance-service-order
+- service-call
+- service-contract-setup
+method_notes:
+  CreateEquipment: Runs through CustomerService.ESCEGenerateEquipment.
+  FillValueDependent: Fills the lookup lists through CustomerService.ESCEFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.ESCEFillValues.
+  SaveBOMDetail: Saves the record through EAM.EAEMSaveBOMDetail.

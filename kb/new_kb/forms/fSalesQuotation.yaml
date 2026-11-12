@@ -1,0 +1,141 @@
+form: fSalesQuotation
+title: Quotation
+module: SD
+kind: transaction
+summary: The Quotation screen records the commercial offer a company makes to a customer before a sales order is raised.
+purpose: |
+  What it is: A priced, dated and terms-bearing offer to a customer location, with a validity date and delivery commitments, stored as a document with yearly numbering. When it applies: When a customer asks for prices, either informally (Direct) or through a registered Customer Enquiry. Business outcome: A single controlled offer that can be authorized, printed, revised and converted into a sales order, with prices kept inside the approved price band (BR-24).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header control at the top (document number, date, status, division, prefix), a "Revision No." / "Revision Date" panel, a tab area ("General Detail", "Lift Detail", "Shipment Detail", "Tax Detail", "Payment Terms", "Export Detail", "Cost Detail", "Terms & Condition", "Custom Field") and the item grid below the tabs.
+  - Document Header Control: Shared control for document number (manual or by prefix), document date, status and division; mandatory checks are its own.
+  - Revision No. and Revision Date Fields: Read-only displays (max 30 characters).
+  - Source Document Field: Mandatory dropdown ("Direct", "Customer Enquiry", "Opportunity"), defaulted from the list's default entry.
+  - Ref. Doc. No. Field: Dropdown of enquiries (Document No, Document Date); read-only for Direct.
+  - Ref. Doc. Date, Type, Nature and Agent Name Fields: Read-only displays of the enquiry date, enquiry type, enquiry nature and agent.
+  - Customer Name Field and Customer Information Icon: Mandatory dropdown (Customer Name, Code); for enquiry sources it is filtered to the enquiry's customer.
+  - Location Field: Mandatory dropdown of the customer's locations (Vendor Location, Code), defaulted to the enquiry location.
+  - Contact Person Name Field: Optional dropdown of authorized contacts of the location; defaulted from the enquiry.
+  - Delivery Date Field: Optional (checkable) date.
+  - Valid till Field: Mandatory date.
+  - Booking Time Field: Time picker, defaulted to the current time.
+  - Sales Person Name Field: Optional dropdown (Sales Person Name, Code).
+  - Sales Category Field: Mandatory dropdown ("Domestic", "Export").
+  - Cost Sheet No., Cost Sheet Revision No. and Cost Sheet Revision Date Fields: Read-only displays of the enquiry's latest authorized cost sheet.
+  - Currency Control: Shared currency and exchange-rate control.
+  - Print Description and Remark Fields: Optional free text, 1000 characters each, trimmed.
+  - EMD Applicable Checkbox: Optional flag.
+  - Notes Control: Shared notes grid (Print Area, Notes, Default), preloaded with the company's default notes.
+  - Item Detail Grid: Main grid: Item Code, Item Description, lookup button, information icon, Unit, Make, Item Information, Tech.
+  - Item Information Dialog: Pop-up per line with "Code", "Base Attribute", "Base Price", "Price Variation", "Min.
+  - Tech. Description Dialog: Pop-up text box (1000 characters) with "Ok" / "Cancel".
+  - Specification Dialog: Pop-up grid of quality parameters (Code, Quality Parameter, QP Type, Unit, Value, Lower Limit, Upper Limit) with "Ok" / "Cancel".
+  - Item Tax Pop-up: Shared item-tax editor opened from the Tax button.
+  - Lift Detail Tab: Read-only grid of the location's lifts (Select, Card No., Address, Manager, Line Man, Supervisor, Sales Executive, Technician, Zone, Route); no row deletion.
+  - Shipment Detail Tab: Mandatory "Freight Type" dropdown and the consignee grid (Consignee Name, Consignee Location, From Location, To Location, Freight Rate Type, Freight Rate, Remarks).
+  - Tax Detail Tab: Shared document tax control (tax group, charges on amount, Net Amount).
+  - Payment Terms Tab: "Pay Term Code" dropdown and the payment-terms grid (Pay Code (50, auto-numbered), Payment Type, Payment Description, Pay Value %, Credit Days, Remark (500)).
+  - Export Detail Tab: "Country Of Origin", "Pre Carriage", "Port Of Loading", "Place Of Receipt", "Type Of Dispatch", "Method Of Shipment", "Port Of Discharge", "Place Of Delivery" dropdowns, "Packing Instruction" (200) and "QC Required".
+  - Cost Detail Tab: "Inco Terms" dropdown, a cost-row currency pop-up and the cost grid (Sl No., Cost Group, Cost Head, Is Calculate On Item Qty., Quantity, Unit, Local Freight, Rate Type, Currency, Rate, Amount, Amount (Base Currency), Amount (Export Currency), Billing Reference, Is Mandatory, Remarks).
+  - Terms & Condition Tab: Shared terms-and-conditions control (group, head, text), editable.
+  - Custom Field Tab: Shared custom-field grid (Field Name, Field Value).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Print Preview, Export and Email of the quotation report.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search (Open): Standard toolbar Open with the shared search window.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last are enabled for the screen.
+validations:
+- Can't be deleted as some record exist against this entry.
+- Amendment is done against this Order.
+- Sales Order is prepared against this Quotation
+- Authorized Quotation can't be updated.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- Sales Organization is not set for login company.
+- Sales Organization is not set for login company and Division.
+- Duplicate Document No. not allowed.
+- <description>,Do you want to continue?
+- Select valid Source Document.
+- Select valid Ref Doc. No.
+- Select valid Sales Category.
+- Select valid Customer Name
+- Ref. Doc. Date can't be greater than Document Date.
+- Delivery Date can't be less than Document Date.
+- Valid Till can't be less than Document Date.
+- Valid Till can't be greater than Delivery Date.
+- Select valid Freight type.
+- Freight Type should be FOR.
+- Cost Sheet is not created against this Enquiry.
+- Taxes are not applicable in case of Export.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row <n>.
+- Select valid From Location in row <n>.
+- Select valid To Location in row <n>.
+- Select valid Freight Rate Type in row <n>.
+- Freight Rate can't be empty or zero in row <n>.
+- Freight Rate Type should be Per Unit in row <n>.
+- Freight Rate in row <n> should be equal to Local Freight Rate in Cost Detail Tab.
+- Select atleast one Payment Term.
+- Select/Enter valid Payment Description in row <n>.
+- Credit Days can't be empty or zero in row <n>.
+- Select atleast one Item.
+- Select valid Item Description in row <n>.
+- Select valid Unit in row <n>.
+- Select valid Attribute Value in row <n>
+- Enter value for mandatory quality parameter  in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Quantity should be equal to <n> (No of lift).
+- Rate can't be empty or zero in row <n>.
+- Select valid Delivery Date in row <n>.
+- Delivery Date can't be less than Document Date in row <n>.
+- Enter value for atleast one quality parameter in row <n>.
+- Select valid Inco Term.
+- Select valid Method Of Shipment.
+- Select valid Type Of Dispatch.
+- Select valid Place Of Receipt.
+- Select valid Port Of Loading.
+- Select valid Port Of Discharge.
+- Select valid Place Of Delivery.
+- Select valid PreCarriage.
+- Select valid Country Of Origin.
+- Select Unit in row <n>.
+- Select Currency in row <n>.
+- For same currency, Exchange Rate (General Detail) should be equal to Exchange Rate of Cost Head in row <n>.
+- Select valid Attribute.
+- Duplicate Item,Make and Attributes not allowed.
+- Duplicate Item Code,Make and Item Information is not allowed.
+- Duplicate Consignee Name and Consignee Location is not allowed.
+- Duplicate Quality Parameter is not allowed.
+- Value can't be empty or zero  in row <n>.
+- Enter lower limit  in row <n>.
+- Enter upper limit  in row <n>.
+- Item Information
+manages:
+- quotation
+uses_concepts:
+- attribute-master
+- company
+- cost-group
+- cost-head
+- customer-enquiry
+- enquiry-type
+- inco-terms-master
+- revised-quotation
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-organization
+- sales-person
+method_notes:
+  BeforeRowEditDisplayItemInformation: Runs through Sales.SDQEGetItemAttributePriceDetail.
+  CustomValidation: Validates the entry through ODTSalesQuotation.ProcedureName.
+  Delete: Deletes the record through Sales.SDQEDelete.
+  FillRefDoc: Runs through Sales.SDQEFillRefDoc.
+  FillValues: Fills the lookup lists through Sales.SDQEFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDQEFillValuesDependent.
+  GetAttributeDetail: Runs through Sales.SDQEGetItemAttributePriceDetail.
+  GetCustomerInfo: Runs through Sales.SDQEGetCustomerInfo.
+  GetItemInfo: Runs through Sales.SDQEGetItemInfo.
+  GetItemPriceSetting: Runs through Sales.SDQEGetItemAttributePriceDetail.

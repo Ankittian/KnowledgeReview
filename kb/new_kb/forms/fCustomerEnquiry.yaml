@@ -1,0 +1,114 @@
+form: fCustomerEnquiry
+title: Customer Enquiry
+module: SD
+kind: transaction
+summary: The Customer Enquiry screen records a customer's request for quotation as a numbered sales document of the current
+  company and financial year.
+purpose: |
+  What it is: A formal record of a customer's request for prices and terms, numbered and dated as a sales document and listing the materials, quantities and dates requested. When it applies: Whenever a customer sends an RFQ, tender or informal request by e-mail, phone, tender or a marketing contact (the "Enquiry Through" list). Business outcome: Each enquiry can be quoted, followed up, rejected or closed. Sales management can see pending enquiries per customer, item, agent and sales person, and how many turn into quotations and orders.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Strip: The shared document-number control at the top: Document No.
+  - Header Tabs (General, Export Detail, Lift Detail, Custom Field): The upper tab set.
+  - Customer Name Field: Mandatory dropdown of active, authorized customers of the company (BR-05, BR-09).
+  - Location Field: Mandatory dropdown of the selected customer's locations (BR-05).
+  - Contact Person and Contact No. Fields: Optional dropdown of the location's contacts, and a read-only "Contact No." showing mobile and phone (BR-10, BR-29).
+  - Customer RFQ No. Field: Mandatory entry of up to 50 characters [Sales.SDCESave:17] (BR-05).
+  - Customer RFQ Date Field: Date, marked as a mandatory field.
+  - Enquiry Type, Material Nature and Enquiry Priority Fields: Mandatory dropdowns (BR-05).
+  - Enquiry Through and Sales Category Fields: Mandatory dropdowns: the channel (Email, Phone, Tender, Marketing) and the sales category (BR-05).
+  - Sales Person Name and Agent Name Fields: Optional dropdowns of the company's sales persons and agents (BR-29).
+  - Quotation Submission Date and Expected Order Date Fields: Date fields.
+  - Shipping Location Field: Optional dropdown of the company's own active locations (BR-29).
+  - Enquiry Status, Reason For Loosing and Reason For Rejection Fields: Read-only text boxes on the right of the General tab [fCustomerEnquiry.Designer.vb:371-414].
+  - Remarks Field and Notes Control: Optional Remarks (up to 1000 characters) [fCustomerEnquiry.Designer.vb:634].
+  - Information Icons: Icons for customer, sales person and agent, and an information column in the item grid.
+  - Export Detail Tab Fields: "Inco Terms", "Port Of Discharge", "Place Of Delivery" (dropdowns), "Packing Instruction" (text, up to 100 characters) and "QC Required" (checkbox) [fCustomerEnquiry.Designer.vb:685-761].
+  - Lift Detail Tab: A "Lift Search" button and a lift grid with columns Select, "Card No.", Address, Manager, Sales Executive, Line Man, Supervisor, Technician, Zone and Route.
+  - Custom Field Tab: The shared custom-field grid for form code "SDCE" [fCustomerEnquiry.vb:119].
+  - Item Details Grid: Lower tab "&Item Details".
+  - Tech. Description Pop-up: A multi-line text editor (up to 1000 characters) with Ok and Cancel buttons [fCustomerEnquiry.Designer.vb:905-918].
+  - Specification Pop-up: A quality-parameter grid (Code, Quality Parameter, QP Type, Unit, Value, Lower Limit, Upper Limit) with Ok and Cancel [fCustomerEnquiry.vb:1840-1883].
+  - Particular Details Grid: Lower tab "&Particular Details".
+  - Other Toolbar Actions (Print, Preview, Export, Email): Implemented as empty procedures [fCustomerEnquiry.vb:337-352] [fCustomerEnquiry.vb:1499-1505].
+actions:
+  New: The standard toolbar New, handled by the main window [fCustomerEnquiry.vb:299-306].
+  Save: Validates and saves the enquiry and all its details as one unit [fCustomerEnquiry.vb:948-1087].
+  Search: Opens the standard search window with the company's enquiries for the current financial year [fCustomerEnquiry.vb:308-335].
+  Delete: Deletes the loaded enquiry after confirmation [fCustomerEnquiry.vb:32-59].
+validations:
+- Do you want to save ?
+- Document No. {number} saved successfully.
+- Authorized Customer Enquiry can't be updated.
+- Select valid Document Status.
+- Select valid {Division label}.
+- Enter Document No.
+- Select valid Document No. or create new Document No.
+- Enter Document No. or select valid Document No.
+- Document Date should be between Financial Start and End Date.
+- Sales Organization is not set for login company.
+- Sales Organization is not set for login company and Division.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Location.
+- Enter Customer RFQ No.
+- Customer RFQ Date can't be greater than Document Date.
+- Select valid Enquiry Type.
+- Select valid Material Nature.
+- Select valid Enquiry Priority.
+- Select valid Enquiry Through.
+- Select valid Sales Category.
+- Quotation Submission Date can't be less than Document Date.
+- Expected Order Date can't be less than Quotation Submission Date.
+- Select atleast one Lift.
+- Select atleast one Item.
+- More then 1 item can not be selected.
+- Duplicate Item Code and Make is not allowed.
+- Select valid Item Description in row {n}.
+- Select valid Unit in row {n}.
+- Enter value for mandatory quality parameter  in row {n}.
+- Enter value for atleast one quality parameter in row {n}.
+- Quantity can't be empty or zero in row {n}.
+- Quantity should be equal to {count} (No of lift).
+- Select valid Required Date in row {n}.
+- Required Date can't be less than Document Date in row {n}.
+- Required Date can't be less than Quotation Submission Date in row {n}.
+- Select atleast one Particular.
+- Duplicate Particular is not allowed.
+- Select valid Inco Terms.
+- Select valid Port Of Discharge.
+- Select valid Place Of Delivery.
+- Enter Packing Instruction.
+- Duplicate Quality Parameter is not allowed.
+- Value can't be empty or zero  in row {n}.
+- Enter lower limit  in row {n}.
+- Enter upper limit  in row {n}.
+- Do you want to delete ?
+- Quotation already exists against this Entry.Can't Delete this entry.
+- Some data already exists against this record.
+- Data deleted successfully.
+- Item Information
+manages:
+- customer-enquiry
+uses_concepts:
+- company
+- enquiry-rejection
+- enquiry-type
+- inco-terms-master
+- quotation
+- quotation-closing
+- revised-quotation
+- sales-organization
+- sales-person
+method_notes:
+  CustomValidation: Validates the entry through ODTCustomerEnquiry.ProcedureName.
+  Delete: Deletes the record through Sales.SDCEDelete.
+  FillValues: Fills the lookup lists through Sales.SDCEFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDCEFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetAgentInfo: Runs through Sales.SDCEGetAgentInfo.
+  GetCustomerInfo: Runs through Sales.SDCEGetCustomerInfo.
+  GetItemInfo: Runs through Sales.SDCEGetItemInfo.
+  GetSalesPersonInfo: Runs through Sales.SDCEGetSalesPersonInfo.
+  LoadData: Loads the selected record through Sales.SDCELoadData.

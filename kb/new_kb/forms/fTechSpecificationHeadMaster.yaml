@@ -1,0 +1,44 @@
+form: fTechSpecificationHeadMaster
+title: Technical Specification Head Master
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: 'The Technical Specification Head Master screen maintains specification heads: named technical attributes (for example
+  a dimension or property) grouped under a technical specification category, together with the list of items the head applies
+  to.'
+purpose: |
+  What it is: A catalogue of specification attributes and the items they apply to. When it applies: When a new attribute is introduced or its item coverage changes. Business outcome: Specifications are captured consistently per item (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and an item grid.
+  - Code Field: Read-only text box.
+  - Head Name Field: Mandatory text box, up to 100 characters (BR-01, BR-03).
+  - Category Field: Mandatory dropdown with Category Name and Code (BR-01, BR-02).
+  - Item Details Grid: Columns Select (checkbox, default unticked), Sub Group, Item Code, Item Description (read-only); internal item identifier hidden.
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the head and its item list.
+  Search: Standard search with Code, Head Name, Category Name, Inactive, Created By, Authorized By.
+  Delete: Deletes the loaded head after confirmation (MSG-08).
+validations:
+- Enter Head Name.
+- Select valid Category.
+- Duplicate Technical Specification Head name not allowed
+- Select atleast one Item
+- Technical Specification not found.
+manages:
+- tech-specification-head
+uses_concepts:
+- company
+- material-item
+- material-sub-group
+method_notes:
+  Delete: Deletes the record through masterdata.MTSHDelete.
+  FillValues: Fills the lookup lists through masterdata.MTSHFillValues.
+  LoadData: Loads the selected record through masterdata.MTSHLoadData.
+  Open: Searches records through masterdata.MTSHSearchData.
+  Save: Saves the record through masterdata.MTSHSave.
+  SaveItemDetails: Saves the record through masterdata.MTSHSaveItemDetail.
+  ValidateForm: Validates the entry through masterdata.MTSHValidate.

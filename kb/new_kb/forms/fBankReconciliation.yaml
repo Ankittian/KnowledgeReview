@@ -1,0 +1,42 @@
+form: fBankReconciliation
+title: Bank Reconciliation
+module: FI
+kind: transaction
+summary: The Bank Reconciliation screen matches the company's bank ledger with the bank's statement for one bank account on
+  one Reconciliation Date.
+purpose: |
+  What it is: The periodic proof that the bank ledger agrees with the bank statement, with a record of which items the bank has cleared and when. When it applies: At each statement date, for each bank account. Business outcome: Uncleared cheques and deposits are known, unrecorded bank charges and interest are booked, and any difference is visible (BR-07; BR-11; BR-14).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Account Name, Account Number, Reconciliation Date, Transaction Type, Status, Document Status and the Show button, a Finance Book grid, three tabs (Voucher Detail, Charges Detail, Un-Reconcilated Entry) and a summary block; form code "FBRS" [fBankReconciliation.Designer.vb:162-297; fBankReconciliation.Designer.vb:397-406; fBankReconciliation.Designer.vb:671].
+  - Account Name and Account Number Fields: A drop-down of bank accounts, mandatory, and a read-only account number [fBankReconciliation.vb:29; fBankReconciliation.Designer.vb:169].
+  - Reconciliation Date Field: A date picker in dd/MM/yyyy, locked once a record is opened [fBankReconciliation.Designer.vb:185-187; fBankReconciliation.vb:142; fBankReconciliation.vb:976-984].
+  - Transaction Type and Status Fields: Filters for the list: Transaction Type All, Receipt or Payment; Status All, Pending or Cleared [Finance.FBRSFillValues:82-89].
+  - Document Status Field: A drop-down, mandatory, starting at Initial (10); read-only for an authorized record [fBankReconciliation.vb:80-81; fBankReconciliation.vb:132-134; fBankReconciliation.vb:214-215].
+  - Show Button: Lists the items for the chosen account, date, filters and Finance Books, loads the charge account lists and, if a reconciliation already exists for that date, the saved bank book balance [fBankReconciliation.vb:905-950; Finance.FBRSFillValuesReconciliationDate:45-48].
+  - Finance Book Grid: A tick list of Finance Books (captioned Profit Center when applicable) with a hidden opening amount; the selected books supply the company-book balance [fBankReconciliation.vb:417-440; fBankReconciliation.vb:1021-1035].
+  - Summary Block: Balance as per Bank Book with its Type (keyed), Balance as per Company Books with its Type, Cheque Issued but not Cleared, Cheque Deposited but not Cleared, Charges and Interest Debited, Charges and Interest Credited, Balance as per Bank Reconciliation and Difference in Reconciliation (all computed and read-only except the first two) [fBankReconciliation.Designer.vb:324-364; fBankReconciliation.De
+  - Voucher Detail Tab: A filterable, sortable grid: Select, Unit Name, Finance Book, Voucher Date, Account Name, Payment Reference No.
+  - Charges Detail Tab: Grid of Type (By or To), Finance Book, Account Name, Date, Debit Amount, Credit Amount and Narration (2000 characters) [fBankReconciliation.vb:572-602].
+  - Un-Reconcilated Entry Tab and Import Button: A hidden tab shown after an import, listing the statement rows that matched no item; the Import button reads a bank statement spreadsheet [fBankReconciliation.Designer.vb:403-406; fBankReconciliation.vb:1119-1128; fBankReconciliation.vb:1225-1227].
+actions:
+  Save: Checks back-log dates, the authorized lock and the screen validations, asks for confirmation, then saves in one transaction
+    and clears the screen [fBankReconciliation.vb:603-679].
+  Open, Delete and Print: Open lists the reconciliations of the financial year; Delete asks for confirmation; Print, Preview,
+    Export and Email use the bank reconciliation report for the saved record [fBankReconciliation.vb:35-59; fBankReconciliation.vb:158-204;
+    fBankReconciliation.vb:1082-1117].
+manages:
+- bank-reconciliation
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FBRSDelete.
+  FillValues: Fills the lookup lists through Finance.FBRSFillValues.
+  FillValuesAccount: Fills the lookup lists through Finance.FBRSFillValuesAccount.
+  FillValuesReconciliationDate: Fills the lookup lists through Finance.FBRSFillValuesReconciliationDate.
+  LoadData: Loads the selected record through Finance.FBRSLoadData.
+  Open: Searches records through Finance.FBRSSearchData.
+  Save: Saves the record through Finance.FBRSSaveMain.
+  SaveCharges: Saves the record through Finance.FBRSSaveChargeDetail, Finance.FBRSSaveDetail.
+  SaveVoucher: Saves the record through Finance.FBRSSaveDetail.
+  ValidateForm: Validates the entry through Finance.FBRSValidate.

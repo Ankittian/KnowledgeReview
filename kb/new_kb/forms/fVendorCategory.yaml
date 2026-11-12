@@ -1,0 +1,23 @@
+form: fVendorCategory
+title: Vendor Category
+module: MM
+kind: transaction
+summary: The Vendor Category screen assigns cities to a Vendor Source so that the planning engine can tell which vendors are,
+  for example, Local Supply or Open Supply.
+purpose: |
+  What it is: A mapping of cities to Vendor Sources (Govt., Open Supply, Local Supply, Foreign in the master data) [Optimization.IOVCFillValues:16; Optimization.IOVCFillValues:19-27; Optimization.IOVCSave:20-23]. When it applies: When planners define which cities count as local or open market for the unit. Business outcome: Purchase history can be split by source type without tagging every vendor.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Vendor Source Field: A mandatory dropdown labelled "&Vendor Source" [fVendorCategory.Designer.vb:40; fVendorCategory.vb:15].
+  - City Grid: Grid with columns Select, City, State and Country; City, State and Country are read-only; the city key is hidden; rows cannot be deleted [fVendorCategory.vb:242-263].
+  - Other Toolbar Actions (Delete, Open, Print, Preview, Export, Email): Delete may show the standard delete confirmation but removes nothing; the rest are empty [fVendorCategory.vb:21-34; fVendorCategory.vb:110-150; fVendorCategory.vb:335-341].
+actions:
+  New: The standard toolbar New.
+  Save: Toolbar save.
+validations:
+- Select valid Vendor Source
+manages:
+- vendor-category
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.IOVCFillValues.
+  Save: Saves the record through Optimization.IOVCSave.

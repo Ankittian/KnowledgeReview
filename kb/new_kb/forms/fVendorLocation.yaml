@@ -1,0 +1,117 @@
+form: fVendorLocation
+title: Location Detail
+module: MM
+kind: master
+users:
+- Purchase officer (inferred)
+- Accounts officer (inferred)
+summary: The Location Detail screen maintains the addresses (locations) of business partners already set up as vendor cards,
+  such as suppliers, customers, contractors, transporters, agents and group companies.
+purpose: |
+  What it is: A register of every address at which the company deals with a business partner, together with the statutory and commercial data that applies at that address. When it applies: When a partner opens a new branch, warehouse or billing address, when registrations change, or when an approved vendor master request asks for a new location. Business outcome: Transactions carry the correct address, GST state and registration, payment terms and bank details for the partner location; duplicates and conflicting defaults are limited (BR-08 to BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: "- Header Area: Top panel with the \"Vendor Code\" link and location code, \"Vendor Name\", \"Vendor\
+  \ Type\", \"Name\", \"Mailing Name\", \"Inactive\" and two icon buttons.\n- Vendor Code Link and Location Code Field: The\
+  \ caption \"Vendor Code\" is a hyperlink (tooltip \"Switch to fast entry mode.\"); next to it a read-only box (12 characters)\
+  \ shows the location code.\n- Vendor Name Field: Drop-down with columns Vendor Name, Code, Vendor Type; mandatory (BR-02).\n\
+  - Vendor Type Field: Read-only text.\n- Name and Mailing Name Fields: Text boxes, 100 characters each, mandatory (BR-02).\n\
+  - Inactive Check Box: \"Inactive\", always disabled.\n- Copy from Vendor Location Button: Icon button with tooltip \"Copy\
+  \ from Vendor Location.\".\n- Load from Vendor Master Request Button: Icon button with tooltip \"Load from Vendor Master\
+  \ Request.\".\n- Communication Tab: Tab \"Communication\" with \"Address\" (three lines of 100 characters, first line mandatory),\
+  \ \"City\", \"State\" (mandatory), \"Country\", \"Pincode\" (6), \"Phone No.\" (50), \"Fax No.\" (50), \"E-Mail\" (300),\
+  \ \"Website\" (50), \"Region\", \"Manufacturing Type\", \"Vendor Code\" (free text), \"CIN No.\", \"GST Registration Type\"\
+  , \"GSTIN No.\" (15), \"UIN No.\" (15), \"Is Shipping Address\", \"Is Default Billed To Location\", \"Is \n- Registration\
+  \ Detail Tab: Tab \"Registration Detail\" with \"LST No.\", \"CST No.\", \"TIN No.\", \"ECC Code\", \"Range\", \"Division\"\
+  , \"Collectorate\", \"STC No.\", \"Premises Code No.\", \"Name of Taxable Service\", \"TAN No.\", \"TDS Circle\", \"PAN\
+  \ No.\" (35), \"Payer's Category\", \"Vendor Group\", \"Industry Type\", \"Business Type\", \"Payment Terms\", \"Tax Group\"\
+  , \"TNC Group\", \"Indian Bureau of Mines No\", \"LBT No.\", \"MSME Registration\", \"MSME No.\", \"\n- Contact Person Detail\
+  \ Grid: Tab \"Contact Person Detail\" with columns \"Contact Person Name\", \"Designation\", \"Address1\" to \"Address3\"\
+  , \"City\", \"State\", \"Country\", \"Mobile No.\", \"Phone No.\", \"Fax No.\", \"Email\", \"Birth Date\", \"Anniversary\
+  \ Date\".\n- Bank Detail Grid: Tab \"Bank Detail\" with columns \"Bank Name\", \"Bank Branch\", \"IFSC Code\" (read-only),\
+  \ \"Account Number\" (25), \"Account Type\".\n- Custom Fields Tab: Tab \"Custom Fields\" showing the user-defined fields\
+  \ configured for this screen.\n- Vendor Group Tab: Grid \"Select\", \"Vendor Group Name\", \"Address\", \"Contact Person\"\
+  .\n- Tally Account Tab: Grid \"Company\", \"Tally Purchase Account\" (200), \"Tally Sales Account\" (200).\n- Division Tab:\
+  \ Grid \"Select\", \"Code\", \"Division Name\", \"IsDefault\".\n- Company Tab: Grid \"Inactive\", \"Company Name\", \"Alias\"\
+  \ with a header check box.\n- Fast Entry Grid Container: Grid with columns Vendor Name, Vendor Type, Name, Mailing Name,\
+  \ Address1 to 3, City, State, Country, Pin Code, Phone No, Fax No, Email, Website, Region, Manufacturing Type, LST No, CST\
+  \ No, ECC Code, Range, Division, Collectorate, STC No, Premises Code No, Name Of Taxable Service, Indian Bureau Of Mines\
+  \ No, TAN No, TDS Circle, Payer's Category, PAN No, Vendor Group, Industry Type, Business Type, Pa\n- Other Toolbar Actions\
+  \ (Print, Preview, Export, Email): Standard toolbar actions.\n"
+actions:
+  Switch back to detail mode.: Link at the top of the fast entry container.
+  Import: '"Import" button in fast entry.'
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open/Search.
+  Delete: Standard toolbar Delete.
+  Navigation: First, Previous, Next, Last over search results, provided by the main window.
+validations:
+- Select valid Vendor Name.
+- Enter Name.
+- Enter Mailing Name.
+- Enter Address.
+- Select valid State.
+- Select valid GST Registration Type.
+- GSTStateCode is not updated in Selected State
+- Enter PAN No.
+- Invalid PAN No.
+- Enter GSTIN No. or UIN No.
+- Enter UIN  No.
+- Invalid GSTIN No.
+- Enter a valid MSME No..
+- Duplicate Location is not allowed.
+- Only One Default Billed To Location is Possible For Same Vendor.
+- Only One Default Consignee Location is Possible For Same Vendor.
+- Enter a valid STRN No. .
+- Select valid Bank Branch in row n.
+- Enter Account Number in row n.
+- Permission denied to delete Vendor Location.
+- Unable to delete this entry.
+- Unable to delete this entry,used in ARD
+- Refer remarks for saved status.
+- Your excel should consists of sheet with name VIVL. Do you want to continue?
+- Duplicate GSTINo ,Want to continue?.
+- GST applicable date is mandatory.
+- GST applicable date is requried. Do you want to continue ?
+- Unable to save,Vendor Request is either Cancel or Completed.
+- Unable to save, Vendor Name or Full Address should be same as selected Vendor Request.
+- MSME Registration can't be empty.
+- MSME Registration is Empty. Do you want to continue?
+- Phone No. Can't be empty.
+- E-mail No. Can't be empty.
+- PAN No. Can't be empty.
+- Phone No. is empty. Do you want to continue?
+- E-mail is empty. Do you want to continue?
+- PAN No. is empty. Do you want to continue?
+- Enter Contact Person Details for at least one Contact Person.
+- Contact Person Detail is Empty. Do you want to continue?
+- Mobile No. and Phone No. both can not be empty for Contact Person '<name>'.
+- Email can not be empty for Contact Person '<name>'.
+- Enter Bank Detail for at least one Bank Account Number.
+- Bank Detail is Empty. Do you want to continue?
+- Successfully Created.
+manages:
+- vendor-location
+uses_concepts:
+- account-determination-rule
+- account-group
+- accounting-voucher
+- city
+- company
+- currency
+- material-item
+- purchase-bill
+- purchase-order
+- vendor
+- vendor-contact-person
+method_notes:
+  Delete: Deletes the record through masterdata.VIVLDelete.
+  DeleteBankDetail: Deletes the record through masterdata.VIBDDelete.
+  DeleteContactPerson: Deletes the record through masterdata.VICPDelete.
+  FillValues: Fills the lookup lists through masterdata.VIVLFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.VIVLFillValuesDependent.
+  LoadVendorDetail: Loads the selected record through masterdata.VIVLLoadData.
+  LoadVendorRequestDetail: Loads the selected record through masterdata.VIRQLoadData.
+  Open: Searches records through masterdata.VIVLSearchData.
+  SaveBankDetail: Saves the record through masterdata.VIBDSaveMain.
+  SaveCompanyDetail: Saves the record through masterdata.VIVLDeleteCompanyInactiveDetail, masterdata.VIVLSaveCompanyInactiveDetail.

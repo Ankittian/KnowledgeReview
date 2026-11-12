@@ -1,0 +1,58 @@
+form: fAssetGroup
+title: Asset Group
+module: MD
+kind: master
+summary: The Asset Group screen maintains asset groups, the level at which individual fixed assets are classified under an
+  asset class.
+purpose: |
+  What it is: A master record that places a named group under an asset class inside a chart of depreciation and holds the group's asset numbering values per book [fAssetGroup.vb:462-542; FixedAsset.AMAGSaveMain:22-69]. When it applies: When the asset hierarchy is set up, or when a new kind of asset must be capitalized. Business outcome: Assets can be capitalized into a controlled group, numbered according to the book's numbering structure, and depreciated by the rule that applies to the group's class.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Code, COD, Asset Class, Group Name, Parent Group and the Asset Number Generation grid [fAssetGroup.designer.vb:150-180].
+  - Code Field: A read-only text box that cannot be tabbed into [fAssetGroup.designer.vb:71-74].
+  - COD Field: A mandatory drop-down of chart-of-depreciation names [fAssetGroup.vb:39; fAssetGroup.vb:105].
+  - Asset Class Field: A mandatory drop-down of leaf classes of the chosen COD [fAssetGroup.vb:39; fAssetGroup.vb:575].
+  - Group Name Field: A mandatory text box, up to 50 characters [fAssetGroup.vb:39; fAssetGroup.vb:90].
+  - Parent Group Field: An optional drop-down of groups [fAssetGroup.vb:583].
+  - Asset Number Generation Grid: A grid with columns DB Name and DB Type (read-only), Prefix (up to 25 characters) and Starts From (numeric, up to 4 digits); the book number and numbering basis are hidden.
+  - Fast Entry Grid: A grid with columns COD, Asset Class, Group Name (up to 50), Parent Group, Starts From (numeric, up to 4) and Remarks (read-only) [fAssetGroup.vb:702-717; fAssetGroup.vb:94-100].
+  - Code Link (Fast Entry Mode): A link labelled "Code" with the tooltip "Switch to fast entry mode." [fAssetGroup.vb:41-42; fAssetGroup.designer.vb:194].
+  - Switch back to detail mode. Link: A link labelled "Switch back to detail mode." in the fast-entry container [fAssetGroup.designer.vb:227].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fAssetGroup.vb:176-208].
+actions:
+  Import: An "Import" button that loads an Excel sheet into the fast-entry grid [fAssetGroup.designer.vb:215].
+  New: The toolbar action that asks the main window to start a blank record and puts the cursor on COD [fAssetGroup.vb:138-147].
+  Save: The toolbar action that stores the group and its numbering values, or all grid rows in fast-entry mode [fAssetGroup.vb:368-460].
+  Search: The toolbar action that opens a search dialog listing Code, COD, Asset Class, Group Name, Parent Group, Created
+    By and Created Date [FixedAsset.AMAGSearchData:17-30].
+  Delete: The toolbar action that removes the open group [fAssetGroup.vb:53-78].
+validations:
+- Select valid COD.
+- Select valid Asset Class.
+- Enter Group Name.
+- Duplicate Group Name not allowed.
+- Asset Number Generation is not set against Depreciation Book  in row N.
+- Asset Number Generation is not set against Depreciation Book.
+- Prefix can't be numeric value, it should be alphanumeric  in row N.
+- Prefix can't be numeric value, it should be alphanumeric.
+- Starts From can't be empty or 0  in row N.
+- Starts From can't be empty or 0.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+- Refer remarks for saved status.
+- Successfully Created.
+manages:
+- asset-group
+uses_concepts:
+- asset-class
+- asset-number-structure
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMAGDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMAGFillValues.
+  FillValuesCODWise: Fills the lookup lists through FixedAsset.AMAGFillValuesCODWise.
+  FillValuesClassWise: Fills the lookup lists through FixedAsset.AMAGFillValuesClassWise.
+  LoadData: Loads the selected record through FixedAsset.AMAGLoadData.
+  Open: Searches records through FixedAsset.AMAGSearchData.
+  SaveAccountNumberDetails: Saves the record through FixedAsset.AMAGSaveAssetNumberDetail.
+  SaveMain: Saves the record through FixedAsset.AMAGSaveMain.
+  ValidateForm: Validates the entry through FixedAsset.AMAGValidate.

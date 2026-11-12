@@ -1,0 +1,64 @@
+form: fInvoiceCancellation
+title: Invoice Cancellation
+module: SD
+kind: transaction
+summary: The Invoice Cancellation screen (window caption "InvoiceCancellation", form code SDIC) cancels an authorized Tax
+  Invoice or Commercial Invoice.
+purpose: |
+  What it is: A numbered record that withdraws an issued sales invoice, with the reason, and the reversal of the invoice's accounting and stock. [fInvoiceCancellation.vb:510-623; Sales.SDICSave:75-118] When it applies: When an authorized invoice must be nullified (wrong party, wrong goods, deal cancelled), after any e-invoice cancellation on the GST portal. [fInvoiceCancellation.vb:452-460] Business outcome: The invoice stops counting as a sale, receivables and stock are restored, and the sales order quantity is released.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Document number control, a general group with invoice fields, and tabs "Item Detail", "Finance Posting", "Advance Voucher" and "Expense Posting".
+  - Document Number Control: Shared control for number, date, division, prefix, finance book and status (MSG-04).
+  - Source Document Field: Mandatory dropdown "Source Document" (BR-04, BR-05).
+  - Invoice No. Field: Mandatory dropdown "Invoice No." showing number and date (BR-06).
+  - Invoice Detail Fields: Read-only "Invoice Date", "Customer Name", "Location", "Bill To Party", "Location", "Agent Name", "Invoice Value", "Adjusted Advance Amount", "Net Invoice Value".
+  - Reason Field: Mandatory text box "Reason", up to 1000 characters (BR-04).
+  - Item Detail Grid: Read-only grid of "Item Code", "Item Description", "Unit", "Make", "Quantity", "Rate", "Basic Amount", "Net Amount", "Remarks".
+  - Finance Posting, Advance Voucher and Expense Posting Tabs: Shared voucher controls with account, type and amount read-only.
+  - Re-Voucher Key: Ctrl+Alt+V rebuilds and validates the vouchers, then reports the facility is unavailable (BR-18).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty.
+actions:
+  New: Resets the screen through the main window.
+  Save: Validates, saves the reversal vouchers and the header, and on authorization runs the stock-versus-voucher check, in
+    one transaction.
+  Search: Search list of cancellations of the company and year (BR-17).
+  Delete: Deletes after confirmation (BR-16).
+  Navigation: Not declared by this screen; handled by the main window if at all (Inferred).
+validations:
+- Authorized InvoiceCancellation can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Select valid Invoice No..
+- IRN Cancellation Request not found. Do you want to continue?
+- Enter Reason.
+- A Commercial Invoice already exists against this Tax Invoice. Cancel the Commercial Invoice first.
+- Outward Bill Entry already exists against this Tax Invoice.
+- Dispatch Challan already exists against this Tax Invoice. Cannot cancel this Tax Invoice.
+- Difference in Voucher and Lot -- ...
+- Not found in Lot
+- IsValidateStock is false for selected Item
+- Document No. <number> saved successfully.
+- Unable to delete,Invoice has already cancelled.
+- Unable to delete,Commercial Invoice has already cancelled.
+- Unable to delete, Sales Order cancellation exists against this invoice.
+- Previously released Sales Order Quantity has been used in other Invoice's Entries. Can't Delete.
+- Facility of REVOUCHER Entry is unavaliable.Please do it manually.
+manages:
+- invoice-cancellation
+uses_concepts:
+- accounting-voucher
+- company
+- sales-supplementary-invoice
+method_notes:
+  CreateExpenseVoucher: Runs through Sales.SDICGetExpensePosting.
+  Delete: Deletes the record through Sales.SDICDelete.
+  FillInvoice: Runs through Sales.SDICFillInvoice.
+  FillValues: Fills the lookup lists through Sales.SDICFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDICFillValuesDependent.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  LoadData: Loads the selected record through Sales.SDICLoadData.
+  Open: Searches records through Sales.SDICSearchData.
+  Save: Saves the record through Inventory.VoucherVsLotValidation, Sales.SDICSave.
+  ValidateForm: Validates the entry through Sales.SDICValidate.

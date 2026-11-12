@@ -1,0 +1,43 @@
+form: fDocumentCancellation
+title: Document Cancellation
+module: FI
+kind: transaction
+summary: The Document Cancellation screen cancels an authorised document by posting its opposite accounting entry.
+purpose: |
+  What it is: An audit-trail record of a cancellation together with the reversal vouchers that undo the cancelled document's postings. When it applies: An authorised document was entered wrongly and cannot be deleted. Business outcome: The ledgers are corrected by a visible, traceable entry instead of a deletion (BR-05, BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: Document number, date, finance book, status and prefix of the cancellation record.
+  - Source Document Field: Mandatory list "&Source Document" [Finance.AUDCFillValues:20-29].
+  - Financial Year Field: Read-only "&Financial Year" showing the current year name (up to 5 characters) [fDocumentCancellation.vb:81-117].
+  - From Date and To Date Fields: Date fields "From Da&te" and "To Da&te".
+  - Ref Doc No. and Ref Doc Date Fields: Mandatory list "Ref Doc &No." and a read-only "Ref Doc Da&te" [fDocumentCancellation.vb:565-580].
+  - Voucher 1 to Voucher 4 Tabs: Four tabs, each with a voucher control tagged for Journal entry [fDocumentCancellation.Designer.vb:90; fDocumentCancellation.Designer.vb:127; fDocumentCancellation.Designer.vb:164; fDocumentCancellation.Designer.vb:201].
+validations:
+- Select Source Document.
+- Select Ref Document No.
+- Authorized Production Cost Allocation can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized entry can't be deleted.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- document-cancellation
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- reverse-voucher
+method_notes:
+  Delete: Deletes the record through Finance.AUDCDelete.
+  FillReverseVoucher: Runs through Finance.AUDCFillReverseVoucher.
+  FillValues: Fills the lookup lists through Finance.AUDCFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.AUDCFillValuesDependent.
+  FillVoucherDetail: Runs through Finance.AUDCFillVoucherDetail.
+  LoadData: Loads the selected record through Finance.AUDCLoadData.
+  Open: Searches records through Finance.AUDCSearchData.
+  Save: Saves the record through Finance.AUDCSave.
+  SaveChildVoucherDetail: Saves the record through Finance.VoucherSaveChildDetail.
+  ValidateForm: Validates the entry through Finance.AUDCValidate.

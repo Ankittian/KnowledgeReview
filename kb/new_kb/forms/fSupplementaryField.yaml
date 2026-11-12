@@ -1,0 +1,41 @@
+form: fSupplementaryField
+title: Supplementary Field
+module: MD
+kind: master
+summary: The Supplementary Field screen maintains the extra data items that can be recorded against equipment, for example
+  a registration number.
+purpose: |
+  What it is: A master record made of a code, a field name, a data type, a nature and a unit [fSupplementaryField.vb:348-407; masterdata.AMSFSave:38-78]. When it applies: When the plant needs to capture an additional attribute on equipment that has no standard place on the equipment screen. Business outcome: Extra equipment attributes come from a controlled list, so the same attribute is captured the same way everywhere.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single small window titled "Supplementary Field" with Code, Field Name, Data Type, Nature, Unit and Inactive [fSupplementaryField.designer.vb:174].
+  - Code Field: A read-only text box of up to 6 characters that cannot be tabbed into; it is marked as compulsory on load although never validated [fSupplementaryField.designer.vb:44-49; fSupplementaryField.vb:54].
+  - Field Name Field: A mandatory text box, up to 50 characters; leading and trailing spaces are removed [fSupplementaryField.vb:54; fSupplementaryField.designer.vb:64; fSupplementaryField.vb:289; fSupplementaryField.vb:366].
+  - Data Type Field: A mandatory drop-down [fSupplementaryField.vb:54; fSupplementaryField.vb:110].
+  - Nature Field: A mandatory drop-down [fSupplementaryField.vb:54; fSupplementaryField.vb:112].
+  - Unit Field: A mandatory drop-down showing the unit alias with its code [fSupplementaryField.vb:54; fSupplementaryField.vb:113].
+  - Inactive Field: A disabled tick box labelled "Inactive" [fSupplementaryField.designer.vb:137-142].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fSupplementaryField.vb:221-255].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fSupplementaryField.vb:179-189].
+  Save: The toolbar action that validates and stores the field [fSupplementaryField.vb:348-407].
+  Search: The toolbar action that opens a search dialog listing the fields of the logged-in company with Code, Supplementary
+    Field, Data Type, Nature, Inactive and Created By [fSupplementaryField.vb:192-219; masterdata.AMSFSearchData:18-31].
+  Delete: The toolbar action that removes the open field [fSupplementaryField.vb:62-94].
+validations:
+- Enter Supplementary Field.
+- Select valid DataType.
+- Select valid Nature.
+- Select valid Unit.
+- Duplicate Supplementary Field not allowed.
+manages:
+- supplementary-field
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AMSFDelete.
+  FillValues: Fills the lookup lists through masterdata.AMSFFillValues.
+  LoadData: Loads the selected record through masterdata.AMSFLoadData.
+  Open: Searches records through masterdata.AMSFSearchData.
+  Save: Saves the record through masterdata.AMSFSave.
+  ValidateForm: Validates the entry through masterdata.AMSFValidate.

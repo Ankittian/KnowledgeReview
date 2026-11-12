@@ -1,0 +1,60 @@
+form: fTDSPayment
+title: TDS Payment
+module: FI
+kind: transaction
+summary: The TDS Payment screen records the monthly remittance of Tax Deducted at Source (TDS) that the company has withheld
+  on vendor bills and salary.
+purpose: |
+  What it is: A document that groups the TDS deductions of a month for one Tax Book and one TDS Rule and records that they are being paid to the tax authority, with interest for late payment [Finance.TDSPFillValuesDependent:29-104; Finance.TDSPSaveMain:158-163]. When it applies: When the company deposits withheld TDS, normally by the statutory challan due date of the following month. Business outcome: Every deduction is paid once, late-payment interest is computed consistently from the TDS Setting, and the payable amount flows to the cash or bank payment (BR-06; BR-10; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control strip at the top, a group of six header fields in two columns, and a TDS lines grid below [fTDSPayment.Designer.vb:50; fTDSPayment.Designer.vb:176].
+  - Document Control (Number, Date, Status, Finance Book): The standard document control embedded at the top [fTDSPayment.vb:139; fTDSPayment.vb:286].
+  - Tax Book Field: Mandatory dropdown "Tax Book" [fTDSPayment.vb:81; fTDSPayment.Designer.vb:76].
+  - Month Field: Date picker in format MMM-yyyy, label "Month" [fTDSPayment.Designer.vb:116; fTDSPayment.Designer.vb:131].
+  - TDS Rule Field: Mandatory dropdown "TDS Rule" [fTDSPayment.vb:81; fTDSPayment.Designer.vb:150].
+  - Reference No. Field: Optional text box, up to 50 characters, trimmed on save [fTDSPayment.vb:123; fTDSPayment.vb:493].
+  - Reference Date Field: Optional date picker "Reference Date", format dd/MM/yyyy; if its tick box is unchecked, no date is stored [fTDSPayment.Designer.vb:97-112; fTDSPayment.vb:495-499].
+  - Payment Mode Field: Mandatory dropdown "Payment Mode" [fTDSPayment.vb:81; fTDSPayment.Designer.vb:169].
+  - TDS Lines Grid: A read-only grid, no insert or delete of rows, with columns Tax Book, Document No., Document Date, Party Name, Vendor Bill No., Vendor Bill Date, Vendor Bill Amount, Taxable Amount, TDS Amount, Edu Cess, SHE Cess, Total TDS, Diff.
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Handlers exist but are empty [fTDSPayment.vb:231-263].
+actions:
+  Search: Opens the common search window listing documents of the company and financial year [fTDSPayment.vb:204-229; Finance.TDSPSearchData:13-36].
+  New: Resets the screen through the main window [fTDSPayment.vb:195-202; fTDSPayment.vb:265-280].
+  Save: Validates and saves in one transaction [fTDSPayment.vb:459-542].
+  Delete: Deletes the loaded document after confirmation [fTDSPayment.vb:87-111].
+validations:
+- Authorized TDSPayable can't be updated.
+- Select valid Tax Book.
+- Selected Month can't be greater than Document Date.
+- Select valid TDS Rule.
+- Reference Date can't be greater than Document Date.
+- Select valid Payment Mode.
+- No detail of Tax found.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- TDS Penalty account is not created.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- tds-payment
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+method_notes:
+  Delete: Deletes the record through Finance.TDSPDelete.
+  FillValues: Fills the lookup lists through Finance.TDSPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.TDSPFillValuesDependent.
+  LoadData: Loads the selected record through Finance.TDSPLoadData.
+  Open: Searches records through Finance.TDSPSearchData.
+  Save: Saves the record through Finance.TDSPSaveMain.
+  ValidateForm: Validates the entry through Finance.TDSPValidate.

@@ -1,0 +1,55 @@
+form: fChgInDepreciationProv
+title: Change In Depreciation Provision
+module: FI
+kind: transaction
+summary: The Change In Depreciation Provision screen revises the remaining life and depreciation rate of asset tags after
+  the depreciation rule for their class has changed.
+purpose: |
+  What it is: A document that records, per asset tag, a new remaining life and depreciation rate and the depreciation still to be provided or reversed [fChgInDepreciationProvision.vb:614-731; FixedAsset.CIDPFillValuesDB:44-75]. When it applies: When a rule change alters the rate or life of assets already in use, or when an asset's life has been exhausted but a balance remains. Business outcome: The books and later depreciation runs follow the revised rate, and any remaining balance is written into the ledgers once.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window with the document block, a "Depreciation Book" field and three tabs: "General Detail", "Posting Detail" and "Posting Reversal Detail" [fChgInDepreciationProvision.designer.vb:90; fChgInDepreciationProvision.designer.vb:213-224].
+  - Document Block (Document No., Date, Status, Finance Book): A shared control for number, date, status and finance book [fChgInDepreciationProvision.vb:183; fChgInDepreciationProvision.vb:371-373].
+  - Depreciation Book Field: A mandatory drop-down labelled "Depreciation Book" [fChgInDepreciationProvision.vb:128; fChgInDepreciationProvision.designer.vb:90].
+  - Tag Grid: A grid in three column groups.
+  - Posting Detail and Posting Reversal Detail Tabs: The finance posting controls showing the generated voucher lines [fChgInDepreciationProvision.vb:868-952].
+  - Hidden Maintenance Keys: Two key combinations on the form (Alt+Ctrl+V, Alt+Ctrl+G) that regenerate the voucher lines and, for the second, step through all documents and put update statements on the clipboard [fChgInDepreciationProvision.vb:49-110].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty routines [fChgInDepreciationProvision.vb:279-311].
+actions:
+  New: Asks the main window for a blank record [fChgInDepreciationProvision.vb:242-249].
+  Save: Validates and stores the document, its tag rows and the vouchers [fChgInDepreciationProvision.vb:614-691].
+  Search: Opens a list of documents of the company and year with Document No., Document Date, Finance Book, Status, Depreciation
+    Book, Created By, Released By and Authorized By [fChgInDepreciationProvision.vb:251-277; FixedAsset.CIDPSearchData:18-39].
+  Delete: Deletes the open document after confirmation [fChgInDepreciationProvision.vb:137-163].
+validations:
+- Select valid Depreciation Book.
+- Authorized Change In Depreciation Provision can't be updated.
+- Authorized entry can't be updated.
+- Select atleast one Asset Tag.
+- As per New Rule Depreciation Rate can't be empty or 0
+- ' in row '
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+- Functionality not available.
+manages:
+- change-in-depreciation-provision
+uses_concepts:
+- asset-class
+- asset-disposal
+- asset-group
+- class-account-item-mapping
+- company
+- depreciation-rule
+- depreciation-rule-class-mapping
+method_notes:
+  Delete: Deletes the record through FixedAsset.CIDPDelete.
+  FillValues: Fills the lookup lists through FixedAsset.CIDPFillValues.
+  FillValuesDB: Fills the lookup lists through FixedAsset.CIDPFillValuesDB.
+  FillValuesFB: Fills the lookup lists through FixedAsset.CIDPFillValuesFB.
+  LoadData: Loads the selected record through FixedAsset.CIDPLoadData.
+  Open: Searches records through FixedAsset.CIDPSearchData.
+  Save: Saves the record through FixedAsset.CIDPSaveMain.
+  SaveDepreciationAssetTagDetail: Saves the record through FixedAsset.DepreciationSaveAssetTagDetail.
+  SaveTag: Saves the record through FixedAsset.CIDPSaveTagDetail.
+  ValidateForm: Validates the entry through FixedAsset.CIDPValidate.

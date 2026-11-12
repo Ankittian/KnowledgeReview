@@ -1,0 +1,106 @@
+key: p3-master-entry-masters
+name: Master data set-up (Phase 3)
+module: MD
+status: active
+summary: Phase 3 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Account Mapping, Sales Order Status Category, Sales Order Custom Status, Sales Organization, LUT Master, Multiple Layout Mapping, Check List Document Group, Pricing Factor, Measurement Parameter, Sale Account Posting Rule, Attribute Master, Enquiry Type, Order Nature, INCO Terms Master, Vendor Group, Sales Person, Sales Group, Transit Insurance Policy, Layout Design, Commission Terms, Cost Group, TDS TCS Setup Yearly, TDS TCS Setup, Cost Head.
+steps:
+- order: 1
+  name: Maintain Account Mapping
+  form: fFSLayoutDesignMapping
+- order: 2
+  name: Maintain Sales Order Status Category
+  form: fSalesOrderStatusCategory
+- order: 3
+  name: Maintain Sales Order Custom Status
+  form: fSOCustomStatus
+- order: 4
+  name: Maintain Sales Organization
+  form: fSalesOrganization
+- order: 5
+  name: Maintain LUT Master
+  form: fLUTMaster
+- order: 6
+  name: Maintain Multiple Layout Mapping
+  form: fFSMultiLayoutMapping
+- order: 7
+  name: Maintain Check List Document Group
+  form: fDocCheckListGroup
+- order: 8
+  name: Maintain Pricing Factor
+  form: fPricingFactor
+- order: 9
+  name: Maintain Measurement Parameter
+  form: fMeasurementParameter
+- order: 10
+  name: Maintain Sale Account Posting Rule
+  form: fSaleAccPostingRule
+- order: 11
+  name: Maintain Attribute Master
+  form: fItemAttribute
+- order: 12
+  name: Maintain Enquiry Type
+  form: fEnquiryType
+- order: 13
+  name: Maintain Order Nature
+  form: fOrderNature
+- order: 14
+  name: Maintain INCO Terms Master
+  form: fIncoTermMaster
+- order: 15
+  name: Maintain Vendor Group
+  form: fVendorGroup
+- order: 16
+  name: Maintain Sales Person
+  form: fSalesPerson
+- order: 17
+  name: Maintain Sales Group
+  form: fSalesGroup
+- order: 18
+  name: Maintain Transit Insurance Policy
+  form: fTransitInsurancePolicy
+- order: 19
+  name: Maintain Layout Design
+  form: fFSLayoutDesign
+- order: 20
+  name: Maintain Commission Terms
+  form: fSalesCommissionTerms
+- order: 21
+  name: Maintain Cost Group
+  form: fCostGroup
+- order: 22
+  name: Maintain TDS TCS Setup Yearly
+  form: fTDSTCSSetupYearly
+- order: 23
+  name: Maintain TDS TCS Setup
+  form: fTDSTCSSetup
+- order: 24
+  name: Maintain Cost Head
+  form: fCostHead
+concepts:
+- account-mapping
+- sales-order-status-category
+- sales-order-custom-status
+- sales-organization
+- lut-master
+- multiple-layout-mapping
+- check-list-document-group
+- pricing-factor
+- measurement-parameter
+- sale-account-posting-rule
+- attribute-master
+- enquiry-type
+- order-nature
+- inco-terms-master
+- vendor-group
+- sales-person
+- sales-group
+- transit-insurance-policy
+- layout-design
+- commission-terms
+- cost-group
+- tds-tcs-setup-yearly
+- tds-tcs-setup
+- cost-head

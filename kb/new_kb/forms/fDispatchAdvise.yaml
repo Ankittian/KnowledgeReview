@@ -1,0 +1,78 @@
+form: fDispatchAdvise
+title: Dispatch Advice
+module: SD
+kind: transaction
+summary: The Dispatch Advice screen records an instruction to dispatch quantities of open sales-order lines, either directly
+  against sales orders or against authorized dispatch plannings.
+purpose: |
+  What it is: A document that tells the dispatch side what to send, to whom, and with which vehicle, based on sales orders or an authorized dispatch planning. When it applies: After orders (and optionally a dispatch planning) exist and before goods are invoiced or leave the gate. Business outcome: Dispatch quantities are controlled against order and plan balances, and the vehicle details are captured before dispatch.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The document-number control, a header area with transport fields and the Notes control, and three tabs: Document Detail, Item Detail and Custom Field [fDispatchAdvise.Designer.vb:410-419].
+  - Document No., Date, Division and Status Control: The shared control for yearly document number (or automatic number from a prefix), Document Date, Division and Status.
+  - Source Document Field: A mandatory dropdown listing Sales Order and Dispatch Planning (Joint Inspection exists in the lookup but is not offered) [Sales.SDDAFillValues:155-160] [fDispatchAdvise.vb:187].
+  - Sales Category Field: A mandatory dropdown of Domestic and Export categories; the default is preselected [Sales.SDDAFillValues:102-111] [fDispatchAdvise.vb:187].
+  - Delivery Mode, Transporter Name, Freight Type, From Location, To Location Fields: Optional dropdowns; defaults of Delivery Mode and Freight Type are preselected on New [fDispatchAdvise.vb:289-301].
+  - Vehicle Type, Vehicle No., Driver Name, Licence No., Contact No. Fields: Vehicle Type is a text-or-list field (up to 25 characters) listing earlier vehicle types; Vehicle No.
+  - Driver Search Button: A button beside the driver fields that opens a search window of previously saved driver, licence and contact combinations [fDispatchAdvise.vb:2137-2162] [Sales.SDDAFillValues:173-177].
+  - Remarks Field: Optional text, up to 1000 characters [fDispatchAdvise.Designer.vb:425].
+  - Notes Control: The shared Notes control (Print Area, Notes, Default).
+  - Document Detail Grid: The grid of dispatch plannings: Select, Dispatch Plan No., Dispatch Date, Planning From Date, Planning To Date and Customer [Sales.SDDAFillValues:162-171] [fDispatchAdvise.vb:2192-2215].
+  - Item Detail Grid: The grid of order lines.
+  - Shipment Detail Popup: A popup grid of Consignee Name, Consignee Location, a search button, Attribute and Quantity, with Ok and Cancel [Sales.SDDAFillValues:64-73].
+  - Dispatch Planning Detail Popup: A popup grid of Dispatch Plan No., Dispatch Plan Date and Quantity per ticked plan for one item line, with Ok and Cancel [fDispatchAdvise.vb:2320-2335].
+  - Technical Description and Specification Popups: Popups to view the item's technical description and quality specification; Ok and Cancel [fDispatchAdvise.vb:2394-2415].
+  - Custom Field Tab: The shared Custom Field grid.
+  - Navigation and Other Toolbar Actions (First, Previous, Next, Last, Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: Starts a blank advice.
+  Save: Validates and stores the advice.
+  Search: Opens the common search window of advices of the company and year (head office sees all companies).
+  Delete: Deletes the loaded advice after confirmation.
+validations:
+- Select valid Source Document.
+- Authorized Dispatch Advise can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Black listed Vehicle can not be used.
+- Select atleast one Document.
+- Select Dispatch Plan of logged in company in row <n>.
+- Dispatch Plan does not belong to logged in company in row <n>. Do you want to continue?
+- Select atlease one Order.
+- Document date can't be less than sales order date.
+- Quantity can't be empty or zero in row <n>.
+- Quantity. can't be greater than Balance Advise Qty. + Tolerance Qty.  in row <n>.
+- Agent Name for Location <location>must be same.
+- Quantity (Dispatch Planning Detail) should be equal to Quantity  in row <n>.
+- Quantity can not be greater than Balance Planning Qty. + Tolerance Qty. in row  <n>.
+- Quantity is greater than Balance Planning Qty. + Tolerance Qty. in row <n>. Do you want to continue?
+- Bill To Party Name not same as previous name. in row  <n>.
+- Agent Name not same as previous name. in row  <n>.
+- Do you want to continue?
+- Consignee Name not matching. in row  <n>.
+- Consignee Location not matching. in row  <n>.
+- Select valid Consignee Location in row <n>.
+- Select atleast one Shipment Detail.
+- Total Quantity should be equal to <qty> in row <n>.
+- Duplicate Consignee Name is not allowed for same Consignee Location and Attribute.
+- Total Quantity should be equal to <qty>.
+- Quantity can't be greater than <qty> in row <n>.
+- Unable to delete, Invoice entry exists for this Dispatch Advice.
+- Unable to delete, Gate entry exists for this Dispatch Advice.
+- Document No. <no> saved successfully.
+manages:
+- dispatch-advice
+uses_concepts:
+- company
+- dispatch-planning
+method_notes:
+  Delete: Deletes the record through Sales.SDDADelete.
+  FillValues: Fills the lookup lists through Sales.SDDAFillValues.
+  Fillvaluesdependent: Fills the lookup lists through Sales.SDDAFillValuesDependent.
+  LoadData: Loads the selected record through Sales.SDDALoadData.
+  Open: Searches records through Sales.SDDASearchData.
+  Save: Saves the record through Sales.SDDASave.
+  SaveConsigneeDetail: Saves the record through Sales.SDDASaveConsigneeDetail.
+  SaveCustomFieldDetail: Saves the record through Sales.SDDASaveCustomFieldDetail.
+  SaveDispatchPlanDetail: Saves the record through Sales.SDDASaveDispatchPlanDetail.
+  SaveItemDetail: Saves the record through Sales.SDDASaveItemDetail.

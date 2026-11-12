@@ -1,0 +1,25 @@
+form: fWeighBridgeDefaultMachineSetting
+title: Weigh Bridge Default Machine Setting
+module: WB
+kind: transaction
+summary: The Weigh Bridge Default Machine Setting screen tells the application which weigh bridge machine the current computer
+  is connected to.
+purpose: |
+  What it is: A per-workstation choice of weigh bridge machine, stored in the local user settings of the computer [fWeighBridgeDefaultMachineSetting.vb:163-165]. When it applies: When a workstation is set up for weighment, or when it is moved to another weigh bridge. Business outcome: Each weighment is read from the scale attached to the computer in use.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A small group box holding the Machine Name drop-down [fWeighBridgeDefaultMachineSetting.Designer.vb:51-58].
+  - Machine Name Field: A mandatory drop-down showing Machine Name with Code as a second column [fWeighBridgeDefaultMachineSetting.vb:41; fWeighBridgeDefaultMachineSetting.vb:62; fWeighBridgeDefaultMachineSetting.Designer.vb:44].
+  - Other Toolbar Actions (Delete, Open, Search, Print, Preview, Export, Email): Handlers that are empty [fWeighBridgeDefaultMachineSetting.vb:47-49; fWeighBridgeDefaultMachineSetting.vb:78-80; fWeighBridgeDefaultMachineSetting.vb:91-127].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWeighBridgeDefaultMachineSetting.vb:82-89].
+  Save: The toolbar action that stores the choice on this computer [fWeighBridgeDefaultMachineSetting.vb:152-182].
+validations:
+- Select valid Machine Name.
+- Saved succesfully.
+manages:
+- weigh-bridge-default-machine-setting
+uses_concepts:
+- weighment-machine-master
+method_notes:
+  FillValues: Fills the lookup lists through WeighBridge.DWMSFillValues.

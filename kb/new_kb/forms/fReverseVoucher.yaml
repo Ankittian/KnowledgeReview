@@ -1,0 +1,53 @@
+form: fReverseVoucher
+title: Reverse Voucher
+module: FI
+kind: transaction
+summary: The Reverse Voucher screen records a temporary accounting entry that must be undone on a later date, such as an accrual
+  booked at month end and reversed at the start of the next month.
+purpose: |
+  What it is: Records an entry together with its automatic offsetting entry on a future date. When it applies: A user books an accrual, provision or advance that is valid only until a known date. Business outcome: The reversal is created at the same time as the entry, so it cannot be forgotten (BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: Document number, date, finance book, status and prefix, with a repeat entry button [fReverseVoucher.vb:38].
+  - Voucher Type Field: "Voucher T&ype" list with Regular and Inter FB; read-only on this screen [Voucher.cs:126-129].
+  - Reversal Date Field: Date field "Reversal Da&te" shown only for this type [Voucher.cs:106-124; fReverseVoucher.Designer.vb:64].
+  - Voucher Grid: Columns Type, Account Name, Current Balance, Balance Amount, Debit Amount, Credit Amount, Ref.
+  - Ref. Detail, Cost Center, Qty. Detail and TDC Rule Pop-ups: Pop-up editors opened from the grid cells.
+  - Hidden Reversing Journal Control: A second voucher control, configured as a Journal and not visible, placed off-screen [fReverseVoucher.Designer.vb:36; fReverseVoucher.Designer.vb:38; fReverseVoucher.Designer.vb:53].
+  - Narration Field: "&Narration" text area; the journal receives the same narration [fReverseVoucher.vb:197].
+  - Total Debit and Total Credit: Running totals of the grid.
+actions:
+  Toolbar: New, Save, Open, Delete, Navigation, Print, Print Preview, Export, Email [fReverseVoucher.vb:20-28].
+validations:
+- On Account can't be selected for reverse voucher
+- Reversal Date can't be less than Document Date.
+- Authorized entry can't be updated.
+- Finance Book is closed for this Document Date.
+- Contact your vendor,Reference getting -ve
+- Do you want to print?
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- reverse-voucher
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- cash-journal
+- change-voucher-status
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- recurring-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.VoucherDelete.
+  Open: Searches records through Finance.VoucherSearchData.
+  Save: Saves the record through Finance.VoucherSaveChildDetail.

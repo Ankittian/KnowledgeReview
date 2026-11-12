@@ -1,0 +1,18 @@
+key: p4-inventory-indent-budget
+name: 'Inventory: Indent & budget (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the indent & budget group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Indent & budget' (Inventory). The steps follow the plan order, not a verified business sequence: Budget, Budget Amendment.
+steps:
+- order: 1
+  name: Record Budget
+  form: fBudget
+- order: 2
+  name: Record Budget Amendment
+  form: fBudgetAmendment
+concepts:
+- budget
+- budget-amendment

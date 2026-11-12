@@ -1,0 +1,53 @@
+key: procure-to-pay
+name: Procure-to-Pay (PO Flow)
+module: MM
+status: active
+summary: A department's need becomes a material request, a purchase request, an RFQ, quotations, a comparison and a purchase
+  order.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Material requests that the store cannot meet become purchase requests (indents); the buyer sends RFQs, records vendor quotations, compares them and places the purchase order on an approved vendor, then receives the goods.
+steps:
+- order: 1
+  name: Set up purchase organizations
+  form: fPurchaseOrganization
+- order: 2
+  name: Define sub group approved vendors and makes
+  form: fMaterialSubGroupMaster
+- order: 3
+  name: Raise a material request
+  form: fIndentRequisition
+- order: 4
+  name: Raise a purchase request
+  form: fIndent
+- order: 5
+  name: Send a request for quotation
+  form: fRequestforQuotation
+- order: 6
+  name: Record vendor quotations
+  form: fQuotation
+- order: 7
+  name: Compare quotations
+  form: fCS
+- order: 8
+  name: Create the purchase order
+  form: fPurchaseOrder
+- order: 9
+  name: Record the gate inward
+  form: fGateEntry
+- order: 10
+  name: Receive the goods
+  form: fGRN
+concepts:
+- material-request
+- purchase-order
+- vendor
+- make
+- purchase-request
+- rfq
+- vendor-quotation
+- comparative-statement
+- purchase-organization
+leads_to:
+- goods-receipt-quality-inspection
+- payment-flow

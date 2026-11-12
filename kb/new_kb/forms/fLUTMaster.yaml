@@ -1,0 +1,42 @@
+form: fLUTMaster
+title: LUT Master
+module: MD
+kind: master
+summary: The LUT Master screen records the company's Letters of Undertaking (LUT), the tax authority acceptance that allows
+  exports without payment of tax (Inferred).
+purpose: |
+  What it is: A company-level register of LUTs with their validity period and export type. When it applies: When a new LUT is accepted, typically each financial year (Inferred). Business outcome: Export documents can quote a valid LUT (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with four fields.
+  - LUT No. Field: Mandatory text box, up to 50 characters (BR-01).
+  - Export Type Field: Dropdown of export types; required by validation but not marked compulsory (BR-03).
+  - Accepted Date Field: Date picker, format "dd/MM/yyy"; defaults to the working date (BR-04, BR-05).
+  - Validity Date Field: Date picker, format "dd/MM/yyy"; defaults to the working date (BR-04, BR-05).
+  - Description Label: A hidden label with no field.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; handlers are empty (BR-06).
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the LUT.
+  Search: Standard search with Export Type, LUT No., Acceptance Date, Validity Date, Created By, Created Date, newest first.
+  Delete: Deletes the loaded LUT after confirmation (MSG-08).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-06).
+validations:
+- Enter LUT No.
+- Duplicate LUT No is not allowed.
+- Select a valid Export Type.
+- Acceptance date can't be less than Validity date.
+- Do you want to save ?
+- Data saved successfully.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- lut-master
+method_notes:
+  Delete: Deletes the record through Finance.LUTMDelete.
+  FillValues: Fills the lookup lists through Finance.LUTMFillValues.
+  LoadData: Loads the selected record through Finance.LUTMLoadData.
+  Open: Searches records through Finance.LUTMSearchData.
+  Save: Saves the record through Finance.LUTMSave.
+  ValidateForm: Validates the entry through Finance.LUTMValidate.

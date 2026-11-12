@@ -1,0 +1,54 @@
+form: fRevisedQuotation
+title: Revised Quotation
+module: MM
+kind: transaction
+summary: The Revised Quotation screen records a vendor's changed offer against a quotation that was already entered and authorized
+  on the [Quotation](Functional_Doc_fQuotation.md) screen.
+purpose: |
+  What it is: A numbered revision (1, 2, 3 and so on) of a vendor quotation, kept next to the original so that the history of price and term changes is retained [fRevisedQuotation.vb:202; Purchase.POMQLoadData:38-42]. When it applies: When a vendor changes its price, terms or quantities after the quotation has been authorized. Business outcome: Purchasing orders against the latest authorized offer while earlier offers stay on record.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Same layout as the [Quotation](Functional_Doc_fQuotation.md) screen, Section 5 'Document Header Area' and 'Tabbed Header Area', with these differences.
+  - Quotation No. Field: Dropdown (mandatory by choice, MSG-02) of quotations that can be revised.
+  - Revision No. and Revision Date Fields: Revision No.
+  - Vendor Quotation No., Vendor Quotation Date, Validity Date, Freight Type, Payment Mode, Credit Days, Remark: Same fields and meaning as on the Quotation screen, loaded from the live offer and editable.
+  - Currency Control, Tax Details, Terms Condition and Custom Field Tabs: Same as on the Quotation screen: Section 5 'Currency Control', 'Tax Details Tab', 'Terms Condition Tab', 'Custom Field Tab' of [Quotation](Functional_Doc_fQuotation.md).
+  - Document Status Field: "Document &Status" dropdown.
+  - Item Details Grid: Same grid as the Quotation screen's 'Item Details Grid' (Select, Item Code, Item Description, Make, HSN and SAC Code, Tech.
+actions:
+  New, Search and Navigation: New clears the screen.
+  Save: Validates, asks for confirmation, saves, then shows MSG-16 and opens a new screen [fRevisedQuotation.vb:336-447].
+  Delete: Deletes the loaded revision after confirmation (MSG-20) [fRevisedQuotation.vb:41-72].
+validations:
+- Authorized Revised Quotation can't be updated.
+- Select valid Quotation No.
+- Revision Date can't be less than RFQ Date.
+- Enter Vendor Quotation No.
+- Vendor Quotation Date can't be less than RFQ Date.
+- Select valid Frieght Type.
+- Select valid Payment Mode.
+- Select valid Document Status.
+- Select atleast one Item.
+- Quantity can't be empty or zero in row
+- Rate can't be empty or zero in row
+- 'Quantity can''t be less than booked Qty '
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- PO is Prepared against this quoation,so you can't save this entry.
+- Financial Year is not defined for selected document date.
+- PO is Prepared against this quoation,so you can't delete this entry.
+manages:
+- revised-quotation
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Purchase.POMQDelete.
+  FillValueDependent: Fills the lookup lists through Purchase.POMQFillValuesDependent.
+  FillValues: Fills the lookup lists through Purchase.POMQFillValues.
+  Open: Searches records through Purchase.POMQSearchData.
+  QuotationLoadData: Loads the selected record through Purchase.POMQLoadData.
+  Save: Saves the record through Purchase.POMQSave.
+  SaveCustomFields: Saves the record through Purchase.POMQSaveCustomFieldDetail.
+  SaveItemDetails: Saves the record through Purchase.POMQSaveItemDetail.
+  SaveItemTaxDetails: Saves the record through Purchase.POMQSaveItemTaxDetail.
+  SaveItemTechSpecificationDetail: Saves the record through Purchase.POMQSaveItemTechSpecificationDetail.

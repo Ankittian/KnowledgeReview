@@ -1,0 +1,18 @@
+key: p5-purchase-service-subcontract
+name: 'Purchase: Service / subcontract (Phase 5)'
+module: MM
+status: active
+summary: Phase 5 screens of the service / subcontract group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Service / subcontract' (Purchase). The steps follow the plan order, not a verified business sequence: Service Quotation, Revised Service Quotation.
+steps:
+- order: 1
+  name: Record Service Quotation
+  form: fSCQuotation
+- order: 2
+  name: Record Revised Service Quotation
+  form: fRevisedSCQuotation
+concepts:
+- service-quotation
+- revised-service-quotation

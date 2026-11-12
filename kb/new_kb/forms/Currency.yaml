@@ -1,0 +1,18 @@
+usercontrol: Currency
+title: Currency control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded panel for document currency, rate type, date and conversion rate.
+purpose: |
+  Shows the currency, rate type, on-date and conversion rate of a document; the list comes from CurrencyFillValues.
+functional_description: |
+  Embedded in: CurrencyRET, Voucher, fAdvancePassing, fAssetCapitalization, fAssetDisposal, fBillEntryEROS, fBillOfExchange, fCommissionBill, fDDPosting, fDepreciation, fDrCrNote, fExpenseAdvance, fExpenseApproval, fExpenseEntry, fExpensePolicy, fFreightInvoice, fGSTAdvanceAdjustment, fGSTAdvanceReceipt, fGeneralPIReceipt, fInputExcisePosting, fLC, fLCAmendment, fOutwardBillEntry, fPIReceipt, fRecurringVoucher, fServiceBill, fSetOpeningBalance, fSundryPayment, fSundryReceipt.
+  On-screen fields: Conversion Rate, Currency, On Date, Rate Type.
+uses_concepts:
+- currency
+- currency-exchange-rate
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.CurrencyFillValues.
+  dtpOnDate_ValueChanged: Fills the lookup lists through masterdata.CurrencyFillValues.

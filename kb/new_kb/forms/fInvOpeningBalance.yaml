@@ -1,0 +1,72 @@
+form: fInvOpeningBalance
+title: Multi Item Opening
+module: MM
+kind: transaction
+summary: The Multi Item Opening screen records the opening stock of many items in one session.
+purpose: |
+  What it is: A fast way to load the stock on hand at the inventory start date for many items, with the detail needed to track it later. When it applies: When a company starts using inventory or a new warehouse is brought on. Business outcome: Stock ledgers and lot-wise stock start from a known quantity and value, and the finance opening balance can agree with them.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The upper area with the stock combination and the read-only Opening Date.
+  - Division Field: Dropdown labelled "&Division" [fInvOpeningBalance .Designer.vb:243].
+  - Warehouse Field: Dropdown labelled "&Warehouse", mandatory [fInvOpeningBalance .Designer.vb:252].
+  - Ownership Field: Dropdown labelled "&Ownership" with Own and Party, mandatory [fInvOpeningBalance .Designer.vb:261].
+  - Stock Nature Field: Dropdown labelled "Stock &Nature", mandatory [fInvOpeningBalance .Designer.vb:234].
+  - Stock Type Field: Dropdown labelled "Stock &Type" with Capital and Non-Capital, mandatory [fInvOpeningBalance .Designer.vb:175].
+  - Opening Date Field: Read-only text labelled "Opening Date" [fInvOpeningBalance .Designer.vb:222; fInvOpeningBalance .Designer.vb:270].
+  - Item Grid: A grid with Select, Category, Group, SubGroup, Item Code, Item Description, Make, Unit, Quantity, Rate, Total Amount, Expiry Date and an Other Details button.
+  - Other Details Panel: A row-edit panel opened from the Other Details button of a ticked row, with a grid of lots (Department, Cost Center, BIN Card, Party Name, Party Location, Bill No., Bill Date, Batch No., Quantity, Rate, Amount, Reserve Stock) and "O&k" and "Cance&l" buttons [fInvOpeningBalance .Designer.vb:84; fInvOpeningBalance .Designer.vb:111; fInvOpeningBalance .Designer.vb:120; fInvOpeningBalance .vb:859-903]
+  - Import Button: Button labelled "&Import" [fInvOpeningBalance .Designer.vb:156].
+  - Item Not Found Panel: A panel titled "Item Not Found" with the unmatched import rows, shown below the item grid and hidden otherwise [fInvOpeningBalance .Designer.vb:279; fInvOpeningBalance .vb:1222-1238].
+actions:
+  New: Toolbar New [fInvOpeningBalance .vb:17].
+  Save: Toolbar Save [fInvOpeningBalance .vb:19].
+  Search: Toolbar Open with a search list [fInvOpeningBalance .vb:20; fInvOpeningBalance .vb:186-210].
+  Delete: Toolbar Delete [fInvOpeningBalance .vb:23; fInvOpeningBalance .vb:33-63].
+  Navigation and Other Toolbar: Navigation enabled; Print, Preview, Email, Export empty [fInvOpeningBalance .vb:22; fInvOpeningBalance
+    .vb:212-216; fInvOpeningBalance .vb:1120-1126].
+validations:
+- Start Date of Inventory is not define. Please contact your vendor.
+- Select valid Division.
+- Select valid Warehouse.
+- Select valid Ownership.
+- Select valid Stock Nature.
+- Select valid Stock nature.
+- Select valid Stock Type.
+- Select atleast one Item.
+- 'Quantity can''t be empty or zero in row '
+- 'Stock Account is not created against item in row '
+- 'Stock Clearing Account is not created against item in row '
+- 'Select Expiry Date in row '
+- 'Expiry Date can not less than opening date in row '
+- 'Rate can''t be empty in row '
+- Select valid Department/Cost Center/BIN / Batch No.
+- Rate can't be empty.
+- 'Sum of Quantity should be equal to '
+- ' [Quantity].'
+- 'Sum of Total Amount should be equal to '
+- ' with Cost Center.'
+- 'Select valid Department/ Cost Center/BINCard/Batch No. in row '
+- 'Select valid Party Name in row '
+- 'Sum of Quantity should be equal '
+- Duplicate Item and Make is not allowed.
+- 'Quantity can''t be less than issued Qty '
+- Few item not found, please check list mentioned below.
+- Balance sheet is prepared ,so you can't make change in Opening
+manages:
+- multi-item-opening
+uses_concepts:
+- company
+- inter-unit-stock-transfer
+- material-category
+- pack-slip
+- picking
+- stock-transfer
+method_notes:
+  Delete: Deletes the record through Inventory.IMIODelete.
+  FillValueDependent: Fills the lookup lists through Inventory.IMIOFillValuesDependent.
+  FillValues: Fills the lookup lists through Inventory.IMIOFillValues.
+  LoadData: Loads the selected record through Inventory.IMIOLoadData.
+  Open: Searches records through Inventory.IMIOSearchData.
+  SaveFinanceOpening: Saves the record through Inventory.IMIOSaveFinanceOpening.
+  SaveItemDetails: Saves the record through Inventory.IMIOSave.

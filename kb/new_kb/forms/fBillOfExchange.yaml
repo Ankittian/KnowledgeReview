@@ -1,0 +1,73 @@
+form: fBillOfExchange
+title: Bill of Exchange
+module: FI
+kind: transaction
+summary: The Bill of Exchange screen (window caption "BillOfExchange") records a draft drawn under an Authorized, usance Letter
+  of Credit.
+purpose: |
+  What it is: A document recording one draft under a usance LC with its utilized source documents, charges and, for payable LCs, its vouchers [fBillOfExchange.vb:451-556; Finance.FBOESaveMain:33-184; Finance.FBOESaveInvoiceDetail:22-39]. When it applies: When the bank accepts a draft against an LC whose due date is not based on the order. Business outcome: The LC utilization, the interest and the payable to the bank or supplier are recorded against the right documents.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "BillOfExchange" with a document header control, an LC detail group, a source document grid, a charges area and tabs "General Detail", "Custom Detail", "LC Payable Posting" and "Other Charges Posting" [fBillOfExchange.designer.vb:1094; fBillOfExchange.designer.vb:800-811].
+  - Document Header: The shared document control with Finance Book, Document No., Document Date and Document Status [fBillOfExchange.vb:79; fBillOfExchange.vb:253-258].
+  - LC No. Field: A mandatory drop-down showing LC No.
+  - LC Detail Group: Read-only fields Opening Date, Opening Bank Name, Opening Country, Financial Doc.
+  - Draft Issue Date Field: An optional date picker [fBillOfExchange.designer.vb:861; fBillOfExchange.vb:272-274].
+  - Charges Fields: Read-only Utilize Amount, Interest Period, LC Interest (%), Interest Amount, Negotiating & Discounting (%), Negotiating & Discounting Amount and Net Amount, and an optional Remarks box of up to 500 characters [fBillOfExchange.designer.vb:870-996; fBillOfExchange.vb:60].
+  - Source Document Grid: A grid with Select, Document Type, Ref.
+  - Posting Tabs: LC Payable Posting and Other Charges Posting tabs with the generated voucher lines [fBillOfExchange.vb:798-826].
+  - Notes and Custom Detail: A notes control with print area notes and a custom field tab [Finance.FBOEFillValues:35-41; fBillOfExchange.vb:73-80].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fBillOfExchange.vb:193-225].
+actions:
+  New: Asks the main window for a blank record [fBillOfExchange.vb:157-163].
+  Save: Validates, asks confirmation, creates vouchers and stores the draft [fBillOfExchange.vb:451-556].
+  Search: Opens the shared search dialog with Document No., Document Date, Finance Book, LC No., Draft Issue Date, Interest
+    Amount, Negotiating & Discounting Amount, Net Amount, Status, Created By and Authorized By [fBillOfExchange.vb:166-190;
+    Finance.FBOESearchData:18-29].
+  Delete: Deletes the open draft and its vouchers after confirmation [fBillOfExchange.vb:26-52].
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized Bill Of Exchange can't be updated.
+- Select valid LC No.
+- Document Date can't be less than LC Date.
+- Select atleast one Source Document.
+- Utilize Amount can't be empty or zero in row <n>.
+- Utilize Amount can't be greater than Balance Amount.
+- Can't select difference types of source document in case of payable nature.
+- Draft Issue Date can't be greater than Due Date.
+- Document No. <number> saved successfully.
+- Finance Book is closed for this Document Date.
+manages:
+- bill-of-exchange
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- bank-limit
+- cash-journal
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- letter-of-credit
+- letter-of-credit-amendment
+- order-mapping
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FBOEDelete.
+  FillValues: Fills the lookup lists through Finance.FBOEFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FBOEFillValuesDependent.
+  FillValuesFBWise: Fills the lookup lists through Finance.FBOEFillValuesFBWise.
+  LoadData: Loads the selected record through Finance.FBOELoadData.
+  Open: Searches records through Finance.FBOESearchData.
+  Save: Saves the record through Finance.FBOESaveMain.
+  SaveCustomFieldDetail: Saves the record through Finance.FBOESaveCustomFieldDetail.
+  SaveInvoiceDetail: Saves the record through Finance.FBOESaveInvoiceDetail.
+  SaveNotesDetail: Saves the record through Finance.FBOESaveNotesDetail.

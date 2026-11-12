@@ -1,0 +1,244 @@
+form: fExciseInvoice
+title: Tax Invoice
+module: SD
+kind: transaction
+summary: The Tax Invoice screen (window caption "Excise Invoice", form code SDEI) raises the outbound sales invoice of a company
+  for a customer location.
+purpose: |
+  What it is: The legal sales invoice of the company: what was sold, to whom, shipped where, at what price and tax, and from which stock. When it applies: When goods or services are billed to a customer, either directly or after a sales order, dispatch challan, dispatch planning/advice or purchase-return document. Business outcome: A single authorized document drives the customer receivable, GST output liability, stock reduction, sales order fulfilment and e-invoice/e-way bill compliance.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A document number control (Document No., Date, Status, prefix, division, copy button) above a tab set: "General Detail", "Dispatch Challan Detail", "Shipment & Other Documents", "Bill Detail", "Tax Detail", "Advance Detail", "Posting Detail", "Advance GST Posting", "GST Posting", "Document Required", "Disposal Posting", "Custom Field", "Expense Posting" [fExciseInvoice.Designer.vb:4051-4094].
+  - Document No., Date and Status: Shared document control; Document No.
+  - Customer Name and Customer Location Fields: Mandatory dropdowns (customer, then its location with code and GSTIN) (BR-02).
+  - Invoice Category Field: Mandatory dropdown, defaulted from the master default (Domestic) (BR-02, BR-07).
+  - Source Document, Ref. Doc. No., Ref. Doc. Date and Ref. No. Date Fields: Mandatory "Source Document" dropdown (default Direct on new [fExciseInvoice.vb:1653-1655]), reference document selector and free-text "Ref.
+  - Bill To Party / Location and Consignee Name / Location Fields: Mandatory dropdowns for the billed party and the ship-to party with their locations (BR-02).
+  - Contact Person Name, Agent Name, Warehouse, All Warehouse Fields: Optional contact, optional agent (double-click label for agent commission information [fExciseInvoice.vb:9716]), warehouse to issue stock from, and "All Warehouse" checkbox when allowed by setting.
+  - Preparation Date, Removal Date, TC No., TC Date, Wt Slip No. / Wt Slip Dt or Weighment Slip Fields: Date-time fields (Preparation Date defaults to now [fExciseInvoice.vb:395]) and test certificate / weight slip references; a weighment slip dropdown replaces the free-text weight slip when weighbridge integration is on [fExciseInvoice.vb:549-559].
+  - Place Of City, Place Of State, Place Of Supply, Place Of Supply PinCode Fields: Place of supply for GST; "Place Of Supply" text and "Place Of State" are mandatory (BR-10).
+  - Supply Type, Reverse Charge and GST Tax Rule Fields: Dropdowns defaulted from master defaults (Regular, No); "GST Tax Rule" is hidden by default and required when Reverse Charge is "Yes" [fExciseInvoice.vb:912-913].
+  - Checkboxes: Sales W/O Stock, Update SO, Cash Discount Applicable, Adjust Advance, Don't Print Agent, Create DC Against This Invoice, Exclude from RG1, Use Alternative Unit In Invoice: Option flags shown by configuration and source document.
+  - Remarks Field: Optional free text, saved trimmed.
+  - Item Details Grid: Main item grid in the General Detail tab with columns including "Select", "Sales Order No.", "Customer Order No.", "Item Code", "Item Description", "Make", "Attribute Combination", "HSN & SAC Code", "Chapter Head", "Quantity", "Unit", "Pcs", "First CF", "Second CF", "Stock Unit", "Rate", "Basic Amount", "Net Amount", "Balance Qty.", "Order Qty.", "Pre.
+  - Dispatch Challan Detail Grid: List of pending dispatch challans with "Select", "Dispatch No.", "Dispatch Date", "Challan Type", "Challan Nature", "Dispatch Category", "Sales Order No.", "Consignee Name", "Transporter Name", "Vehicle No." and quantities [fExciseInvoice.vb:8046-8094].
+  - Shipment & Other Documents Tab: "Delivery Mode", "Transporter Name", "Vehicle No.", "Vehicle Type", "Driver Name", "Licence No.", "Contact No.", "LR No.", "LR Date", "eWay-Bill No.
+  - Bill Detail Tab: "Payment Mode" (mandatory, defaulted), "Payment Days" (mandatory), "Pay Code" (read-only by default), "Commodity Name", "Bank Name" (when bank display is enabled), "Print Description", "Project Milestone", "A.R.E.
+  - Tax Detail Tab: Shared tax-on-amount control with document charges (Basic Amount, GST, TCS, freight) and item-wise tax breakdown, plus the tax concession form control.
+  - Advance Detail Tab: Advance grid ("Reference No.", "Reference Date", "Document No.", "Document Date", "Due Date", "Advance Amount", "Adjusted Amount", "Balance Amount", "Adjusting Amount") with Manual/automatic allocation option [fExciseInvoice.vb:8596-8664].
+  - Posting Detail, GST Posting, Advance GST Posting, Disposal Posting, Expense Posting Tabs: Embedded voucher controls.
+  - Document Required Tab: "Document Group" selector and checklist grid ("Document Name", "No.
+  - Custom Field Tab: Shared custom field control.
+  - Pop-up Panels (Lot, Serial No., Attribute, Asset Tag, Conversion Factor, Description, Additional Detail, Stock Details): Panels opened from item cells for lot selection, serial numbers, attribute values, asset tags, unit conversion, description and stock view.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print and Preview of the daily sales invoice report, repeated for the configured number of copies; Export and Email of the report (BR-51).
+actions:
+  New: Clears the screen through the main window's new-record routine.
+  Save: Validates and saves the invoice with all child data and vouchers in one transaction.
+  Search: Opens the common search list of invoices for the current company and year, using the search procedure configured
+    for the form [Sales.SDEISearchData:15-24].
+  Copy (Repeated Entry): Button in the document control that loads an earlier invoice as a template.
+  Delete: Deletes the loaded invoice after confirmation.
+  Navigation: First / Previous / Next / Last through the main window toolbar (BR-01).
+validations:
+- Document No. <number> saved sucessfully.
+- insufficient Stock <lot> for selected lot ... Balance Qty <qty>
+- Unable to save,IRN not generated
+- 'Unable to save, Invoice already exists for Dispatch challan: <nos>.'
+- Dispatch Qty. can't be greater than order qty for following details-...
+- Tax Rule is not set against charges.
+- Voucher is not Generate against this Entry, Contact your Software Vendor.
+- IRN Doesn't exists for this Entry. Can't Authorize.
+- Invoice Item is different than Weighment slip
+- Authorised Inspection Result not found against this Tax Invoice.
+- Selected Sales Orders are having different currencies.
+- Invoice can not be deleted it has been cancelled.
+- Service Invoice is prepared against this entry,so you can't delete this entry
+- Unable to delete,IRN exists against this invoice.
+- Unable to delete,weighment entry exists against this invoice.
+- Unable to delete,Outward Bill Entry exists against this invoice.
+- Authorized Excise Invoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. should be numeric only.
+- Selected Dispatch Advice does not exists.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Please Update State/City in Location Master.
+- Please Update GST Registration Type in Vendor.
+- Select valid Invoice Category.
+- Select 'Export' in Invoice Category.
+- Select valid Source Document.
+- Source Document is of type Direct. Do you want to continue?
+- Source Document can't be of type Direct.
+- Select valid Bill To Party.
+- Select valid Bill To Party Location.
+- Select valid Consignee Name.
+- Select valid Consignee Location.
+- Preperation Date can't be greater than Removal Date.
+- Enter TC No.
+- TC Date can't be greater than Document Date.
+- Enter Wt Slip No.
+- Wt Slip Date can't be greater than Document Date.
+- Place Of City is not same as City of selected Customer Location. Do you want to continue?
+- Place Of City should be same as City of selected Customer Location.
+- Place Of Supply is not same as Place Of City. Do you want to continue?
+- Place Of Supply should be same as Place Of City.
+- Enter Place Of Supply
+- Select valid Place Of State
+- Select valid Freight Type.
+- Enter approx distance in km.
+- Select valid Destination Country.
+- Select valid Place of Receipt Pre Carriage.
+- Select valid Port of Loading.
+- Select valid Port of Discharge.
+- Enter LR No.
+- LR Date can't be greater than Document Date.
+- Enter Way Bill No.
+- Vehicle No. should not contain special characters.
+- Enter valid Vehicle No.
+- Driver Name should not have numeric value.
+- Contact No. can only have numbers, comma(,) and hyphen(-).
+- Contact No. should not be less than 10 digits.
+- Each Contact No. should be of 10 digit only.
+- Select valid Transaction Type.
+- Select valid Dispatch From.
+- Select valid Dispatch From Location.
+- Customer Location and Consignee Location should be same when Transaction Type is <type>.
+- '... should be different when Transaction Type is <type>.'
+- Customer Location GSTIN No and Consignee Location GSTIN No should be same when Transaction Type is <type>.
+- '... should not be same when Transaction Type is <type>.'
+- Bill From Location GSTIN No and Dispatch From Location GSTIN No should not be same when Transaction Type is <type>.
+- Warehouse is not selected. Do you want to continue?
+- Select a Valid WareHouse.
+- Insurance No. can't be empty
+- Select valid Payment Mode.
+- Enter Payment Days.
+- Select valid Milestone for Project
+- Dispatch Challan will not be created against this Tax Invoice. Do you want to continue?
+- Selected Sales Order should belong to same Customer Order No.
+- This Tax Invoice will not be reflected in RG1. Do you want to continue?
+- Update SO is checked, Do you really want to update SO?
+- Select either GST or Bond No. and Date/LUT No.
+- GST can not be applied when Supply Type is Export Without Payment.
+- Only IGST is applicable when Supply Type is Export With Payment.
+- IGST should be applied when Supply Type is Export With Payment.
+- GST can not be applied when Supply Type is SEZ Without Payment.
+- Only IGST is applicable when Supply Type is SEZ With Payment.
+- IGST should be applied when Supply Type is SEZ With Payment.
+- Select either Bond No. and Date/LUT No.
+- Select valid Reverse Charge.
+- Select valid GST Tax Rule.
+- GST Taxes and GST Rule can't be selected simultaneously
+- GST Taxes can't be applied when Reverse Charge is Exempted.
+- Select atleast one Dispatch Challan.
+- Document Date can't be less then Reference Doc. Date.
+- Document Date can't be less then Challan Date.
+- Can't select multiple dispatch challan of different Dispatch Challan Type,Challan Nature and Dispatch Category.
+- Can't select multiple dispatch challan against different projects.
+- Select similare type of Dispatch Challan.
+- Select atleast one Item Description.
+- Document Date can't be less than Sales Order Date in row <n>.
+- Select valid Sales Order No. in row <n>.
+- Select valid HSN & SAC Code in row <n>.
+- HSN & SAC Code in not 6 character long. Do you want to continue?
+- HSN & SAC Code must be 6 character long.
+- HSN & SAC Code in not 8 character long. Do you want to continue?
+- HSN & SAC Code must be 8 character long.
+- HSN/ SAC code is not greater than or equal to 6 character long.Do you want to continue?
+- HSN/ SAC code should be greater than or equal to 6 character long.
+- Select valid Unit in row <n>.
+- Select valid Attribute Value in row <n>
+- Quantity can't be empty or zero in row <n>.
+- Quantity can't be greater than Balance Qty. in row <n>.
+- Quantity can't be greater than Balance Qty. + Tolerance Qty. in row <n>.
+- Quantity is greater than <basis> in row <n>. Do you want to continue?
+- Quantity can't be greater than <basis> in row <n>.
+- Serial No. detail should be same as issued Quantity in row <n>.
+- Quantity can't be greater than <Current Stock / On Date Stock> in row <n>.
+- Stock Qty. can't be greater than <qty> in row <n>.
+- Stock Qty. can't be less than <qty> in row <n>.
+- Document Date cannot be less than selected Received Document Date '<date>' in row <n>.
+- SGST or CGST is not applicable for inter state sales.
+- IGST is not applicable for intra state sales.
+- Nil Rated/GST Exempted /Non-GST and GST Relevant Item can't be seleted at same time.
+- For GST Relevant Items apply GST.
+- Rate is empty or zero in row <n> do you want to continue.
+- Total Tag Qty. is not equal to total LOT Quantity.
+- Some of selected Asset Tag(s) are unauthorized.
+- Some of selected Asset Tag(s) have Document Date greater than current Document Date.
+- Adjusting Amount can't be greater than Balance Amount in row <n>.
+- Advance Amount can't be 0.
+- Total Advance Amount can't be greater than Invoice Amount.
+- Customer Receivable Account is not created against this location.
+- Customer Pre Payment Account is not created against this location.
+- No. of Copy can't be empty or zero in row <n>.
+- Document No. can't be empty in row <n>.
+- Select valid Document Date in row <n>.
+- Copies can't be empty or zero in row <n>.
+- Issue Pcs can't be empty in row <n>.
+- Quantity can't be greater than Stock Qty. <qty>
+- Quantity can't be greater than <item qty>
+- Quantity can't be less than <qty>
+- Enter First CF.
+- Enter Second CF.
+- Select valid Unit.
+- Select valid Attribute.
+- Duplicate Item,Make and Attributes not allowed.
+- Qty. can't be empty or zero in row <n>.
+- Qty. is not equal to Total LOT Quantity in row <n>.
+- Qty. can't be greater than Balance Qty.
+- Select valid Sales Order No.
+- Unable to Send Mail please send it manually.
+- Tax not selected. Do you want to save?
+- Approx. Distance is Empty. Do you want to continue?
+- Approx. Distance can't be empty.
+- District of Starting Position & District of Final Position is Different. Do you want to continue?
+- TCS is not applied in Taxes. Do you want to continue?
+- TCS must be applied in Taxes.
+- Document status should be release. Do you want to continue?
+- Document status should be release.
+- Transporter Name is different in Dispatch Challan. Do you want to continue?
+- Transporter Name is different in Dispatch Challan.
+- Vehicle No. is different in Dispatch Challan. Do you want to continue?
+- Vehicle No. is different in Dispatch Challan.
+- Tax Invoice can be created against only one Sales Order. Do you want to continue?
+- Tax Invoice can be created against only one Sales Order.
+- Bank Name is Empty. Do you want to continue?
+- Bank Name is mandatory in tax invoice
+- Customer's Payment for old invoices is due at present date. Do you want to continue?
+- '... Can''t create new Invoice.'
+- Unable to create invoice. Direct invoice exists.
+- Select Valid Delivery Mode.
+- Quantity should be equal to weighment quantity
+- VoucherValidation
+manages:
+- tax-invoice
+uses_concepts:
+- accounting-voucher
+- attribute-master
+- check-list-document-group
+- company
+- delivery-challan
+- dispatch-challan
+- inco-terms-master
+- lut-master
+- order-nature
+- proforma-invoice
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-order-shipment-detail
+- sales-organization
+- sales-return
+- transit-insurance-policy
+method_notes:
+  Authorize: Runs through Sales.SDEIAuthorize.
+  CreateExpenseVoucher: Runs through Sales.SDEIGetExpensePosting.
+  CustomValidation: Validates the entry through ODTExciseInvoice.ProcedureName.
+  Delete: Deletes the record through Sales.SDEIDelete.
+  FillDispatchChallanItemDetails: Runs through Sales.SDEIFillDispatchChallanItemDetails.
+  FillItemDetail: Fills the lookup lists through Sales.SDEIFillValuesItemDetail.
+  FillLUTDetail: Runs through Sales.SDEIFillLUTDetail.
+  FillValueDependent: Fills the lookup lists through Sales.SDEIFillValuesDependent.
+  FillValues: Fills the lookup lists through Sales.SDEIFillValues.
+  FillValuesLotAsset: Fills the lookup lists through Sales.SDEIFillValuesLotAsset.

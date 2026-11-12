@@ -1,0 +1,42 @@
+form: fItemEOQ
+title: Change Consumption Pattern
+module: MM
+kind: transaction
+summary: The Change Consumption Pattern screen lets a planner revise, item by item, the planning figures that were approved
+  in the most recent Material Consumption Pattern entry of an Optimization Unit.
+purpose: |
+  What it is: A correction screen that re-states the planning parameters (pattern, source, rate, safety and lead days, reorder and stock levels) of items already planned for an Optimization Unit [fItemEOQ.vb:183; Optimization.CICPSave:19-40]. When it applies: When the figures agreed in the last Material Consumption Pattern entry no longer suit an item, for example a changed supplier source or consumption rate. Business outcome: Reorder figures can be corrected quickly for selected items, without re-running the full period analysis.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Filter Panel: A top panel with Optimization Unit, Category Name, Group Name, Subgroup Name and a Show button.
+  - Optimization Unit Field: A mandatory dropdown of execution units, labelled "Optimization Unit" [fItemEOQ.vb:260].
+  - Category Name, Group Name and Subgroup Name Fields: Three optional dropdowns, each with an "(All)" entry.
+  - Show Button: Button labelled "&Show" that loads the item grid for the chosen unit [fItemEOQ.vb:312-349].
+  - Item Detail Grid: The "Item Detail" tab holding one row per item with columns: tick box (no header caption), Item Code, Item Description, UOM, an information icon column, Consumption Pattern No., Pattern Date, Source Type, Consumption Pattern, Consumption Rate, Safety Days, Lead Days, Reorder Point, Reorder Qty, Max Stock, Safety Stock and Stock Qty.
+  - Other Toolbar Actions (Delete, Open, Print, Preview, Export, Email): Empty implementations [fItemEOQ.vb:143-151; fItemEOQ.vb:221-227; fItemEOQ.vb:277-283].
+actions:
+  New: The standard toolbar New.
+  Save: The only toolbar action enabled on this screen [fItemEOQ.vb:27].
+validations:
+- Select valid Optimization Unit.
+- Select valid optimization Unit.
+- Select at least one item.
+- Select valid Consumption Pattern in row N.
+- Select valid Consumption Rate in row N.
+- Select valid Source Type in row N.
+- Enter Safety Days in row N.
+- Enter Lead Days in row N.
+- Enter Reorder Point in row N.
+- Enter Reorder Qty in row N.
+- Enter Max Stock in row N.
+- Enter Safety Stock in row N.
+manages:
+- change-consumption-pattern
+uses_concepts:
+- material-category
+- material-lead-safty-days-setting
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.CICPFillValues.
+  FillValuesDependent: Fills the lookup lists through Optimization.OISSFillValuesDependent.
+  Save: Saves the record through Optimization.CICPSave.
+  ubtnShow_Click: Fills the lookup lists through Optimization.CICPFillValuesDependent.

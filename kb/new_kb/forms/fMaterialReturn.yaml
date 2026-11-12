@@ -1,0 +1,109 @@
+form: fMaterialReturn
+title: Material Return
+module: MM
+kind: transaction
+summary: The Material Return screen (window caption "Material Return", form code IMMR) records material that a department,
+  employee, contractor or vendor brings back to a warehouse.
+purpose: |
+  What it is: A stores document that brings unused, excess or scrap material back into stock and reverses its consumption. When it applies: When material issued earlier, or held by a person or job, is handed back to the stores. Business outcome: Stock and consumption cost are corrected, at the original issue value when the return is against an issue (BR-19, BR-27).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Shared document control with "Document &No.", "Document Da&te", "Document St&atus" and division.
+  - General Detail Tab: Tab "&General Detail" with the header fields.
+  - Stock Nature Field: Dropdown "Stock &Nature"; validated as required.
+  - Warehouse Field: Mandatory dropdown "&Warehouse".
+  - Department Field: Mandatory dropdown "&Department" with an information icon (double-click shows "Department Information").
+  - Source Document Field: Mandatory dropdown "Source &Document"; the default source is preselected.
+  - Issue No. / Ref. Document No. Field: Dropdown labelled "Issue No." for source 2 and "Ref.
+  - Returned By Field: Mandatory dropdown "Returned &By" (employee, contractor, vendor).
+  - Employee Name / Contractor Name / Vendor Name Field: Mandatory dropdown "Employee &Name" whose label changes with "Returned By".
+  - Person Name Field: Optional editable dropdown "Person &Name" offering names typed on earlier returns; saved as text (50 characters).
+  - Reference No. & Date Field: Optional text box labelled "Reference &No.
+  - Return with Zero Value and Scrap Return Checkboxes: Checkboxes "&Return with zero value" and "&Scrap Return".
+  - Remarks Field: Optional text "Remar&ks", 1000 characters.
+  - Notes Control: Shared notes button.
+  - Issue Detail Tab: Tab "&Issue Detail" listing candidate issues: "Select", "Issue No", "Issue Date", "Issue Type", "Reference No.
+  - Custom Field Tab: Tab "&Custom Field".
+  - Finance Posting Tab: Tab "Finance P&osting" with the voucher control.
+  - Item Grid: Grid with "Select", "Issue No", "Item Code" (with lookup button), "Item Description", "Make", "Cost Center", "Description", "Unit", "Issued Qty.", "Pre Returned Qty.", "Balance Qty.", "Returned Qty.", "Rate", "Amount", "Expiry Date", "Serial Number" (button), "BIN Details" (button), "Remarks" (500), item and cost centre information icons.
+  - Issue Lot Popup: Popup on "Returned Qty." in issue mode with "Lot No.", "Batch No.", "Issue Qty.", "Balance Qty.", "Qty", "Rate", "O&k", "Cance&l".
+  - BIN Details Popup: Popup with "Item Code", "Make", "Cost Center", "BIN Card No.", "Qty.", "O&k", "Cance&l".
+  - Serial Number Popup: Popup with "Item Code", "Make", "Cost center", "Serial No.", "Expiry Date", "O&k", "Cance&l"; a list of serial numbers is offered for sources 2 and 4, free entry otherwise.
+  - BarCode Area: Group "BarCode" with "&Item Code" (10 characters) and a scan status label ("Not Scanned.").
+  - Other Toolbar Actions (Print, Preview, Export, Email): Material return report output.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last enabled in toolbar options.
+validations:
+- Authorized Material Return can't be updated.
+- Authorized Entry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Material Return No. is not allowed.
+- Value of Issue Type and Chargeable column must be same for all Selected issues.
+- Select valid Stock Nature.
+- Select valid WareHouse.
+- Select valid Department.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Issue Date.
+- '... Ref. Doc. Date.'
+- Select valid Returned By.
+- Select valid Employee Name.
+- Select atleast one Issue.
+- Document date can't be less than issue date.
+- Select atleast one Item.
+- Return Qty. can't be less than production Qty.<qty>
+- Return Qty. can't be less than Fuel Consumed Qty.<qty>
+- No scrap Setting is found for <item>
+- Item <item> can't be returned as it is used in Cost Allocation <no>.
+- Select valid Cost Center in row <n>.
+- Returned Qty. can't be zero or empty in row <n>.
+- Rate can't be zero or empty in row <n>.
+- Qty. should be equal to Issued Qty in row <n>.
+- BIN Qty. can't be empty in row <n>.
+- Total BIN Qty. should be equal to <qty> in row <n>.
+- Count of Serial No. should be equal to <qty> in row <n>.
+- Select Expiry Date in row <n>.
+- Expiry Date can not less than document date in row <n>.
+- Capital And Non-Capital can't be select atonce.
+- Duplicate Item Name and Make is not allowed
+- Select valid Serial No.
+- Serial detail should be equal to quanity.
+- Qty. should be equal to quanity. <qty>
+- Return Qty. can't greater than balance Qty <qty>
+- Material Issue of Different Type can't be selected at once
+- Qty. can't be greater than balance qty. in row <n>.
+- Document No. <number> saved successfully.
+- 'Difference in Voucher and Lot -- '
+- Scanning Failed.
+- Failed Scanning for Item Code <code>
+- Successful Scanning for Item Code <code>
+- Not Scanned.
+- Select Source Document.
+- Department Information
+- CostCemter Information
+- Item Information
+- Select valid Document Status.
+- Document Date should be between Financial Start and End Date.
+manages:
+- material-return
+uses_concepts:
+- accounting-voucher
+- company
+- raw-material-issue
+- stock-adjustment
+- value-stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.IMMRDelete.
+  FillValues: Fills the lookup lists through Inventory.IMMRFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMMRFillValuesDependent.
+  GetCostCenterInfo: Runs through Inventory.IMMRGetCostCenterInfo.
+  GetDeptInfo: Runs through Inventory.IMMRGetDeptInfo.
+  GetItemInfo: Runs through Inventory.IMMRGetItemInfo.
+  LoadData: Loads the selected record through Inventory.IMMRLoadData.
+  Open: Searches records through Inventory.IMMRSearchData.
+  RefDetail: Runs through Inventory.IMMRRefDetail.
+  RefItemDetail: Runs through Inventory.IMMRRefItemDetail.

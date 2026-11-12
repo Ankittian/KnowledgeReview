@@ -1,0 +1,147 @@
+form: fServiceContractSetup
+title: Service Contract Setup
+module: PM
+kind: transaction
+summary: The Service Contract Setup screen defines reusable service contract templates for one company.
+purpose: |
+  What it is: A master document that stores the standard commercial and service terms of a type of service contract, together with the rule that decides where it applies [fServiceContractSetup.vb:2100-2313; CustomerService.ESCSSave:95-186]. When it applies: When the company introduces or changes a standard warranty, maintenance or AMC offer. Business outcome: Contracts start from approved terms instead of being keyed from scratch, and default templates can be tied to specific items or sub groups (BR-22).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header (Division, Document No., Date, Status), an upper tabbed area (General Detail, Warranty Detail, Contract Detail, Billing Detail, Payment Detail, Term And Condition) and a lower tabbed area (Contract Rule, Preventive Maintenance, Service Detail, Spare Parts, Resource Detail) [fServiceContractSetup.Designer.vb:2753-2799].
+  - Document Header: The shared document control with Division, Prefix, Document No., Document Date and Status [fServiceContractSetup.vb:211; fServiceContractSetup.vb:617-621].
+  - Contract Description Field: A text box "Contract &Description", mandatory, 300 characters [fServiceContractSetup.Designer.vb:514-527; fServiceContractSetup.vb:63-64].
+  - Is Default and Effective From Fields: A checkbox "Is Default" and a date "Effective From" [fServiceContractSetup.Designer.vb:535-545].
+  - Service Nature, Contract Type and Contract Category Fields: Three mandatory drop-downs "Service &Nature", "Contract &Type", "Contract &Category" [fServiceContractSetup.vb:63-64; fServiceContractSetup.vb:213-218].
+  - Remarks Field: A multi-line optional text box "Remar&ks", 1000 characters [fServiceContractSetup.Designer.vb:617-630].
+  - Notes Control: The shared Notes control with a Print Area, Notes text and Default flag per line; defaults load from earlier contracts [fServiceContractSetup.vb:305-306; fServiceContractSetup.vb:2726-2752; CustomerService.ESCSFillValues:326-335].
+  - Warranty Detail Fields: "Warranty Co&ndition" (Time, Measurement Parameter, Any of the condition), "Warranty &Life in Days", "Warranty &Float in Days" (3 digits each), "Warranty &Base Date" and a Measurement Parameter grid (Measurement Parameter, Value) [fServiceContractSetup.Designer.vb:669-746; CustomerService.ESCSFillValues:122-127; fServiceContractSetup.vb:3972-4020].
+  - Contract Detail Fields: "Baseline Da&te", "Time Pe&riod" (3 digits), time unit, "Coverage &Terms", "Response &Time" and "Resolution &Time" (hours.minutes), "Service &Area" (Km), "Service &Location" [fServiceContractSetup.Designer.vb:827-950; fServiceContractSetup.vb:63-64].
+  - Billing Detail Fields: "Payment &Mode", "Due &Days", "Billing &Type" (Single Invoice Billing, Periodic Billing, Time & Material Based), "Billing Start Da&te", "Pe&riod", "Hori&zon", "Billing Da&te" (Last Date of Month, First Date of Month, Date), "Da&te" and "Contract &Value" [fServiceContractSetup.Designer.vb:1001-1149; CustomerService.ESCSFillValues:176-203].
+  - Payment Detail Grid and Pay Term Code: A "Pay Term &Code" drop-down and a grid with Pay Code, Payment Type, Payment Description, Pay Value %, Payment Mode, Credit Days and Remarks (limits 20, 300, 500 characters) [fServiceContractSetup.Designer.vb:1185; fServiceContractSetup.vb:4223-4245].
+  - Term And Condition Tab: The shared terms and conditions control [fServiceContractSetup.Designer.vb:1250-1265].
+  - Contract Rule Grid and Criteria Value Window: A grid with Criteria, Contract Value (button) and Detail; the button opens a window "Criteria Value" with the columns that fit the criterion and Ok and Cancel buttons [fServiceContractSetup.vb:4578-4590; fServiceContractSetup.vb:4663-4861; fServiceContractSetup.Designer.vb:1370-1378].
+  - Preventive Maintenance Fields and Trigger Grid: "Schedule &Interval" (Fixed Interval, Actual Interval), "Preventive Maintenance Based &On" (All Trigger occur, Any of the Trigger occur) and a trigger grid with Trigger No, Trigger Type, Trigger (button) and Trigger Description [fServiceContractSetup.Designer.vb:2541-2560; fServiceContractSetup.vb:1901-1944; CustomerService.ESCSFillValues:205-218].
+  - Trigger Dialog: A pop-up with option buttons "By Time" and "By Meter Reading" and their fields: Schedule Type (Fixed, Recurring), Start Date, Every, On, End Date After, End After (occurrences), Threshold Days; or Measurement Parameter, Schedule Type, Every, Start At, End By (Value, Occurrence), End For Value, Threshold On (Percentage, Value), Threshold Value, Condition (less than, greater than, equal to) and Read
+  - Service Detail Grid and Pricing Window: A grid with Service Description, Unit (read-only), Pricing Detail (button) and Trigger No; the button opens a pricing window with Rate Type, Quantity and Value [fServiceContractSetup.vb:1991-2010; fServiceContractSetup.vb:4391-4470].
+  - Spare Parts Grid: A grid with Item Code, Item Description, Unit, Quantity, Rate Type, Rate and Trigger No [fServiceContractSetup.vb:2016-2036; CustomerService.ESCSFillValues:67-79].
+  - Resource Detail Grid: A grid with Resource Name, Quantity, Rate Unit (Hour, Day), Rate Type, Value and Trigger No [fServiceContractSetup.vb:2042-2058; CustomerService.ESCSFillValues:313-317].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions that are empty [fServiceContractSetup.vb:543-575].
+actions:
+  New: Standard toolbar New [fServiceContractSetup.vb:507-514].
+  Save: Toolbar Save [fServiceContractSetup.vb:2100-2313].
+  Search: Toolbar Open showing a list [fServiceContractSetup.vb:516-541].
+  Delete: Toolbar Delete [fServiceContractSetup.vb:79-107].
+validations:
+- Authorized Service Contract Setup can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Item Description
+- '  is already Exists'
+- 'Item SubGroup '
+- Select valid Schedule Type.
+- Select valid Start Time.
+- Enter Every Duration.
+- Select valid Every Duration Period.
+- Select valid On Day.
+- Select valid Start Date.
+- Select valid End Date After Period.
+- Select valid End Date After.
+- Select valid End Condition.
+- Select valid Measurement Parameter.
+- Enter Recursive value(Every).
+- Enter End For Value.
+- Enter Threshold Value.
+- Select valid Condition.
+- Enter Reading Value.
+- End For Value can't be less then Start At + Every.
+- Enter Trigger No in row N.
+- Select Trigger Type in row N.
+- Select valid Schedule Type in row N.
+- Select vaild Warranty Condition
+- Fill atleast one detail either Time Based Detail or Measurement Parameter Detail.
+- Enter Warranty Life in Days.
+- Enter Warranty Float in Days.
+- Select valid Warranty Base Date.
+- Select atleast one Measurement Parameter.
+- Select valid Value in row N.
+- Select valid Base Line Date.
+- Enter valid Time Priod.
+- Select valid Time Unit.
+- Select valid Coverage Terms.
+- Enter Response Time (Hrs.).
+- Enter Resolution Time (Hrs.).
+- Enter Service Area (K.m.).
+- Select valid Service Location.
+- 'Invalid Time : minute should be less than 60.'
+- Enter Contract Description.
+- Select valid Service Nature.
+- Select valid Contract Type.
+- Select valid Contract Category.
+- Effective Date should be greater then Document Date.
+- Select valid Payment Mode.
+- Enter Due Days.
+- Select valid Billing Type.
+- Select valid Billing Start Date.
+- Select valid Period.
+- Select valid Billing Date.
+- Enter Horizon.
+- Horizon can't be greater then Time Period.
+- Enter Date.
+- Date should be between 1 to 31.
+- Enter Contract Value.
+- Select atleast one Payment Term.
+- Duplicate Pay Code is not allowed.
+- Duplicate Payment Type and Payment Description is not allowed.
+- Select/Enter valid Payment Description in row N.
+- Select valid Payment Mode in row N.
+- Credit Days can't be empty or zero in row N.
+- Select valid Schedule Interval.
+- Select valid Preventive Maintenance Based On.
+- Enter atleast one Trigger No.
+- Enter Criteria Value  in row N.
+- Select only one either Item Description Or Item Sub Group
+- Select only one either Customer Or Customer Group
+- Select only one either Country Or State
+- Enter atleast one Rate Type Detail.
+- Select only one Rate Type either Fixed Rate Or Fixed Amount .
+- Enter Value in row N.
+- Enter Quantity in row N.
+- Enter at least One Pricing Detail in row N.
+- Atleast one Service Description should be selected. Do you want to continue?
+- Trigger No can't be null For <name> in row N.
+- Select valid Item Description in row N.
+- Enter Rate Type in row N.
+- Enter Rate in row N.
+- Select valid Resource Name in row N.
+- Select valid Rate Unit in row N.
+- Select valid Rate Type in row N.
+- Unable to delete,Resource,Service, or Spare Detail exists for selected Trigger detail(s).
+- Duplicate Resource  not allowed for Same Trigger No.
+- Duplicate Service Description not allowed for Same Trigger No.
+- Duplicate Item Descriptuion  not allowed for Same Trigger No.
+- Duplicate Measurement Parameter not allowed.
+- Duplicate Trigger Description not allowed.
+- Duplicate Rate Type is not allowed.
+- Duplicate Criteria is not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- service-contract-setup
+uses_concepts:
+- company
+- eam-resource-master
+- functional-location
+- material-category
+- service-contract
+- service-contract-coverage-term
+method_notes:
+  Delete: Deletes the record through CustomerService.ESCSDelete.
+  FillValueDepaendent: Fills the lookup lists through CustomerService.ESCSFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.ESCSFillValues.
+  LoadData: Loads the selected record through CustomerService.ESCSLoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through CustomerService.ESCSSearchData.
+  Save: Saves the record through CustomerService.ESCSSave.
+  SaveCriteriaValues: Saves the record through CustomerService.ESCSSaveContractRuleDetail.
+  SaveMeasurementParameters: Saves the record through CustomerService.ESCSSaveMeasurementParameters.
+  SaveNotesDetail: Saves the record through CustomerService.ESCSSaveNotesDetail.

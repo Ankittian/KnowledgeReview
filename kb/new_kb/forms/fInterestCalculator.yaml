@@ -1,0 +1,76 @@
+form: fInterestCalculator
+title: Interest Calculator
+module: FI
+kind: transaction
+summary: The Interest Calculator screen (window caption "Interest Calculator") works out the interest earned or charged on
+  a bank account for a period and, once Authorized, books it as a journal voucher.
+purpose: |
+  What it is: A document that computes bank interest from the daily closing balances of one account over a period and records the result with its voucher [fInterestCalculator.vb:398-487; Finance.FAICFillValuesDependent:93-171; Finance.FAICSave:101-146]. When it applies: At the end of a period for which the bank gives interest or charges it. Business outcome: The interest is calculated in a repeatable way, kept as a day-by-day statement and posted to the books.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "Interest Calculator" with a document header control and tabs "General Detail", "Tax Detail" and "Finance Posting" [fInterestCalculator.Designer.vb:344; fInterestCalculator.Designer.vb:322-329].
+  - Document Header: The shared document control with Finance Book, Document No., Document Date and Document Status [fInterestCalculator.vb:115; fInterestCalculator.vb:292-294].
+  - Account Name Field: A mandatory drop-down showing Account Name and Group Name [fInterestCalculator.vb:345-349; fInterestCalculator.vb:619-626; fInterestCalculator.Designer.vb:114].
+  - From Date and To Date Fields: Two date pickers in the format dd/MM/yyyy; changing either clears the grid [fInterestCalculator.Designer.vb:118; fInterestCalculator.Designer.vb:137; fInterestCalculator.vb:673-683].
+  - Show Button: A button "Show" that loads the opening balance and the daily rows for the account and period [fInterestCalculator.Designer.vb:95; fInterestCalculator.vb:628-641].
+  - Statement Grid: A read-only grid with Caption, Debit Amount, Credit Amount, Day Closing, Interest Rate and Interest Amount; the Date column is hidden [fInterestCalculator.vb:380-396; Finance.FAICFillValues:20-22].
+  - Interest Amount Field: A read-only total of the Interest Amount column [fInterestCalculator.Designer.vb:177; fInterestCalculator.Designer.vb:188; fInterestCalculator.vb:643-647].
+  - Remarks Field: An optional text box of up to 1000 characters [fInterestCalculator.vb:98; fInterestCalculator.Designer.vb:170].
+  - Tax Detail Tab: A tax control that applies the chosen tax group to the interest amount; the tax is validated on save [fInterestCalculator.vb:109-110; fInterestCalculator.vb:329-331; fInterestCalculator.vb:819-823].
+  - Finance Posting Tab: The shared posting control with the generated voucher lines [fInterestCalculator.vb:685-730; fInterestCalculator.vb:791-806].
+  - Notes and Custom Fields: A notes control with print area notes and a custom field control [fInterestCalculator.vb:104-114; fInterestCalculator.vb:468].
+  - Hidden Voucher Repair Shortcut: The key combination Alt+Ctrl+V on the screen, not shown on any button [fInterestCalculator.vb:732-789].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fInterestCalculator.vb:235-267].
+actions:
+  New: Asks the main window for a blank record [fInterestCalculator.vb:199-206].
+  Save: Validates, asks confirmation, creates the voucher and stores the document [fInterestCalculator.vb:398-487].
+  Search: Opens the shared search dialog with Document No., Document Date, Account Name, Status, Interest Amount, Created
+    By, Release By and Authorized By [fInterestCalculator.vb:208-233; Finance.FAICSearchData:18-29].
+  Delete: Deletes the open document and its voucher after confirmation [fInterestCalculator.vb:61-88].
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized InterestCalculator can't be updated.
+- Select valid Account Name.
+- Document Date can''t not less than from Date.
+- From Date can''t be greate then To Date.
+- No Interest found
+- Select valid Account Name
+- 'From-Date of this Entry falls between Date range of another Interest Rate Entry. Whose Date Range are from <from date>
+  to <to date>. '
+- To-Date of this Entry falls between Date range of another Interest Rate Entry. Whose Date Range are from <from date> to
+  <to date>.
+- Document No. <number> saved successfully.
+- Finance Book is closed for this Document Date.
+- No Detail Found
+manages:
+- interest-calculator
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- input-excise-invoice-posting
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FAICDelete.
+  FillValues: Fills the lookup lists through Finance.FAICFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FAICFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FAICLoadData.
+  Open: Searches records through Finance.FAICSearchData.
+  Save: Saves the record through Finance.FAICSave.
+  SaveNotesDetail: Saves the record through Finance.FAICSaveNotesDetail.
+  SaveSDDetail: Saves the record through Finance.FAICSaveSDDetail.
+  SaveTaxDetail: Saves the record through Finance.FAICSaveTaxDetail.
+  ValidateForm: Validates the entry through Finance.FAICValidate.

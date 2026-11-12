@@ -1,0 +1,78 @@
+form: fCashJournal
+title: Cash Journal
+module: FI
+kind: transaction
+summary: The Cash Journal screen settles one pending item at a time in cash.
+purpose: |
+  What it is: A cash settlement record that pairs one voucher with one pending item. When it applies: When an approved payable, receivable, cash counter document or payroll amount is paid or received in cash. Business outcome: Cash movements follow the cash limits of each payment nature and never exceed the pending balance (BR-05; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header, Source Detail Grid and Voucher Posting Area: A selection header, a grid of pending items and a read-only voucher preview below it [fCashJournal.vb:83-96].
+  - Paying Unit Field: Mandatory drop-down "Paying Unit" [fCashJournal.vb:36; fCashJournal.vb:107].
+  - Finance Book Field: Mandatory drop-down "Finance Book", or "Profit Center" when configured [fCashJournal.vb:28-34].
+  - Transaction Type Field: Mandatory drop-down "Transaction Type": Payment or Receipt [Finance.FICJFillValues:39-40].
+  - Transaction Date Field: Date "Transaction Date", the voucher date [fCashJournal.vb:827-833].
+  - Account Name Field: Mandatory drop-down "Account Name" showing account and group [fCashJournal.vb:813-821].
+  - Due Date Field: Date "Due Date".
+  - Source Detail Grid: Read-only columns: Finance Book, Company Name, Document No., Document Date, Ref.
+  - Currency Column: Button column opening the shared currency row editor; rate type and conversion rate are read-only [fCashJournal.vb:515-517; fCashJournal.vb:858-881].
+  - Paying/Receiving Amount Field: Mandatory number, 2 decimals, at most 12 characters [fCashJournal.vb:85-87; fCashJournal.vb:36].
+  - Payment Nature Field: Drop-down "Payment Nature" [fCashJournal.vb:150].
+  - Paid To/ Received From Field: Mandatory text, 50 characters [fCashJournal.vb:89; fCashJournal.vb:36].
+  - Narration Field: Free text "Narration", pre-filled "Being amount paid to/received from ...
+  - Voucher Posting Area: The embedded voucher with Type, Account and Amount read-only [fCashJournal.vb:91-96].
+actions:
+  New: Toolbar New [fCashJournal.vb:174-181].
+  Save: Toolbar Save [fCashJournal.vb:558-719].
+  Search (Open): 'Toolbar Open showing this year''s cash journals: Paying Unit, Finance Book, Transaction Type, Date, Account
+    Name, Source Document, Document No., Document Date, Ref.'
+  Delete: Toolbar Delete [fCashJournal.vb:42-69].
+  Navigation, Print, Preview, Export and Email: Navigation is on the toolbar; Print, Preview and Export use the voucher report;
+    Email attaches the voucher report [fCashJournal.vb:22-26; fCashJournal.vb:210-228; fCashJournal.vb:920-954].
+validations:
+- Select valid Paying Unit.
+- Select valid Finance Book.
+- Select valid Transaction Type.
+- Select valid Account Name.
+- Select atleast one Source Detail.
+- Account is not created against <Particular>.
+- Enter Paying/Receiving Amount.
+- Paying/Receiving Amount can't be greater than <balance>.
+- Select valid Payment Nature.
+- Paying/Receiving Amount can't be greater than <limit> set in Payment Nature.
+- Enter Paid To/ Received From.
+- Voucher Amount and Paying/ Receiving Amount differ.
+- Cash Journal can't be updated.
+- Paying/Receiving Amount can't be greater than <limit> in case of per day limit.
+- Do you want to print?
+- Contact your vendor,Reference getting -ve
+manages:
+- cash-journal
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FICJDelete.
+  FillValues: Fills the lookup lists through Finance.FICJFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FICJFillValuesDependent.
+  FillValuesFinanceBook: Fills the lookup lists through Finance.FICJFillValuesFinanceBook.
+  FillValuesPayingUnit: Fills the lookup lists through Finance.FICJFillValuesPayingUnit.
+  FillValuesSourceDocumentForm: Fills the lookup lists through Finance.FICJFillValuesSourceDocumentForm.
+  LoadData: Loads the selected record through Finance.FICJLoadData.
+  Open: Searches records through Finance.FICJSearchData.
+  Save: Saves the record through Finance.FICJSaveMain, Finance.VoucherSaveChildDetail.
+  ValidateForm: Validates the entry through Finance.FICJValidate.

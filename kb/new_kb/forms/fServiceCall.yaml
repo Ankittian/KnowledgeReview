@@ -1,0 +1,86 @@
+form: fServiceCall
+title: Service Call
+module: PM
+kind: transaction
+summary: The Service Call screen records a customer's request for service and follows it until it is fixed.
+purpose: |
+  What it is: A transaction that logs one customer service request with the customer, location, contact, equipment or item, problem classification, priority, assignee, status and coverage by contract or invoice [fServiceCall.vb:651-778; CustomerService.EASCSave:45-138]. When it applies: Whenever a customer reports a fault or asks for service. Business outcome: Every request is recorded once with a traceable number, status history and owner, so that work can be allocated, monitored and closed (BR-02; BR-08; BR-16).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A general area with Call ID, Entry Date, customer, contact, equipment and item fields and a Contract Detail group; a tab control with the tabs Service Call Detail, Solution Detail, Customer Feedback, Notification User Detail, History and Custom Field; and a hidden pop-up for history details [fServiceCall.designer.vb:1435; fServiceCall.designer.vb:1600-1617; fServiceCall.designer.vb:1080].
+  - Call ID Field and Copy Button: A read-only text box "Call ID" of up to 8 characters, with a small icon button beside it that copies an earlier call [fServiceCall.designer.vb:1258-1272; fServiceCall.designer.vb:1422-1425].
+  - Entry Date Field: A date and time picker shown as dd/MM/yyyy hh:mm tt, set to the current moment on a new call [fServiceCall.designer.vb:1276; fServiceCall.vb:207].
+  - Customer Name Field: A mandatory drop-down listing customer, supplier and company parties with their code [fServiceCall.vb:94; fServiceCall.vb:187; CustomerService.EASCFillValues:31].
+  - Customer Location Field: A mandatory drop-down labelled "Customer Location" [fServiceCall.vb:1416].
+  - Contact Person Field: A mandatory editable drop-down of contact persons seen on earlier calls of the location and in the location's contact master, with "Contact Person Detail" showing Contact No.
+  - Equipment Description Field: An optional drop-down of equipment of the location [fServiceCall.vb:1442].
+  - Item Description Field: An optional drop-down of sales-applicable items [fServiceCall.vb:1443; CustomerService.EASCFillValuesDependent:379-389].
+  - Serial No. Field: A drop-down of serial numbers, or, when none is found for the item, a text box up to 100 characters [fServiceCall.vb:958-967; fServiceCall.designer.vb:1412].
+  - Subject and Description Fields: Subject is a mandatory text box of up to 300 characters; Description is an optional text box of up to 500 [fServiceCall.designer.vb:634; fServiceCall.designer.vb:652].
+  - Origin, Call Type, Problem Type and Priority Fields: Four mandatory drop-downs; Origin takes its default value on a new call [fServiceCall.vb:94; fServiceCall.vb:189-193; fServiceCall.vb:210-212].
+  - Assign To Field: An optional drop-down of resources [fServiceCall.vb:195].
+  - Status Field: A mandatory drop-down [fServiceCall.vb:94; fServiceCall.vb:196].
+  - Remarks and Customer Remarks Fields: Remarks is a text box of up to 1,000 characters; Customer Remarks up to 100 [fServiceCall.designer.vb:785; fServiceCall.designer.vb:897].
+  - Gate Pass Required Checkbox: A checkbox "Gate Pass Required" [fServiceCall.designer.vb:1627].
+  - Contract Detail Grid: A grid with Select, Document Type, Document No., Document Date, Contract End Date, Source Document, Ref.
+  - Solution Detail Grid: A grid with S No., Solution (300), Btn, Description (500) and Add to knowledge [fServiceCall.vb:1224-1254].
+  - Customer Feedback Grid: A grid with Parameter Name and Value [fServiceCall.vb:1349-1362].
+  - Notification User Detail Grid: A grid with S No.
+  - Custom Field Tab: An embedded custom field control showing the extra fields configured for this screen [fServiceCall.vb:186; fServiceCall.vb:431-433].
+  - History Tab: A "From Date" and "To Date" pair, a "&Show" button and a history grid of earlier service calls and service orders for the same location and equipment or item, each with a Detail button [fServiceCall.designer.vb:1135; fServiceCall.designer.vb:1155; fServiceCall.designer.vb:1176; fServiceCall.vb:1848-1895].
+  - History Detail Pop-up: A pop-up with tabs Document Summary (Service Call Detail and Service Order Detail groups), Service Detail, Item Detail, Solution Detail and Fault Detail, and an "&OK" button [fServiceCall.designer.vb:1105-1119; fServiceCall.designer.vb:1089; fServiceCall.vb:1949-2040].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Print, Preview, Export and Email are empty; no First/Previous/Next/Last navigation [fServiceCall.vb:360-392].
+actions:
+  New: Asks the main window to open a blank screen and sets focus on Customer Name [fServiceCall.vb:315-329].
+  Save: Validates, asks for confirmation (MSG-18) and saves the call and all details in one transaction [fServiceCall.vb:651-778].
+  Search: Opens a search list of calls of the company and financial year, then loads the chosen call [fServiceCall.vb:331-358].
+  Delete: Deletes the loaded call after confirmation [fServiceCall.vb:114-147].
+validations:
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Enter Contact Person.
+- Either Contact No or email id is compulsary.
+- Enter Subject.
+- Select valid Priority.
+- Select valid Origin.
+- Select valid Call Type.
+- Select valid Problem Type.
+- Select valid Status.
+- Select atleast one Solution Details.
+- Select atleast One Contract Detail.
+- Select only one Contract in Contract Detail.
+- Multiple contract is selected. Do you want to continue?
+- Entry date should not be greater than service contract end date in row N.
+- Duplicate Solution not allowed.
+- Enter value in row no.N.
+- Duplicate Parameter Name not allowed.
+- Duplicate Notification User not allowed.
+- 'Call Id '
+- ' saved successfully.'
+- Unable to delete entry exist for this service call.
+manages:
+- service-call
+uses_concepts:
+- company
+- customer-feedback-parameter
+- eam-resource-master
+- equipment-master
+- maintenance-service-order
+- maintenance-service-order-amendment
+- service-call-change-status
+- service-call-resource-reporting
+- service-contract
+- service-contract-setup
+- service-order-reporting
+- solution-knowledge
+method_notes:
+  Delete: Deletes the record through CustomerService.EASCDelete.
+  FillValueDependent: Fills the lookup lists through CustomerService.EASCFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.EASCFillValues.
+  LoadData: Loads the selected record through CustomerService.EASCLoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through CustomerService.EASCSearchData.
+  Save: Saves the record through CustomerService.EASCSave.
+  SaveContractDetail: Saves the record through CustomerService.EASCSaveContractDetail.
+  SaveCustomFieldDetail: Saves the record through CustomerService.EASCSaveCustomFieldDetail.
+  SaveCustomerFeedbackDetail: Saves the record through CustomerService.EASCSaveCustomerFeedbackDetail.

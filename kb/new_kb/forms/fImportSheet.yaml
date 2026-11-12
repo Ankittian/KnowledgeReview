@@ -1,0 +1,21 @@
+form: fImportSheet
+title: MIS From Excel
+module: RPT
+kind: transaction
+summary: The MIS From Excel screen lets a user open an Excel workbook, pick one of its worksheets and view that sheet as a
+  report inside the application.
+purpose: |
+  What it is: A way to bring the rows of one worksheet of an Excel file into the report viewer as a flat table [fImportSheet.vb:188-246; clsReadExcelFile.vb:211-238]. When it applies: When a user holds data in Excel and wants to view it with the report viewer. Business outcome: Spreadsheet data can be viewed without loading it into the system's own tables.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A small window with one group box holding Import From, Sheet and the Show button [fImportSheet.Designer.vb:92-100].
+  - Import From Field: A text box with a browse button on its right edge [fImportSheet.Designer.vb:35-38].
+  - Sheet Field: A drop-down listing the worksheets of the file, one column named "SheetName" [fImportSheet.vb:163; fImportSheet.Designer.vb:52-58].
+  - Save, Search, Delete and Other Toolbar Actions (Print, Preview, Export, Email): Open, Save and Delete are disabled in the main toolbar when the screen loads; the Save, Delete, Open, Print, Preview, Export and Email handlers do nothing [fImportSheet.vb:55-63; fImportSheet.vb:50-53; fImportSheet.vb:86-123; fImportSheet.vb:152-155].
+actions:
+  Show: The button labelled "Show" [fImportSheet.Designer.vb:87].
+  New: Toolbar action that asks the main window for a new record [fImportSheet.vb:77-84].
+validations:
+- Select valid Sheet.
+manages:
+- mis-from-excel

@@ -1,0 +1,149 @@
+form: fMaintenanceOrderClosing
+title: Maintenance Order Closing
+module: PM
+kind: transaction
+summary: The Maintenance Order Closing screen is where a maintenance order is finished.
+purpose: |
+  What it is: A closing document that records the final outcome of one maintenance order: closing status, actual start and end, duration, delay and reason, remarks, and the actual task, resource, shutdown, fault and check point results [fMaintenanceOrderClosing.vb:2320-2447; EAM.EAOCSave:97-148]. When it applies: When the work on a maintenance order is completed, cancelled, short-closed, held or still in progress and the planner needs to close out the facts (BR-02; BR-03). Business outcome: The order's tasks and the order itself take their final status, and actual times, delays, root causes and resource usage are on record (BR-27).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: The window is titled "MaintenanceOrderClosing".
+  - Document Control (Division, Prefix, Number, Date, Status): The shared document control with Division, document number, document date and document status [fMaintenanceOrderClosing.vb:2337-2351; fMaintenanceOrderClosing.vb:248].
+  - Maintenance Order Field: A mandatory drop-down listing Maintenance Order No, Maintenance Order Date, Reference Object and Maintenance Type [fMaintenanceOrderClosing.vb:249; fMaintenanceOrderClosing.Designer.vb:656] (BR-04).
+  - Status Field: A mandatory drop-down of the closing statuses [fMaintenanceOrderClosing.vb:251; fMaintenanceOrderClosing.Designer.vb:751].
+  - Reason Field: A text box, up to 300 characters, read-only unless the Status is 4, 3 or 7 [fMaintenanceOrderClosing.Designer.vb:987-989; fMaintenanceOrderClosing.vb:3765-3772].
+  - Start Time and End Time Fields: Two date-time pickers in the format dd/MM/yyyy hh:mm tt, defaulting to the current time [fMaintenanceOrderClosing.Designer.vb:793-818; fMaintenanceOrderClosing.vb:480-481].
+  - Duration, Delay Duration and Delay Reson Fields: Duration is a mandatory number in hours.minutes; Delay Duration is a read-only number of up to 10 characters; Delay Reson is a drop-down labelled "Delay &Reson" [fMaintenanceOrderClosing.vb:76; fMaintenanceOrderClosing.Designer.vb:890-892; fMaintenanceOrderClosing.Designer.vb:924; fMaintenanceOrderClosing.vb:212-215].
+  - Remarks Field: An optional text box, up to 1000 characters [fMaintenanceOrderClosing.Designer.vb:997].
+  - Fault Detail Grid: Columns Select, Fault (or Description), RCA.
+  - ShutDown Detail Grid: Grouped columns Equipment Down Time (Equipment Start Date, Equipment End date, Equipment Duration) and Production Down Time (Production Start Date, Production End Date, Production Duration); new rows are added automatically; durations are read-only [fMaintenanceOrderClosing.vb:2045-2100; fMaintenanceOrderClosing.vb:2908-2955].
+  - Task Detail Grid: Columns include Task Id, Task Description, Parent Task, Assign To, Start Time, Progress Entry, End Time, Total Duration, Estimated Start Time, Estimated End Time, Estimated Duration, Progress (%), Status, Reason, Delay Duration and Delay Reason [fMaintenanceOrderClosing.vb:2119-2181].
+  - Progress Entry Pop-up for Tasks: A row edit template with Entry Date, Start Time, End Time, Duration, Shift and Progress (%); OK and Cancel buttons [fMaintenanceOrderClosing.vb:3127-3160; fMaintenanceOrderClosing.vb:3245-3290; fMaintenanceOrderClosing.vb:3440-3470].
+  - Resource Detail Grid: Columns Task Id, Task Description, Resource Name, Quantity, Start Time, Progress Entry, End Time, Usage Duration, Rate Type, Rate and Amount.
+  - Progress Entry Pop-up for Resources: A row edit template with Entry Date, Start Time, End Time, Usage Duration, Shift, Quantity, Rate Type, Rate and Amount [fMaintenanceOrderClosing.vb:3290-3340; fMaintenanceOrderClosing.vb:3477-3615].
+  - Check Points Grid: Columns S.No., Check Points (read-only), Inspection Date and Status [fMaintenanceOrderClosing.vb:3820-3836].
+  - Permit, Item and Service Grids: Read-only grids.
+  - Multi Level Authorization Tab: The shared authorization control showing authorization levels and actions [fMaintenanceOrderClosing.vb:3891-3908].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print Preview and Print are on the toolbar, but the screen's Print, Preview, Export and Email handlers are empty [fMaintenanceOrderClosing.vb:431-463].
+actions:
+  New: Asks the main window for a new record [fMaintenanceOrderClosing.vb:393-401].
+  Save: Validates the closing, asks for confirmation (MSG-40), then saves the header, faults, shutdowns, check points, tasks
+    and resources in one transaction [fMaintenanceOrderClosing.vb:2320-2447].
+  Search: Opens the search list of closings and loads the chosen one [fMaintenanceOrderClosing.vb:403-425].
+  Delete: Asks for confirmation (MSG-42), deletes the closing and its details and reopens a blank screen [fMaintenanceOrderClosing.vb:85-117].
+  Navigation: First, Previous, Next and Last are offered on the toolbar [fMaintenanceOrderClosing.vb:72].
+validations:
+- Authorized Maintenance Order Closing can't be updated.
+- Authorized entry can't be updated.
+- Select valid Maintenance Order.
+- Select valid Status.
+- Duration Can't be Empty.
+- 'Enter reason to '
+- Document Date can't be less than Maintenance Order Date.
+- Start Date can't be less than Maintenance Order Date.
+- End Date can't be less than Start Date.
+- End Date can't be less than Maintenance Order Date.
+- Select Valid Delay Reson.
+- Start Time can't be more than Start Time in Task Detail tab.
+- End Time should not be less than End Time in Task Detail tab.
+- Start time can't be more than Start time in Resource Detail tab.
+- End Time should not be less than End Time in Resource Detail tab.
+- Can not authorize as last level is not approved.
+- Document Status can't be Authorized for multi level Authorization
+- In progress maintenance order closing can not be authorized.
+- Unable to authorized,Meter Reading is pending against this maintenance order.
+- Duplicate Document No. not allowed.
+- Enter valid Start Time in row n.Do you want to continue?
+- Enter valid End Time in row n.Do you want to continue?
+- Enter valid Start Time in row n.
+- Enter valid End Time in row n.
+- Total Duration can't be empty or zero in row n.
+- Enter vaild Status in row n.
+- Progress (%) can't be empty or zero in row n.
+- Progress (%) can't be greater then 100  in row n.
+- 'Enter '
+- ' reason  in row n.'
+- End Time can't be less then Start Time  in row n.
+- Progress (%) should be 100 in row n.
+- Status should be completed in row n.
+- Status should be Completed.
+- Select valid Dealy Reason in row n.
+- Start Date can't be less then Maintenance Order Date in row n.
+- End Date can't be less then Maintenance Order Date in row n.
+- Start Date can't be less then Maintenance Order Date.
+- End Date can't be less then Maintenance Order Date.
+- Progress (%) cant' be less than completed Progress (%)
+- in Row
+- Enter Start Time  in row n.
+- Enter End Time  in row n.
+- Enter Shift  in row n.
+- End Time can't be less then Start Time in row n.
+- Progress (%) can't be less than previous Progress (%)  in row n.
+- Start time can't be Overlap.
+- End Time can't be Overlap.
+- Quantity can't be empty or zero in row n. Do you want to continue?
+- Enter Valid Start Time in row n.Do you want to continue?
+- Enter Valid End Time in row n. Do you want to continue?
+- End Time can't be less then start time  in row n.
+- Enter Start Time in row n.
+- Enter End Time in row n.
+- Enter Quantity  in row n.
+- Quantity can't be empty or zero in row n.
+- Start time can't be OverLap.
+- End Time can't be OverLap.
+- Duplicate Task Id and Resource Name not allowed.
+- Select valid RCA in row n.
+- RCA Detail is not selected in the fault. Do you want to continue?
+- Shutdown Detail Required.
+- Shutdown Detail is not present. Do you want to continue?
+- Enter Valid Equipment End Date in row n.
+- Enter Valid Equipment Start Date in row n.
+- Enter Valid Production Start Date in row n.
+- Enter Valid Production End Date in row n.
+- Select valid Equipment Start Date in row n.
+- Select valid Equipment End Date in row n.
+- Select valid Production Start Date in row n.
+- Select valid Production End Date in row n.
+- Equipment End Date can't be less then Equipment Start Date  in row n.
+- Production End Date can't be less then Production Start Date  in row n.
+- Equipment Start Date can't be Overlap.
+- Equipment End Date can't be Overlap.
+- Production Start Date can't be Overlap.
+- Production End Date can't be Overlap.
+- Select valid Inspection Date in row n.
+- Select valid Status in row n.
+- 'Permit Required For '
+- ' in row n.'
+- Issued Qty. is less then required qty in row n,Do you want to continue?
+- Material issue and service bill exists .Do you want to continue?
+- Service bill exists .Do you want to continue?
+- Material issue exists .Do you want to continue?
+- Resource Name is not selected in Resource Detail. Do you want to continue?
+- Select Resource Name in Resource Detail.
+- Different status is selected in the Task Details.Do you want to continue?
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- maintenance-order-closing
+uses_concepts:
+- clearance-permit
+- company
+- eam-resource-master
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-reporting
+- maintenance-schedule
+- meter-reading
+method_notes:
+  Delete: Deletes the record through EAM.EAOCDelete.
+  FillValues: Fills the lookup lists through EAM.EAOCFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAOCFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EAOCLoadData.
+  Open: Searches records through EAM.EAOCSearchData.
+  Save: Saves the record through EAM.EAOCAuthorize, EAM.EAOCSave.
+  SaveCheckPointDetail: Saves the record through EAM.EAOCSaveCheckPoint.
+  SaveFaultDetail: Saves the record through EAM.EAOCSaveFaultDetail, masterdata.AMRCSave.
+  SaveResourceDetail: Saves the record through EAM.EAOCSaveResourceDetail.
+  SaveResourceDetailProgress: Saves the record through EAM.EAMPSaveResourceDetail.

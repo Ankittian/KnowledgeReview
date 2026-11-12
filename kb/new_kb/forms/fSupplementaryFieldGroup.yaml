@@ -1,0 +1,39 @@
+form: fSupplementaryFieldGroup
+title: Supplementary Field Group
+module: MD
+kind: master
+summary: The Supplementary Field Group screen maintains named bundles of supplementary fields.
+purpose: |
+  What it is: A master record made of a code, a group name and a list of supplementary fields [fSupplementaryFieldGroup.vb:336-421; masterdata.ASUGSave:20-51; masterdata.ASUGSaveFieldDetail:19-28]. When it applies: When a class of assets always needs the same additional attributes. Business outcome: The same attribute set is applied to similar assets without re-selection.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A small window captioned "Supplementary Field Group" with a header area (Code, Group Name, Inactive) above a grid of supplementary fields [fSupplementaryFieldGroup.designer.vb:127].
+  - Code Field: A read-only text box of up to 6 characters that cannot be tabbed into [fSupplementaryFieldGroup.designer.vb:41-46].
+  - Group Name Field: A mandatory text box, up to 50 characters, marked as compulsory on load; leading and trailing spaces are removed [fSupplementaryFieldGroup.vb:45; fSupplementaryFieldGroup.designer.vb:61; fSupplementaryFieldGroup.vb:258; fSupplementaryFieldGroup.vb:355].
+  - Inactive Field: A disabled tick box labelled "Inactive" that cannot be tabbed into [fSupplementaryFieldGroup.designer.vb:77-83].
+  - Supplementary Field Detail Grid: A grid with the columns Supplementary Field (drop-down) and Code (read-only) [fSupplementaryFieldGroup.vb:321-330].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fSupplementaryFieldGroup.vb:200-232].
+actions:
+  New: The toolbar action that asks the main window to start a blank record and places the cursor in Group Name [fSupplementaryFieldGroup.vb:160-170].
+  Save: The toolbar action that validates and stores the group and its field rows [fSupplementaryFieldGroup.vb:336-396].
+  Search: The toolbar action that opens a search dialog listing the groups of the logged-in company with Code, Group Name,
+    Inactive, Created By and Created Date [fSupplementaryFieldGroup.vb:173-198; masterdata.ASUGSearchData:17-27].
+  Delete: The toolbar action that removes the open group [fSupplementaryFieldGroup.vb:53-90].
+validations:
+- Enter Group Name.
+- Duplicate Group Name not allowed.
+- Select at least one Supplementary Field.
+- Duplicate Supplementary Field not allowed in Supplementary Field Detail Grid.
+manages:
+- supplementary-field-group
+uses_concepts:
+- company
+- supplementary-field
+method_notes:
+  Delete: Deletes the record through masterdata.ASUGDelete.
+  FillValues: Fills the lookup lists through masterdata.ASUGFillValues.
+  LoadData: Loads the selected record through masterdata.ASUGLoadData.
+  Open: Searches records through masterdata.ASUGSearchData.
+  Save: Saves the record through masterdata.ASUGSave.
+  SaveSupplementaryFieldDetail: Saves the record through masterdata.ASUGSaveFieldDetail.
+  ValidateForm: Validates the entry through masterdata.ASUGValidate.

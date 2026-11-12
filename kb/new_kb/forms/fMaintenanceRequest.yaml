@@ -1,0 +1,84 @@
+form: fMaintenanceRequest
+title: Maintenance Request
+module: PM
+kind: transaction
+summary: The Maintenance Request screen lets a user report that a piece of equipment or a functional location needs maintenance
+  work.
+purpose: |
+  What it is: A document that asks maintenance to look at one equipment or one functional location, listing the faults or request descriptions with priority and target date, plus the requester, approver, category, shift and breakdown flag [fMaintenanceRequest.vb:945-1090; fMaintenanceRequest.vb:1098-1166]. When it applies: When a fault is noticed, a service is wanted, or a repeat of an earlier request is needed. Business outcome: Every maintenance need is recorded once, with an owner, urgency and target date, and is traceable through authorization (BR-01; BR-06 to BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: The window caption is "Maintenance Request" [fMaintenanceRequest.designer.vb:620].
+  - Document Header Fields (Division, Document No., Document Date, Document Status): A shared control that holds the division, the yearly document number or prefix, the document date and the document status.
+  - Source Document Field: A dropdown "Source Document", checked on save [fMaintenanceRequest.designer.vb:433; fMaintenanceRequest.vb:643-647].
+  - Ref. Document No. Field: A dropdown "Ref.
+  - Ref. Document Date Field: A read-only text box "Ref.
+  - Reference Object Field: A mandatory dropdown "Reference &Object" with Equipment and Location [fMaintenanceRequest.designer.vb:494; fMaintenanceRequest.vb:66].
+  - Equipment / Location Field: A mandatory dropdown whose label shows "Equipment" or "Location" [fMaintenanceRequest.designer.vb:514; fMaintenanceRequest.vb:1264-1267].
+  - Custodian Field: A read-only text box "Custodian" [fMaintenanceRequest.designer.vb:520-534].
+  - Request Type Field: A mandatory dropdown "Request &Type" [fMaintenanceRequest.designer.vb:553; fMaintenanceRequest.vb:66].
+  - Maintenance Category Field: A mandatory dropdown "Maintenance &Category" [fMaintenanceRequest.designer.vb:358; fMaintenanceRequest.vb:66].
+  - Shift Field: A dropdown "&Shift" [fMaintenanceRequest.designer.vb:339].
+  - Requested By and Approved By Fields: Two mandatory text combos "Requested &By" and "Approved &By", up to 100 characters [fMaintenanceRequest.designer.vb:441-475; fMaintenanceRequest.vb:66].
+  - Is Breakdown Checkbox: A checkbox "Is Breakdown" [fMaintenanceRequest.designer.vb:317].
+  - Remarks Field: A multi-line text "&Remarks", up to 1000 characters, trimmed on save [fMaintenanceRequest.designer.vb:559-572; fMaintenanceRequest.vb:1003].
+  - Notes Control: A small embedded notes control with a Print Area column, placed at the right edge of the General Detail group [fMaintenanceRequest.designer.vb:260-266].
+  - Fault Detail Grid: The grid on the "Fault Detail" tab with columns Fault, Fault Description, Request Description, Occurrence Date, Priority, Target Date and Remarks [EAM.EARQFillValues:100-108].
+  - Log Detail Grid: A grid on the "Log Detail" tab with Select, Work Log No, Work Log Date, Work Log Category and Log Description.
+  - Custom Field Tab: The shared custom field grid [fMaintenanceRequest.designer.vb:215-225].
+  - Multi-Level Authorization Tab: The shared multi-level authorization control [fMaintenanceRequest.designer.vb:230-240].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fMaintenanceRequest.vb:452-484].
+actions:
+  New: Asks the main window for a fresh record [fMaintenanceRequest.vb:410-420].
+  Save: Validates the whole request, asks for the standard save confirmation, then saves in one transaction [fMaintenanceRequest.vb:945-1096].
+  Search: Opens the search list of requests of the company and year, limited to the user's divisions [fMaintenanceRequest.vb:422-450;
+    EAM.EARQSearchData:21-47; EAM.EARQSearchData:100-115].
+  Repeated Entry: A "repeat" button on the document header control that lists requests of all years and copies the chosen
+    one into a new request [fMaintenanceRequest.vb:1573-1604; EAM.EARQSearchData:49-81].
+  Delete: Deletes the loaded request after the standard delete confirmation [fMaintenanceRequest.vb:74-107].
+validations:
+- Authorized Maintenance Request can't be updated.
+- Select valid Source Document.
+- Select valid Ref. Document No.
+- Document Date can't be less than Ref. Document Date.
+- Select valid Reference Object.
+- Select valid Equipment.
+- Select valid Location.
+- Select valid Request Type.
+- Select valid Maintenance Category.
+- Select valid Requested By.
+- Select valid Approved By.
+- Can not authorize as last level is not approved.
+- Document Status can't be Authorized for multi level Authorization
+- Document Date can't be less than Selected Work Log Date.
+- Select atleast one Request Description.
+- Select atleast one Fault.
+- Select valid Fault Description in row n.
+- Select valid Occurrence Date in row n.
+- Select valid Priority in row n.
+- Select valid Target Date in row n.
+- Problem Occuring Date Time can't be greater than Document Date in row n.
+- Target Date can�t be less than Document Date in row n.
+- Shift is not selected. Do you want to continue?
+- Select a valid Shift.
+- Duplicate Document No. not allowed.
+- Authorized entry can't be updated.
+manages:
+- maintenance-request
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+- work-log-category
+- worklog
+method_notes:
+  Delete: Deletes the record through EAM.EARQDelete.
+  FillValues: Fills the lookup lists through EAM.EARQFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EARQFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EARQLoadData.
+  Open: Searches records through EAM.EARQSearchData.
+  Save: Saves the record through EAM.EARQAuthorize, EAM.EARQSave.
+  SaveCustomFieldDetail: Saves the record through EAM.EARQCustomFieldDetail.
+  SaveFaultDetails: Saves the record through EAM.EARQFaultDetails, EAM.EARQMaintenanceDescription.
+  SaveLogDetails: Saves the record through EAM.EARQSaveLogDetails.
+  SaveNotesDetail: Saves the record through EAM.EARQNotesDetail.

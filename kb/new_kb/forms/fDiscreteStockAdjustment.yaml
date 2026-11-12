@@ -1,0 +1,67 @@
+form: fDiscreteStockAdjustment
+title: Discrete Stock Adjustment
+module: DRM
+kind: transaction
+summary: The Discrete Stock Adjustment screen corrects the book stock of one discrete raw material Section in one Warehouse
+  so that it matches what is physically counted.
+purpose: |
+  What it is: A document that records the counted (actual) pieces, quantity and amount of each lot of a discrete raw material Section against the quantity, pieces and amount the system holds, and, once Authorized, turns the difference into stock movements and an accounting journal [fDiscreteStockAdjustment.vb:582-685; DiscreteRM.DRSAAuthorize:31-217]. When it applies: After a physical count, or when stock of a Section is found to differ from the books, for example because offcuts were produced or lots were never recorded. Business outcome: Book stock and its value agree with physical stock, and the difference is traceable to a numbered, dated, authorized document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header, a Warehouse/Section/Stock Type/Remarks area, and two tabs: "Lot Detail" with the lot grid and print notes, and "Finance Posting" [fDiscreteStockAdjustment.Designer.vb:323-326; fDiscreteStockAdjustment.Designer.vb:363].
+  - Document No., Date, Status and Division Controls: The shared document control at the top that holds Division (when divisions are used), document number prefix and number, Document Date and Document Status [fDiscreteStockAdjustment.vb:171-172; fDiscreteStockAdjustment.vb:355-357].
+  - Stock Type Field: A mandatory drop-down with "RawMaterial" and "Finished Goods" [fDiscreteStockAdjustment.vb:402-407; DiscreteRM.DRSAFillValues:88-91].
+  - Warehouse Field: A mandatory drop-down showing Warehouse and Code [fDiscreteStockAdjustment.vb:93; fDiscreteStockAdjustment.vb:174].
+  - Section Field: A mandatory drop-down showing Section and Unit [fDiscreteStockAdjustment.vb:93; fDiscreteStockAdjustment.vb:1112-1117].
+  - Remarks Field: An optional text box with a 1000 character limit; the text is trimmed before saving [fDiscreteStockAdjustment.Designer.vb:155; fDiscreteStockAdjustment.vb:626].
+  - Lot Grid: One row per lot with columns Select, Lot No., Document Date, Make, Mark No., Min Length, Max Length, Avg.
+  - Lot Detail Pop-up: A pop-up opened from the "Detail" button of a lot row, with a grid of Length, Width, Pcs and Qty.
+  - Notes Control: An embedded control to enter print notes by Print Area, with a Default flag; defaults of the company are pre-filled on a new document [fDiscreteStockAdjustment.vb:178-187; DiscreteRM.DRSAFillValues:56-63].
+  - Finance Posting Tab: The embedded finance posting control showing the journal voucher for the value difference [fDiscreteStockAdjustment.vb:1132-1180].
+  - Voucher Regeneration Shortcut: Pressing Alt+Ctrl+V while the Finance Posting tab is visible regenerates the voucher and saves it for an already Authorized document [fDiscreteStockAdjustment.vb:20-88].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard toolbar actions.
+actions:
+  New: Asks the main window to open a blank document [fDiscreteStockAdjustment.vb:278-285].
+  Save: Validates and saves the document, its lots, dimension rows and notes, then reads back the result.
+  Search: Opens the search list of all adjustments of the current company and year, newest document date first, showing Adjustment
+    No., Adjustment Date, Warehouse, Section, Remarks, Created By, Released By and Authorized By [fDiscreteStockAdjustment.vb:287-313;
+    DiscreteRM.DRSASearchData:18-31].
+  Delete: Deletes the loaded document after the standard delete confirmation [fDiscreteStockAdjustment.vb:100-129].
+validations:
+- Select valid Stock Type.
+- Select valid Warehouse.
+- Select valid Section.
+- Authorized Stock Adjustment can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select atleast one Lot.
+- Actual Qty. can't be empty or zero in row N.
+- Lot No. can't be empty in row N.
+- Select valid Mark No.  in row N.
+- Actual Qty. should be equal to X in row N.
+- sum of Qty. should be equal to X
+- Document No. <number> saved successfully.
+- No Scrap Item found for selected Section
+manages:
+- discrete-stock-adjustment
+uses_concepts:
+- accounting-voucher
+- company
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- rawmaterial-opening
+- sin-lot-entry
+- stock-transfer
+- store-inward-note
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRSADelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRSAFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.DRSAFillValuesDependent.
+  ItemLotDetail: Runs through DiscreteRM.DRSAItemLotDetail.
+  LoadData: Loads the selected record through DiscreteRM.DRSALoadData.
+  Open: Searches records through DiscreteRM.DRSASearchData.
+  Save: Saves the record through DiscreteRM.DRSAAuthorize, DiscreteRM.DRSASave, Inventory.VoucherVsLotValidation.
+  SaveDimension: Saves the record through DiscreteRM.DRSASaveDimensionDetail.
+  SaveItemDetail: Saves the record through DiscreteRM.DRSASaveDetail.
+  SaveNotesDetail: Saves the record through DiscreteRM.DRSASaveNotesDetail.

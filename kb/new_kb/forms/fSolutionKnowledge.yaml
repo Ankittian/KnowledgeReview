@@ -1,0 +1,42 @@
+form: fSolutionKnowledge
+title: Solution Knowledge
+module: MD
+kind: master
+summary: The Solution Knowledge screen maintains a library of known problems and their remedies.
+purpose: |
+  What it is: A master record that captures a known symptom, its cause and its solution for one item [fSolutionKnowledge.vb:283-346; masterdata.ESKOSave:44-73]. When it applies: When a fault pattern and its fix should be reusable by service staff, or when an existing entry has to be corrected. Business outcome: Service staff reuse proven solutions instead of rediscovering them, and the Status tells whether an entry is internal, published or under review (BR-01; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Group Area: A single group box holding all fields [fSolutionKnowledge.Designer.vb:178-180].
+  - Code Field: A read-only text box labelled "Code", 8 characters [fSolutionKnowledge.Designer.vb:50-52; fSolutionKnowledge.Designer.vb:63].
+  - Item Description Field: A mandatory drop-down labelled "Item &Description" [fSolutionKnowledge.vb:42; fSolutionKnowledge.vb:98; fSolutionKnowledge.Designer.vb:82].
+  - Symptom Field: A mandatory text box labelled "S&ymptom", 100 characters [fSolutionKnowledge.vb:42; fSolutionKnowledge.Designer.vb:88; fSolutionKnowledge.Designer.vb:100].
+  - Solution Field: A mandatory multi-line text box labelled "Sol&ution", 500 characters on screen [fSolutionKnowledge.vb:42; fSolutionKnowledge.Designer.vb:109; fSolutionKnowledge.Designer.vb:204-205].
+  - Solution Description Field: A mandatory multi-line text box labelled "Solution &Description", 500 characters [fSolutionKnowledge.vb:42; fSolutionKnowledge.Designer.vb:115-116; fSolutionKnowledge.Designer.vb:128].
+  - Cause Field: An optional multi-line text box labelled "Ca&use", 300 characters [fSolutionKnowledge.Designer.vb:134-135; fSolutionKnowledge.Designer.vb:147].
+  - Status Field: A mandatory drop-down labelled "Sta&tus" with Internal, Publish and Review [fSolutionKnowledge.vb:42; fSolutionKnowledge.vb:99; fSolutionKnowledge.Designer.vb:166].
+  - Inactive Field: A check box labelled "Inactive", disabled [fSolutionKnowledge.Designer.vb:170; fSolutionKnowledge.Designer.vb:175].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fSolutionKnowledge.vb:185-217].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fSolutionKnowledge.vb:146-155].
+  Save: The toolbar action that validates and stores the entry [fSolutionKnowledge.vb:283-346].
+  Search: The toolbar action that opens a search list [fSolutionKnowledge.vb:157-183].
+  Delete: The toolbar action that removes the opened entry [fSolutionKnowledge.vb:49-82].
+validations:
+- Select valid Item Description.
+- Enter Symptom.
+- Enter Solution.
+- Enter Solution Description.
+- Select valid Status.
+- Document No. saved successfully.
+manages:
+- solution-knowledge
+uses_concepts:
+- company
+- service-call
+method_notes:
+  Delete: Deletes the record through masterdata.ESKODelete.
+  FillValues: Fills the lookup lists through masterdata.ESKOFillValues.
+  LoadData: Loads the selected record through masterdata.ESKOLoadData.
+  Open: Searches records through masterdata.ESKOSearchData.
+  Save: Saves the record through masterdata.ESKOSave.

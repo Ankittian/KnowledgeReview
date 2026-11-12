@@ -1,0 +1,18 @@
+key: p5-inventory-gate
+name: 'Inventory: Gate (Phase 5)'
+module: MM
+status: active
+summary: Phase 5 screens of the gate group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Gate' (Inventory). The steps follow the plan order, not a verified business sequence: Gate In - Outward, Gate In - Outward Amendment.
+steps:
+- order: 1
+  name: Record Gate In - Outward
+  form: fVehicleGateIn
+- order: 2
+  name: Record Gate In - Outward Amendment
+  form: fVehicleGateInAmendment
+concepts:
+- gate-in-outward
+- gate-in-outward-amendment

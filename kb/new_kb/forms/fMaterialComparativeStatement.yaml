@@ -1,0 +1,37 @@
+form: fMaterialComparativeStatement
+title: MaterialComparativeStudy
+module: MM
+kind: transaction
+summary: The MaterialComparativeStudy screen (form name Material Comparative Statement) prepares the Excel version of a comparative
+  statement for a material Request For Quotation (RFQ) that has received vendor quotations.
+purpose: |
+  What it is: A per-RFQ marker with a subject line and a display-level choice, plus an Excel export of the vendors' quotations side by side. [Purchase.EXCSSave:18-23; fMaterialComparativeStatement.vb:433-446] When it applies: After vendors have quoted against an RFQ and the buyer wants to circulate or file a comparison. Business outcome: A documented basis for vendor selection, and a record of which RFQs already have a statement prepared.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Material Details Panel: A single group box holding all fields; window caption "MaterialComparativeStudy".
+  - RFQ No. Field: Dropdown of RFQ number and date; marked mandatory (BR-01, MSG-01).
+  - RFQ Date Field: Read-only text showing the RFQ date as dd/MM/yyyy.
+  - Subject of CS Field: Multi-line optional text box.
+  - Show TDC On Field: Dropdown of three options; mandatory for Save and export (BR-02, MSG-02).
+  - Show T & C and Show Custom Field Checkboxes: Two unchecked-by-default checkboxes.
+  - Export Button (picture): A picture button without text beside the checkboxes.
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): Empty handlers.
+actions:
+  New: Standard New toolbar action.
+  Save: Validates, asks for confirmation and records subject, display level and prepared mark.
+  Search: The standard search opens a list of RFQs with a prepared statement for the company and year, showing RFQ No., RFQ
+    Date and the quotation numbers.
+  Delete: Clears the prepared statement of the loaded RFQ after confirmation.
+validations:
+- Select valid RFQ No.
+- Select valid Show TDC On.
+- Saved successfully.
+manages:
+- materialcomparativestudy
+method_notes:
+  Delete: Deletes the record through Purchase.EXCSDelete.
+  FillValues: Fills the lookup lists through Purchase.EXCSFillValues.
+  LoadData: Loads the selected record through Purchase.EXCSLoadData.
+  Open: Searches records through Purchase.EXCSSearchData.
+  Save: Saves the record through Purchase.EXCSSave.
+  picbExport_Click: Runs through Purchase.ComparativeStatementOne, Purchase.ComparativeStatementTwo.

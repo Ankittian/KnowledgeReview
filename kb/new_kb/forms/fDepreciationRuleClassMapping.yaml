@@ -1,0 +1,46 @@
+form: fDepreciationRuleClassMapping
+title: Depreciation Rule Class Mapping
+module: MD
+kind: master
+summary: The Depreciation Rule Class Mapping screen decides which depreciation rule applies to each asset class of a depreciation
+  book, for a stated period.
+purpose: |
+  What it is: A dated assignment of depreciation rules to the asset classes of one depreciation book [fDepreciationRuleClassMapping.vb:271-342; FixedAsset.ACDRSaveMain:21-64]. When it applies: When a depreciation book starts to be used, or when the rule for some classes changes from a given date. Business outcome: Each asset class depreciates under a defined rule for each period, with a history of changes and no overlap.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Depreciation Book, Effective From, Effective To and the class grid [fDepreciationRuleClassMapping.Designer.vb:97-111].
+  - Depreciation Book Field: A mandatory drop-down of depreciation book names [fDepreciationRuleClassMapping.vb:11; fDepreciationRuleClassMapping.vb:56].
+  - Effective From Field: A date picker in dd/MM/yyyy form [fDepreciationRuleClassMapping.Designer.vb:55-57].
+  - Effective To Field: A date picker with a tick box [fDepreciationRuleClassMapping.Designer.vb:74-79].
+  - Asset Class Detail Grid: A grid with Class Name and Parent Class (read-only), and Depreciation Rule (drop-down of active rules); the class number and last depreciation date are hidden [fDepreciationRuleClassMapping.vb:250-264; fDepreciationRuleClassMapping.vb:57].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fDepreciationRuleClassMapping.vb:124-156].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fDepreciationRuleClassMapping.vb:88-95].
+  Save: The toolbar action that validates and stores the mapping and its class rows [fDepreciationRuleClassMapping.vb:271-322].
+  Search: The toolbar action that opens a search dialog listing Depreciation Book, Effective From, Effective To, Created By
+    and Created Date [FixedAsset.ACDRSearchData:17-26].
+  Delete: The toolbar action that removes the open mapping [fDepreciationRuleClassMapping.vb:17-42].
+validations:
+- Select valid Depreciation Book.
+- Effective To can't be less than Effective From.
+- Select atleast one Depreciation Rule.
+- To Date can't be less than max of To Date of depreciation.
+- Duplicate entry found against depreciation book and effective dates.
+- Select valid To Date.
+- Can't be deleted, Some Asset Tag from below asset class is depreciated.
+- Depreciation exists against this class.
+manages:
+- depreciation-rule-class-mapping
+uses_concepts:
+- asset-class
+- asset-group
+- depreciation-rule
+method_notes:
+  Delete: Deletes the record through FixedAsset.ACDRDelete.
+  FillValues: Fills the lookup lists through FixedAsset.ACDRFillValues.
+  FillValuesDependent: Fills the lookup lists through FixedAsset.ACDRFillValuesDependent.
+  LoadData: Loads the selected record through FixedAsset.ACDRLoadData.
+  Open: Searches records through FixedAsset.ACDRSearchData.
+  Save: Saves the record through FixedAsset.ACDRSaveMain.
+  SaveAssetClassDetail: Saves the record through FixedAsset.ACDRSaveDetail.
+  ValidateForm: Validates the entry through FixedAsset.ACDRValidate.

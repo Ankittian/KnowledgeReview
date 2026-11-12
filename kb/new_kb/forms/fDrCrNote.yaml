@@ -1,0 +1,105 @@
+form: fDrCrNote
+title: Debit/ Credit Note
+module: FI
+kind: transaction
+summary: The Debit/ Credit Note screen records a numbered note that raises or reduces an amount owed by or to a business partner
+  after the original document was posted.
+purpose: |
+  What it is: A controlled correction document that changes the balance of one or more posted bills of a partner, with its own number, taxes, GST posting and voucher. [fDrCrNote.vb:1631-1758; Finance.FIDCSaveMain:91-188] When it applies: When a rate difference, short supply, quality rejection, discount, freight or other reason requires the partner's account to be debited or credited after billing. Business outcome: The partner ledger, outstanding references, GST input or output and stock lot values are corrected through one auditable document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A header with number, status, date and division, and tabs General, Invoice Detail, Item Detail, Tax Detail (hidden unless Calculate Tax), Finance Posting and GST Posting (hidden by default).
+  - General Tab Fields: Note type, Source Document, Vendor Name, Vendor Location (mandatory, BR-01), Reason, Other Reason (100 characters, only for reason 5), On, Remarks (1000), Vendor Bill No.
+  - Invoice Detail Grid: The partner's open bills with select box, bill number and date, net amount, balance, currency, reverse charge and the note Amount (sum of the selected lines' Net Amount).
+  - Item Detail Grid: Lines of the selected bills (or free item rows for direct notes) with select box, item, unit, HSN, purchase type, bill quantity, rate and net amount, deduction or addition Qty., Rate, Amount, Net Amount, remarks (500) and previous notes.
+  - Quality Deduction Grid: A pop-up grid opened from the deduction rate cell for Auto nature, listing inspection parameters with OK and Cancel; OK writes the calculated rate to the line.
+  - Tax Detail, Finance Posting and GST Posting Tabs: Tax Detail holds the tax lines on the note amount and the tax concession form.
+  - Hidden Shortcuts: Ctrl+Alt+G on the GST tab deletes and re-saves the GST posting after confirmation; Ctrl+Alt+V shows MSG-49; Ctrl+Alt+G with the posting tab visible copies narration-update statements for all notes to the clipboard.
+actions:
+  Save, Search, Delete, Print and Other: 'Standard toolbar: New, Save, Search (opens the configured list), Delete, Print and
+    Preview (voucher, supplier debit note report and daily print reports), E-mail and Export.'
+validations:
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select Vendor Bill No.
+- Select Bill Date.
+- Bill Date can't be greater than Document Date.
+- Select valid <Deduction/Addition> Reason.
+- Enter Other Reason.
+- Select valid <Deduction/Addition> Nature.
+- Nature Value can't be empty or 0.
+- Select valid <Deduction/Addition> On.
+- Select valid Method.
+- Select valid Vendor Bill No..
+- Select Due Date.
+- Select valid Payment Mode.
+- Select valid GST Tax Rule.
+- Select Valid Dispatch Challan.
+- Select atleast one Bill.
+- Document Currency and referred Invoice Currency doesn't match.
+- Bill Date can't be greater than Document Date in row <n>.
+- <Deduction/Addition> Amount can't be greater than Net Amount in row <n>.
+- Reverse charge of all the selected bills must be same.
+- ' GST is Applied in Tax Invoice but GST in Tax Detail is missing. Do you want to continue?  '
+- ' GST is not Applied in Tax Invoice but GST in Tax Detail exists. Do you want to continue?  '
+- Enter atleast one Item.
+- Select atleast one <GRN/Invoice/Ref. Document>.
+- Row <n> doesn't match with Item Details of Selected Dispatch Challan.
+- <Net Amount caption> in row <n> can not be zero or empty.
+- In Item Detail, rows with 'Purchase Type' Capital & Non-Capital, can't be selected at once.
+- Select valid HSN & SAC Code in row <n>.
+- HSN & SAC Code in not 8 character long. Do you want to continue?
+- HSN & SAC Code must be 8 character long.
+- <Deduction/Addition> Qty. can't be empty or 0 in row <n>.
+- <Deduction/Addition> Rate can't be empty or 0 in row <n>.
+- must be equal to Qty. <n>
+- Qty. can't be greater than Challan Qty.
+- Qty. can't be greater than Received Qty.
+- Nature Value should be equal to Basic Amount.
+- GST cannot be applied in Tax Detail tab for those Invoices, whose Reverse Charge is 'Exempted'.
+- GST Taxes and GST Tax Rule can't be selected simultaneously
+- GST Input can't be selected in TDC Account Rule for Tax Invoice
+- Net Amount can't be 0.
+- Total Selected Invoices are more than one. Do you want to continue?
+- Total selected Invoices can't be more than one.
+- Debit/Credit Note can be created against only one Tax Invoice. Do you want to continue?
+- Debit/Credit Note can be created against only one Tax Invoice.
+- Authorized Debit Note/ Credit Note can't be updated.
+- Authorized entry can't be updated.
+- Authorized Bill can't be updated.
+- Duplicate Document No. not allowed.
+- IRN Doesn't exists for this Entry. Can't Authorize.
+- IRN already exists for this Entry. Can't Save.
+- In Selected Document No. DN character is missing, please select valid document No. where should mentioned DN Character
+- Document Receipt Already used in Debit/Credit Note.
+- Conversion case is not handle, Please contact your s/w vendor
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- InTransit Not found in Lot
+- GST Voucher Posting is not found
+- Document No. <number> saved successfully.
+- Unable to delete,IRN exists against this Entry.
+- Facility of REVOUCHER Entry is unavaliable.Please do it manually.
+manages:
+- debit-credit-note
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- freight-invoice
+- outward-bill-entry
+- reverse-voucher
+- service-invoice
+method_notes:
+  Delete: Deletes the record through Finance.FIDCDelete.
+  FillValues: Fills the lookup lists through Finance.FIDCFillValues.
+  FillValuesBill: Fills the lookup lists through Finance.FIDCFillValuesBill.
+  FillValuesDependent: Fills the lookup lists through Finance.FIDCFillValuesDependent.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FIDCFillValuesSourceDocument.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetVendorInfo: Runs through Finance.FIDCGetVendorInfo.
+  LoadData: Loads the selected record through Finance.FIDCLoadData.
+  Open: Searches records through Finance.FIDCSearchData.
+  Save: Saves the record through Finance.FIDCAuthorize, Finance.FIDCSaveMain, Finance.VoucherSaveChildDetail, Inventory.VoucherVsLotValidation.

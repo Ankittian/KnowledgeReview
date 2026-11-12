@@ -1,0 +1,63 @@
+form: fFSLayoutDesign
+title: Layout Design
+module: MD
+kind: master
+summary: The Layout Design screen (window caption "FSLayoutDesign") builds the structure of a financial statement layout,
+  such as a balance sheet, profit and loss or cash flow statement.
+purpose: |
+  What it is: The hierarchy of sections and groups that make up each financial statement layout, with presentation rules. When it applies: When a statement format is set up or restructured. Business outcome: Statements are produced in the format the business and regulators require (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields on the left and a read-only structure grid (Particular, Section, Sequence Id), with sections in black and groups in dark red.
+  - Code Field: Read-only text box with a Code link above it ("Switch to fast entry mode.").
+  - FSL Name Field: Mandatory dropdown (BR-01).
+  - Type Field: Mandatory dropdown Section / Group (BR-02).
+  - Section/ Group Name Field: Mandatory text, up to 100 characters (BR-04).
+  - Parent Name Field: Dropdown of other entries of the layout, shown as "name<-parent name".
+  - Schedule Field: Optional dropdown.
+  - Sequence Id Field: Mandatory numeric text, up to 3 digits (BR-05).
+  - Section Nature, Classification and FS Report Component Fields: Section Nature and Classification mandatory dropdowns; FS Report Component optional, filtered to the chosen classification (BR-06).
+  - Show Negative Balance Account / Group and Alternate Group Name Fields: Two mandatory dropdowns and an optional Alternate Group Name (BR-07).
+  - Show Group/ Section Summary, Summary Description and Hide Group/ Section Value Fields: Two checkboxes and an optional description up to 50 characters.
+  - Mapping, Show Account Balance and Formula Fields: Option set Map with account / Formula Based / Fix Value; Show Account Balance dropdown (Opening Balance, Closing Balance, Period Credit, Period Debit, Period Net Amount); read-only formula box with a Formula button.
+  - Fast Entry Grid Container: Columns FSL Name, Type, Group/Section Name, Parent Name, Schedule, Sequence Id, Section Nature, FS Report Component, Classification, Show Negative Balance Account, Show Negative Balance Group, Alternate Group Name, Hide Group/Section Name, Show Group/Section Summary, Summary Description, read-only Remarks.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present but empty.
+actions:
+  Back Link: A link on the fast entry container returning to the main layout.
+  Import: Import button on the fast entry container; loads an Excel sheet named "FSLD" with the fast entry columns.
+  New: Standard toolbar New, handled by the main window.
+  Save: 'Single entry: validates and saves the entry.'
+  Search: Standard search with FSL Name, Type, Section/ Group Name, Parent Name, Schedule, Classification, Alternate Group
+    Name, Mapping, Created By.
+  Delete: Deletes the loaded entry after confirmation (MSG-19).
+  Navigation: Not coded on this screen; provided by the standard toolbar, if at all (Inferred).
+validations:
+- Select valid FSL Name.
+- Select valid Type.
+- Enter Section/ Group Name.
+- Duplicate Section/ Group Name not allowed.
+- Select valid Parent Name.
+- Enter Sequence Id.
+- Select valid Section Nature.
+- Select valid Classification.
+- Select valid Show Negative Balance Account.
+- Select valid Show Negative Balance Group.
+- Select valid Alternate Group.
+- Select valid Show Account Balance.
+- Enter Formula.
+- Successfully Created.
+- Refer remarks for saved status.
+- Your excel should consists of sheet with name FSLD. Do you want to continue?
+manages:
+- layout-design
+uses_concepts:
+- account-mapping
+- multiple-layout-mapping
+method_notes:
+  Delete: Deletes the record through masterdata.FSLDDelete.
+  FillValues: Fills the lookup lists through masterdata.FSLDFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.FSLDFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.FSLDLoadData.
+  Open: Searches records through masterdata.FSLDSearchData.
+  SaveMain: Saves the record through masterdata.FSLDSaveMain.
+  ValidateForm: Validates the entry through masterdata.FSLDValidate.

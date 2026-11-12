@@ -1,0 +1,14 @@
+key: p4-inventory-gate
+name: 'Inventory: Gate (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the gate group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Gate' (Inventory). The steps follow the plan order, not a verified business sequence: Vehicle Gate Out.
+steps:
+- order: 1
+  name: Record Vehicle Gate Out
+  form: fVehicleGateOut
+concepts:
+- vehicle-gate-out

@@ -1,0 +1,86 @@
+form: fSCAgreement
+title: Service Agreement
+module: MM
+kind: transaction
+summary: 'The Service Agreement screen records a standing agreement with a service or subcontract vendor: the agreed rates,
+  quantities or amounts for services, conversion items or activities, the period for which the agreement runs, the freight,
+  payment and billing arrangements, terms and conditions, notes and custom fields.'
+purpose: |
+  What it is: A numbered agreement with one vendor and vendor location for a list of services, conversion items or activities, with rates, quantities or amounts, an agreement period and commercial terms. [fSCAgreement.vb:701-840] When it applies: When a rate, quantity or value has been agreed with a subcontractor or service vendor, either from a won quotation or negotiated directly. Business outcome: Agreed prices and terms are stored once and reused by later service documents instead of being re-typed.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared control at the top showing division (when applicable), agreement number, date and status, with a "repeated entry" button.
+  - Tab Layout: Four tabs: "General Details", "Shipping and Account Details", "Terms and Conditions", "Custom Fields", plus the item grid and notes.
+  - Source Document Field: A mandatory dropdown, "Source Document": "Direct" or "Quotation".
+  - Subcontract Type Field: A mandatory dropdown "Subcontract Type" (Service, Conversion, Activity); defaults to Service.
+  - Ref. Doc. No. and Ref. Doc. Date Fields: "Ref.
+  - Vendor Name, Location and Contact Person Fields: Three linked dropdowns: "Vendor &Name", "&Location", "Contact Person &Name".
+  - Agreement Type Field: A mandatory dropdown "Agreement T&ype": Rate, Quantity, Amount; defaults to Rate.
+  - Agreement Value Field: A read-only text box "Agreement Value", up to 13 characters, 2 decimals.
+  - Agreement Period Fields: Date pickers "From Da&te" and "To Da&te" inside "Agreement Period".
+  - Currency Control: The shared currency control: currency, conversion and rate, converted on the document date.
+  - Remarks Field: A multi-line text box "Remar&ks", up to 1000 characters.
+  - Port Of Loading Field: A dropdown "&Port Of Loading".
+  - Freight Fields: "Freight T&ype" (mandatory), "Freight &Rate Type", "Freight A&mount" (10 characters, 2 decimals), "&Location".
+  - Payment Mode, Bill To and Pay To Fields: "&Payment Mode", "&Bill To Party", "Bill To L&ocation", "&Pay To Party", "Pay To L&ocation" and the checkboxes "&Change Bill To Party" and "&Change Pay To Party".
+  - Item Details Grid: The agreement lines: Select, Item Code and Item Description (or Activity Code and Activity), an information button, Tech.
+  - Tolerance Pop-up: Pop-up with "&Tolerance Basis", "Tolerance(+)" and "Tolerance(-)" (11 characters, 3 decimals).
+  - Technical Specification Pop-up: Pop-up text editor for a line, up to 1000 characters.
+  - Terms and Conditions, Custom Fields and Notes: The shared terms-and-conditions group control, custom field control and notes control.
+actions:
+  New: Starts a blank agreement.
+  Save: Validates and saves.
+  Search: Opens the shared search list for the company and year.
+  Delete: Deletes the loaded agreement after the standard confirmation.
+  Repeated Entry: The document control's repeated-entry button copies an earlier agreement into a new document.
+  Print, Preview, Export and Email: Produce the agreement report and send it by e-mail.
+  Navigation: Toolbar option setup is commented out in this form; any navigation is the shared main window's behaviour.
+validations:
+- Authorized Subcontract Agreement can't be updated.
+- Authorized Entry can't be updated.
+- Duplicate Agreement No. is not allowed.
+- Select valid Source Document.
+- Select valid Subcontract Type.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Ref. Doc. Date.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select valid Agreement Type.
+- For Subcontract type Expense (sales) only Rate Agreement Type is allowed.
+- From Date can't be less than Document Date.
+- To Date can't be less than or equal to From Date.
+- Select valid Freight Type.
+- Select valid Pay To Party.
+- Select valid Pay To Location.
+- Select valid Bill To Party.
+- Select valid Bill To Location.
+- Select valid Payment Mode.
+- Select atleast one Code.
+- Select valid Tolerance Basis.
+- 'Document No. '
+- ' saved successfully.'
+- Subcontract Order is Prepared against this Agreement ,so you can't delete this entry.
+- Duplicate Code is not allowed
+- 'Rate can''t be zero or empty in row '
+- 'Quantity can''t be zero or empty in row '
+- 'Amount can''t be zero or empty in row '
+- 'Select Rate Basis in row '
+- 'Select Currency in row '
+manages:
+- service-agreement
+uses_concepts:
+- company
+- service-order
+- service-order-amendment
+- service-rfq
+method_notes:
+  Delete: Deletes the record through Purchase.PSCADelete.
+  FillValueDependent: Fills the lookup lists through Purchase.PSCAFillValuesDependent.
+  FillValues: Fills the lookup lists through Purchase.PSCAFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Purchase.PSCALoadData.
+  Open: Searches records through Purchase.PSCASearchData.
+  Save: Saves the record through Purchase.PSCASave.
+  SaveItemDetails: Saves the record through Purchase.PSCASaveItemDetail.
+  SaveNotesDetail: Saves the record through Purchase.PSCASaveNotesDetail.
+  SaveTNCDetails: Saves the record through Purchase.PSCASaveTermsNConditionDetail.

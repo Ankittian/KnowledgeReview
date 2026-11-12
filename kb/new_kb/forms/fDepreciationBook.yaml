@@ -1,0 +1,43 @@
+form: fDepreciationBook
+title: Depreciation Book
+module: MD
+kind: master
+summary: The Depreciation Book screen defines a named depreciation book for the fixed asset module.
+purpose: |
+  What it is: A master record that ties a book type, a chart of depreciation and a set of finance books together and records how depreciation days are counted [fDepreciationBook.vb:44-68; fDepreciationBook.vb:292-295]. When it applies: When fixed asset accounting is set up, or when a new depreciation basis is needed. Business outcome: Depreciation can be run and reported per book, with each book posting to its own finance books.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single window holding Code, Book Name, Book Type, COD, the three option tick boxes, the FB Details grid and the COD structure grid [fDepreciationBook.designer.vb:62-143].
+  - Code Field: A read-only text box that cannot be tabbed into [fDepreciationBook.designer.vb:50-53].
+  - Book Name Field: A mandatory text box, up to 50 characters, marked compulsory on load; leading and trailing spaces are removed [fDepreciationBook.vb:11; fDepreciationBook.vb:52; fDepreciationBook.vb:187].
+  - Book Type Field: A mandatory drop-down showing the book type names [fDepreciationBook.vb:11; fDepreciationBook.vb:58].
+  - COD Field: A mandatory drop-down showing the COD names [fDepreciationBook.vb:11; fDepreciationBook.vb:59].
+  - Depreciation Options Fields: Three optional tick boxes: Depreciation On 30 Days, Include Capitalization Date For Depreciation and Include Processing Date For Depreciation [fDepreciationBook.designer.vb:125; fDepreciationBook.designer.vb:134; fDepreciationBook.designer.vb:143].
+  - FB Details Grid: A grid with columns Select, FB Code and FB Name.
+  - COD Structure Grid: A read-only grid with columns Particular and Type; the level column is hidden; rows cannot be deleted [fDepreciationBook.vb:252-271].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fDepreciationBook.vb:130-162].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fDepreciationBook.vb:94-101].
+  Save: The toolbar action that validates and stores the book and its finance book ticks [fDepreciationBook.vb:272-325].
+  Search: The toolbar action that opens a search dialog listing every depreciation book with Code, Book Name, Book Type, COD,
+    Created By and Created Date [FixedAsset.AMDBSearchData:17-31].
+  Delete: The toolbar action that removes the open book [fDepreciationBook.vb:17-42].
+validations:
+- Enter Book Name.
+- Select valid Book Type.
+- Select valid COD.
+- Duplicate Book Name not allowed.
+manages:
+- depreciation-book
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMDBDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMDBFillValues.
+  FillValuesBookType: Fills the lookup lists through FixedAsset.AMDBFillValuesBookType.
+  FillValuesCODWise: Fills the lookup lists through FixedAsset.AMDBFillValuesCODWise.
+  LoadData: Loads the selected record through FixedAsset.AMDBLoadData.
+  Open: Searches records through FixedAsset.AMDBSearchData.
+  Save: Saves the record through FixedAsset.AMDBSaveMain.
+  SaveFBDetails: Saves the record through FixedAsset.AMDBSaveFBDetail.
+  ValidateForm: Validates the entry through FixedAsset.AMDBValidate.

@@ -1,0 +1,27 @@
+form: fServiceTaxAdvanceAccount
+title: Service Tax Advance Account
+module: ADM
+kind: transaction
+summary: The Service Tax Advance Account screen maps each service tax charge to the ledger account in which advance service
+  tax is booked.
+purpose: |
+  What it is: A configuration pairing a service tax charge with the account that holds its advance [fServiceTaxAdvanceAccount.vb:191-202; Config.STAASave:17-27]. When it applies: When service tax charges are set up, or when the advance account for a charge changes. Business outcome: Advance service tax is posted to the correct account without the user choosing it on each document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Charge Detail Layout: One grid on a window captioned "ServiceTaxAdvanceAccount" [fServiceTaxAdvanceAccount.Designer.vb:55; fServiceTaxAdvanceAccount.vb:29].
+  - Charge Name Column: An editable drop-down, 250 pixels wide, mandatory for the list as a whole; duplicates are refused with MSG-01 [fServiceTaxAdvanceAccount.vb:163; fServiceTaxAdvanceAccount.vb:34; fServiceTaxAdvanceAccount.vb:38].
+  - Percentage Column: A read-only column, 50 pixels wide [fServiceTaxAdvanceAccount.vb:165-166].
+  - Account Name Column: An editable drop-down, 300 pixels wide; each entry shows the account and its Account Group [fServiceTaxAdvanceAccount.vb:168; fServiceTaxAdvanceAccount.vb:39].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Standard actions whose code is empty [fServiceTaxAdvanceAccount.vb:17-19; fServiceTaxAdvanceAccount.vb:62-98].
+actions:
+  New: The toolbar action that asks the main window for a new record [fServiceTaxAdvanceAccount.vb:53-60].
+  Save: The toolbar action that saves the mapping [fServiceTaxAdvanceAccount.vb:177-226].
+validations:
+- Duplicate Charge Name are not allowed.
+- Select atleast one Charge Name.
+- Select valid Account Name in row N.
+manages:
+- service-tax-advance-account
+method_notes:
+  FillValues: Fills the lookup lists through Config.STAAFillValues.
+  Save: Saves the record through Config.STAASave.

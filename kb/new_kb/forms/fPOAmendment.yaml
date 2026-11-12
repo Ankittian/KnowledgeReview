@@ -1,0 +1,196 @@
+form: fPOAmendment
+title: Purchase Order Amendment
+module: MM
+kind: transaction
+summary: The Purchase Order Amendment screen lets a buyer revise an already authorized purchase order (PO) without re-creating
+  it.
+purpose: |
+  What it is: A controlled, versioned change to an authorized purchase order; each version carries its own amendment number, date, reason, status and full copy of the PO detail (BR-02, BR-03). When it applies: When an authorized PO must change after release to the vendor, for example a revised rate, quantity, delivery schedule, tax, freight term or payment term. Business outcome: The PO history is preserved version by version, changes are approved before they take effect, and the live PO always reflects the last authorized amendment (BR-38).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: A panel above the tabs with "PO No.", the amendment number, "Document Date", "PO Date", "Document Status" and "Division Name" [fPOAmendment.Designer.vb:2130].
+  - Tabbed Workspace: Tabs "General Details", "Indent Details", "Shipping & Account Detail", "Tax Details", "Terms and Conditions", "Transportation Route", "Other Expenses", "Payment Terms", "Account Assignment", "Authorization Group", "Advance Detail" and "Custom Fields" [fPOAmendment.Designer.vb:2273].
+  - Item Details Grid: The main item grid below the tabs [fPOAmendment.Designer.vb:2367] with item code and description, make, technical grade, HSN & SAC code, quantity, unit, rate, discount, basic and net amount, weights, cost centre, agreement schedule and buttons for schedule, QC, tax, consignee, tolerance, technical specification and previous PO.
+  - PO No. Field: Mandatory drop-down with a search button listing eligible POs (PO number with financial year, PO Date, vendor name, vendor location) (BR-02).
+  - Amendment Number Field: Read-only numeric box next to "PO No." [fPOAmendment.Designer.vb:2199].
+  - Document Date Field: Mandatory date of the amendment.
+  - PO Date and Division Name Fields: Read-only displays copied from the PO [fPOAmendment.Designer.vb:2149].
+  - Document Status Field: Mandatory drop-down: Initial, Release, Authorized; default Initial [fPOAmendment.vb:873].
+  - General Details Tab Fields: "Document Type", "Purchase Type", "Purchase Category", "Ref.
+  - Shipping & Account Detail Tab Fields: "Shipping Detail" group with the consignee grid (consignee name, consignee location), "Define Transportation Route", "Freight Type", "Freight Rate Type", "Freight Amount", "Freight Order", "From Location", "To Location", "No.
+  - Tax Details Tab: The shared tax-on-amount control (document taxes and charges, item-wise taxes, net amount) and the tax concession form control [fPOAmendment.Designer.vb:1249].
+  - Transportation Route Tab: "Level" drop-down, route grid, "PO Manually Closing" check box, freight popup ("Freight Nature", "Freight Amount", "No.
+  - Other Expenses Tab: Expense head grid with "Expense Amount" and "PO Net Amount" totals and an output-item conversion popup ("Input Item Qty.", "Yield %", "Rejection %", "Loss %") [fPOAmendment.Designer.vb:1575].
+  - Payment Terms Tab: "Payment Mode" (mandatory) and the shared payment terms control [fPOAmendment.Designer.vb:1775].
+  - Account Assignment, Authorization Group, Advance Detail and Custom Fields Tabs: Account assignment grid; "Authorization Group" drop-down with approval grid (level, user, role, status, action, comment, previous status / comment, "Send Email" button); advance grid with "Manual" / "Automatic" option; custom field control [fPOAmendment.Designer.vb:1822].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, preview, export and e-mail of the amendment report.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last are enabled for the screen [fPOAmendment.vb:52].
+validations:
+- Transaction on back date are disabled.
+- Transaction on future date are disabled.
+- Authorized Purchase Order can't be updated.
+- Authorized Entry can't be updated.
+- Someone updated this Purchase Order Amendment , please reload.
+- Unable to authorize as PO is already completed.
+- Unable to authorize as PO is already cancelled.
+- Select valid PO No.
+- Document date must be in Financial Year.
+- Document date can't be less than PO Date.
+- Select valid Document Status
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Reference Date.
+- Contact Person Name is empty. Do you want to continue?
+- Select valid Contact Person Name.
+- Select valid Validity date.
+- Validity Date can't be less than Document Date.
+- Document Date can't be less than Way Bill Date.
+- Reference No. can't be empty.
+- Select Valid Reference Date.
+- Select valid Dept Name.
+- Enter Reason
+- 'Budget Amount should not exceeded (…) for selected Division '
+- '… for selected Dept. '
+- '… for this Item '
+- '… for this Cost Center '
+- 'Select atleast one Item in '
+- Indent of Different Item Type can't be selected.
+- 'Document Date can''t be less than '
+- ' in row n.'
+- Enter First CF can't be zero or empty in row n.
+- Select valid PO Unit in row
+- Second CF can't be zero or empty in row n.
+- PO Qty. can't be zero or empty in row n.
+- PO Qty. can't greater than balance qty. in row n.
+- Rate can't be zero or empty in row n.
+- Schedule Date can't be empty in row n.
+- Schedule Date can't be less than Document Date in row n.
+- PO Unit for Same Item can't be different in row n.
+- Rate for Same Item can't be different in row n.
+- Select atleast one Reserve Indent Detail in row n.
+- 'Sum of  Reserve Indent Detail should be equal to '
+- GRN is received against this reference.
+- PO Qty. can't be greater than indent Qty.
+- PO Qty. can't be less than GRN Received Qty.
+- 'PO Qty. can''t be greater than GRN Received Qty. '
+- Item Description of Intermediate/Finished Goods/Product Group/Phantom Item Type can't be selected.
+- Item Description of Different Item Type can't be selected.
+- For Discrete Item , you can't define transportion route.
+- For Discrete Item , you can't Expense Head.
+- Quantity can't empty or zero in row n.
+- Rate can't empty in row n.
+- Tolerance(-) can't be 100% in row n.
+- Tolerance(-) can't be equal to or greater than Quantity in row n.
+- PO Qty can't be greater than Balance CS Booking Qty. …
+- PO Qty. can't be greater than Balance Indent Qty. …
+- QC not selected in row n . Do you want to continue?
+- Select QC in row n .
+- 'Chapter Heading is not Linked with selected Item. '
+- Select valid Cost Center in row n.
+- Select valid Agreement Schedule in row n.
+- Document Date can not be less than Schedule Date in row n.
+- 'No Item detail found for Consignee '
+- 'Consignee Quantity Should be equal to '
+- Select atleast one Item Description.
+- SGST or CGST is not applicable for inter state purchase.
+- IGST is not applicable for intra state purchase.
+- Selec valid Consignee Location in row n.
+- Select atleast one Consignee Location.
+- Select valid Freight Type.
+- Freight Amount should be blank
+- Select valid From Location
+- Select valid To Location
+- From Location And To Location can't be same
+- Select valid Party Name in Concession Form
+- Select valid Party Location in Concession Form
+- Select valid Pay To.
+- Select valid Pay To Location.
+- Select valid Billed To.
+- Select valid Billed To Location.
+- Select valid Payment Mode.
+- Select valid Level.
+- Select Valid Item Description in row n.
+- Select Valid Freight Type in row n.
+- Select Valid From Location in row n.
+- Select Valid TO Location in row n.
+- Select Valid Warehouse in row n.
+- Select Valid Receipient in row n.
+- From & TO Location can't be same in row n.
+- Freight Amount and Freight Order both are selected in row n. Please choose only one value.
+- When PO Manually Closing is true, Tolearance Basis is not allowed in row n.
+- Select Valid Route For transportation .
+- Select Valid Billing Location in row n.
+- Select Valid Billing Qty. in row n.
+- Select Valid Rate Basis in row n.
+- Select Valid Party Name in row n.
+- Reference date can't be greater than Document Date in row n.
+- Select Valid Item Detail in row n.
+- Can not delete expense head. GRN exists against this purchase order.
+- Can't authorize, Limit exceeds from configuration.
+- Can't define Route if PO Rate Validation is applicable
+- Tax/Charges Can't be Inclusive if PO Rate Validation is applicable
+- One Item can be selected if PO Rate Validation is applicable
+- Tolerance is empty for row no. n . Do you want to continue?
+- Tolerance Can't be empty for row no. n .
+- Validity Date is not equal to maximum available Schedule Date (dd/MM/yyyy). Do you want to continue?
+- Validity Date must be equal to maximum available Schedule Date (dd/MM/yyyy).
+- GST not selected. Do you want to save?
+- Account Name is empty for row no. n . Do you want to continue?
+- Account Name can't be empty for row no. n .
+- Advance is not adjusted.Do you want to continue?
+- Advance should be adjusted.
+- PO Adjusting Amount can't be greater than Balance Amount in row n.
+- Sum of PO Adjusting Amount is not equal to Net Amount. Do you want to continue?
+- Document Status can't be Authorized for multi level Authorization
+- Can not authorize as last level is not approved.
+- Select atleast one Authorization Group.
+- Entry is release so only authorized person can update this.
+- Select valid action in row n.
+- Enter Rejection comment in row n.
+- Mail queued
+- Entry already authorized for this level
+- Expensehead used in GRN can not be deleted.
+- Some problem in route creation
+- PO Qty can't be greater than Balance Agreement qty …
+- Do you want to save ?
+- 'Document No. '
+- ' saved successfully.'
+- Do you want to delete ?
+- Data deleted successfully.
+- PO is Prepared against this LOI,so you can't delete this entry.
+- Advance request is prepared against this PO,so you can't delete this entry.
+- BG is prepared against this PO,so you can't delete this entry.
+- PO Amendment is done againt this PO,so you can't delete this entry.
+- Enter First CF.
+- Enter Second CF.
+- Select valid PO Unit.
+- Qty. can't be zero or empty in row n.
+- 'Sum of Qty. should be equal to '
+- sum of Reserved Qty should be equal to PO Qty.
+- Qty can't be greater than Balance Qty.
+- Converted Item can't be same as PO Item.
+manages:
+- purchase-order-amendment
+uses_concepts:
+- accounting-voucher
+- authorization-group
+- company
+- material-agreement
+- material-category
+- purchase-order-follow-up
+- supplier-advance-request
+method_notes:
+  CustomValidation: Validates the entry through ODTPurchaseOrder.ProcedureName.
+  Delete: Deletes the record through Purchase.PMPODelete.
+  FillIndentDetail: Runs through Purchase.PMPOIndentDetail.
+  FillQCParmeter: Runs through Purchase.GetSpecificationDetail.
+  FillValues: Fills the lookup lists through Purchase.PMPOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through Purchase.PMPOFillValuesAccountAssignment.
+  FillValuesDependent: Fills the lookup lists through Purchase.PMPOFillValuesDependent.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  FreightOrderDetail: Runs through Purchase.PMPOFreightOrderDetail.
+  GetAuthorizationDetail: Runs through Purchase.PMPOGetTATDetail.

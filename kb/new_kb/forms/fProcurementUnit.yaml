@@ -1,0 +1,39 @@
+form: fProcurementUnit
+title: Procurement Unit
+module: MM
+kind: transaction
+summary: 'The Procurement Unit screen (window caption "Procurement Unit Master") maintains procurement units: groups of companies,
+  and divisions where divisions apply, that plan and buy material together.'
+purpose: |
+  What it is: The enterprise list of procurement units with their member companies or divisions, execution unit and tracked item types. When it applies: When the group decides which companies buy together, or changes that grouping. Business outcome: Pooled planning and buying per unit, with one company or division executing the purchases (BR-04 to BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel (Code, Procurement Unit, Inactive) and a detail panel with the company grid above the item type grid.
+  - Code Field: Read-only text box.
+  - Procurement Unit Field: Mandatory text box, no length limit on screen; stored up to 100 characters [Optimization.OPUMSave:9] (BR-03).
+  - Inactive Field: Checkbox.
+  - Company Grid: Columns Select, Company Name, Division, Is Execution Unit; company and division identifiers hidden; names read-only; rows cannot be deleted [fProcurementUnit.vb:248].
+  - Item Type Grid: Columns Select and read-only Item Type; identifier hidden [fProcurementUnit.vb:361].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers are empty on this screen (BR-01).
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the unit with its members and item types.
+  Search: Standard search with Procurement Unit, Company Name (member companies, comma-separated) and Created By (BR-12).
+  Delete: Deletes the loaded unit after confirmation (MSG-09).
+  Navigation: First, Previous, Next, Last through the standard toolbar (BR-01).
+validations:
+- Enter Production Unit.
+- Duplicate Procurement Unit Name
+- Select atleast one company
+- Select atleast one company as Execution Unit
+- Execution Unit can't nbe greater than one.
+manages:
+- procurement-unit
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Optimization.OPUMDelete.
+  FillValues: Fills the lookup lists through Optimization.OPUMFillValues.
+  LoadData: Loads the selected record through Optimization.OPUMLoadData.
+  Open: Searches records through Optimization.OPUMSearchData.
+  ValidateForm: Validates the entry through Optimization.OPUMValidate.

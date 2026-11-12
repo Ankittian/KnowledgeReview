@@ -1,0 +1,49 @@
+form: fTDSTCSSetupYearly
+title: TDS TCS Setup Yearly
+module: MD
+kind: master
+summary: The TDS TCS Setup Yearly screen activates a TDS or TCS tax setup for one financial year and for a chosen group of
+  companies that share the same income tax PAN.
+purpose: |
+  What it is: The yearly activation of a TDS or TCS rule for the companies of one PAN, with party-level exceptions. When it applies: At the start of each financial year, when a new tax section applies, or when a party must be forced into or out of TDS/TCS validation. Business outcome: Documents are checked against the right rule and threshold for the year, and the whole PAN group is treated as one tax entity (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Three panels: header fields at the top left, the company grid at the top right, and the vendor grid across the bottom.
+  - Code Field: Read-only text box.
+  - Setup Field: Mandatory dropdown (marked as compulsory) showing Description, Tax Category, Section and Threshold (BR-01).
+  - Fin Year Field: Mandatory dropdown (marked as compulsory) of financial years (BR-02).
+  - Effective From Field: Read-only date display.
+  - Inactive Field: Optional checkbox.
+  - Company Detail Grid: Grid with an unlabelled select checkbox, read-only Company Name and read-only PAN No.; the company identifier is hidden.
+  - Vendor Detail Grid: Grid with read-only Code, Vendor Name, Vendor Location, PAN No., Vendor Type and Is Threshold Reached, and editable checkboxes Is Always Validate and Is Exclude From Validation; location identifier and an existing-entry marker are hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in code but empty.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the yearly setup with its companies and party flags.
+  Search: Standard search with Code, Description, Tax Category, Section, Fin Year, Effective From, Company, Inactive, Created
+    By, Created Date, Modified By, Modified Date.
+  Delete: Deletes the loaded setup after confirmation (MSG-13).
+  Navigation: First, Previous, Next and Last come from the standard application toolbar, not from this screen's code (Inferred).
+validations:
+- Select valid Tax Setup.
+- Select valid Fin Year.
+- 'PAN No. can not be blank for row '
+- Company with different PAN No. can not be selected in one setup.
+- 'Select all company having PAN No '
+- Select atleast one company.
+- 'Select all vendor having PAN No '
+- Duplicate entry for Same setup in one FY is not allowed.
+manages:
+- tds-tcs-setup-yearly
+uses_concepts:
+- company
+- tds-tcs-setup
+method_notes:
+  Delete: Deletes the record through masterdata.TTSYDelete.
+  FillValues: Fills the lookup lists through masterdata.TTSYFillValues.
+  LoadData: Loads the selected record through masterdata.TTSYLoadData.
+  Open: Searches records through masterdata.TTSYSearchData.
+  Save: Saves the record through masterdata.TTSYSave.
+  SaveCompanyDetail: Saves the record through masterdata.TTSYSaveCompanyDetail.
+  SaveVendorDetail: Saves the record through masterdata.TTSYSaveVendorDetail.
+  ValidateForm: Validates the entry through masterdata.TTSYValidate.

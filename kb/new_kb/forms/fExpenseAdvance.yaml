@@ -1,0 +1,61 @@
+form: fExpenseAdvance
+title: Expense Advance
+module: FI
+kind: transaction
+summary: The Expense Advance screen records money advanced to an employee ahead of expenses.
+purpose: |
+  What it is: A document that records an advance paid to an employee against future expenses and posts it to the books [fExpenseAdvance.vb:426-524; ExpenseMgmt.EXADSave:35-208]. When it applies: When an employee is given money before incurring expenses, for example for a trip. Business outcome: The advance is traceable to the employee, controlled by approval status and reflected in the ledger.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared document control at the top with number, date, finance book and status [fExpenseAdvance.vb:85-86,145].
+  - General Detail Tab: The default tab holding the data entry fields [fExpenseAdvance.Designer.vb:315].
+  - Advance Description Field: A mandatory text box labelled "Advance Description", up to 300 characters [fExpenseAdvance.vb:91,139; fExpenseAdvance.Designer.vb:122].
+  - Employee Name Field: A mandatory drop-down labelled "Employee Name" [fExpenseAdvance.vb:91,149; fExpenseAdvance.Designer.vb:150].
+  - Payment Mode Field: A mandatory drop-down labelled "Payment Mode" [fExpenseAdvance.vb:91,150; fExpenseAdvance.Designer.vb:169].
+  - Amount Field: A mandatory numeric text box labelled "Amount" with two decimals, up to 10 characters [fExpenseAdvance.vb:138; fExpenseAdvance.Designer.vb:91,103].
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Optional text box (30 characters) and date picker with a tick box, labelled "Ref.
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fExpenseAdvance.vb:141; fExpenseAdvance.Designer.vb:226].
+  - Currency Control: The shared currency control, validated at save [fExpenseAdvance.vb:351-353].
+  - Finance Posting Tab: A tab labelled "Finance Posting", hidden by default, holding the shared posting control with the voucher lines [fExpenseAdvance.Designer.vb:318-319].
+  - Voucher Check Shortcut: A hidden key combination, Alt+Ctrl+V, available when the Finance Posting tab shows [fExpenseAdvance.vb:43-65].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fExpenseAdvance.vb:259-290].
+actions:
+  New: Toolbar action that clears the form [fExpenseAdvance.vb:223-230; fExpenseAdvance.vb:293-312].
+  Save: Toolbar action that saves the advance [fExpenseAdvance.vb:426-524].
+  Search: Toolbar action that opens the search dialog [fExpenseAdvance.vb:232-256].
+  Delete: Toolbar action that deletes the opened advance [fExpenseAdvance.vb:99-128].
+validations:
+- Authorized Expense Advance can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Enter Advance Description.
+- Select valid Employee Name.
+- Select valid Payment Mode.
+- Enter Amount.
+- Select Ref. Doc. Date.
+- Ref. Doc. Date cannot be greater than Document Date.
+- Enter Ref. Doc. No.
+- Save Feature is not available.
+- 'Document No. '
+- ' saved successfully.'
+- Finance Book is closed for this Document Date.
+manages:
+- expense-advance
+uses_concepts:
+- asset-disposal
+- commission-invoice
+- expense-approval
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through ExpenseMgmt.EXADDelete.
+  FillValues: Fills the lookup lists through ExpenseMgmt.EXADFillValues.
+  LoadData: Loads the selected record through ExpenseMgmt.EXADLoadData.
+  Open: Searches records through ExpenseMgmt.EXADSearchData.
+  Save: Saves the record through ExpenseMgmt.EXADSave.
+  ValidateForm: Validates the entry through ExpenseMgmt.EXADValidate.

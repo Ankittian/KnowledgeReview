@@ -1,0 +1,45 @@
+form: fLayoutSchedule
+title: Layout Schedule
+module: MD
+kind: master
+summary: The Layout Schedule screen (window caption "Single Field Master") maintains the list of schedule names used to group
+  the lines of a financial statement layout, for example the notes to a balance sheet.
+purpose: |
+  What it is: A central list of named schedules with a display sequence. When it applies: When a statement needs a new schedule or a different order of schedules. Business outcome: Schedule names are unique and ordered (BR-02; BR-03; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A box with Code, Name, Sequence Id and Inactive [fLayoutSchedule.designer.vb:75-137].
+  - Code Field: Text box, read-only because the code is not editable for this master [masterdata.FSLSFillValues:23; fLayoutSchedule.vb:434-440].
+  - Name Field: Text box, mandatory, maximum 50 characters [fLayoutSchedule.vb:51; fLayoutSchedule.vb:412].
+  - Sequence Id Field: Numeric text box, mandatory, three digits, no decimals [fLayoutSchedule.vb:58; fLayoutSchedule.designer.vb:88].
+  - Inactive Field: Check box labelled "Inactive", disabled after reset [fLayoutSchedule.vb:259].
+  - Fast Entry Grid Container: A full-window grid with columns Layout Schedule Name (max 50), Sequence Id and Remarks (read-only result) [fLayoutSchedule.vb:517-529; masterdata.FSLSFillValues:27].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fLayoutSchedule.vb:386-392; fLayoutSchedule.vb:452-458].
+actions:
+  Back Link: A link in the fast entry window that hides it and returns to the main layout [fLayoutSchedule.vb:478-480].
+  Import: '"Import" button; reads an Excel sheet with columns "Layout Schedule Name" and "Sequence Id" and adds a Remarks
+    column [fLayoutSchedule.vb:15-37; fLayoutSchedule.vb:482-493].'
+  New: Clears the screen through the MDI shell [fLayoutSchedule.vb:39-47; fLayoutSchedule.vb:256-266].
+  Save: Validates and saves.
+  Search: Search dialog with Code, Layout Schedule Name, Sequence Id, Inactive, Created By, Created Date [fLayoutSchedule.vb:228-254;
+    masterdata.FSLSSearchData:20-26].
+  Delete: Deletes the loaded schedule after the standard delete confirmation [fLayoutSchedule.vb:186-226].
+validations:
+- Enter Layout Schedule Name.
+- Enter Sequence Id.
+- Enter Code.
+- Duplicate Layout Schedule Name not allowed.
+- Permission denied to create <field name>.
+- Refer remarks for saved status.
+- Your excel should consists of sheet with name <form code>. Do you want to continue?
+- Successfully Created.
+- Permission denied to delete <field name>.
+manages:
+- layout-schedule
+method_notes:
+  Delete: Deletes the record through masterdata.Delete.
+  FillValues: Fills the lookup lists through masterdata.FillValues.
+  LoadData: Loads the selected record through masterdata.LoadData.
+  Open: Searches records through masterdata.SearchData.
+  SaveMain: Saves the record through masterdata.Save.
+  ValidateForm: Validates the entry through masterdata.Validate.

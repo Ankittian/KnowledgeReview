@@ -1,0 +1,161 @@
+form: fMaintenanceSchedule
+title: Maintenance Schedule
+module: PM
+kind: transaction
+summary: The Maintenance Schedule screen defines recurring or one-off preventive and inspection maintenance for a piece of
+  equipment or a functional location.
+purpose: |
+  What it is: A planned-maintenance definition tied to one equipment item or one functional location, with a maintenance category and type, the work content, and one or more triggers that say when maintenance falls due [fMaintenanceSchedule.vb:896-1024; fMaintenanceSchedule.vb:1510-1671]. When it applies: When maintenance planning wants an asset serviced or inspected on a calendar rhythm (daily, weekly, monthly) or on a meter reading (for example running hours). Business outcome: Due maintenance is predictable and Maintenance Orders can be raised from dated occurrences instead of being remembered manually (BR-36; BR-38).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: The window captioned "MaintenanceSchedule" [fMaintenanceSchedule.designer.vb:2577].
+  - Document Number, Date, Status, Division and Repeat Controls: The standard document control with Document No.
+  - Schedule Description Field: Mandatory text box, up to 300 characters [fMaintenanceSchedule.designer.vb:2020; fMaintenanceSchedule.vb:903-909].
+  - Reference Object Field: Mandatory dropdown listing the active reference objects; defaults to Equipment on a new record [EAM.EAMSFillValues:123-125; fMaintenanceSchedule.vb:492; fMaintenanceSchedule.vb:911-917].
+  - Equipment Description / Location Field: Mandatory dropdown (label switches between "Equipment Description" and "Location") listing authorized assets of the company [fMaintenanceSchedule.vb:919-932; fMaintenanceSchedule.vb:4340-4348].
+  - Custodian Field: Read-only text, up to 100 characters, filled from the selected asset [fMaintenanceSchedule.designer.vb:2078-2080; fMaintenanceSchedule.vb:4417-4420].
+  - Maintenance Category Field: Mandatory dropdown [fMaintenanceSchedule.vb:943-949].
+  - Maintenance Type Field: Mandatory dropdown with Preventive Maintenance and Inspection [fMaintenanceSchedule.vb:935-941; EAM.EAMSFillValues:168-171].
+  - Free Service Checkbox: Checkbox "Free Service" saved with the schedule [fMaintenanceSchedule.vb:2719; fMaintenanceSchedule.designer.vb:2139].
+  - Shutdown Required Checkbox and Shutdown Duration Field: Checkbox "Shutdown Required" and a numeric "Shutdown Duration" in hours.minutes with two decimals, up to 8 characters, read-only until the checkbox is ticked [fMaintenanceSchedule.designer.vb:2149-2170; fMaintenanceSchedule.vb:4358-4376].
+  - Create MO Manually Checkbox and Start MO with Status Field: Checkbox "Create MO Manually" and dropdown "Start MO with Status" listing the document statuses [fMaintenanceSchedule.vb:4385-4400; EAM.EAMSFillValues:186-187].
+  - Estimated Completion Field: Mandatory numeric field (up to 5 characters, two decimals) with the unit label "Hrs" [fMaintenanceSchedule.designer.vb:2205-2217; fMaintenanceSchedule.designer.vb:2346].
+  - Status Field: Read-only text, shows "Initial" for a new record and the schedule's business status after loading [fMaintenanceSchedule.vb:286; fMaintenanceSchedule.vb:586].
+  - Remarks Field: Optional text, up to 500 characters [fMaintenanceSchedule.designer.vb:2242; fMaintenanceSchedule.vb:2713].
+  - Schedule Interval and Generate MO Fields: Two mandatory dropdowns on the Trigger Detail tab area.
+  - Shift Field: Dropdown "Shift" of the active shifts of the company [fMaintenanceSchedule.vb:508; EAM.EAMSFillValues:495-499].
+  - Take Meter Reading Checkbox: Checkbox "Take Meter Reading"; ticking shows the Meter Reading Detail tab [fMaintenanceSchedule.vb:4943-4950].
+  - Trigger Detail Grid: Grid with Trigger No, Trigger Type, a Trigger button column and the read-only Trigger Description.
+  - Trigger Dialog (By Time / By Meter Reading): A row-edit dialog opened with the Trigger button.
+  - By Time Fields: Schedule Type, Every (up to 4 digits) with a period (Day, Week, Month), On (weekday, only for weekly), Start Date, End Date (a checkbox on the date), End After (occurrences, up to 4 digits) and Threshold Days (up to 4 digits, with the label "Before") [fMaintenanceSchedule.designer.vb:1265; fMaintenanceSchedule.designer.vb:1256; fMaintenanceSchedule.designer.vb:1078; EAM.EAMSFillValues:372-374].
+  - By Meter Reading Fields: Measurement Parameter, Schedule Type, Every (up to 15 characters, four decimals), Start At (four decimals, default 0.0000), End By (Value or Occurrence), End For Value, Threshold On (Percentage or Value), Threshold Value, Condition (greater than or equal to), Reading Value, plus read-only unit displays [fMaintenanceSchedule.designer.vb:849; fMaintenanceSchedule.designer.vb:878; fMaintenanceSchedul
+  - Task Detail Grid: Grid with Trigger No, Task Id (auto), a Btn button, Task Name, Code, Parent Task Id, Parent Task, Subcontract checkbox, Subcontract Detail button, Priority, Assign To, Estimated Duration(Hr), Work Center and Cost Center.
+  - Task Name Button and Import Button: The Btn column opens a multiple-selection picker of task masters [fMaintenanceSchedule.vb:5911-5925].
+  - Subcontract Dialog: A row-edit dialog with "Service &Item" (items of type service), "&Quantity" (up to 11 characters, three decimals), read-only "Unit" and "&Ok" and "&Cancel" buttons [fMaintenanceSchedule.designer.vb:1509-1575; EAM.EAMSFillValues:477-488].
+  - Inspection Check Points Grid: Grid with S No.
+  - Resource Detail Grid: Grid with Trigger No, Task Id, Task Name (read-only), Resource Name, Code (read-only), Quantity (whole number) and Estimated Duration(Hr) [fMaintenanceSchedule.vb:2230-2255; fMaintenanceSchedule.vb:383-384].
+  - Skill Detail Grid: Grid with Trigger No, Task Id, Task Name, Skill Name and Code (read-only, 6 characters) [fMaintenanceSchedule.vb:2297-2320].
+  - Tools Required Grid: Grid with Trigger No, Task Id, Task Name, Item Code, Item Description, Unit (read-only), Quantity (three decimals), Estimated Duration(Hr) and a Btn button that shows item details [fMaintenanceSchedule.vb:2389-2421; fMaintenanceSchedule.vb:3695-3760].
+  - Item Required Grid: Grid with Trigger No, Task Id, Task Name, Item Code, Item Description, Unit, Make, Technical Grade, Quantity (three decimals), "Is Replacement" and a Btn button [fMaintenanceSchedule.vb:2497-2537; fMaintenanceSchedule.vb:3764-3845].
+  - Meter Reading Detail Grid: Grid with Measurement Parameter, Code (read-only) and a Standard Value column that appears only for Inspection [fMaintenanceSchedule.vb:4986-5003].
+  - Occurrence Detail Grid and Calculate Button: Grid with Trigger No, Occurrence No., Occurrence Date and Remarks (up to 500 characters).
+  - Custom Field Tab: A shared custom-field control saved with the schedule [fMaintenanceSchedule.vb:353; fMaintenanceSchedule.vb:3313-3336].
+  - Notes Control: A shared notes control with Print Area, Notes and Default, positioned very small at the right of the header [fMaintenanceSchedule.designer.vb:2350-2356].
+  - Create Same Schedule For Grid: Grid with Document No., Code (read-only) and Equipment Description (equipment or location) [fMaintenanceSchedule.vb:5356-5380].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that exist but do nothing [fMaintenanceSchedule.vb:713-745].
+actions:
+  New: Clears the form for a new schedule.
+  Save: Validates and saves the schedule and all details, then authorizes.
+  Search: Opens the standard search list of schedules.
+  Delete: Deletes the loaded schedule after the standard delete confirmation.
+  Import: The "Import" button reads an Excel file and fills the Task Detail grid from sheet "Sheet1$" [fMaintenanceSchedule.vb:5951-5966;
+    fMaintenanceSchedule.designer.vb:1475].
+validations:
+- Enter Schedule Description.
+- Select valid Reference Object.
+- Select valid Equipment Description.
+- Select valid Location.
+- Select valid Maintenance Type.
+- Select valid Maintenance Category.
+- Enter Shutdown Duration.
+- Select valid MO Document Status.
+- Enter Estimated Completion Days.
+- Estimated Completion Days is less then Estimated Duration(Max) of task,Do you want to continue?
+- Select valid Schedule Interval.
+- Select valid Generate MO.
+- 'Invalid Time : minute should be less than 60.'
+- Shift is not selected. Do you want to continue?
+- Select a valid Shift.
+- Enter Trigger No in row n.
+- Select atleast one Trigger Type in row n.
+- Select valid Schedule Type in row n.
+- Start Date - Threshold (dd/MM/yyyy) can not be less than Document Date in row n.
+- End Date can not be less than Document Date in row n.
+- Can not select time based trigger twice for same trigger no.
+- Select as least one task for trigger no X.
+- Select as least one check point for trigger no X.
+- Select atleast one trigger.
+- Unable to delete,task(check point)(s),resource(s),skill(s),tool(s),item(s) or occurrence(s) detail exists for selected trigger(s).
+- Select valid Schedule Type.
+- Enter Every Duration.
+- Select valid Every Duration Period.
+- Select valid On Day.
+- Start Date - Threshold (dd/MM/yyyy) can not be less than Document Date.
+- End Date can not be less than Document Date.
+- End Date can not be less than Start Date.
+- Select valid Measurement Parameter.
+- Enter Recursive value(Every).
+- Enter End For Value.
+- Enter Threshold Value.
+- Threshold Value can't be greater then start at Value.
+- Threshold Value can't be greater then recurring value(Every).
+- Threshold Value can't be less then start at Value.
+- Select valid Condition.
+- Enter Reading Value.
+- Select valid Service Item in row n.
+- Service Item Quantity can not be empty or zero in row n.
+- Select valid priority in row n.
+- Select valid Assign To in row n.
+- Estimated Duration can't be empty or zero in row n.
+- Select atleast one Task Name.
+- Select atleast one Check Points.
+- Unable to delete,resource(s),skill(s),tool(s) or item(s) detail exists for selected task(s).
+- Select valid service item.
+- Enter quantity.
+- Quantity can't be empty or zero in row n.
+- Can't select more than one resource( X ) for same trigger no in row n.
+- Can't select more than one Skill( X ) for same trigger no in row n.
+- Can't select more than one Item( X ) for same trigger no in row n.
+- Select atleast one Measurement Parameter.
+- Duplicate Task is not allowed for same parent task and trigger no.
+- Duplicate Trigger Description is not allowed for same trigger no.
+- Duplicate Resource Name is not allowed for same task id and trigger no.
+- Duplicate Skill Name is not allowed for same task id and trigger no.
+- Duplicate Item Description is not allowed for same task id and trigger no.
+- Duplicate Check Points is not allowed for same trigger no.
+- Duplicate Measurement Parameter not allowed.
+- Duplicate Equipment Description/Location not allowed.
+- Duplicate Occurrence No. is not allowed for same trigger no.
+- Enter Occurrence No. in row n.
+- Enter Occurrence Date in row n.
+- Occurrence Date can not less than document date in row n.
+- Occurrence date can not less than trigger start date - threshold days (dd/MM/yyyy) in row n.
+- Occurrence date should be between trigger start date - threshold days (dd/MM/yyyy) and end date (date) in row n.
+- No. Of occurrences should be N for trigger no T
+- Equipment/Location Name of row n can't be same as Maintenance Schedule Equipment/Location.
+- Enter Document No. in row n.
+- Document No. of row n can't be same as Maintenance Schedule's Document No.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Following Duplicate Document No.(s) not allowed '
+- 'Some Measurement Parameter doesn''t exists for Equipment(s) '
+- 'Some Measurement Parameter doesn''t exists for Location(s) '
+- Authorized Maintenance Schedule can't be updated.
+- Document No. <number> saved successfully.
+- Do you want to delete ref. Maintenance Schedule also?
+- Unable to delete occurrence detail already exists.
+- Excel is not in valid format.
+- Some items are not valid or duplicate.View log for detail.
+- Row n- Inserted.
+- Row n- Task Name doesn't exists or duplicate.
+manages:
+- maintenance-schedule
+uses_concepts:
+- eam-resource-master
+- equipment-master
+- functional-location
+- maintenance-category-task
+- maintenance-schedule-occurrence
+- skill-master
+- work-center
+method_notes:
+  Delete: Deletes the record through EAM.EAMSDelete.
+  FillOccurrenceDetail: Runs through EAM.EAMSFillOccurrenceDetail.
+  FillValues: Fills the lookup lists through EAM.EAMSFillValues.
+  LoadData: Loads the selected record through EAM.EAMSLoadData.
+  Open: Searches records through EAM.EAMSSearchData.
+  Save: Saves the record through EAM.EAMSAuthorize, EAM.EAMSSave.
+  SaveCheckPoints: Saves the record through EAM.EAMSSaveCheckPoints.
+  SaveCustomFieldDetail: Saves the record through EAM.EAMSSaveCustomFieldDetail.
+  SaveItemDetail: Saves the record through EAM.EAMSSaveItemDetail.
+  SaveMeterReadingDetail: Saves the record through EAM.EAMSSaveMeterReadingDetail.

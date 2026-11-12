@@ -1,0 +1,29 @@
+form: fWeighmentDelete
+title: Weighment Delete
+module: WB
+kind: transaction
+summary: The Weighment Delete screen lets an authorised user remove weighment slips in bulk.
+purpose: |
+  What it is: A bulk removal tool for weighment slips selected by type and date range [fWeighmentDelete.vb:52-91; WeighBridge.WBWDDelete:20-26]. When it applies: When weighments were captured in error or must be purged. Business outcome: Wrong weighments leave the weigh bridge records instead of remaining as noise.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box with the filters and Show button above a grid of weighments [fWeighmentDelete.Designer.vb:105-120].
+  - Weighment Type Field: A mandatory drop-down of weighment types [fWeighmentDelete.vb:46; fWeighmentDelete.vb:110; fWeighmentDelete.Designer.vb:52].
+  - From Date and To Date Fields: Two date pickers shown as dd/MM/yyyy [fWeighmentDelete.Designer.vb:56-58; fWeighmentDelete.Designer.vb:71-77].
+  - Show Button: A button labelled "Show" [fWeighmentDelete.Designer.vb:98].
+  - Weighment Detail Grid: A grid with columns Select, Wt.
+  - Other Toolbar Actions (Save, Open, Search, Print, Preview, Export, Email): Save returns nothing and its old body is commented out; the other handlers are empty or commented out [fWeighmentDelete.vb:300-361; fWeighmentDelete.vb:170-229].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWeighmentDelete.vb:161-168].
+  Delete: The toolbar action that removes the ticked weighments [fWeighmentDelete.vb:52-91].
+validations:
+- Select atleast one Weighment Details.
+manages:
+- weighment-delete
+uses_concepts:
+- first-weighment
+- second-weighment
+method_notes:
+  Delete: Deletes the record through WeighBridge.WBWDDelete.
+  FillValues: Fills the lookup lists through WeighBridge.WBWDFillValues.
+  FillValuesDependent: Fills the lookup lists through WeighBridge.WBWDFillValuesDependent.

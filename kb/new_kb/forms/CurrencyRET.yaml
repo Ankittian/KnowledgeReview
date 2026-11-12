@@ -1,0 +1,13 @@
+usercontrol: CurrencyRET
+title: Currency control (payment plan)
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded currency selector variant used on the payment plan.
+purpose: |
+  Variant of the currency control used by the payment plan; it has no stored procedure of its own.
+functional_description: |
+  Embedded in: fBankJournal, fCashJournal, fChequePrint, fOutwardBillEntry, fReferenceReconciliation, fSetOpeningBalance.
+uses_concepts:
+- currency

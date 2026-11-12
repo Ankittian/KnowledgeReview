@@ -1,0 +1,18 @@
+key: p3-sales-dispatch
+name: 'Sales: Dispatch (Phase 3)'
+module: SD
+status: active
+summary: Phase 3 screens of the dispatch group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Dispatch' (Sales). The steps follow the plan order, not a verified business sequence: Dispatch Challan, Delivery Challan.
+steps:
+- order: 1
+  name: Record Dispatch Challan
+  form: fDispatchChallan
+- order: 2
+  name: Record Delivery Challan
+  form: fDispatchChallanVTPL
+concepts:
+- dispatch-challan
+- delivery-challan

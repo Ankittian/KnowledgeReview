@@ -1,0 +1,79 @@
+form: fClearancePermit
+title: Clearance Permit
+module: PM
+kind: transaction
+summary: The Clearance Permit screen records a work permit for one piece of equipment or one functional location before maintenance
+  work starts.
+purpose: |
+  What it is: A transaction that grants and documents permission to work on equipment or a location under a defined permit, with the orders covered, tags applied, safety instructions and check list [fClearancePermit.vb:695-807; EAM.EACPSave:75-126]. When it applies: Before maintenance work under a maintenance order that requires a permit. Business outcome: Dangerous work is linked to an approved, dated and authorized permit and cannot be closed or altered carelessly (BR-01; BR-09; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail and Detail Tabs Layout: The upper area holds the document control and header fields; below it a tab control has tabs "Maintenance Order Detail", "Tags Detail", "Safety Instructions", "Check List Detail" and "Custom Field".
+  - Document Control (Division, Prefix, Number, Date, Status): The shared document control, with Division, document number, date and status; the status becomes read-only once Authorized [fClearancePermit.vb:228-230; fClearancePermit.vb:339-342].
+  - Reference Object Field: A mandatory dropdown listing Equipment and Functional Location [fClearancePermit.vb:75; EAM.EACPFillValues:21-27; fClearancePermit.designer.vb:256].
+  - Equipment Field: A mandatory dropdown showing Description and Code.
+  - Permit Name Field: A mandatory dropdown of permits [fClearancePermit.vb:75; fClearancePermit.designer.vb:295].
+  - Permit Type and LOTO Fields: Two read-only text boxes, labelled "Permit Type" and "LOTO" [fClearancePermit.designer.vb:301-303; fClearancePermit.designer.vb:321-323; fClearancePermit.designer.vb:315; fClearancePermit.designer.vb:335].
+  - No. Of Tags Field: A numeric box of up to 4 digits [fClearancePermit.designer.vb:341; fClearancePermit.vb:132].
+  - Permit Holder and Approved By Fields: Two mandatory editable dropdowns of up to 100 characters [fClearancePermit.designer.vb:361; fClearancePermit.designer.vb:382; fClearancePermit.vb:456-469].
+  - Start Date and End Date Fields: Two date pickers in dd/MM/yyyy format inside the Permit Period group [fClearancePermit.designer.vb:399-401; fClearancePermit.designer.vb:418-420; fClearancePermit.designer.vb:445].
+  - Remarks Field: A text box of up to 1,000 characters [fClearancePermit.designer.vb:488].
+  - Maintenance Order Detail Grid: A grid with Select, MO No, MO Date, Maintenance Category and Maintenance Type; only Select is editable; the order number is hidden [fClearancePermit.vb:579-608].
+  - Tags Detail Grid: A grid with S No.
+  - Safety Group Field and Safety Instructions Grid: A Safety Group dropdown (label "Safety Group") and a grid with Safety Instruction (dropdown) and a read-only Code [fClearancePermit.designer.vb:189; fClearancePermit.vb:647-662; fClearancePermit.vb:1013-1039].
+  - Check List Grid: A grid with S No.
+  - Notes and Custom Field Controls: A Notes control with print area and a Custom Field tab, both shared controls [fClearancePermit.designer.vb:452; fClearancePermit.vb:148; fClearancePermit.vb:161-162].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fClearancePermit.vb:294-326].
+actions:
+  New: Asks the main window for a new record [fClearancePermit.vb:251-262].
+  Save: Checks authorization, validates, asks for confirmation and saves all parts in one transaction [fClearancePermit.vb:695-807].
+  Search: A search list of the company's permits for the current year, newest first, with Entry No, Entry Date, Reference
+    Object, Equipment, Location, Permit Holder, Approved By, Start Date, End Date, Created By and Authorized By [EAM.EACPSearchData:18-38;
+    fClearancePermit.vb:264-292].
+  Delete: Deletes the opened permit after confirmation [fClearancePermit.vb:83-117].
+validations:
+- Select valid Reference Object.
+- Select valid Equipment.
+- Select valid Permit Name.
+- Enter No Of tags.
+- Enter or Select valid Permit Holder.
+- Enter or Select valid Approved By.
+- Permit Start date can't be less than document date.
+- Permit End date can't be less then permit start date.
+- Select atleast One Maintenance Order.
+- Document Date can't be less then MO Date
+- ' in row '
+- Enter Tag Detail
+- Enter valid Tags Text.
+- Authorized ClearancePermit can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'unable to save,following maintenance order - '
+- previously selected in clearance permit.
+- Duplicate Tag No not allowed.
+- Duplicate Safety Instruction not allowed.
+- Duplicate Check List not allowed.
+- 'Document No. '
+- ' saved successfully.'
+- 'Unable to delete,following maintenance order - '
+- ' used in MO closing.'
+manages:
+- clearance-permit
+uses_concepts:
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-order-closing
+- safety-instruction-group
+method_notes:
+  Delete: Deletes the record through EAM.EACPDelete.
+  FillValues: Fills the lookup lists through EAM.EACPFillValues.
+  FillvaluesDependent: Fills the lookup lists through EAM.EACPFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EACPLoadData.
+  Open: Searches records through EAM.EACPSearchData.
+  Save: Saves the record through EAM.EACPSave.
+  SaveCheckLists: Saves the record through EAM.EACPSaveCheckLists.
+  SaveCustomFieldDetail: Saves the record through EAM.EACPSaveCustomFieldDetail.
+  SaveMaintenanceOrderDetail: Saves the record through EAM.EACPSaveMODetail.
+  SaveNotesDetail: Saves the record through EAM.EACPSaveNotesDetail.

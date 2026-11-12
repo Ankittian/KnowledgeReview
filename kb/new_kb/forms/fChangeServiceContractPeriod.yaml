@@ -1,0 +1,42 @@
+form: fChangeServiceContractPeriod
+title: Change Service Contract Period
+module: PM
+kind: transaction
+summary: The Change Service Contract Period screen lets a user move the end date of an authorised service contract.
+purpose: |
+  What it is: A correction screen that changes only the end of the validity period of an already authorised service contract, together with the end dates of its time-based triggers [fChangeServiceContractPeriod.vb:46-72; fChangeServiceContractPeriod.vb:216-286; CustomerService.CSCPSave:20-26]. When it applies: When a contract is extended, renewed in place or ended early. Business outcome: The contract period stays consistent with its covered items and triggers without editing the full contract (BR-03; BR-04; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header area with the contract selection and the "Previous" and "New" date groups, above a grid captioned "Time Based Trigger" [fChangeServiceContractPeriod.designer.vb:185-196].
+  - Service Contract No. Field: A dropdown, mandatory [fChangeServiceContractPeriod.vb:32].
+  - Previous From Date and To Date Fields: Two read-only text boxes under "Previous" labelled "From Date" and "To Date" [fChangeServiceContractPeriod.designer.vb:83-100].
+  - New From Date Field: A date picker labelled "From Da&te", disabled, format dd/MM/yyyy [fChangeServiceContractPeriod.designer.vb:152-160].
+  - New To Date Field: A date picker labelled "To Da&te", mandatory, format dd/MM/yyyy, editable [fChangeServiceContractPeriod.vb:32; fChangeServiceContractPeriod.designer.vb:162-170].
+  - Time Based Trigger Grid: A grid with the columns Trigger No, Trigger Type, Trigger Description, Schedule Type, Every, Unit, On, Start Date, End Date, End After and Threshold Days.
+  - Other Toolbar Actions (Delete, Open, Print, Preview, Export, Email): Standard toolbar actions that are empty on this form [fChangeServiceContractPeriod.vb:38-44; fChangeServiceContractPeriod.vb:100-141].
+actions:
+  New: The standard toolbar New, which asks the main window to start a new record [fChangeServiceContractPeriod.vb:91-98].
+  Save: The toolbar Save [fChangeServiceContractPeriod.vb:216-259].
+validations:
+- Select valid Service contract no.
+- End Date should be between contract Start Date and End Date.
+- From date can't be greater than to date.
+- To date can't be less than server date.
+- Billing date can't be greater than contract to date.
+- To Date can't be less than service invoice date .
+- Expected Occurance Date can't be greater than contract to date.
+- End Date can't be less than service call entry date.
+- End Date can't be less than service order document date.
+manages:
+- change-service-contract-period
+uses_concepts:
+- customer-service-invoice
+- maintenance-service-order
+- service-call
+- service-contract
+method_notes:
+  FillValues: Fills the lookup lists through CustomerService.CSCPFillValues.
+  Save: Saves the record through CustomerService.CSCPSave.
+  SaveTriggerDetail: Saves the record through CustomerService.CSCPSaveTriggerDetail.
+  ValidateForm: Validates the entry through CustomerService.CSCPValidate.
+  ucmbServiceContractNo_ValueChanged: Fills the lookup lists through CustomerService.CSCPFillValues.

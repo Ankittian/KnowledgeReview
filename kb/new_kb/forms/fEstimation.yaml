@@ -1,0 +1,102 @@
+form: fEstimation
+title: Estimation
+module: SD
+kind: transaction
+summary: The Estimation screen lets the sales and costing team prepare a cost estimate for a customer before a quotation is
+  issued.
+purpose: |
+  What it is: A controlled cost sheet for a product or an export enquiry: what material, operations, overheads, expenses and taxes make up the cost, what margin is added and what the resulting product cost or total export amount is (BR-05, BR-11). When it applies: Before a quotation is prepared, when the company must know its cost for an enquiry, a sales order item or a directly chosen product. Business outcome: Quotations start from an approved, auditable cost instead of ad-hoc figures; the estimate is authorized before it can be relied upon (BR-02, BR-18).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: "- Screen Layout: A window titled \"Estimation\" [fEstimation.Designer.vb:1207] with a top document\
+  \ control (document number, date, division, status), a main tab control with \"General Details\" and \"Multi-level Auth\"\
+  \ [fEstimation.Designer.vb:1173; fEstimation.Designer.vb:1176], and a second tab control with \"Shipment Details\", \"Material\
+  \ Costing\", \"Operational Cost\", \"Cost Details\", \"Overheads\", \"Expense Detail\", \"Tax \n- Document Control (Document\
+  \ No., Date, Division, Status): A shared control that holds the estimate number, document date, division and Document Status;\
+  \ it also provides the repeat-entry button [fEstimation.vb:103].\n- Revision No. and Revision Date Fields: Two read-only\
+  \ boxes labelled \"Revision No.\" and \"Revision Date\" [fEstimation.Designer.vb:1139; fEstimation.Designer.vb:1158].\n\
+  - Customer Name Field: Drop-down, mandatory (marked compulsory) [fEstimation.vb:102; fEstimation.Designer.vb:883].\n- Location\
+  \ Field: Drop-down, mandatory [fEstimation.Designer.vb:903].\n- Source Document Field: Drop-down, mandatory [fEstimation.Designer.vb:923].\n\
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Drop-down plus a read-only date [fEstimation.Designer.vb:943; fEstimation.Designer.vb:962].\n\
+  - Item Description, Unit and Quantity Fields: Item Description is a drop-down; Unit is read-only; Quantity is a numeric\
+  \ box (3 decimals, 10 characters) [fEstimation.Designer.vb:982; fEstimation.Designer.vb:1001; fEstimation.Designer.vb:1010;\
+  \ fEstimation.Designer.vb:300; fEstimation.vb:173].\n- Bom No. Field: Drop-down of BOM revisions with number and date; read-only\
+  \ unless Source Document is Direct [fEstimation.Designer.vb:1030; fEstimation.vb:1996-2002].\n- Contact Person, Contact\
+  \ No. and Email Id Fields: Contact Person drop-down; Contact No.\n- Margin %, Margin Value and Product Cost Fields: Margin\
+  \ % is numeric (2 decimals, 6 characters); Margin Value and Product Cost are read-only [fEstimation.Designer.vb:733; fEstimation.Designer.vb:715;\
+  \ fEstimation.Designer.vb:721; fEstimation.Designer.vb:693; fEstimation.Designer.vb:703].\n- Remarks Field: Text box up\
+  \ to 1000 characters, trimmed on save [fEstimation.Designer.vb:803; fEstimation.vb:182; fEstimation.vb:1450].\n- Total Amount\
+  \ (Base Currency) and (Export Currency) Fields: Two read-only boxes [fEstimation.Designer.vb:393; fEstimation.Designer.vb:373].\n\
+  - Shipment Details Tab: Base Currency (read-only, company base currency [fEstimation.vb:306-308]), the export-currency control,\
+  \ Inco Term, Method Of Shipment, Type Of Dispatch, Place of Receipt, Port of Loading, Pre Carriage, and read-only Place\
+  \ of Delivery and Port of Discharge [fEstimation.Designer.vb:313; fEstimation.Designer.vb:580; fEstimation.Designer.vb:493;\
+  \ fEstimation.Designer.vb:473; fEstimation.Designer.vb:453\n- Material Costing Grid: Columns Item Code, Item Description,\
+  \ Make, Unit, Quantity, Rate (Base Currency), Amount, Remarks (500 characters); the export rate and amount columns are hidden\
+  \ [fEstimation.vb:1073-1095].\n- Operational Cost Grid: Activity, Cost Element, Quantity, Unit, Rate, Amount (read-only),\
+  \ Remarks; the sequence number is hidden [fEstimation.vb:1142-1165].\n- Overheads Grid: Cost Element, Quantity, Unit, Rate,\
+  \ Amount, Remarks [fEstimation.vb:1187-1210].\n- Expense Detail Grid: Expense Head, Quantity, Unit, Rate, Amount, Remarks\
+  \ [fEstimation.vb:1228-1250].\n- Tax Detail Grid: Charge Name and Total Value [fEstimation.vb:1269-1285].\n- Cost Details\
+  \ Grid: Sl No., Cost Group, Cost Head, Is Calculate On Item Qty., Quantity, Unit, Local Freight, Rate Type, Currency, Rate,\
+  \ Amount, Amount (Base Currency), Amount (Export Currency), Billing Reference, Is Mandatory, Remarks (200 characters) [fEstimation.vb:3062-3115].\n\
+  - Summary Tab: A read-only grid [fEstimation.vb:1291-1293].\n- Multi-level Auth Tab: The approval-chain control for this\
+  \ document.\n- Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fEstimation.vb:561-593].\n"
+actions:
+  New: Toolbar action that asks the main window for a fresh record [fEstimation.vb:522-529].
+  Save: Validates and saves the estimate and all its lines.
+  Search: Opens a search dialog listing estimates for the company and year.
+  Delete: Deletes the loaded estimate after a delete confirmation.
+  Navigation: First / Previous / Next / Last are provided by the application frame; this form has no handlers for them.
+validations:
+- Authorized Estimation can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized entry can't be updated.
+- Can not authorize as last level is not approved.
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Ref Doc No.
+- Select valid Item Description.
+- Select a valid Method of Shipment.
+- Select a valid Type of Dispatch.
+- Select a valid Place of Receipt.
+- Select a valid Port of loading.
+- Select a valid Pre Carriage.
+- Select a valid contact person.
+- Margin % can't be 0 or greater than 100.00.
+- Document Status can't be Authorized for multi level Authorization
+- Select atleast one material Costing Detail.
+- Select valid Item Description in row n.
+- Select valid Unit in row n.
+- Quantity can't be empty or zero in row n.
+- Rate can't be empty or zero in row n.
+- Select valid Cost Element in row n.
+- Amount can't be empty or zero in row n.
+- Total Value can't be zero or empty  in row n.
+- Duplicate Item not allowed.
+- Duplicate Acivity And Cost Element not allowed.
+- Duplicate Cost Element not allowed.
+- Duplicate Expense Head not allowed.
+- Duplicate Charge Name not allowed.
+- Select a valid Inco Terms.
+- Select atleast one cost head in Costing Detail.
+- Select valid Currency in row n.
+- Document No. <number> saved successfully.
+- Same estimation revision already exists,
+- Unable to delete,Next revision exists.Delete it first.
+- For same currency, Export Exchange Rate (Shipment Details) should be equal to Exchange Rate of Cost Head in row n.
+manages:
+- estimation
+uses_concepts:
+- company
+- revised-estimation
+- service-order-amendment
+method_notes:
+  Delete: Deletes the record through Sales.SDPEDelete.
+  FillValues: Fills the lookup lists through Sales.SDPEFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDPEFillValuesDependent.
+  GetMaterialDetail: Runs through Sales.SDPEGetMaterialDetail.
+  LoadData: Loads the selected record through Sales.SDPELoadData.
+  LoadRepeatedEstimation: Searches records through Sales.SDPESearchData.
+  Open: Searches records through Sales.SDPESearchData.
+  Save: Saves the record through Sales.SDPEAuthorize, Sales.SDPESave.
+  SaveExpenseDetail: Saves the record through Sales.SDPESaveExpenseDetail.
+  SaveExportCostDetail: Saves the record through Sales.SDPESaveExportCostDetail.

@@ -1,0 +1,35 @@
+form: fAssetUtalizationWork
+title: Utalization Description
+module: MD
+kind: master
+summary: The Utalization Description screen maintains a list of utilization descriptions, each tied to a Unit of measure.
+purpose: |
+  What it is: A master record naming one kind of asset utilization (Description, up to 300 characters) and the Unit it is measured in [fAssetUtalizationWork.vb:84; fAssetUtalizationWork.vb:281-282; masterdata.MAUWSave:28-43]. When it applies: When a new way of measuring asset usage has to be made available, or when an existing description or its Unit changes. Business outcome: Utilization is described and measured in a consistent, coded vocabulary (BR-01; BR-02; BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Group Area: A single group box holding Code, Description, Unit and Inactive [fAssetUtalizationWork.Designer.vb:81].
+  - Code Field: A read-only text box labelled "Code" [fAssetUtalizationWork.Designer.vb:92; fAssetUtalizationWork.Designer.vb:99].
+  - Description Field: A mandatory text box labelled "&Description" with a 300-character limit; marked as a compulsory field [fAssetUtalizationWork.vb:42; fAssetUtalizationWork.vb:84; fAssetUtalizationWork.Designer.vb:50].
+  - Unit Field: A mandatory drop-down labelled "&Unit", listing unit aliases; the Unit row must be a selected row [fAssetUtalizationWork.vb:42; fAssetUtalizationWork.vb:87; fAssetUtalizationWork.vb:254; fAssetUtalizationWork.Designer.vb:69].
+  - Inactive Field: A check box labelled "&Inactive", disabled [fAssetUtalizationWork.Designer.vb:106; fAssetUtalizationWork.Designer.vb:112].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fAssetUtalizationWork.vb:161-193].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fAssetUtalizationWork.vb:125-132].
+  Save: The toolbar action that validates and stores the record [fAssetUtalizationWork.vb:264-310].
+  Search: The toolbar action that opens a search list [fAssetUtalizationWork.vb:134-159].
+  Delete: The toolbar action that removes the opened description [fAssetUtalizationWork.vb:48-73].
+validations:
+- Enter Description.
+- Select valid Unit.
+- Duplicate Description not allowed.
+manages:
+- utalization-description
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MAUWDelete.
+  FillValues: Fills the lookup lists through masterdata.MAUWFillValues.
+  LoadData: Loads the selected record through masterdata.MAUWLoadData.
+  Open: Searches records through masterdata.MAUWSearchData.
+  Save: Saves the record through masterdata.MAUWSave.
+  ValidateForm: Validates the entry through masterdata.MAUWValidate.

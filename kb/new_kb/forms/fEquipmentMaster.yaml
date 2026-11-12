@@ -1,0 +1,144 @@
+form: fEquipmentMaster
+title: Equipment Master
+module: PM
+kind: transaction
+summary: 'The Equipment Master screen maintains every piece of equipment that the business owns, hires or services for customers:
+  machines, vehicles, tools and installed components.'
+purpose: |
+  What it is: The master record of one unit of equipment together with its history-bearing attributes: location, custody, driver, bill of materials and supplementary values [fEquipmentMaster.vb:1865-2110; EAM.EAEMSave:92-424]. When it applies: When equipment is bought, received, hired in, taken over from a customer, or when its location, custody, parts or maintenance attributes change. Business outcome: One coded, unique equipment register on which maintenance, service calls, meter readings and documents are based (BR-01 to BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "Equipment Master" with a header block above a tab control with the tabs General Detail; Supplemental Information And Skill Detail; Measurement And Safety Detail; Resource And Tools Detail; Certificate Detail; Warranty Detail; Service Center Detail; Utalization Detail; BOM; Permit Detail [fEquipmentMaster.Designer.vb:2351-2380; fEquipmentMaster.Designer.vb:2396].
+  - Code Field: A read-only text box [fEquipmentMaster.Designer.vb:1935].
+  - Equipment Name Field: A mandatory text box of up to 100 characters [fEquipmentMaster.Designer.vb:1944; fEquipmentMaster.vb:58].
+  - Make, Model No., Part No. and Serial No. Fields: Make is a drop-down; Model No.
+  - Alias Field: An optional text box of up to 10 characters; the mandatory check was commented out "as per feedback while working on UMOJA" [fEquipmentMaster.Designer.vb:1962; fEquipmentMaster.vb:820-830].
+  - Equipment Description Field: A read-only text box built automatically [fEquipmentMaster.Designer.vb:2075; fEquipmentMaster.vb:3162-3164].
+  - Ownership, Equipment Category and Equipment Type Fields: Three mandatory drop-downs [fEquipmentMaster.vb:58; fEquipmentMaster.vb:193-199].
+  - Is Critical, Inactive and Is Daily Maintenance Required Fields: Three tick boxes [fEquipmentMaster.Designer.vb:2185; fEquipmentMaster.Designer.vb:1927; fEquipmentMaster.Designer.vb:2145].
+  - Part Of Field: A drop-down and label that are hidden on the screen [fEquipmentMaster.Designer.vb:2197; fEquipmentMaster.Designer.vb:2207].
+  - Item Description Field: A drop-down of items showing Item Description and Code, optionally read-only by company setting [fEquipmentMaster.Designer.vb:1908; fEquipmentMaster.vb:206; fEquipmentMaster.vb:345].
+  - Fixed Asset and Customer Asset Fields: A Fixed Asset drop-down and a Customer Asset No.
+  - Installation Date and Year Of Manufacture Fields: Optional date pickers; Year Of Manufacture is stored as the first day of the chosen month [fEquipmentMaster.Designer.vb:1899; fEquipmentMaster.Designer.vb:969; fEquipmentMaster.vb:1921-1925].
+  - Vendor Name and Vendor Location Fields: Drop-downs whose labels change to "Supplier Name" and "Supplier Location" for own equipment and to "Customer Name" and "Customer Location" for party equipment; otherwise "Vendor Name" and "Vendor Location" [fEquipmentMaster.vb:3751-3772].
+  - Source Document, Based On, Ref. Document No. and Ref. Document Date Fields: Drop-downs and a read-only date; a Ref.
+  - Lot Detail Grid: A grid with Select, Lot No., Serial No., Document No., Document Date, PO No.
+  - Location, Location Effective From and Equipment Address Fields: Location drop-down, an effective date, and an Equipment Address block with Address lines (100 characters each), City, State, Country and Pincode (6 characters) [fEquipmentMaster.Designer.vb:757; fEquipmentMaster.Designer.vb:988; fEquipmentMaster.Designer.vb:1010].
+  - Custodian Name, Custodian Contact No. and Date Of Custody Fields: A custodian drop-down, a contact box (30 characters) and a date picker [fEquipmentMaster.Designer.vb:1056; fEquipmentMaster.Designer.vb:1076; fEquipmentMaster.Designer.vb:890].
+  - Cost Center, Work Center, Division Name and Department Name Fields: Drop-downs.
+  - Driver Name, Driver Effective From, Fuel and Tyre Layout Fields: Driver Name, "Driver Effective From", "Fuel (Item Description)" with its unit, and Tyre Layout [fEquipmentMaster.Designer.vb:535; fEquipmentMaster.Designer.vb:576; fEquipmentMaster.Designer.vb:1219; fEquipmentMaster.Designer.vb:1170].
+  - Invoice and Service Contract Fields: Invoice No.
+  - Supplemental Information Grid and Group: "Supplemental Information Group" drop-down and a grid of Supplementary Field, Value and Remarks [fEquipmentMaster.vb:252-256; fEquipmentMaster.vb:3014-3023].
+  - Skill, Safety, Resource and Tools Grids: Skill Detail (with Skill Group), Safety Detail (with Safety Instruction Group), Resource Detail (Resource Group and Resource Name) and Tools Detail (Item Description) [fEquipmentMaster.vb:3036-3090].
+  - Measurement Detail Grid: A grid with Measurement Parameter, Measurement Date, Value, Alert Condition, Alert Value, Remarks and Per Day Max Limit, with a group drop-down and a date picker that stamps all rows [fEquipmentMaster.vb:3025-3035; fEquipmentMaster.vb:3166-3176; fEquipmentMaster.vb:180].
+  - Spare Detail Grid and Serial Number Entry: A grid of spares with Item Code, Item Description, Make, Quantity, Unit and a Serial Number cell that opens a small entry panel (Ok/Cancel) for several serial numbers [fEquipmentMaster.vb:3424-3530; fEquipmentMaster.vb:4088-4120].
+  - Certificate, Warranty and Service Center Grids: Certificate Detail, Warranty Detail and Service Center Detail (name, contact person, address, city, state, country) [fEquipmentMaster.vb:285-299].
+  - Utalization Detail Grid: A grid in which the user picks a utilization Description, with Code and Unit shown [fEquipmentMaster.vb:201; fEquipmentMaster.vb:4373-4400].
+  - BOM Grid: A grid with Alias, Item Code, Item Description, Make, Quantity, Unit, Consumption Entry Required, Serial No., a Span Remark button and a Life Span button [fEquipmentMaster.vb:4567-4604].
+  - Permit Detail Grid: A grid with Permit Name, read-only Permit Type and IsMandatory [fEquipmentMaster.vb:4649-4680].
+  - Fast Entry Grid Container: A full-window grid with columns Equipment Name, Item Description, Make, Part No, Model No, Serial No, Alias, Installation Date, Ownership, Part Of, Equipment Category, Equipment Type, Is Critical, Month & Year Of Manufacture, Location, Location Effective From, Address 1 to 3, City, State, Country, Pincode, Custodian, Custodian Contact No, Date Of Custody, Cost Centre, Work Center, Fixed Asset, Div
+  - Switch Back to Detail Mode Link: The link "Switch back to detail mode." [fEquipmentMaster.Designer.vb:2257].
+  - Reference Equipment Button: A button that opens the search list [fEquipmentMaster.vb:4682-4707].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  Import: An "&Import" button that reads an Excel sheet into the fast entry grid [fEquipmentMaster.Designer.vb:2245; fEquipmentMaster.vb:4259-4297].
+  New: The toolbar action asking the main window to start a blank record [fEquipmentMaster.vb:568-578].
+  Save: The toolbar action that validates and stores the equipment and its children [fEquipmentMaster.vb:1585-1809].
+  Search: The toolbar action listing the company's equipment [fEquipmentMaster.vb:580-601].
+  Delete: The toolbar action that removes the open equipment [fEquipmentMaster.vb:75-103].
+validations:
+- Enter Equipment Name.
+- Enter Serial No.
+- Select valid Ownership.
+- Select valid ownership.
+- Select valid Equipment Category.
+- Select valid Equipment Type.
+- Enter Custodian Contact No.
+- Year of manufacture date can not be greater than acquisition date.
+- Select Valid Date Of Custody.
+- Date of custody can not be less than acquisition date.
+- Select valid Ref. Document No..
+- Select valid Based On.
+- Can Not select more than one lot Detail.
+- Select Location Effective Date.
+- Select Driver Effective Date.
+- Select valid Driver Name.
+- Select valid Division Name.
+- Invoice Date can not be empty.
+- Service Contract Date can not be empty.
+- Service Contract Date can not be less than Invoice Date.
+- Item can not be changed, Equipment is used in either Service Call Or Service Order.
+- Select valid Value in row n.
+- Enter a valid vehicle Registration No.  in row n.
+- Select valid Fuel.
+- Quantity can't be zero or empty in row n.
+- Select only one measurement parameter for Hour.
+- Select Measurement Date in row n.
+- Enter Value in row n.
+- Select Resource Name in row n.
+- Select Certificate Date in row n.
+- Expiry date can not be less than Certificate date.
+- Enter Warranty No in row n.
+- Select Warranty Date in row n.
+- Select Expiry Date in row n.
+- Expiry date can not be less than Warranty date.
+- Warranty date can not be less than Year Of Manufacture.
+- Select valid Contact Person Name in row n.
+- Select atleast one permit detail.
+- Tyre Layout is not selected. Do you want to continue?
+- Select valid Tyre Layout
+- 'Invalid Time : minute should be less than 60 in row n.'
+- 'Invalid Time : minute should be less than 10 in row n.'
+- 'Invalid Time : minute should be less than 100 in row n.'
+- Duplicate Equipment Description not allowed.
+- Duplicate Alias not allowed.
+- Equipment already exists for same Item and Serial No.
+- Duplicate utalization description not allowed.
+- Duplicate Tools not allowed.
+- Duplicate Spare not allowed.
+- Duplicate Safety Instruction not allowed.
+- Duplicate Resource Group not allowed.
+- Duplicate Certificate Name not allowed.
+- Duplicate Warranty not allowed.
+- Duplicate Skill Name not allowed.
+- Duplicate Service Center Name not allowed.
+- Duplicate Measurement Parameter not allowed.
+- Duplicate Supplementary Field not allowed.
+- Duplicate Permit not allowed.
+- Duplicate Item not allowed.
+- Your excel should consists of sheet with name EAEM. Do you want to continue?
+- Refer remarks for saved status.
+- Successfully Created.
+manages:
+- equipment-master
+uses_concepts:
+- axle-wheel-configuration
+- change-equipment-driver
+- change-equipment-location
+- company
+- eam-resource-master
+- equipment-category
+- equipment-replacement
+- functional-location
+- maintenance-service-order
+- measurement-parameter-group
+- safety-instruction-group
+- service-call
+- service-contract-setup
+- skill-master
+- supplementary-field
+- supplementary-field-group
+- tripsheet
+- utalization-description
+- work-center
+method_notes:
+  Delete: Deletes the record through EAM.EAEMDelete.
+  FillValues: Fills the lookup lists through EAM.EAEMFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAEMFillValuesDependent.
+  GetRefDetail: Runs through EAM.EAEMGetRefDetail.
+  LoadData: Loads the selected record through EAM.EAEMLoadData.
+  Open: Searches records through EAM.EAEMSearchData.
+  SaveBOMDetail: Saves the record through EAM.EAEMSaveBOMDetail.
+  SaveCertificateDetail: Saves the record through EAM.EAEMSaveCertificateDetail.
+  SaveLotDetail: Saves the record through EAM.EAEMSaveLotDetail.
+  SaveMain: Saves the record through EAM.EAEMSave.

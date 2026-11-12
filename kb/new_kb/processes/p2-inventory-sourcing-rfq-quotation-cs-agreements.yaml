@@ -1,0 +1,14 @@
+key: p2-inventory-sourcing-rfq-quotation-cs-agreements
+name: 'Inventory: Sourcing (RFQ, quotation, CS, agreements) (Phase 2)'
+module: MM
+status: active
+summary: Phase 2 screens of the sourcing (rfq, quotation, cs, agreements) group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 2 forms that the KB validation plan puts in 'Sourcing (RFQ, quotation, CS, agreements)' (Inventory). The steps follow the plan order, not a verified business sequence: Items for Rate Contract.
+steps:
+- order: 1
+  name: Record Items for Rate Contract
+  form: fRateContractorList
+concepts:
+- items-for-rate-contract

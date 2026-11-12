@@ -1,0 +1,67 @@
+form: fFinancePosting
+title: Finance Posting
+module: FI
+kind: transaction
+summary: The Finance Posting screen creates an accounting voucher for a business document that has been authorized but has
+  no voucher yet.
+purpose: |
+  What it is: A manual route to post the accounting voucher of an authorized source document and to remove that voucher again [fFinancePosting.vb:20-43; fFinancePosting.vb:310-364]. When it applies: When an authorized document exists in the company but its voucher has not been generated, or an existing posting must be undone. Business outcome: Documents and the books stay in step; the voucher number is written onto the source document (BR-04; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Transaction Area: A group box at the top holding the Transaction Type list and the document grid, above an embedded voucher posting control [fFinancePosting.Designer.vb:60-66; fFinancePosting.Designer.vb:70-110].
+  - Transaction Type Field: Dropdown labelled "Transaction Type", marked mandatory [fFinancePosting.vb:14; fFinancePosting.Designer.vb:48].
+  - Source Document Grid: Read-only grid with a filter row (contains-match).
+  - Voucher Type Field: Read-only dropdown in the embedded control, set from the document row [fucFinancePosting.Designer.cs:198-200; fucFinancePosting.cs:429].
+  - Document No. Field: Read-only text box in the embedded control [fucFinancePosting.Designer.cs:87-98].
+  - Tax Group Field: Dropdown labelled "Tax Group" in the embedded control; visible on this screen [fucFinancePosting.Designer.cs:183; fFinancePosting.Designer.vb:97].
+  - Posting Grid: Grid in the embedded control with Add to Basic, Particular, Debit Amount, Credit Amount, Account Name, Ref.
+  - Narration Field: Text box labelled "Narration", up to 2000 characters [fucFinancePosting.Designer.cs:255; fucFinancePosting.cs:423].
+  - TDC Rule Description Panel: A popup row template with "TDC Rule Description", "Ok" and "Cancel" [fucFinancePosting.Designer.cs:132-163].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fFinancePosting.vb:144-159; fFinancePosting.vb:382-388].
+actions:
+  New: Asks the main window to reset the form.
+  Save: Posts the voucher for the selected document.
+  Search: Opens the common search list of postings for the company and the current year [fFinancePosting.vb:117-142].
+  Delete: Deletes the opened posting's voucher.
+validations:
+- Select valid Transaction Type.
+- Finance Posting can't be updated.
+- Finance Book is closed for this Document Date.
+- Select valid TDC Rule Description.
+- Account Detail is missing.
+- Select valid TDC Rule Description in row N.
+- Select valid Account Name in row N.
+- Authorized entry can't be updated.
+- Total Debit Amount should be equal to Total Credit Amount.
+- Duplicate Document No. not allowed.
+- Opening Date is not set against selected Finance Book.
+- Document Date can't be less than Finance Book Opening Date.
+- Document Date can't be less than Inventory Start Date.
+manages:
+- finance-posting
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- cash-journal
+- change-voucher-status
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- recurring-voucher
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.VoucherDelete.
+  FillValues: Fills the lookup lists through Finance.FATPFillValues.
+  FillValuesTransactionType: Fills the lookup lists through Finance.FATPFillValuesTransactionType.
+  LoadData: Loads the selected record through Finance.FATPLoadData.
+  Open: Searches records through Finance.FATPSearchData.
+  Save: Saves the record through Finance.FATPSaveDocument.

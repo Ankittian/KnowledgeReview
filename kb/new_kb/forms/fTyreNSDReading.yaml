@@ -1,0 +1,51 @@
+form: fTyreNSDReading
+title: Tyre Inspection Entry
+module: PM
+kind: transaction
+summary: The Tyre Inspection Entry screen records tread-depth inspections of tyres.
+purpose: |
+  What it is: A document that records dated tread depth readings and tyre condition for a set of tyres, with the inspector's name and shift [fTyreNSDReading.vb:536-613; EAM.TINESaveTyreInspectionEntryDetail:29-60]. When it applies: Whenever tyres are measured during routine checks. Business outcome: A history of tread wear per tyre that supports life analysis and replacement decisions.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control at the top, a "general detail" group with Inspected By, Shift and Remarks, and a lines grid below; the window caption is "TyreNSDReading" [fTyreNSDReading.Designer.vb:115; fTyreNSDReading.Designer.vb:162; fTyreNSDReading.Designer.vb:362].
+  - Document Control Fields: The shared document control with Document Status, Division, Document Date and Document No.
+  - Inspected By Field: A mandatory drop-down labelled "Inspected By" that accepts typed text; earlier names are offered [fTyreNSDReading.Designer.vb:148; fTyreNSDReading.vb:130; fTyreNSDReading.vb:329-335].
+  - Shift Field: A mandatory drop-down labelled "Shift" [fTyreNSDReading.Designer.vb:105; fTyreNSDReading.vb:119; fTyreNSDReading.vb:336-342].
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fTyreNSDReading.Designer.vb:86; fTyreNSDReading.Designer.vb:135].
+  - Inspection Detail Grid: A grid with columns Entry Type, Vehicle, Position, Tyre Serial No, Km Reading, NSD Reading (edit button), Tyre Condition and Remarks; the individual NSD1 to NSD5 columns are hidden [EAM.TINEFillValues:64-78; fTyreNSDReading.vb:416-426].
+  - NSD Reading Pop-up: A row-edit panel opened from the NSD Reading cell with fields "NSD Reading 1" to "NSD Reading 5", a read-only "NSD Avg" and buttons "OK" and "Cancel" [fTyreNSDReading.Designer.vb:207; fTyreNSDReading.Designer.vb:227; fTyreNSDReading.Designer.vb:249; fTyreNSDReading.Designer.vb:258; fTyreNSDReading.Designer.vb:267; fTyreNSDReading.Designer.vb:276; fTyreNSDReading.Designer.vb:323; fTyreNSDReading.De
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a new record [fTyreNSDReading.vb:194-203].
+  Save: The toolbar action that validates and saves [fTyreNSDReading.vb:447-532].
+  Search: The toolbar action that opens a document search [fTyreNSDReading.vb:206-232].
+  Delete: The toolbar action that removes the open document [fTyreNSDReading.vb:51-80].
+validations:
+- Authorized Tyre NSD Reading can't be updated.
+- Duplicate Document No. not allowed.
+- Enter Inspected By name
+- Select valid Shift.
+- Select Vehicle in row N.
+- Select Position in row N.
+- Select Tyre Serial No in row N.
+- NSD Reading can not be empty in row N.
+- Select atleast one Tyre Serial No.
+- Atleast set the NSD Reading 1.
+- Document No. <number> saved successfully.
+manages:
+- tyre-inspection-entry
+uses_concepts:
+- axle-wheel-configuration
+- company
+- equipment-master
+- supplementary-field
+- tyre-master
+method_notes:
+  Delete: Deletes the record through EAM.TINEDelete.
+  FillValues: Fills the lookup lists through EAM.TINEFillValues.
+  GetTyreForVehicleOnPosition: Runs through EAM.GetTyreVehicleWise.
+  LoadData: Loads the selected record through EAM.TINELoadData.
+  Open: Searches records through EAM.TINESearchData.
+  Save: Saves the record through EAM.TINESave.
+  SaveDocumentDetail: Saves the record through EAM.TINESaveTyreInspectionEntryDetail.
+  ValidateForm: Validates the entry through EAM.TINEValidate.

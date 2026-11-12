@@ -1,0 +1,43 @@
+form: fEAMDocumentType
+title: Document Type
+module: MD
+kind: master
+summary: The Document Type screen maintains the kinds of documents that can be recorded against equipment and functional locations,
+  such as certificates or permits.
+purpose: |
+  What it is: A master record made of a code, a type name, a description, two entry-control flags and a list of extra fields to capture [fEAMDocumentType.vb:339-394; masterdata.MDDTSave:38-76]. When it applies: When the plant starts to track a new kind of equipment document, or changes what must be captured for it. Business outcome: Equipment documents are recorded in a controlled list of types, each with its own extra data and entry rules.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general-detail box (Code, Document Type, Description and three tick boxes) above an Additional Field box holding a grid; the window caption reads "DocumentType" (see Section 13) [fEAMDocumentType.designer.vb:127; fEAMDocumentType.designer.vb:144; fEAMDocumentType.designer.vb:169].
+  - Code Field: A read-only text box that cannot be tabbed into, labelled "Code" [fEAMDocumentType.designer.vb:47-59].
+  - Document Type Field: A mandatory text box, limited to 50 characters when the screen is first filled; leading and trailing spaces are removed [fEAMDocumentType.vb:42; fEAMDocumentType.vb:83; fEAMDocumentType.vb:239; fEAMDocumentType.vb:357].
+  - Description Field: A mandatory multi-line text box, limited to 100 characters [fEAMDocumentType.vb:42; fEAMDocumentType.vb:84; fEAMDocumentType.designer.vb:102].
+  - Is Allow Multiple Entry Field: A tick box, off by default [fEAMDocumentType.designer.vb:81-84; fEAMDocumentType.vb:113].
+  - Is Allow Duplicate No. Field: A tick box, off by default [fEAMDocumentType.designer.vb:151-154; fEAMDocumentType.vb:114].
+  - Inactive Field: A disabled tick box labelled "Inactive" [fEAMDocumentType.designer.vb:89-94].
+  - Additional Field Grid: A grid with the columns Field Name (up to 100 characters), Data Type (drop-down) and Is Mandatory (tick, off by default); a field number and a used flag are hidden [fEAMDocumentType.vb:317-333; fEAMDocumentType.vb:88].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fEAMDocumentType.vb:172-204].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fEAMDocumentType.vb:137-143].
+  Save: The toolbar action that validates and stores the type and its additional fields [fEAMDocumentType.vb:339-394].
+  Search: The toolbar action that opens a search dialog listing the types of the logged-in company with Code, Document Type,
+    Description, Allow Multiple Entry, Inactive and Created By [fEAMDocumentType.vb:146-170; masterdata.MDDTSearchData:17-27].
+  Delete: The toolbar action that removes the open type [fEAMDocumentType.vb:48-72].
+validations:
+- Enter Document Type.
+- Enter Description.
+- Duplicate Document Type is not allowed.
+- Select valid Data Type in row N.
+manages:
+- document-type
+uses_concepts:
+- company
+- equipment-document-entry
+method_notes:
+  Delete: Deletes the record through masterdata.MDDTDelete.
+  FillValues: Fills the lookup lists through masterdata.MDDTFillValues.
+  LoadData: Loads the selected record through masterdata.MDDTLoadData.
+  Open: Searches records through masterdata.MDDTSearchData.
+  Save: Saves the record through masterdata.MDDTSave.
+  SaveAdditionalField: Saves the record through masterdata.MDDTSaveAdditionalField.
+  ValidateForm: Validates the entry through masterdata.MDDTValidate.

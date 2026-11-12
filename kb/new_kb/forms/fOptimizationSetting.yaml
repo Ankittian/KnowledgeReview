@@ -1,0 +1,22 @@
+form: fOptimizationSetting
+title: Material Lead/Safty Days Setting
+module: MM
+kind: transaction
+summary: The Material Lead/Safty Days Setting screen holds the standard lead days and safety days for each supply source.
+purpose: |
+  What it is: A one-grid setting that records, per supply source, the normal time to receive material (lead days) and the extra buffer days (safety days) [fOptimizationSetting.vb:109-123; Optimization.OLSSFillValues:22-25]. When it applies: When the organisation first sets up planning, or when supplier performance changes. Business outcome: Planners get consistent default days per source instead of typing them for every item.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Setting Grid: A single grid with columns Source, Standard Lead Days and Standard Safety Days.
+  - Other Toolbar Actions (Delete, Open, Print, Preview, Export, Email): Empty implementations [fOptimizationSetting.vb:72-80; fOptimizationSetting.vb:161-167; fOptimizationSetting.vb:203-209].
+actions:
+  New: The standard toolbar New.
+  Save: The only enabled toolbar action [fOptimizationSetting.vb:25].
+validations:
+- Enter Standard Lead Days in row N.
+- Enter Standard Safety Days in row N.
+manages:
+- material-lead-safty-days-setting
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.OLSSFillValues.
+  Save: Saves the record through Optimization.OLSSSave.

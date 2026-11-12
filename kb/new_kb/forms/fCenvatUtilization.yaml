@@ -1,0 +1,50 @@
+form: fCenvatUtilization
+title: Cenvat Utilization
+module: FI
+kind: transaction
+summary: The Cenvat Utilization screen settles the legacy excise and service tax credit position for a month.
+purpose: |
+  What it is: A monthly document that offsets duty payable against available excise and service tax credit [fCenvatUtilization.vb:725-768; Finance.FICUFillValuesDependent:34-65; Finance.FICUFillValuesDependent:204-265]. When it applies: At month end, per tax book, while the company still carries Cenvat credit balances. Business outcome: The payable balances are cleared against credit balances and the register is updated (BR-05; BR-07; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Document number, date and status control, Tax Book, Month and Remarks; the designer caption is "CenvatUtilization" [fCenvatUtilization.Designer.vb:209; fCenvatUtilization.Designer.vb:228; fCenvatUtilization.Designer.vb:246; fCenvatUtilization.Designer.vb:303].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status; division validation is off [fCenvatUtilization.vb:98; fCenvatUtilization.vb:46-55].
+  - Tax Book Field: A mandatory drop-down labelled "Tax &Book" [fCenvatUtilization.vb:371].
+  - Month Field: A month picker labelled "Mon&th" [fCenvatUtilization.Designer.vb:228].
+  - Remarks Field: An optional text box with a maximum of 500 characters [fCenvatUtilization.vb:113].
+  - Receivable, Payable and Utilization Tabs: Three tabs: Receivable (excise duty and service tax grids), Payable, and Utilization [fCenvatUtilization.Designer.vb:275-281; fCenvatUtilization.Designer.vb:75-151].
+  - Utilization Amount Cell: The Amount column of the utilization grid, checked on each cell update [fCenvatUtilization.vb:541-555].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fCenvatUtilization.vb:248-280].
+actions:
+  New: Opens a blank document [fCenvatUtilization.vb:212-219].
+  Save: Validates, then saves voucher, header and rows in one transaction [fCenvatUtilization.vb:609-683].
+  Search: Lists utilizations of this company and year [fCenvatUtilization.vb:221-245].
+  Delete: Deletes the loaded document after a confirmation [fCenvatUtilization.vb:65-92].
+validations:
+- Authorized Cenvat Utilization can't be updated.
+- Select valid Tax Book.
+- Enter values.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Amount can't be greater than Month Closing Amount.
+- 'Total Utilization Amount should be equal to Payable Amount for Finance Book : <name>.'
+- Amount can't be greater than Closing Amount in row n.
+- Document No. <number> saved successfully.
+manages:
+- cenvat-utilization
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- reverse-voucher
+method_notes:
+  Delete: Deletes the record through Finance.FICUDelete.
+  FillValues: Fills the lookup lists through Finance.FICUFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FICUFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FICULoadData.
+  Open: Searches records through Finance.FICUSearchData.
+  Save: Saves the record through Finance.FICUSaveMain.
+  SaveBalanceUtilization: Saves the record through Finance.FICUSaveBalanceUtilization.
+  ValidateForm: Validates the entry through Finance.FICUValidate.
+  createVoucher: Saves the record through Finance.VoucherSaveChildDetail.

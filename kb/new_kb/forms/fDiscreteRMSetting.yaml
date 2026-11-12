@@ -1,0 +1,31 @@
+form: fDiscreteRMSetting
+title: DiscreteRM Setting
+module: ADM
+kind: transaction
+summary: The DiscreteRM Setting screen holds one set of company-wide defaults for discrete raw material handling.
+purpose: |
+  What it is: A single configuration record per company that fixes the default sources, tolerances and units for discrete raw material [fDiscreteRMSetting.vb:95-140; DiscreteRM.DRCSSave:22-58]. When it applies: When a company starts using discrete raw material handling, or when its tolerances or units change. Business outcome: Tolerances and unit defaults are held once and not re-decided on each document; out-of-range tolerance entries are stopped before saving (BR-02).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Settings Panel: The single group box on the form titled "DiscreteRM Setting", holding all eight fields [fDiscreteRMSetting.Designer.vb:123-146; fDiscreteRMSetting.Designer.vb:624].
+  - Gate Entry Source Document Field: A dropdown, optional, first field on the screen; it takes focus when the screen is reset [fDiscreteRMSetting.vb:80; fDiscreteRMSetting.vb:197].
+  - SIN Challan Tolerance Field: A decimal text box, optional, up to 6 characters, followed by a "%" label [fDiscreteRMSetting.Designer.vb:431; fDiscreteRMSetting.vb:191].
+  - SIN Tolerance Field: A decimal text box, optional, up to 6 characters, followed by a "%" label, labelled "SIN Tolerance" [fDiscreteRMSetting.Designer.vb:178; fDiscreteRMSetting.Designer.vb:191; fDiscreteRMSetting.vb:192].
+  - Stock Adjustment Tolerance Field: A decimal text box, up to 6 characters, followed by a "%" label [fDiscreteRMSetting.Designer.vb:599-612; fDiscreteRMSetting.vb:193].
+  - Section Unit Field: A dropdown showing Unit, Unit Name and Code, optional [fDiscreteRMSetting.vb:198].
+  - Section Dimension Unit Field: A dropdown with the same unit list as Section Unit, optional [fDiscreteRMSetting.vb:199].
+  - Raw Material Unit Field: A dropdown labelled "Raw Material Unit", showing Raw Material Unit, Raw Material Unit Name and Code, optional [fDiscreteRMSetting.vb:200; fDiscreteRMSetting.Designer.vb:265].
+  - Inspection Required Field: A tick box [fDiscreteRMSetting.Designer.vb:399-402].
+  - Hidden Grid: A grid named "UltraGrid1" is declared on the form but is not added to the form or the panel, so it never appears [fDiscreteRMSetting.Designer.vb:576-579; fDiscreteRMSetting.Designer.vb:619].
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not implemented on this screen; Delete returns without doing anything and the other handlers are empty [fDiscreteRMSetting.vb:64-72; fDiscreteRMSetting.vb:172-178; fDiscreteRMSetting.vb:233-239].
+actions:
+  Save: The only enabled toolbar action [fDiscreteRMSetting.vb:24].
+  New: Passes the request to the main window's standard New handling [fDiscreteRMSetting.vb:11-19].
+validations:
+- SIN Challan Tolerance can't be greater than 100.
+- SIN Tolerance can't be greater than 100.
+manages:
+- discreterm-setting
+method_notes:
+  FillValues: Fills the lookup lists through DiscreteRM.DRCSFillValues.
+  Save: Saves the record through DiscreteRM.DRCSSave.

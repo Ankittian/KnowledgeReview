@@ -1,0 +1,22 @@
+key: p5-sales-returns-certificates
+name: 'Sales: Returns & certificates (Phase 5)'
+module: SD
+status: active
+summary: Phase 5 screens of the returns & certificates group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Returns & certificates' (Sales). The steps follow the plan order, not a verified business sequence: VTPL Sales Return, Trade Certificate Master, Issue Trade Certificate.
+steps:
+- order: 1
+  name: Record VTPL Sales Return
+  form: fVTPLSalesReturn
+- order: 2
+  name: Record Trade Certificate Master
+  form: fTradeCertificateMaster
+- order: 3
+  name: Record Issue Trade Certificate
+  form: fIssueTradeCertificate
+concepts:
+- vtpl-sales-return
+- trade-certificate-master
+- issue-trade-certificate

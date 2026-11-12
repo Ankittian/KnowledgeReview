@@ -1,0 +1,38 @@
+form: fMPGroup
+title: Measurement Parameter Group
+module: MD
+kind: master
+summary: The Measurement Parameter Group screen bundles measurement parameters (such as temperature, pressure or running hours)
+  into named groups.
+purpose: |
+  What it is: A master record that names a set of measurement parameters so that the set can be assigned to assets in one step [fMPGroup.vb:312-386; masterdata.AMPGSave:26-45; masterdata.AMPGSaveParameterDetail:17-26]. When it applies: When a standard set of readings is defined for a class of equipment or location, or when the set changes. Business outcome: Asset measurement set-up is consistent and does not require selecting every parameter for every asset (BR-01; BR-02; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: The header area holding Code, Group Name and Inactive, above the parameter grid [fMPGroup.Designer.vb:41-82].
+  - Code Field: A read-only text box labelled "Code", 6 characters [fMPGroup.Designer.vb:41-43; fMPGroup.Designer.vb:55].
+  - Group Name Field: A mandatory text box labelled "Group &Name", 50 characters [fMPGroup.vb:37; fMPGroup.vb:90; fMPGroup.Designer.vb:61; fMPGroup.Designer.vb:73].
+  - Inactive Field: A check box labelled "Inactive", disabled [fMPGroup.Designer.vb:77; fMPGroup.Designer.vb:82].
+  - Parameter Details Grid: A grid with columns Measurement Parameter (drop-down) and Code (read-only) [masterdata.AMPGFillValues:18-21; fMPGroup.vb:297-306].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fMPGroup.vb:181-213].
+actions:
+  New: The toolbar action that asks the main window for a blank record and focuses Group Name [fMPGroup.vb:141-150].
+  Save: The toolbar action that validates and stores the group [fMPGroup.vb:312-366].
+  Search: The toolbar action that opens a search list [fMPGroup.vb:152-179].
+  Delete: The toolbar action that removes the opened group [fMPGroup.vb:44-76].
+validations:
+- Enter Group Name.
+- Select atleast one Measurement Parameter.
+- Duplicate Group Name not allowed.
+- Duplicate Parameter Name not allowed.
+manages:
+- measurement-parameter-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AMPGDelete.
+  FillValues: Fills the lookup lists through masterdata.AMPGFillValues.
+  LoadData: Loads the selected record through masterdata.AMPGLoadData.
+  Open: Searches records through masterdata.AMPGSearchData.
+  Save: Saves the record through masterdata.AMPGSave.
+  SaveParameterDetails: Saves the record through masterdata.AMPGSaveParameterDetail.
+  ValidateForm: Validates the entry through masterdata.AMPGValidate.

@@ -1,0 +1,53 @@
+form: fServiceCallChangeStatus
+title: Service Call Change Status
+module: PM
+kind: transaction
+summary: The Service Call Change Status screen moves a service call from its current status to the next permitted one and
+  records why.
+purpose: |
+  What it is: A controlled status change document for one service call, with entry date, new status, reason and, on closing, solution, feedback and contract details [fServiceCallChangeStatus.vb:507-572; CustomerService.CSCSSave:27-86]. When it applies: When work on a call starts, pauses, is cancelled or is finished. Business outcome: Only valid status moves are offered (BR-03), and the closing information needed for service history and knowledge is collected at the moment of completion (BR-05; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A header with Entry Date, Call ID, Status and Reason, a "Contact Person Detail" group, a "Contract Detail" group, and three tabs: Service Call Detail, Solution Detail and Customer Feedback [fServiceCallChangeStatus.Designer.vb:451; fServiceCallChangeStatus.Designer.vb:598; fServiceCallChangeStatus.Designer.vb:689; fServiceCallChangeStatus.Designer.vb:772-778].
+  - Entry Date Field: A date and time picker shown as dd/MM/yyyy hh:mm tt, set to the current moment on a new entry [fServiceCallChangeStatus.Designer.vb:436-438; fServiceCallChangeStatus.vb:206-208].
+  - Call ID Field: A mandatory drop-down [fServiceCallChangeStatus.vb:67].
+  - Status Field: A mandatory drop-down listing only the statuses permitted from the call's current status [fServiceCallChangeStatus.vb:67; fServiceCallChangeStatus.vb:743].
+  - Reason Field: An optional drop-down that also accepts typed text; blank text is saved as no reason [fServiceCallChangeStatus.vb:532-536; fServiceCallChangeStatus.Designer.vb:173-180].
+  - Service Call Detail Tab Fields: Read-only displays: Call Date, Customer Name, Customer Location, Contact Person, Contact No., Email Id, Item Description, Serial No., Equipment Description, Subject, Description, Origin, Call Type, Problem Type, Priority, Assign To, Current Status and Customer Remarks (up to 100 characters) [fServiceCallChangeStatus.Designer.vb:187-342; fServiceCallChangeStatus.Designer.vb:409-412; fServiceCallCha
+  - Solution Detail Grid: A grid with S.No., Solution, a Btn button column, Description, Add to Knowledge and a hidden Knowledge Base column [fServiceCallChangeStatus.vb:479-500].
+  - Customer Feedback Grid: A grid with Parameter Name and Value [fServiceCallChangeStatus.vb:870-878].
+  - Contract Detail Grid: A grid with Select, Contract No and End Date; only Select is editable [fServiceCallChangeStatus.vb:885-899].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Print, Preview, Export and Email are empty; First/Previous/Next/Last are not implemented [fServiceCallChangeStatus.vb:324-356].
+actions:
+  New: Asks the main window to open a blank screen [fServiceCallChangeStatus.vb:288-295].
+  Save: Validates, asks for confirmation (MSG-08) and saves in one transaction [fServiceCallChangeStatus.vb:507-572].
+  Search: Opens a search list of earlier status changes of the company and financial year, then loads the chosen one [fServiceCallChangeStatus.vb:297-322].
+  Delete: Deletes the loaded status change after confirmation [fServiceCallChangeStatus.vb:87-119].
+validations:
+- Select valid Call ID.
+- Call Date can't be greater than Entry Date.
+- Select valid Status.
+- Select atleast one Solution Details.
+- Select atleast One Contract Detail.
+- Duplicate Parameter Name not allowed.
+- Saved successfully.
+manages:
+- service-call-change-status
+uses_concepts:
+- company
+- customer-feedback-parameter
+- eam-resource-master
+- equipment-master
+- service-call
+- service-contract
+- solution-knowledge
+method_notes:
+  Delete: Deletes the record through CustomerService.CSCSDelete.
+  FillValues: Fills the lookup lists through CustomerService.CSCSFillValues.
+  FillValuesDependent: Fills the lookup lists through CustomerService.CSCSFillValuesDependent.
+  LoadData: Loads the selected record through CustomerService.CSCSLoadData.
+  Open: Searches records through CustomerService.CSCSSearchData.
+  Save: Saves the record through CustomerService.CSCSSave.
+  SaveContractDetail: Saves the record through CustomerService.EASCSaveContractDetail.
+  SaveCustomerFeedbackDetail: Saves the record through CustomerService.EASCSaveCustomerFeedbackDetail.
+  SaveSolutionDetail: Saves the record through CustomerService.EASCSaveSolutionDetail.

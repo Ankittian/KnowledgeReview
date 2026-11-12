@@ -1,0 +1,64 @@
+form: fChangeStockAllocation
+title: Change Stock Allocation
+module: MM
+kind: transaction
+summary: The Change Stock Allocation screen re-allocates the stock of one item in a warehouse.
+purpose: |
+  What it is: A document that moves the reserved split of selected lots of an item to a new split between Unreserved, Cost Center, Job Card and Sales Order [fChangeStockAllocation.vb:1141-1174; Inventory.ICSAAuthorize:17-62]. When it applies: When stock that was reserved for one purpose must be released or reserved for another, for example from a Sales Order to a Job Card [Inventory.ICSAFillReserveDoc:24-81]. Business outcome: Reservations on lots stay accurate and traceable to a requester, a reason and an approval.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header control, a general-details area with Warehouse, Item Description, Current Stock, On Date Stock, Requested By, Reason, Remarks and Notes, and a lot grid [fChangeStockAllocation.Designer.vb:75-80,102-228].
+  - Document Header Control (Division, Date, Document No., Status): The shared control holding division, date, number, prefix and status [fChangeStockAllocation.Designer.vb:75-80].
+  - Warehouse Field: Mandatory drop-down labelled "Warehouse" [fChangeStockAllocation.Designer.vb:102; fChangeStockAllocation.vb:193].
+  - Item Description Field: Mandatory drop-down labelled "Item Description", filled after a warehouse is chosen [fChangeStockAllocation.Designer.vb:122; fChangeStockAllocation.vb:985-995].
+  - Current Stock Field: Read-only number, three decimals, labelled "Current Stock" [fChangeStockAllocation.Designer.vb:129,142; fChangeStockAllocation.vb:260].
+  - On Date Stock Field: Read-only number, three decimals, labelled "On Date Stock" [fChangeStockAllocation.Designer.vb:149,162; fChangeStockAllocation.vb:261].
+  - Requested By Field: Mandatory drop-down labelled "Requested By" listing names from earlier authorized documents; text can be entered [fChangeStockAllocation.Designer.vb:182; fChangeStockAllocation.vb:515; Inventory.ICSAFillValues:84-88].
+  - Reason Field: Optional multi-line text box labelled "Reason", maximum 500 characters [fChangeStockAllocation.Designer.vb:188-189,201].
+  - Remarks Field: Optional multi-line text box labelled "Remarks", maximum 1000 characters [fChangeStockAllocation.Designer.vb:207-208,220].
+  - Notes Control: Shared notes grid with Print Area, Notes and Default [fChangeStockAllocation.Designer.vb:227].
+  - Lot Detail Grid: Grid with Select, Lot No., Document No., Document Date, Make, Attribute, References, Min Length, Max Length, Avg Length, Accounting Length, Balance Pcs, Balance Qty., Reservation Detail, Reserved Pcs, Reserved Qty., Unreserved Pcs and Unreserved Qty.; lot id, make id, combination id and weight per piece are hidden [Inventory.ICSAFillValues:19-40; fChangeStockAllocation.vb:605-675].
+  - Reservation Detail Pop-up: A row-edit pop-up opened from the Reservation Detail button of a ticked lot, titled "New Reservation Detail", with an editable grid (Particular, Document, Pcs, Quantity) and a read-only grid captioned "Previous Reservation Detail" showing the lot's current reservations [fChangeStockAllocation.Designer.vb:310,342; fChangeStockAllocation.vb:905-965].
+  - Copy Button: A button labelled "Copy" that copies the lot's previous reservation lines into the editable grid [fChangeStockAllocation.Designer.vb:301; fChangeStockAllocation.vb:1285-1301].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fChangeStockAllocation.vb:386-418].
+actions:
+  New: Asks the main window to open a fresh record [fChangeStockAllocation.vb:349-356].
+  Save: Validates, saves header, notes, lots and reservation lines, then runs authorization in one transaction [fChangeStockAllocation.vb:677-765].
+  Search: Opens the shared search list of the company's documents of the current year and loads the chosen one [fChangeStockAllocation.vb:358-384;
+    Inventory.ICSASearchData:18-37].
+  Delete: Deletes the loaded document after the standard confirmation [fChangeStockAllocation.vb:199-232].
+validations:
+- Authorized Change Stock Allocation can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Warehouse.
+- Select valid Item Description.
+- Enter/Select valid Requested By.
+- Enter atleast one Reservation Detail in row N.
+- Sum of quantity should be equal to balance qty.(X) in row N.
+- Select atleast one Lot detail.
+- Select Document in row N.
+- Pcs can't be empty or zero in row N.
+- Quantity can't be empty or zero in row N.
+- Enter atleast one reservation detail.
+- Sum of quantity should be equal to balance qty.(X).
+- Sum of quantity should be equal to balance qty.(X).Do you want to continue
+- Duplicate Particular and Document is not allowed.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be delete,Reallocate lot if you want changes
+- Difference in Lot Qty and Reserve Qty
+manages:
+- change-stock-allocation
+uses_concepts:
+- commercial-invoice
+method_notes:
+  Authorize: Runs through Inventory.ICSAAuthorize.
+  Delete: Deletes the record through Inventory.ICSADelete.
+  FillLotDetail: Runs through Inventory.ICSAFillLotDetail.
+  FillReserveDoc: Runs through Inventory.ICSAFillReserveDoc.
+  FillValues: Fills the lookup lists through Inventory.ICSAFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.ICSAFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.ICSALoadData.
+  Open: Searches records through Inventory.ICSASearchData.
+  Save: Saves the record through Inventory.ICSASave.
+  SaveLotDetail: Saves the record through Inventory.ICSASaveLotDetail.

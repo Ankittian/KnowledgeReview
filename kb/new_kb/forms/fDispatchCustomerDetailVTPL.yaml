@@ -1,0 +1,39 @@
+form: fDispatchCustomerDetailVTPL
+title: Change Dispatch Customer Location
+module: SD
+kind: transaction
+summary: The Change Dispatch Customer Location screen lets a user show a different customer location on a dispatch document
+  without touching the document itself.
+purpose: |
+  What it is: A record that replaces the customer location of one Dispatch Challan, Tax Invoice or Commercial Invoice for display and reporting purposes (BR-01, BR-04). When it applies: When a document has been raised against one customer location and the business needs another location shown after the fact. Business outcome: The document is not edited or reissued, and the correction is traceable to a user and a time (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Selection Area: The top group holding Source Document, From Date, To Date and the Show button [fDispatchCustomerDetailVTPL.Designer.vb:125-143].
+  - Source Document Field: A dropdown labelled "Source &Document" with Dispatch Challan, Tax Invoice and Commercial Invoice; mandatory [fDispatchCustomerDetailVTPL.Designer.vb:85; fDispatchCustomerDetailVTPL.vb:42; Customize.DCDVFillValues:18-20].
+  - From Date and To Date Fields: Two date pickers labelled "From Da&te" and "To Da&te" [fDispatchCustomerDetailVTPL.Designer.vb:104; fDispatchCustomerDetailVTPL.Designer.vb:123].
+  - Show Button: A button labelled "&Show" [fDispatchCustomerDetailVTPL.Designer.vb:131; fDispatchCustomerDetailVTPL.vb:300-302].
+  - Document No. Field: A dropdown labelled "Document &No." showing Document No, Document Date, Customer Name and Customer Location; mandatory at save [fDispatchCustomerDetailVTPL.Designer.vb:232; fDispatchCustomerDetailVTPL.vb:65; fDispatchCustomerDetailVTPL.vb:214-220].
+  - Current Detail Read-Only Fields: Read-only boxes: Document Date, Customer Name, Customer Location, Bill To Party, Bill To Location, Consignee Name and Consignee Location [fDispatchCustomerDetailVTPL.Designer.vb:239-340].
+  - New Customer Name Field: A dropdown labelled "Customer Name" (accelerator "Customer &Name") inside the New Customer Detail group, showing Customer Name, Code and Type [fDispatchCustomerDetailVTPL.Designer.vb:195-204; fDispatchCustomerDetailVTPL.vb:66].
+  - New Customer Location Field: A dropdown labelled "Customer &Location" showing the locations of the chosen customer [fDispatchCustomerDetailVTPL.Designer.vb:213; fDispatchCustomerDetailVTPL.vb:333].
+actions:
+  New: Toolbar New [fDispatchCustomerDetailVTPL.vb:110-117].
+  Save: Toolbar Save [fDispatchCustomerDetailVTPL.vb:225-274].
+  Search: Toolbar Open [fDispatchCustomerDetailVTPL.vb:119-143].
+  Delete, Print, Preview, Export and E-mail: Empty actions [fDispatchCustomerDetailVTPL.vb:48-50; fDispatchCustomerDetailVTPL.vb:145-177].
+validations:
+- Select valid Source Document.
+- Select valid Document No.
+manages:
+- change-dispatch-customer-location
+uses_concepts:
+- commercial-invoice
+- company
+method_notes:
+  FillDetail: Fills the lookup lists through Customize.DCDVFillValues.
+  FillValues: Fills the lookup lists through Customize.DCDVFillValues.
+  LoadData: Loads the selected record through Customize.DCDVLoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through masterdata.DCDVSearchData.
+  Save: Saves the record through Customize.DCDVSave.
+  ucmbSourceDocument_ValueChanged: Fills the lookup lists through Customize.DCDVFillValues.

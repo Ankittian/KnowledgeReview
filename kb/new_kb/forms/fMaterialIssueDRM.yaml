@@ -1,0 +1,101 @@
+form: fMaterialIssueDRM
+title: Material Issue (Discrete Raw Material)
+module: DRM
+kind: transaction
+summary: The Material Issue (Discrete Raw Material) screen records the issue of one discrete raw material item (for example
+  bars, plates or pipes tracked by heat, cast and test-certificate number) from a warehouse to an employee, a contractor or
+  a vendor.
+purpose: |
+  What it is: A stores transaction that takes a single raw material item out of chosen stock lots of one warehouse, identified by a yearly document number, a date and a status [fMaterialIssueDRM.vb:794-941]. When it applies: When production (Job Card), a subcontractor (SC Order) or a direct requirement needs raw material from stores. Business outcome: Stock is reduced lot by lot at lot cost, Job Card and SC Order consumption is tracked by lot, and own-material issues are valued in finance (BR-15; BR-17).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: The shared document number strip at the top, a tab control with "General Detail", "Custom Field" and "Finance Posting" tabs, and a Lot Details area with the lot grid [fMaterialIssueDRM.Designer.vb:1694-1704; fMaterialIssueDRM.Designer.vb:1719-1720].
+  - Document Number Strip: The shared control holding document number, date, status and, where divisions apply, division [fMaterialIssueDRM.vb:186-195; fMaterialIssueDRM.vb:356-367].
+  - Source Document Field: Mandatory dropdown "Source Document" (BR-01; MSG-01) [fMaterialIssueDRM.Designer.vb:781; DiscreteRM.DRMIFillValues:104-106].
+  - Material Arrangement Field: Mandatory dropdown "Material Arrangement" (BR-01; MSG-02) [fMaterialIssueDRM.Designer.vb:1076].
+  - Warehouse Field: Mandatory dropdown "Warehouse" with code and division (BR-01; MSG-03) [fMaterialIssueDRM.Designer.vb:1163].
+  - Item Name Field and Item Information: Mandatory dropdown "Item Name" with code (BR-01; MSG-04; BR-28) [fMaterialIssueDRM.Designer.vb:934].
+  - Make Field: Optional dropdown "Make" of makes linked to the item (BR-27) [fMaterialIssueDRM.Designer.vb:451].
+  - Unit Field: Read-only "Unit" box showing the item's unit [fMaterialIssueDRM.Designer.vb:523-525; fMaterialIssueDRM.vb:1657].
+  - Department Field: Mandatory dropdown "Department" (BR-01; MSG-05) [fMaterialIssueDRM.Designer.vb:1280].
+  - Issue Type Field: Mandatory dropdown "Issue Type" (BR-01; MSG-06) [fMaterialIssueDRM.Designer.vb:922].
+  - Issue To Field: Mandatory dropdown "Issue To" (BR-01; MSG-07) [fMaterialIssueDRM.Designer.vb:769].
+  - Issue To Name Field: Mandatory dropdown whose label follows Issue To (default text "IssueTo Name") (BR-01; MSG-08) [fMaterialIssueDRM.Designer.vb:619; fMaterialIssueDRM.vb:1117-1127].
+  - Receiver Name Field: Optional editable dropdown "Receiver Name" listing receiver names used before in the company [fMaterialIssueDRM.Designer.vb:539; DiscreteRM.DRMIFillValues:42-45].
+  - Non Chargeable / Chargeable Option: Option set "Non Chargeable" / "Chargeable", default Non Chargeable [fMaterialIssueDRM.Designer.vb:1233-1237; fMaterialIssueDRM.vb:489].
+  - Reference No. & Date Field: Optional text box "Reference No.
+  - Remarks Field: Optional text box "Remarks", up to 1000 characters [fMaterialIssueDRM.Designer.vb:1254; fMaterialIssueDRM.Designer.vb:1269].
+  - Notes Area: The shared notes control with print area, notes and default flag [fMaterialIssueDRM.Designer.vb:1082-1083; fMaterialIssueDRM.vb:972-993].
+  - Reference Document Grid: A grid of eligible Job Cards or SC Orders with a "Select" tick box; other columns are read-only (BR-06) [fMaterialIssueDRM.vb:1575-1585].
+  - Lot Details Grid: Lot rows with a fixed "Lot No." dropdown and a search button, read-only lot attributes, editable "Issue Pcs", "Issue Qty." and "Cost Center", a "Job Card Detail" button, and read-only "Rate" and "Amount" [fMaterialIssueDRM.vb:1268-1342].
+  - Job Card Detail Pop-up: A pop-up opened from the lot row's "Job Card Detail" (or "SC Detail") button, showing the lot's heat, cast, TC and serial numbers, size, the lot's issue pieces (labelled "Issue Qty.") and issue quantity (labelled "Issue Wt."), and a grid of selected references with "Select", "Issue Pcs" and "Issue Qty." [fMaterialIssueDRM.vb:1693-1768; fMaterialIssueDRM.Designer.vb:1405; fMaterialIssueDRM.Designer
+  - Custom Field Tab: The shared custom field control for this screen [fMaterialIssueDRM.vb:230; fMaterialIssueDRM.Designer.vb:1284].
+  - Finance Posting Tab: The shared posting control showing the journal voucher [fMaterialIssueDRM.Designer.vb:1299].
+  - Other Toolbar Actions (Print, Print Preview, Export, Email): Print, preview, export and e-mail of the issue report for the loaded issue [fMaterialIssueDRM.vb:454-472; fMaterialIssueDRM.vb:1899-1931].
+  - Hidden Voucher Rebuild Shortcut: Ctrl+Alt+V rebuilds the voucher of the loaded issue and saves it against the issue, even if authorized (BR-29) [fMaterialIssueDRM.vb:20-85].
+actions:
+  New: Clears the screen through the main window and selects "General Detail" [fMaterialIssueDRM.vb:414-424].
+  Save: Validates and saves header, references, lots, distribution, custom fields, notes and voucher.
+  Open: The shared search list of issues of the login company and year (BR-24) [fMaterialIssueDRM.vb:426-452].
+  Delete: Deletes the loaded issue after the standard confirmation (BR-23) [fMaterialIssueDRM.vb:114-147].
+  Navigation: First / Previous / Next / Last are enabled for the screen [fMaterialIssueDRM.vb:96].
+validations:
+- Select valid Source Document.
+- Select valid Material Arrangement.
+- Select valid WareHouse.
+- Select valid Item Name.
+- Select valid Department.
+- Select valid Issue Type.
+- Select valid Issue To.
+- Select valid <label>.
+- Select atleast one Ref Document.
+- Document Date can't be less than <date>.
+- Select atleast one Lot No.
+- Stock Pcs/Stock Qty. can't be zero or empty in row <n>.
+- Issue Qty. can't be empty or 0 in row <n>.
+- Issue Pcs can't be greater than Stock Pcs in row <n>.
+- Issue Qty. can't be greater than Stock Qty. in row <n>.
+- Total Issue Qty. is not equal to Issue Qty.
+- Select valid Cost Center in row <n>.
+- Can't select more than one Custom Field.
+- Do you want to continue?
+- Authorized Material Issue can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+- Duplicate Lot No. not allowed.
+- Select valid material Arrangement.
+- Select valid warehouse.
+- Select valid Item Name .
+- Issue Pcs can't be greater than Stock Pcs.
+- Issue Qty. can't be greater than Stock Qty.
+- Pcs is empty, want to continue?
+- Issue Qty. can't be zero or empty in row <n>.
+- Production Entry is done against this Entry
+- Difference in Voucher and Lot -- <difference> and VoucherAmt -- <amount> and ReceivedAmt -- <amount> and IssuedAmt -- <amount>
+- Not found in Lot
+- Not found in Voucher 2nd
+- Item Information
+manages:
+- material-issue-fmaterialissuedrm
+uses_concepts:
+- accounting-voucher
+- company
+- discrete-stock-adjustment
+- gate-entry-fgateentrydrm
+- rawmaterial-opening
+- sin-lot-entry
+- stock-transfer
+- store-inward-note
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRMIDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRMIFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.DRMIFillValuesDependent.
+  FillValuesItemWise: Fills the lookup lists through DiscreteRM.DRMIFillValuesItemWise.
+  GetItemInfo: Runs through Inventory.DRMIGetItemInfo.
+  LoadData: Loads the selected record through DiscreteRM.DRMILoadData.
+  Open: Searches records through DiscreteRM.DRMISearchData.
+  Save: Saves the record through DiscreteRM.DRMISaveMain, Inventory.VoucherVsLotValidation.
+  SaveJobCardDetail: Saves the record through DiscreteRM.DRMISaveJobCardDetail.
+  SaveLotDetail: Saves the record through DiscreteRM.DRMISaveLotDetail.

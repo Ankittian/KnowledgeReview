@@ -1,0 +1,102 @@
+key: p12-finance-vouchers-notes-and-journals
+name: 'Finance: Vouchers, notes and journals (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the vouchers, notes and journals group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Vouchers, notes and journals' (Finance). The steps follow the plan order, not a verified business sequence: Cash Journal, Contra Voucher, Credit Note, Journal Voucher, Other Voucher, Purchase Voucher, Receipt Voucher, Recurring Voucher, Reverse Voucher, Sales Voucher, Bank Journal, Bill of Exchange, Change Voucher Status, Cheque Print, DD Posting, Debit/ Credit Note, GST Advance Adjustment, Commission Invoice, Input Excise Invoice Posting, Stock Difference Adjustment, Finance Posting, Stock Journal, VTPL Debit Credit Note.
+steps:
+- order: 1
+  name: Record Cash Journal
+  form: fCashJournal
+- order: 2
+  name: Record Contra Voucher
+  form: fContraVoucher
+- order: 3
+  name: Record Credit Note
+  form: fCreditNote
+- order: 4
+  name: Record Journal Voucher
+  form: fJournalVoucher
+- order: 5
+  name: Record Other Voucher
+  form: fOtherVoucher
+  status: planned
+- order: 6
+  name: Record Purchase Voucher
+  form: fPurchaseVoucher
+- order: 7
+  name: Record Receipt Voucher
+  form: fReceiptVoucher
+- order: 8
+  name: Record Recurring Voucher
+  form: fRecurringVoucher
+- order: 9
+  name: Record Reverse Voucher
+  form: fReverseVoucher
+- order: 10
+  name: Record Sales Voucher
+  form: fSalesVoucher
+- order: 11
+  name: Record Bank Journal
+  form: fBankJournal
+- order: 12
+  name: Record Bill of Exchange
+  form: fBillOfExchange
+- order: 13
+  name: Record Change Voucher Status
+  form: fChangeVoucherStatus
+- order: 14
+  name: Record Cheque Print
+  form: fChequePrint
+- order: 15
+  name: Record DD Posting
+  form: fDDPosting
+- order: 16
+  name: Record Debit/ Credit Note
+  form: fDrCrNote
+- order: 17
+  name: Record GST Advance Adjustment
+  form: fGSTAdvanceAdjustment
+- order: 18
+  name: Record Commission Invoice
+  form: fCommissionBill
+- order: 19
+  name: Record Input Excise Invoice Posting
+  form: fInputExcisePosting
+- order: 20
+  name: Record Stock Difference Adjustment
+  form: fStockDifferenceAdjustment
+- order: 21
+  name: Record Finance Posting
+  form: fFinancePosting
+- order: 22
+  name: Record Stock Journal
+  form: fStockJournalVoucher
+- order: 23
+  name: Record VTPL Debit Credit Note
+  form: fVTPLDrCrNote
+concepts:
+- cash-journal
+- contra-voucher
+- credit-note
+- journal-voucher
+- purchase-voucher
+- receipt-voucher
+- recurring-voucher
+- reverse-voucher
+- sales-voucher
+- bank-journal
+- bill-of-exchange
+- change-voucher-status
+- cheque-print
+- dd-posting
+- debit-credit-note
+- gst-advance-adjustment
+- commission-invoice
+- input-excise-invoice-posting
+- stock-difference-adjustment
+- finance-posting
+- stock-journal
+- vtpl-debit-credit-note

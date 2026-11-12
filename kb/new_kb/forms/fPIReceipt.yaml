@@ -1,0 +1,44 @@
+form: fPIReceipt
+title: Proforma Invoice Receipt Voucher
+module: FI
+kind: transaction
+summary: The Proforma Invoice Receipt Voucher screen is the client specific (EROS) version of the advance receipt screen described
+  in [General Proforma Invoice Receipt](Functional_Doc_fGeneralPIReceipt.md).
+purpose: |
+  What it is: A document recording an advance received against proforma invoices for the EROS business, with the receipt split into goods and services parts [fPIReceipt.vb:1098-1130; Customize.PIRVFillValues:90-91]. When it applies: Historically when an EROS customer paid a proforma invoice in advance; today only for viewing and deleting old receipts (BR-02; BR-10). Business outcome: Existing EROS receipts stay visible; new advances must be entered on the general screen.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout and Tabs: A document control and the tabs General Detail, Tax Detail and Finance Posting; there is no GST Posting tab [fPIReceipt.Designer.vb:530-538].
+  - Header Fields: Customer Name, Location, Order No., Order Date, Receipt Mode, Bank Account Name, Cost Center, Cheque No., Cheque Date, Cheque Amount, two read-only Basic Amount boxes and Remarks [fPIReceipt.Designer.vb:162-398; fPIReceipt.Designer.vb:466-568].
+  - Item % and Service % Fields: Two editable percentage boxes labelled Item % and Service %, placed on the screen next to the amount fields [fPIReceipt.Designer.vb:429-447].
+  - Proforma Invoice and Item Grids: The same two grids as the general screen, but without party bank, HSN and SAC code, Amount, Balance Amount of the item and source document columns on the item grid [fPIReceipt.vb:545-590; fPIReceipt.vb:1139-1157].
+  - Toolbar: Same toolbar as the general screen; the Ctrl+Alt+V and Ctrl+Alt+G shortcuts do not exist here [fPIReceipt.vb:50-76].
+validations:
+- Authorized Proforma Invoice Reciept Voucher can't be updated.
+- Select valid Bank Account Name.
+- Select valid ...
+- Select atleast one Proforma Invoice.
+- Sum of PI Receipt Amount should be equal to Basic Amount.
+- Net amount should be equal to Cheque Amount.
+- Select atleast one Item Code.
+- Duplicate Item Code and Proforma Invoice No. not allowed.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Item + Service % should be equal to 100
+- VAT should be Include In Basic.
+- Can not save data through this form use form Performa Invoice Receipt(GPIR).
+manages:
+- proforma-invoice-receipt-voucher
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Customize.PIRVDelete.
+  FillValues: Fills the lookup lists through Customize.PIRVFillValues.
+  FillValuesDependent: Fills the lookup lists through Customize.PIRVFillValuesDependent.
+  FillValuesPIDetail: Fills the lookup lists through Customize.PIRVFillValuesPIDetail.
+  FillValuesSO: Fills the lookup lists through Customize.PIRVFillValuesSO.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Customize.PIRVLoadData.
+  Open: Searches records through Customize.PIRVSearchData.
+  Save: Saves the record through Customize.PIRVSave.
+  SaveItemDetail: Saves the record through Customize.PIRVSaveItemDetail.

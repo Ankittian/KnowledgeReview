@@ -1,0 +1,38 @@
+form: fTaxConcessionForm
+title: Tax Concession Form
+module: MD
+kind: master
+summary: The Tax Concession Form screen is a master that defines which statutory concession forms (such as the forms a buyer
+  issues to claim a lower tax rate) the company handles and which taxes each form covers.
+purpose: |
+  What it is: A master record that links one statutory form type to a tax group and to the taxes it covers [fTaxConcessionForm.vb:246-324; Finance.FICFFillValuesDependent:26-28; masterdata.TaxConcessionFormFillValuesDependent:20-45]. When it applies: When a new concession form type must be offered on documents, or the taxes it covers change. Business outcome: Documents offer only the forms that match the taxes they carry (BR-01 to BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Code, Form Name, Description, Tax Group and the Tax Detail grid; the caption in the designer is "TaxConcessionForm" [fTaxConcessionForm.Designer.vb:59; fTaxConcessionForm.Designer.vb:77; fTaxConcessionForm.Designer.vb:111; fTaxConcessionForm.Designer.vb:148; fTaxConcessionForm.Designer.vb:162].
+  - Code Field: A display of the generated code, with a limit of 12 characters [fTaxConcessionForm.Designer.vb:134].
+  - Form Name Field: A mandatory drop-down labelled "Form &Name" [fTaxConcessionForm.vb:26; fTaxConcessionForm.Designer.vb:59].
+  - Description Field: A mandatory text box with a maximum of 50 characters [fTaxConcessionForm.Designer.vb:65; fTaxConcessionForm.vb:211-215].
+  - Tax Group Field: A mandatory drop-down [fTaxConcessionForm.vb:217-221].
+  - Tax Detail Grid: A grid in which the user picks a Tax Name; Code and Charge Value fill in and cannot be edited; a new empty row is added after each entry [fTaxConcessionForm.vb:225-245; fTaxConcessionForm.vb:326-350].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fTaxConcessionForm.vb:149-181].
+actions:
+  New: Opens a blank record [fTaxConcessionForm.vb:114-121].
+  Save: Validates and saves the record and its tax rows in one transaction [fTaxConcessionForm.vb:246-306].
+  Search: Lists the records of this company [fTaxConcessionForm.vb:123-147].
+  Delete: Deletes the loaded record after a confirmation [fTaxConcessionForm.vb:33-57].
+validations:
+- Select valid Form Name.
+- Enter Description.
+- Select valid Tax Group.
+- Duplicate Tax Name not allowed.
+manages:
+- tax-concession-form
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MECFDelete.
+  FillValues: Fills the lookup lists through masterdata.MECFFillValues.
+  LoadData: Loads the selected record through masterdata.MECFLoadData.
+  Open: Searches records through masterdata.MECFSearchData.
+  Save: Saves the record through masterdata.MECFSave.
+  SaveTaxDetail: Saves the record through masterdata.MECFSaveTaxDetail.

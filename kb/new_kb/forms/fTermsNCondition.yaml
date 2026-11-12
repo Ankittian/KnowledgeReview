@@ -1,0 +1,37 @@
+form: fTermsNCondition
+title: Terms & Condition
+module: MD
+kind: master
+summary: The Terms & Condition screen maintains the library of standard terms and conditions text used on commercial documents.
+purpose: |
+  What it is: A central list of approved clause texts, grouped by head. When it applies: When a new standard clause is agreed or an existing clause is reworded. Business outcome: Documents use consistent, approved wording instead of free text typed each time (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with code, head, clause text and inactive flag.
+  - Code Field: Read-only text box, up to 6 characters.
+  - Head Name Field: Mandatory dropdown showing Head Name and Code (BR-01).
+  - Terms And Condition Field: Mandatory multi-line text box, up to 1000 characters (BR-02).
+  - Inactive Field: Checkbox, permanently disabled.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; the screen's handlers are empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates a new clause or updates the loaded one.
+  Search: Standard search window listing Code, Head Name, Terms and Condition, Inactive, Created By, Created Date, sorted
+    by head and text.
+  Delete: Deletes the loaded clause after confirmation (MSG-07).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-09).
+validations:
+- Select valid Head Name.
+- Enter Terms and Condition.
+- Duplicate Terms and Condition is not allowed.
+manages:
+- terms-condition
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.ADTCDelete.
+  FillValues: Fills the lookup lists through masterdata.ADTCFillValues.
+  LoadData: Loads the selected record through masterdata.ADTCLoadData.
+  Open: Searches records through masterdata.ADTCSearchData.
+  Save: Saves the record through masterdata.ADTCSave.
+  ValidateForm: Validates the entry through masterdata.ADTCValidate.

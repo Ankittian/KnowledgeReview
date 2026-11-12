@@ -1,0 +1,42 @@
+form: fInterUnitMaterialTransferSetting
+title: InterUnit Material Transfer Setting
+module: ADM
+kind: transaction
+summary: The InterUnit Material Transfer Setting screen defines which item in one business unit corresponds to which item
+  in another business unit.
+purpose: |
+  What it is: A mapping, valid from a date, between items of a sending business unit and items of a receiving business unit, stored once for each direction [fInterUnitMaterialTransferSetting.vb:263-287; Inventory.IMTSSave:23-68; Inventory.IMTSSaveDetail:20-24]. When it applies: When two business units start exchanging material, or when an item mapping changes from a new date. Business outcome: The receiving side can identify the matching item of the sender; the mirrored record keeps both directions consistent (BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Panel: One group box holding Effective From, Business Unit I, Business Unit II and the item grid [fInterUnitMaterialTransferSetting.Designer.vb:92-94].
+  - Effective From Field: A date picker in the format dd/MM/yyy; optional in the sense that it always holds a date [fInterUnitMaterialTransferSetting.Designer.vb:99-101].
+  - Business Unit I Field: A mandatory dropdown labelled "Business Unit I" showing Company and Division [fInterUnitMaterialTransferSetting.vb:12; fInterUnitMaterialTransferSetting.vb:56; fInterUnitMaterialTransferSetting.Designer.vb:53].
+  - Business Unit II Field: A mandatory dropdown labelled "Business Unit II" with the same list [fInterUnitMaterialTransferSetting.vb:12; fInterUnitMaterialTransferSetting.vb:57; fInterUnitMaterialTransferSetting.Designer.vb:72].
+  - Item Detail Grid: A two-column grid with columns "Business Unit I" and "Business Unit II"; each cell holds an item chosen from the list of that unit's company, shown as Item Description, Item Code and Unit Name [fInterUnitMaterialTransferSetting.vb:51; fInterUnitMaterialTransferSetting.vb:357; fInterUnitMaterialTransferSetting.vb:368].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Not implemented; the handlers are empty [fInterUnitMaterialTransferSetting.vb:123-155].
+actions:
+  Save: Saves the mapping and its item pairs.
+  New: Passes the request to the main window's standard New handling [fInterUnitMaterialTransferSetting.vb:89-96].
+  Search: Opens the common search window listing mappings [fInterUnitMaterialTransferSetting.vb:98-121].
+  Delete: Deletes the loaded mapping and its mirror.
+validations:
+- Select valid Bussiness Unit-I.
+- Select valid Bussiness Unit-II.
+- Bussiness Unit-I & Bussiness Unit-II can't be same
+- Select atleast one Item Detail
+- Select valid Business Unit II in row N.
+- Select valid Business Unit I in row N.
+- Both Item Can't be same in row N.
+- Duplicate Item Now Allowed
+manages:
+- interunit-material-transfer-setting
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Inventory.IMTSDelete.
+  FillValues: Fills the lookup lists through Inventory.IMTSFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMTSFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.IMTSLoadData.
+  Open: Searches records through Inventory.IMTSSearchData.
+  Save: Saves the record through Inventory.IMTSSave.
+  SaveItemType: Saves the record through Inventory.IMTSSaveDetail.

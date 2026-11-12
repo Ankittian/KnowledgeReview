@@ -1,0 +1,112 @@
+form: fMaintenanceOrder
+title: Maintenance Order
+module: PM
+kind: transaction
+summary: The Maintenance Order screen is where a maintenance planner turns a need for maintenance into a planned job.
+purpose: |
+  What it is: A planning document for one maintenance job on one asset, with its tasks, resources, materials, permits and dates [fMaintenanceOrder.vb:2123-2300; EAM.EAMOSave:108-211]. When it applies: When a fault has been requested, a scheduled maintenance occurrence falls due, an inspection is needed, or a planner wants to start a job directly. Business outcome: One approved plan per job, tied to its source, so that requests and schedule occurrences are consumed once and work can be reported against the plan (BR-22; BR-24; BR-25).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: The shared document header control on top; a general tab group with General Detail, Reference Detail, Log Detail, Affected Equipment/Location Detail, Permit Detail, Custom Fields and Multi-Level Authorization; and a lower tab group with Task Detail, Inspection Check Points, Resource Detail, Skill Required, Tools Required, Item Required and Meter Reading Detail [fMaintenanceOrder.Designer.vb:1570-1
+  - Document Header Fields: The shared control with Division, Document No., Document Date, Document Status and a Repeated Entry button; its inner labels are not in this screen's source [fMaintenanceOrder.vb:83; fMaintenanceOrder.vb:208].
+  - Reference Object and Equipment Description Fields: Two mandatory dropdowns, "Reference &Object" and "Equipment &Description" (relabelled "Location" for a location), plus a "..." button that opens a search window over the same list, and a read-only Custodian box [fMaintenanceOrder.Designer.vb:964; fMaintenanceOrder.Designer.vb:1003; fMaintenanceOrder.Designer.vb:868; fMaintenanceOrder.vb:4927-4962; fMaintenanceOrder.vb:82].
+  - Maintenance Type, Source Document and Maintenance Category Fields: Three mandatory dropdowns "Maintenance &Type", "&Source Document" and "Maintenance &Category" [fMaintenanceOrder.Designer.vb:1120; fMaintenanceOrder.Designer.vb:1158; fMaintenanceOrder.Designer.vb:1167; fMaintenanceOrder.vb:82].
+  - Responsible Person Field: An editable dropdown "Responsible &Person" that lists names used on earlier orders and accepts new text [fMaintenanceOrder.Designer.vb:1129; EAM.EAMOFillValues:436-441; fMaintenanceOrder.vb:2174].
+  - Dates, Duration, Shift, Driver and Flags: Estimated Start and End dates with time, "Estimated &Duration" in hours ("Hrs"), read-only Actual Start and Actual End dates, "&Shift", "Driver &Name", "&Down Period", "Is Breakdown", "Take Meter &Reading", "Take Equipment &Reading (Does not Impact on running value)" and "&Remarks" [fMaintenanceOrder.Designer.vb:1214; fMaintenanceOrder.Designer.vb:1176; fMaintenanceOrder.Designer.vb:1252; fMainten
+  - Reference Order and Schedule Fields: "&Ref.
+  - Reference Detail Grid: The list of candidate source rows with a Select tick, reference document number and date, schedule number, date and description, trigger, occurrence, fault, description, breakdown flag and occurrence date [EAM.EAMOFillValuesDependent:56-215; fMaintenanceOrder.vb:3515-3600].
+  - Task, Resource, Skill, Tools and Item Grids: Detail grids described in section 7 [fMaintenanceOrder.vb:1666-2120].
+  - Other Tabs: Log Detail (work logs of the asset with a Select tick), Affected Equipment/Location Detail, Permit Detail, Inspection Check Points, Meter Reading Detail, Custom Fields, Notes and Multi-Level Authorization [fMaintenanceOrder.vb:4793-4845; fMaintenanceOrder.vb:4137-4310; fMaintenanceOrder.vb:4311-4400; fMaintenanceOrder.vb:4467-4540; fMaintenanceOrder.vb:4403-4466; fMaintenanceOrder.vb:5122-5141].
+actions:
+  New, Save, Search and Delete: New asks the main window for a fresh record [fMaintenanceOrder.vb:556-562].
+validations:
+- Authorized MaintenanceOrder can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Unable to save,Selected division and current location of equipment are not same.
+- Select valid Reference Object.
+- 'Select valid '
+- Select valid Order Type.
+- Select valid Source Document.
+- Select valid Responsible Person.
+- Select valid Maintenance Category.
+- Document date can't be less than schedule date.
+- Estimated start date can not be less than document date.
+- Estimated end date can not be less than estimated start date.
+- Estimated duration can't be empty or zero.
+- Estimated Start Date can't be more than Estimated Start Date in Task Detail tab.
+- Estimated End Date should not be less than Estimated End Date in Task Detail tab.
+- Estimated Start Date can't be more than Estimated Start Date in Resource Detail tab.
+- Estimated End Date should not be less than Estimated End Date in Resource Detail tab.
+- Is Breakdown not selected whereas Is Breakdown is checked in Maintenance Request,Do you want to continue?
+- Can not authorize as last level is not approved.
+- Document Status can't be Authorized for multi level Authorization
+- Select atleast one maintenance detail.
+- Select valid Fault in row n.
+- Select valid Description in row n.
+- Select valid Occurrence Date in row n.
+- Occurrence Date can not be more than document date in row n.
+- Select atleast one Task Name .
+- Select valid Service Item in row n.
+- Service Item Quantity can not be empty or zero in row n.
+- Select valid Priority in row n.
+- Select valid Assign To in row n.
+- Select valid Fault Description in row n.
+- Only selected Faults can be used in task detail.
+- Enter quantity in row n.
+- Select valid Rate Type in row n.
+- Select valid Item Code in row n.
+- Select valid Item Description in row n.
+- Quantity can't be empty or zero in row n.
+- Select valid Estimated Start Date in row n.
+- Select valid Estimated End Date in row n.
+- Select atleast one check point.
+- Check point can not be empty or blank in row n.
+- Shift is not selected. Do you want to continue?
+- Select a valid Shift.
+- Estimated Start Time should be between Shift Start Time & End Time. Do you want to continue?
+- Estimated Start Time should be between Shift Start Time & End Time.
+- 'Invalid Time : minute should be less than 60.'
+- Duplicate fault not allowed.
+- Duplicate Task Description not allowed.
+- Duplicate Resource Name not allowed.
+- Duplicate Skill Name not allowed.
+- Duplicate Tools not allowed.
+- Duplicate Item not allowed.
+- Child row exists,so can't delete this entry.
+- Permit is mandatory, so can't delete this entry.
+- Select valid service item.
+- Enter quantity.
+manages:
+- maintenance-order
+uses_concepts:
+- change-equipment-driver
+- company
+- eam-resource-master
+- equipment-category
+- equipment-down-period
+- equipment-master
+- functional-location
+- maintenance-category-task
+- maintenance-order-amendment
+- maintenance-order-closing
+- maintenance-reporting
+- maintenance-request
+- maintenance-schedule
+- maintenance-schedule-occurrence
+- shutdown-work-list
+- skill-master
+- work-center
+- work-log-category
+- worklog
+method_notes:
+  Delete: Deletes the record through EAM.EAMODelete.
+  FillValues: Fills the lookup lists through EAM.EAMOFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAMOFillValuesDependent.
+  GetItemInfo: Runs through EAM.EAMOGetItemInfo.
+  LoadData: Loads the selected record through EAM.EAMOLoadData.
+  Open: Searches records through EAM.EAMOSearchData.
+  Save: Saves the record through EAM.EAMOAuthorize, EAM.EAMOSave.
+  SaveAffectedObjectDetail: Saves the record through EAM.EAMOSaveAffectedObjectDetail.
+  SaveCheckPoints: Saves the record through EAM.EAMOSaveCheckPoints.
+  SaveCustomFieldDetail: Saves the record through EAM.EAMOSaveCustomFieldDetail.

@@ -1,0 +1,173 @@
+form: fDispatchChallanVTPL
+title: Delivery Challan (Dispatch Challan VTPL)
+module: SD
+kind: transaction
+summary: The Delivery Challan screen records the goods that physically leave the company, either to a customer or back to
+  a supplier.
+purpose: |
+  What it is: The document that authorises and records outward movement of material, with the stock lots taken out and the transport used. When it applies: Goods are ready to leave the company, either to fulfil a sales order or packing list or to go back to a supplier as a purchase return. Business outcome: Stock leaves the books only against a controlled document. Sales order balances, provisional stock holds and the stock valuation journal all stay in line with what was shipped.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document number and status strip at the top, followed by the tabs "General Details", "Packing Detail", "BOM Detail", "Item Detail", "Document Required", "Finance Posting" and "Custom Field" [fDispatchChallanVTPL.designer.vb:2893-2916].
+  - Document No., Date, Division and Status Strip: A shared control for the document number (manual or from a numbering setting), document date, division and document status.
+  - Challan Type Field: Mandatory dropdown, defaulted to the first value (BR-03, MSG-17).
+  - Source Document Field: Mandatory dropdown (BR-04, MSG-18).
+  - Challan Nature Field: Mandatory dropdown (BR-05, MSG-19).
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Dropdown of sales orders, packing lists or GRNs, with the date as a read-only display.
+  - Customer Name and Customer Location Fields: Mandatory dropdowns.
+  - Consignee Name and Consignee Location Fields: Mandatory dropdowns (BR-06, MSG-24, MSG-25).
+  - Agent Name Field: Optional dropdown, with an agent information link (MSG-70).
+  - Dispatch Category Field: Mandatory dropdown (MSG-26).
+  - Warehouse Field: Optional dropdown, filtered by division.
+  - Wt Slip No., Dated and Ref No. & Date Fields: Optional text and date fields.
+  - Invoice Weight On and Weighment Weight Fields: A choice between "Weighment Weight" and "Packing Weight", plus a numeric weight with 3 decimals [fDispatchChallanVTPL.designer.vb:511-515].
+  - Invoice Type Field: Dropdown, mandatory for customer dispatch and purchase return (BR-25, MSG-57).
+  - Ex. Challan No. and Ex. Challan Date Fields: A dropdown of the customer location's excise challans that also accepts typed text, and a date.
+  - Transport Fields: "Delivery Mode" (defaulted), "Shipping Da&te" (mandatory), "Transporter Name", "Vehicle No.", "Vehicle Type", "Driver Name", "Licence No.", "Contact No.", "LR No."/"LR Date", "E-Way Bill No."/"E-Way Bill Date", "Freight Type", "From Location" and "To Location" [fDispatchChallanVTPL.designer.vb:1510-1758].
+  - Export Details Group: "Destination Country", "Place of Receipt Pre-Carriage", "Vessel / Flight No.", "Port of Loading" and "Port of Discharge".
+  - Maintain Packing Details, Remarks and Print Description Fields: A checkbox, free text, and a print description.
+  - Item Detail Grid: Columns include "Select", "Item Code", "Item Description", "Make", "Item Attribute", "Unit", "First CF"/"Second CF"/"CF", "Qty.", "Sales Order No.", "Customer Order No.
+  - Lot Detail, Stock Details, Serial Number, Packing Detail, CF and Specification Pop-ups: Row-edit windows that open from the matching item cells.
+  - BOM Detail Grid: BOM revisions (with work order, attribute combination and Qty.) to select for dispatch.
+  - Packing Detail Grid: "Packing Material No.", "Packing Material", "Qty.", "Remarks", "Lot Detail", "Current Stock" and "On Date Stock".
+  - Excise Challan Grid: Excise challans with "GRN Qty.", "Balance Qty.", "Qty." and "Excise Challan Date", shown on the Item Detail tab [fDispatchChallanVTPL.designer.vb:2146-2155].
+  - Document Required Grid and Document Group: "Document Name", "No.
+  - Notes and Custom Field Areas: Shared notes control by print area, and the custom field grid.
+  - Finance Posting Tab: Shared voucher control showing the journal built from lot values.
+  - Hidden Voucher Repair Shortcuts: Ctrl+Alt+V rebuilds and re-links the voucher of the loaded challan.
+actions:
+  New: Clears the screen through the main window and returns to "General Details" [fDispatchChallanVTPL.vb:641-652].
+  Save: Runs validation, asks for confirmation (MSG-01) and saves everything in one transaction.
+  Search (Open): Opens the search window with the company and year challans (BR-45).
+  Delete: Asks for confirmation (MSG-65) and then deletes the challan.
+  Navigation, Print, Preview, Export and Email: First/Previous/Next/Last navigation, Print and Preview of the challan report,
+    Export and Email are enabled on the toolbar [fDispatchChallanVTPL.vb:126-135].
+validations:
+- Document No. <number> saved successfully.
+- Authorized Dispatch Challan can't be updated.
+- Duplicate Document No. is not allowed.
+- Unable to save,because Email id is not exists for selected customer.
+- Unable to save,because Email id is not exists for selected consignee.
+- Sum of Qty(<q>) for item <item> can't be greater than Agreement Balance Qty. + Tolerance(<b>) for agreement <no>.
+- Unable to authorize,because 2nd weighment is not final.
+- Invoice Item is different than Weighment slip
+- Authorised Inspection Result not found against this Dispatch Planning.
+- Previously saved Customer Location is different from current Customer Location.
+- Previously saved Source Document is different from current Source Document.
+- Previously saved Transporter Name is different from current Transporter Name.
+- Previously saved Vehicle No. is different from current Vehicle No.
+- No. of Copy can't be empty or zero in row <n>.
+- Document No. can't be empty in row <n>.
+- Select valid Document Date in row <n>.
+- Date can't be less then Document Date in row <n>.
+- Copies can't be empty or zero in row <n>.
+- Select valid Challan Type.
+- Select valid Source Document.
+- Select valid Challan Nature.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Customer Order Date.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select valid Consignee Name.
+- Select valid Consignee Location.
+- Select valid Dispatch Category.
+- Enter Wt Slip No.
+- Wt Slip Date can't be greater than Doucument Date.
+- Select valid invoice weighment on.
+- Weighment weight can't be zero or empty.
+- Select Excise Challan Date .
+- Excise Challan Date can't be greater than Document Date.
+- Shipping Date can't be less than Document Date.
+- Enter LR No.
+- LR Date can't be greater than Document Date.
+- Enter Way Bill No.
+- Way Bill Date can't be greater than Document Date.
+- Select valid Destination Country.
+- Select valid Place of Receipt Pre Carriage.
+- Select valid Port of Loading.
+- Select valid Port of Discharge.
+- Enter atleast one Packing Material No.
+- Select valid Packing Material in row <n>.
+- Enter Qty. in row <n>.
+- Qty. can't be greater than <stock> in row <n>.
+- Stock Qty. should be equal to <qty> in row <n>.
+- Select atleast one BOM Detail
+- Qty. can't be empty or zero in row <n>.
+- Select atleast one Item Description
+- Document Date can't be less than Sales Order Date in row <n>.
+- Select valid Unit in row <n>.
+- Enter value for mandatory quality parameter  in row <n>.
+- Qty. can't be zero or empty in row <n>.
+- Qty. can't be greater than Balance Qty. in row <n>.
+- Qty. can't be greater then Balance Qty. + Tolerance Qty. in row <n>.
+- Dispatch Quantity can't be greater than Issued Qty <q>
+- Purchase Bill not found against selected Lot
+- At least one Lot is not related to Purchase Bill
+- Total Qty. can't be greater than Balance Qty. in row <n>.
+- Qty. can't be greater than <x> in row <n>.
+- Qty. can't be greater than Current Stock <x> in row <n>.
+- Qty. can't be greater than On Date Stock <x> in row <n>.
+- Serial No. detail should be same as issued Quantity in row <n>.
+- Can''t select lot of capital and No capital at once in row <n>.
+- Issue Pcs can't be empty or zero  in row <n>.
+- Select atleast one Packing Material No. in row <n>.
+- Sum of Qty. should be equal to <q> in row <n>.
+- Select valid Invoice Type.
+- Qty. can't be greater than balance Qty. in row <n>.
+- Excise Challan Date can't be empty in row <n>.
+- Duplicate Item is not allowed.
+- Duplicate Packing Material No. is not allowed.
+- Duplicate entry is not allowed.
+- Duplicate Document Name is not allowed.
+- Issue Pcs can't be empty  in row <n>.
+- Qty can't be greater than stock Qty. <x> in row <n>.
+- Quantity can't be greater than Stock Qty.
+- Qty. can't be greater than stock Qty. <x> in row <n>.
+- Quantity should equal to <q>
+- Select atleast one Packing Material No.
+- Sum of Qty. should be equal to <q> ...
+- Enter First CF.
+- Enter Second CF.
+- Select valid PO Unit.
+- Value can't be empty or zero  in row <n>.
+- Enter lower limit  in row <n>.
+- Enter upper limit  in row <n>.
+- Can't be deleted, Material Closure Note is prepared for Sales Order of this document.
+- Unable to delete,Service Invoice entry exists for this Dispatch Challan.
+- Unable to delete,Excise Invoice entry exists for this Dispatch Challan.
+- Unable to delete,Commercial Invoice entry exists for this Dispatch Challan.
+- Unable to delete,Outward Bill Entry exists against this Dispatch Challan.
+- Unable to delete, Gate Pass Out entry exists against this Dispatch Challan.
+- Pre. Dispatch Qty plus Current Dispatch Qty can't be greater than Sales Order Qty
+- Error while picking Reserved Lot, please contact vendor for latest exe
+- Item Information
+- Customer Information
+manages:
+- delivery-challan
+uses_concepts:
+- check-list-document-group
+- company
+- dispatch-challan
+- material-category
+- order-nature
+- proforma-invoice
+- quotation
+- revised-quotation
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-order-shipment-detail
+- sales-organization
+- sales-return
+- tax-invoice
+method_notes:
+  BOMDetail: Runs through VTPL.VTDCBOMDetail.
+  Delete: Deletes the record through Sales.SDDCDelete.
+  FillGeneralDetail: Runs through VTPL.VTDCFillGeneralDetail.
+  FillValues: Fills the lookup lists through VTPL.VTDCFillValues.
+  FillValuesDependent: Fills the lookup lists through VTPL.VTDCFillValuesDependent.
+  GetAgentInfo: Runs through Sales.SDDCGetAgentInfo.
+  GetCustomerInfo: Runs through Sales.SDDCGetCustomerInfo.
+  GetItemInfo: Runs through Sales.SDDCGetItemInfo.
+  GetSpecificationDetail: Runs through Sales.SDDCGetSpecificationDetail.
+  ItemLotDetail: Runs through Sales.SDDCItemLotDetail.

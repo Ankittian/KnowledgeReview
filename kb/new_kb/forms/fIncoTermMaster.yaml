@@ -1,0 +1,49 @@
+form: fIncoTermMaster
+title: INCO Terms Master
+module: MD
+kind: master
+summary: The INCO Terms Master screen (window caption "IncoTermMaster") maintains the delivery terms (INCO terms) used on
+  sales documents, together with the expense heads that each term brings with it.
+purpose: |
+  What it is: A group-wide list of delivery terms with their applicable expense heads and billing documents. When it applies: When a new delivery term is agreed with customers or the charges under a term change. Business outcome: Freight, insurance and other charges are applied consistently per delivery term (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and the expense grid, with a pop-up for billing references.
+  - Code Field: Read-only text box.
+  - INCO Terms Field: Mandatory text box, up to 30 characters (BR-01, BR-02).
+  - Description Field: Optional text box, up to 500 characters.
+  - Inactive Field: Checkbox, disabled in the designer.
+  - Insurance Applicable Field: Optional checkbox.
+  - Expense Heads Grid: Columns Sl No.
+  - Billing Reference Pop-up: A row edit template listing Form Code and Form Name with a select box, and Ok / Cancel buttons.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the term and rewrites its expense rows.
+  Search: Standard search with Code, Inco Term Name, Description, Insurance Applicable, Inactive, Created By, Authorized By,
+    sorted by name.
+  Delete: Deletes the loaded term after confirmation (MSG-12).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Enter INCO Terms.
+- Duplicate INCO Terms not allowed.
+- Select atleast one Expense Head.
+- Select valid Rate Type in row n.
+- Select valid Currency in row n.
+- Select valid Billing Reference in row n.
+- Duplicate Cost Head, Cost Group and Billing Reference not allowed.
+- Only one Local Freight is allowed.
+manages:
+- inco-terms-master
+uses_concepts:
+- company
+- cost-group
+- cost-head
+method_notes:
+  Delete: Deletes the record through masterdata.MINTDelete.
+  FillValues: Fills the lookup lists through masterdata.MINTFillValues.
+  LoadData: Loads the selected record through masterdata.MINTLoadData.
+  Open: Searches records through masterdata.MINTSearchData.
+  Save: Saves the record through masterdata.MINTSave.
+  SaveExpenseHeads: Saves the record through masterdata.MINTSaveExpenseHeadDetail.
+  ValidateForm: Validates the entry through masterdata.MINTValidate.

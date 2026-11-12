@@ -1,0 +1,80 @@
+form: fMaintenanceReporting
+title: Maintenance Reporting
+module: PM
+kind: transaction
+summary: The Maintenance Reporting screen records the actual work done, shift by shift, against open maintenance orders or
+  maintenance requests.
+purpose: |
+  What it is: A shift-wise progress entry for one maintenance order or one maintenance request, covering tasks, resources and faults [fMaintenanceReporting.vb:1082-1148; EAM.EAMPSaveTaskDetail:29-67]. When it applies: At the end of each shift or whenever work on an open order or request is reported. Business outcome: Actual time, progress and resource use are captured as the work happens, and order and request statuses follow the work (BR-17; BR-18).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Details Area and Grids Layout: A header group box with Division, Entry Date, Reporting Document, Reporting For, MO No and Shift, and below it a tab control with "Task Detail" and "Resource Detail"; "Fault Details" is a separate group box [fMaintenanceReporting.Designer.vb:246; fMaintenanceReporting.Designer.vb:287-292; fMaintenanceReporting.Designer.vb:101].
+  - Division Field: A dropdown labelled "Division", shown only when divisions apply [fMaintenanceReporting.Designer.vb:267; fMaintenanceReporting.vb:290-291].
+  - Entry Date Field: A date picker in dd/MM/yyyy labelled "Entry Date" [fMaintenanceReporting.Designer.vb:138; fMaintenanceReporting.Designer.vb:153].
+  - Reporting Document Field: A mandatory dropdown labelled "Reporting Document" [fMaintenanceReporting.vb:48; fMaintenanceReporting.Designer.vb:172].
+  - Reporting For Field: A mandatory dropdown labelled "Reporting For" with All, Equipment and Functional Location [fMaintenanceReporting.vb:48; fMaintenanceReporting.Designer.vb:191].
+  - MO No Field: A mandatory dropdown labelled "MO No" (or "MR No.") showing Document No, Document Date, Reference Object and Equipment/Location [fMaintenanceReporting.vb:96; fMaintenanceReporting.Designer.vb:210].
+  - Shift Field: A mandatory dropdown labelled "Shift" [fMaintenanceReporting.vb:48; fMaintenanceReporting.Designer.vb:229].
+  - Task Detail Grid: A grid with Select, MO No., MO Date, Equipment/Location, Task Id, Task Description, Parent Task Id, Assign To, Start Time, End Time, Total Duration, Estimated Duration (Hrs.), Prev.
+  - Resource Detail Grid: A grid with Select, MO No/MR No, MO Date/MR Date, Task Id, Task Description, Equipment/Location, Resource Name, Quantity, Start Time, End Time and Usage Duration [fMaintenanceReporting.vb:996-1048].
+  - Fault Details Grid: A grid with Select, MO No/MR No, MO Date/MR Date, Fault/Description (read-only), RCA (dropdown, new text allowed) and Action Performed (300 characters) [fMaintenanceReporting.vb:1050-1078].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fMaintenanceReporting.vb:400-432].
+actions:
+  New: Asks the main window for a new record [fMaintenanceReporting.vb:364-370].
+  Save: Validates, asks for confirmation, then saves new RCA texts, task entries, resource entries and fault updates in one
+    transaction [fMaintenanceReporting.vb:1082-1148].
+  Search: A search list of reports of the current year with Entry Date, Equipment/Location Description, Functional Location,
+    Division, MO No, MO Date, MR No, MR Date and Shift [EAM.EAMPSearchData:43-63; fMaintenanceReporting.vb:373-396].
+  Delete: Deletes the opened report after confirmation [fMaintenanceReporting.vb:194-246].
+validations:
+- Select a valid Division.
+- Select valid Reporting Document.
+- Select valid Reporting for.
+- Select valid Shift.
+- Select valid MO No.
+- Entry Date can't be less than MO Date.
+- Entry Date can't be less than MO Date/MR Date.
+- 'Status can''t be empty '
+- ' in row '
+- Start Time can't be empty or zero
+- End Time can't be empty or zero
+- 'Start Time cannot be greater than End Time '
+- 'Total Duartion can''t be zero  '
+- Progress (%) can't be empty or zero
+- 'Prev. Prog. (%) can''t be be greater than Progress (%) '
+- 'Progress (%) can''t be be greater than 100.00 % '
+- Select atleast one Task/Resource Details.
+- Select valid Resource Name
+- Quantity can't be empty or zero
+- Usage Duration can't be empty or zero
+- Select atleast one Resource Details.
+- Enter Fault/Description
+- 'Select valid RCA '
+- 'Invalid Time : minute should be less than 60.'
+- Progress Entry exits for the given tasks,So can't be deleted.
+- Some data already exists at same Date.
+- 'Unable to save, MO Closing entry exists for following Maintenance Order - '
+- Saved successfully.
+manages:
+- maintenance-reporting
+uses_concepts:
+- change-maintenance-request-status
+- company
+- eam-resource-master
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-order-closing
+- maintenance-request
+method_notes:
+  Delete: Deletes the record through EAM.EAMPDelete.
+  FillFault: Runs through EAM.EAMPFillFault.
+  FillRefNo: Runs through EAM.EAMPFillRefNo.
+  FillResource: Runs through EAM.EAMPFillResource.
+  FillValues: Fills the lookup lists through EAM.EAMPFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAMPFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EAMPLoadData.
+  Open: Searches records through EAM.EAMPSearchData.
+  Save: Saves the record through masterdata.AMRCSave.
+  SaveFaultDetail: Saves the record through EAM.EAMPSaveFaultDetail.

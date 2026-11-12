@@ -1,0 +1,46 @@
+key: p5-inventory-planning-inventory-settings
+name: 'Inventory: Planning & inventory settings (Phase 5)'
+module: MM
+status: active
+summary: Phase 5 screens of the planning & inventory settings group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Planning & inventory settings' (Inventory). The steps follow the plan order, not a verified business sequence: Change Consumption Pattern, Material Lead/Safty Days Setting, Material Supplies Source, Unit Rounding Setting, Go A-Head Live, Vendor Category, Job Control Sheet, Release RO, Item Supplemental Information.
+steps:
+- order: 1
+  name: Record Change Consumption Pattern
+  form: fItemEOQ
+- order: 2
+  name: Record Material Lead/Safty Days Setting
+  form: fOptimizationSetting
+- order: 3
+  name: Record Material Supplies Source
+  form: fItemSuppliesSource
+- order: 4
+  name: Record Unit Rounding Setting
+  form: fUnitRoundingSetting
+- order: 5
+  name: Record Go A-Head Live
+  form: fGoAheadLive
+- order: 6
+  name: Record Vendor Category
+  form: fVendorCategory
+- order: 7
+  name: Record Job Control Sheet
+  form: fJobControlSheet
+- order: 8
+  name: Record Release RO
+  form: fReleaseRO
+- order: 9
+  name: Record Item Supplemental Information
+  form: fItemSupplementalInformation
+concepts:
+- change-consumption-pattern
+- material-lead-safty-days-setting
+- material-supplies-source
+- unit-rounding-setting
+- go-a-head-live
+- vendor-category
+- job-control-sheet
+- release-ro
+- item-supplemental-information

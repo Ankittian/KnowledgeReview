@@ -1,0 +1,54 @@
+key: p8-discrete-rawmaterial-discrete-rm
+name: 'Discrete Rawmaterial: Discrete RM (Phase 8)'
+module: DRM
+status: active
+summary: Phase 8 screens of the discrete rm group in Discrete Rawmaterial.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 8 forms that the KB validation plan puts in 'Discrete RM' (Discrete Rawmaterial). The steps follow the plan order, not a verified business sequence: Rawmaterial Opening, Update DR Opening Balance, Gate Entry, Store Inward Note, SIN Lot Entry, SIN Make Update, Material Issue, Material Return, Stock Transfer, Discrete Stock Adjustment, Consumption Detail.
+steps:
+- order: 1
+  name: Record Rawmaterial Opening
+  form: fDiscreteRMOpening
+- order: 2
+  name: Record Update DR Opening Balance
+  form: fUpdateDROpeningBalance
+- order: 3
+  name: Record Gate Entry
+  form: fGateEntryDRM
+- order: 4
+  name: Record Store Inward Note
+  form: fSINDRM
+- order: 5
+  name: Record SIN Lot Entry
+  form: fDiscreteSINLOTEntry
+- order: 6
+  name: Record SIN Make Update
+  form: fSINMakeUpdate
+- order: 7
+  name: Record Material Issue
+  form: fMaterialIssueDRM
+- order: 8
+  name: Record Material Return
+  form: fMaterialReturnDRM
+- order: 9
+  name: Record Stock Transfer
+  form: fStockTransfer
+- order: 10
+  name: Record Discrete Stock Adjustment
+  form: fDiscreteStockAdjustment
+- order: 11
+  name: Record Consumption Detail
+  form: fConsumptionDetail
+concepts:
+- rawmaterial-opening
+- update-dr-opening-balance
+- gate-entry-fgateentrydrm
+- store-inward-note
+- sin-lot-entry
+- sin-make-update
+- material-issue-fmaterialissuedrm
+- material-return
+- stock-transfer
+- discrete-stock-adjustment
+- consumption-detail

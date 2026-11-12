@@ -1,0 +1,50 @@
+form: fFuelConsumption
+title: Fuel Consumption
+module: PM
+kind: transaction
+summary: The Fuel Consumption screen records how much fuel a vehicle used on a given day and where the fuel came from.
+purpose: |
+  What it is: A record, per vehicle and entry date, of fuel consumed with its source, quantity, rate and amount [fFuelConsumption.vb:579-638; fFuelConsumption.vb:639-706]. When it applies: When a vehicle's fuel use is reported, from stock issues or from a fuel station bill. Business outcome: Fuel issued to a vehicle can be matched with fuel consumed, and fuel bought outside stock is costed against the vehicle (BR-04; BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "FuelConsumption" with a header group (Entry Date, Vehicle Name and its read-only details, Fuel Issued From, Source Document) and one reference grid [fFuelConsumption.Designer.vb:257].
+  - Entry Date Field: Date picker "Entry Date" [fFuelConsumption.Designer.vb:70].
+  - Vehicle Name Field: Mandatory dropdown "Vehicle Name" showing name and code [fFuelConsumption.Designer.vb:89; fFuelConsumption.vb:48; fFuelConsumption.vb:328-334].
+  - Cost Center, Fuel Type, Fuel Item and Unit Fields: Four read-only boxes labelled "Cost Center", "Fuel Type", "Fuel Item" and "Unit" [fFuelConsumption.Designer.vb:108; fFuelConsumption.Designer.vb:127; fFuelConsumption.Designer.vb:146; fFuelConsumption.Designer.vb:165].
+  - Fuel Issued From Field: Mandatory dropdown "Fuel Issued From" (Stock, Fuel Station), defaulting to Stock on a new entry [fFuelConsumption.Designer.vb:184; fFuelConsumption.vb:124-127; fFuelConsumption.vb:336-342].
+  - Source Document Field: Dropdown "Source Document" [fFuelConsumption.Designer.vb:203].
+  - Reference Detail Grid (Direct Stock Consumption): For Stock and Direct: columns Date, Quantity, Rate, Amount, Tank Full [fFuelConsumption.vb:813-840].
+  - Reference Detail Grid (Material Issue Consumption): For Stock and Material Issue: columns Select, Issue No., Issue Date, Issued Quantity, Issued Rate, Balance Quantity, Consumed Quantity, Consumption Amount, Tank Full [fFuelConsumption.vb:841-868].
+  - Reference Detail Grid (Fuel Station): For Fuel Station: columns Fuel Station Name, Driver Name, Bill No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fFuelConsumption.vb:253-285].
+actions:
+  New: Starts a fresh entry [fFuelConsumption.vb:218-225; fFuelConsumption.vb:287-298].
+  Save: Validates, saves the header and the rows in one transaction [fFuelConsumption.vb:579-638].
+  Search: Opens the standard search window of this company and year [fFuelConsumption.vb:227-251].
+  Delete: Deletes the open entry after the standard confirmation [fFuelConsumption.vb:55-89].
+validations:
+- Select valid Vehicle Name.
+- Select valid Fuel Issued From.
+- Select atleast one Issue Detail.
+- Select atleast one fuel station Detail.
+- Select valid Driver Name in row <n>.
+- Select valid Bill Date in row <n>.
+- Bill Date can not be greater than Entry Date in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Issue Date can not be greater than Entry Date in row <n>.
+- Consumed Quantity can't be empty or zero in row <n>.
+- Date can not be greater than Entry Date in row <n>.
+manages:
+- fuel-consumption
+uses_concepts:
+- equipment-master
+- supplementary-field
+method_notes:
+  Delete: Deletes the record through EAM.EAFCDelete.
+  FillValues: Fills the lookup lists through EAM.EAFCFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAFCFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EAFCLoadData.
+  Open: Searches records through EAM.EAFCSearchData.
+  Save: Saves the record through EAM.EAFCSave.
+  SaveReferenceDetail: Saves the record through EAM.EAFCSaveRefDetail.

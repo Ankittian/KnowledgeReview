@@ -1,0 +1,38 @@
+form: fBankBranchDetail
+title: Bank Branch Detail
+module: MD
+kind: master
+summary: The Bank Branch Detail screen maintains the list of bank branches.
+purpose: |
+  What it is: A single, shared list of bank branches with address and IFSC code, linked to the bank that owns each branch. When it applies: When a new branch is needed for a vendor bank account, a payment instrument, a guarantee or a voucher, and when the details of an existing branch change. Business outcome: Documents carry a consistent branch identity and IFSC code instead of free-typed text.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Branch Details Area: The single workspace titled "Bank Branch Detail" holding all fields below [fBankBranchDetail.designer.vb:524].
+  - Code Field: A read-only text box labelled "Code" [fBankBranchDetail.designer.vb:500; fBankBranchDetail.designer.vb:512].
+  - Bank Name Field: A mandatory dropdown labelled "Bank Name" showing bank name and code [fBankBranchDetail.designer.vb:393; fBankBranchDetail.vb:20; fBankBranchDetail.vb:136].
+  - Branch Name Field: A mandatory text box labelled "Branch Name", up to 50 characters [fBankBranchDetail.designer.vb:480; fBankBranchDetail.designer.vb:492; fBankBranchDetail.vb:20].
+  - Address Fields: Three text boxes of up to 100 characters each under the label "Address"; the first is mandatory, the other two are optional [fBankBranchDetail.designer.vb:444-474; fBankBranchDetail.vb:20].
+  - City Field: An optional dropdown labelled "City" listing city, state and country [fBankBranchDetail.designer.vb:420; fBankBranchDetail.vb:137].
+  - State Field: An optional dropdown labelled "State" [fBankBranchDetail.designer.vb:438; fBankBranchDetail.vb:138].
+  - Country Field: An optional dropdown labelled "Country" [fBankBranchDetail.designer.vb:429; fBankBranchDetail.vb:139].
+  - IFSC Code Field: A mandatory text box labelled "IFSC Code", limited on screen to 15 characters [fBankBranchDetail.designer.vb:399; fBankBranchDetail.designer.vb:411; fBankBranchDetail.vb:20].
+  - Other Toolbar Actions (Preview, Print, Email, Export): Standard toolbar actions [fBankBranchDetail.vb:115-121; fBankBranchDetail.vb:320-326].
+actions:
+  New: The toolbar action that clears the screen for a new branch [fBankBranchDetail.vb:9-16; fBankBranchDetail.vb:100-113].
+  Save: The toolbar action that stores the branch [fBankBranchDetail.vb:215-275].
+  Search: The toolbar action that opens a search list of branches [fBankBranchDetail.vb:187-213].
+  Delete: The toolbar action that removes the open branch [fBankBranchDetail.vb:60-98].
+validations:
+- Select valid Bank Name.
+- Enter Branch Name.
+- Enter Address.
+- Enter IFSC Code.
+- Permission denied to delete Contact Person.
+manages:
+- bank-branch-detail
+method_notes:
+  Delete: Deletes the record through masterdata.MBBDDelete.
+  FillValues: Fills the lookup lists through masterdata.MBBDFillValues.
+  LoadData: Loads the selected record through masterdata.MBBDLoadData.
+  Open: Searches records through masterdata.MBBDSearchData.
+  Save: Saves the record through masterdata.MBBDSaveMain.

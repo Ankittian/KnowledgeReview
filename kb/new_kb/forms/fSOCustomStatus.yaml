@@ -1,0 +1,43 @@
+form: fSOCustomStatus
+title: Sales Order Custom Status
+module: MD
+kind: master
+summary: The Sales Order Custom Status screen maintains the user-defined statuses that can be recorded against sales orders
+  to track their progress beyond the system's own document statuses.
+purpose: |
+  What it is: A list of business-defined progress statuses for sales orders, each grouped under a category. When it applies: When the business wants to track a new stage of order execution. Business outcome: Consistent, reportable order progress tracking (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with four fields.
+  - Code Field: Read-only text box.
+  - Custom Status Field: Mandatory text box; the screen allows 300 characters (BR-01, Section 13).
+  - Status Category Field: Mandatory dropdown showing category name and code (BR-02).
+  - Inactive Field: Disabled checkbox.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the status.
+  Search: Standard search list with Code, Custom Status, Category Name, Inactive, Created By, Created Date, sorted by status.
+  Delete: Deletes the loaded status after confirmation (MSG-07).
+validations:
+- Enter Custom Status.
+- Select Custom Status category.
+- Duplicate custom status not allowed.
+- Do you want to save ?
+- 'Document No. '
+- ' saved successfully.'
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- sales-order-custom-status
+uses_concepts:
+- company
+- sales-order-status-category
+method_notes:
+  Delete: Deletes the record through masterdata.SDSSDelete.
+  FillValues: Fills the lookup lists through masterdata.SDSSFillValues.
+  LoadData: Loads the selected record through masterdata.SDSSLoadData.
+  Open: Searches records through masterdata.SDSSSearchData.
+  Save: Saves the record through masterdata.SDSSSave.
+  ValidateForm: Validates the entry through masterdata.SDSSValidate.

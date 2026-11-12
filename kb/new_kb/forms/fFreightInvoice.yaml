@@ -1,0 +1,146 @@
+form: fFreightInvoice
+title: Freight Invoice
+module: FI
+kind: transaction
+summary: The Freight Invoice screen records a transporter's bill for carrying goods into or out of the company and turns it
+  into a payable.
+purpose: |
+  What it is: A freight invoice is the company's record of a transporter bill, matched to the movement documents (receipts or dispatches) it charges for, and the source of the transporter liability in the books. When it applies: When a transporter submits a bill for one or more consignments it carried, or when freight is paid on behalf of a supplier or as an advance. Business outcome: Freight is paid only once per document, priced from the agreed freight order where one exists, and charged to the right stock, expense or clearing account.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A document number band at the top, a General band with payment and quantity totals, an Advance Detail group, and tabs General Detail, Document Detail, Tax Detail, Advance Adjustment, Finance Posting (two), Custom Field, a hidden tab and GST Posting.
+  - Document No., Date, Finance Book and Status: Shared yearly document number control with document setting, date, finance book and status; mandatory per the control's own validation.
+  - Transporter Name Field: Mandatory dropdown of active transporters (BR-05).
+  - Transporter Location Field: Dropdown on the hidden tab, filled with the transporter's first location (BR-06).
+  - Freight Nature, Advice Type, Date Filter Apply On, From Date, To Date Fields: Mandatory Freight Nature and Advice Type dropdowns; Date Filter Apply On (Document Date, Challan Date, LR Date; default Challan Date) and a From/To date range (BR-07, BR-08).
+  - Freight Document Field: Mandatory dropdown of active freight document types, defaulted from the setting marked default (BR-09).
+  - Ref. Doc. No., Vehicle No., Challan No. & Date, L.R./R.R. No. & Date Fields: Optional single-document picker with read-only details of the chosen document (BR-15).
+  - Freight Order, Freight Basis Fields: Optional freight order dropdown with read-only date and basis (BR-18).
+  - Rate Type, Unit, Calculation On, Deduction On Fields: Mandatory Rate Type and Calculation On; Unit (enabled for Per Unit) and Deduction On (default Whole Qty.
+  - From Location, To Location, Distance, Vehicle Capacity Fields: Location dropdowns and numeric distance (2 decimals, 8 characters) and vehicle capacity (3 decimals, 10 characters) (BR-16, BR-17).
+  - Invoice No., Invoice Date, Remarks Fields: Mandatory transporter invoice number (50 characters), invoice date, optional remarks (500 characters) (BR-10).
+  - Service Tax Rule, GST Tax Rule, Cost Center, Vehicle Owner Name, Vehicle Owner PAN No. Fields: Optional tax rule dropdowns (mutually exclusive), cost center and vehicle owner details (BR-26, BR-27).
+  - Payment Mode, Credit Days, Due Date Fields: Mandatory payment mode and credit days (numeric, 3 digits, default 0); read-only due date (BR-11, BR-29).
+  - Quantity and Amount Totals: Challan Qty./ Dispatch Qty., Received/ Confirm Qty., Actual Freight Qty.
+  - Document Detail Grid: One row per offered document with Select checkbox, reference, party, vehicle, challan, LR, order numbers, Item Detail button, Distance, Vehicle Capacity, quantities, Freight Qty., Freight Rate, Freight Amount, Advance/ Deduction button and Net Amount; rows cannot be deleted; filter row enabled.
+  - Item Detail Pop-up: Read-only items of the document (order, item, unit, challan and received quantity, rate, landed rate, route).
+  - Advance/ Deduction Pop-up: Tolerance Qty.
+  - Advance Detail Grid: Paid By, Particular (account) and Amount (2 decimals); a new row is added automatically after the last Paid By (BR-31).
+  - Tax Detail Tab: Shared tax-on-amount control; basic amount = freight amount less deduction and other deduction.
+  - Advance Adjustment Tab: Ad&just Advance checkbox, Manual/Automatic option and grid of open advances (document, reference, advance, adjusted, balance, Adjusting Amount) with totals (BR-32, BR-33).
+  - Finance Posting, Finance Posting (advance) and GST Posting Tabs: The shared posting control with the proposed invoice journal, the shared voucher control with the advance adjustment journal, and the GST voucher detail.
+  - Custom Field Tab and Notes: Shared custom field grid and notes (default notes of earlier invoices preloaded).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Print Preview and Export of the freight invoice report, and e-mail (internal mail or Outlook) with the exported report attached.
+  - Maintenance Key Combinations: Ctrl+Alt+G on GST Posting rebuilds GST posting; Ctrl+Alt+V on Finance Posting rebuilds the voucher; Ctrl+Alt+G on Finance Posting walks all records and copies a narration update script to the clipboard (BR-46).
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open with the shared [Search](Functional_Doc_fSearch.md) screen.
+  Delete: Toolbar Delete.
+  Navigation: First, Previous, Next and Last from the framework.
+validations:
+- Authorized FreightInvoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Max GRN Date is less than Document Date for gate entry '
+- Material Closure Note is not created/ authorized against SalesOrder in selected Dispatch Challan.
+- Account Posting for multiple Carriage Inward Account is not allowed.You can pass Freight Invoice for one Carriage Inward
+  Account only
+- All item should be mapped with Carriage Inward Account.
+- Select valid Transporter Name.
+- Select valid Transporter Location.
+- Select valid Freight Nature.
+- Select valid Advice Type.
+- To Date can't be greater than Document Date.
+- Select valid Freight Document.
+- Enter Invoice No.
+- Invoice Date can't be greater than Document Date.
+- Select valid Service Tax Rule.
+- Select valid Rate Type.
+- Select valid Calculation On.
+- Select valid From Location.
+- Select valid To Location.
+- Distance can't be empty or zero.
+- Distance can't be empty or zero in row n.
+- Vehicle Capacity can't be empty or zero.
+- Vehicle Capacity can't be empty or zero in row n.
+- Select atleast one Ref Doc No.
+- Select valid Payment Mode.
+- Enter Credit Days.
+- Received/ Confirm can't be empty or zero.
+- Received/ Confirm Qty. can't be empty or zero in row n.
+- Freight Qty. can't be empty or zero.
+- ' in row n.'
+- Freight Qty. is greater than Actual Freight Qty.
+- Do you want to continue ?
+- Freight Rate can't be empty or zero.
+- Freight Amount can't be empty or zero.
+- Difference of Freight Amount and Deduction Amount and Other Deduction can't be less than 0.
+- Enter Deduction Reason.
+- Enter Deduction Reason in row n.
+- Advance Amount is not equal to Total Advance Detail Amount.
+- Payable Amount can't be less than zero.
+- Tansporter is not GST Registered ,So GST Tax can't be added
+- GRN is not processed against this gateentry
+- GST Taxes and GST Rule can't be selected simultaneously
+- Document Date can't be less than Ref. Doc. Date in row n.
+- Could not select party account in case of FOR as Actual with Freight Nature Outward.
+- Select valid Particular in row n.
+- Amount can't be empty or zero in row n.
+- Adjusting Amount in row n is not Allowed.
+- Enter At least one Advance Adjustment.
+- Adjusting Amount can't be greater than Balance Amount.
+- Can't select document with different Freight Type.
+- Can't select document with different Vendors in case of On Behalf of Party.
+- Duplicate Paid By and Particular not allowed.
+- Payable Account is not created against this transporter.
+- Prepayment Account is not created against this transporter.
+- Prepayment Account is not created against supplier.
+- Freight Clearing Account is not created.
+- ' account is not created.'
+- 'Account is not created against '
+- 'Authorized Receipt Acknowledgement entry not found for Ref. Doc. No. '
+- ' Do you want to continue?'
+- 'Rate(Purchase + Freight)  can''t be greater than Rate defined in PO(FIFI) - Current Rate after FIFI -> '
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- InTransit Not found in Lot
+- Discrete And Inventory Gateentry can't be pass at same time
+- Month is locked via Stock Monthly Closing(ISML)
+- Cash Journal exists against freight invoice.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- freight-invoice
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- general-proforma-invoice-receipt
+- input-excise-invoice-posting
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- stock-monthly-locking
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  CustomValidation: Validates the entry through ODTFreightInvoice.ProcedureName.
+  Delete: Deletes the record through Finance.FIFIDelete.
+  FillValues: Fills the lookup lists through Finance.FIFIFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FIFIFillValuesDependent.
+  FillValuesFB: Fills the lookup lists through Finance.FIFIFillValuesFB.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetInwardOutwardAccount: Runs through Finance.FIFIGetInwardOutwardAccount.
+  LoadData: Loads the selected record through Finance.FIFILoadData.
+  Open: Searches records through Finance.FIFISearchData.
+  Save: Saves the record through Customize.IskconPORateValidation, Finance.FIFIAuthorize, Finance.FIFISaveMain, Finance.VoucherSaveStatuory,
+    Inventory.VoucherVsLotValidation.

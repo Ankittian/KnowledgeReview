@@ -1,0 +1,50 @@
+form: fChangeMaintenanceRequestStatus
+title: Change Maintenance Request Status
+module: PM
+kind: transaction
+summary: 'The Change Maintenance Request Status screen lets a user move an authorized maintenance request, fault by fault,
+  to a new status: Hold, Cancel, In Progress, Short Close, Authorized again or Completed.'
+purpose: |
+  What it is: A document that records a new status, and the reason for it, for the faults of one authorized maintenance request [fChangeMaintenanceRequestStatus.vb:347-455]. When it applies: When work on a request is put on hold, cancelled, started, short-closed or resumed after a hold. Business outcome: The reason and the person behind every status change are kept, and the request status follows the faults (BR-01; BR-06; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: The document header control on top, a general group with the request and status fields, and the grid of faults [fChangeMaintenanceRequestStatus.Designer.vb:177-192].
+  - Document Header Fields: The shared control with Division, Document No., Document Date and Document Status; its internal labels are not in this screen's source.
+  - Maintenance Request No. Field: A mandatory dropdown "Maintenance Request &No." showing request number, date, equipment or location and status; a button beside it opens a search window of the same list [fChangeMaintenanceRequestStatus.Designer.vb:76; fChangeMaintenanceRequestStatus.vb:13; fChangeMaintenanceRequestStatus.vb:457-484].
+  - Maintenance Request Date, Equipment Name and Current Status Fields: Three read-only boxes "Maintenance Request Date", "Equipment Name" and "Current Status" [fChangeMaintenanceRequestStatus.Designer.vb:83-134].
+  - Status Field: A dropdown "&Status" with the statuses that may follow the request's current status [fChangeMaintenanceRequestStatus.Designer.vb:154; fChangeMaintenanceRequestStatus.vb:497-520].
+  - Reason Field: An editable combo "&Reason" up to 1000 characters [fChangeMaintenanceRequestStatus.Designer.vb:162-175].
+  - Fault Grid: A grid with Fault, Fault Description, Current Status, Status and Reason; the fault number and current status number are hidden [fChangeMaintenanceRequestStatus.vb:313-345].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fChangeMaintenanceRequestStatus.vb:176-192; fChangeMaintenanceRequestStatus.vb:611-616].
+actions:
+  New: Asks the main window for a fresh record [fChangeMaintenanceRequestStatus.vb:139-146].
+  Save: Blocks authorized documents, validates, asks the standard save confirmation, then saves the header and the changed
+    faults in one transaction [fChangeMaintenanceRequestStatus.vb:347-430].
+  Search: Opens the list of change documents of the company and year with document number, date, request number, document
+    status, creator and authorizer [fChangeMaintenanceRequestStatus.vb:148-174; EAM.ECMRSearchData:15-30].
+  Delete: Deletes the loaded document after the standard confirmation [fChangeMaintenanceRequestStatus.vb:19-50].
+validations:
+- Duplicate Document No. is not allowed.
+- Select valid Maintenance Request No.
+- Select valid Reason.
+- Enter status of atleast one Fault.
+- Select valid Reason in row n.
+- Authorized Entry can't be updated.
+- Document Date can't be less than Maintenance Request Date.
+manages:
+- change-maintenance-request-status
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+- maintenance-request
+method_notes:
+  Delete: Deletes the record through EAM.ECMRDelete.
+  FillValues: Fills the lookup lists through EAM.ECMRFillValues.
+  LoadData: Loads the selected record through EAM.ECMRLoadData.
+  Open: Searches records through EAM.ECMRSearchData.
+  Save: Saves the record through EAM.ECMRSave.
+  SaveItemdetails: Saves the record through EAM.ECMRSaveFaultDetail.
+  ValidateGeneralDetail: Validates the entry through EAM.ECMRValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through EAM.ECMRFillValues.
+  ucmbIndent_ValueChanged: Fills the lookup lists through EAM.ECMRFillValuesDependent.

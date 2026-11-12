@@ -1,0 +1,59 @@
+form: fEquipmentDocumentEntry
+title: Equipment Document Entry
+module: PM
+kind: transaction
+summary: The Equipment Document Entry screen records the statutory and commercial documents that belong to a piece of equipment
+  or to a functional location, such as a road tax receipt, a pollution certificate or a tracking subscription.
+purpose: |
+  What it is: A record of one document held for an equipment or a functional location, with its issuer, dates, amount and type-specific fields [fEquipmentDocumentEntry.vb:428-513; EAM.EMDESave:31-99]. When it applies: When a document is issued, renewed or received for equipment or a location. Business outcome: The business can see which documents exist, who issued them, when they expire and what they cost (BR-01; BR-08; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "EquipmentDocumentEntry" with a General Detail block, a Previous Entry block and an Additional Fields block [fEquipmentDocumentEntry.designer.vb:565; fEquipmentDocumentEntry.designer.vb:529-550].
+  - Reference Object Field: A mandatory drop-down labelled "Reference Object" [fEquipmentDocumentEntry.designer.vb:317; fEquipmentDocumentEntry.vb:45; fEquipmentDocumentEntry.vb:100].
+  - Equipment Name or Location Field: A mandatory drop-down whose label reads "Equipment Name" for equipment and "Location" for a location; it has a button that opens a search list showing Object Name, Code, Equipment Category, Alias, Registration No and Engine Number [fEquipmentDocumentEntry.vb:629-655; fEquipmentDocumentEntry.vb:657-683; fEquipmentDocumentEntry.designer.vb:112].
+  - Document No. Field: A mandatory text box of up to 50 characters [fEquipmentDocumentEntry.vb:86; fEquipmentDocumentEntry.designer.vb:129].
+  - Document Date Field: A date picker labelled "Document Date", reduced to a date without time on save [fEquipmentDocumentEntry.vb:461; fEquipmentDocumentEntry.designer.vb:148].
+  - Document Type Field: A mandatory drop-down [fEquipmentDocumentEntry.vb:45; fEquipmentDocumentEntry.vb:101].
+  - Issued By Name and Issued By Address Fields: Two mandatory drop-downs; names come from earlier entries of the same type and choosing a name fills its address [fEquipmentDocumentEntry.vb:45; fEquipmentDocumentEntry.vb:568-572; EAM.EMDEFillValuesDependent:63-70].
+  - Validity Date, Renewal Alert and Before N Day(s) Fields: An optional date picker, and a number box of up to three digits labelled "Renewal Alert" with the caption "Before N Day(s)" [fEquipmentDocumentEntry.vb:89; fEquipmentDocumentEntry.vb:93; fEquipmentDocumentEntry.designer.vb:355; fEquipmentDocumentEntry.designer.vb:346].
+  - Amount Field: A mandatory number box of up to 15 characters with two decimals [fEquipmentDocumentEntry.vb:87; fEquipmentDocumentEntry.vb:92].
+  - Status Field: A drop-down labelled "Status" offering the statuses already used on earlier entries; it is not marked mandatory [fEquipmentDocumentEntry.designer.vb:337; EAM.EMDEFillValues:79-80; fEquipmentDocumentEntry.vb:45].
+  - Remarks Field: An optional text box of up to 1000 characters [fEquipmentDocumentEntry.vb:90].
+  - Previous Entry Block: Read-only boxes Document No., Document Date, Issued By Name, Issued By Address, Validity Date, Validity Status, Amount and Remarks [fEquipmentDocumentEntry.designer.vb:369-508; fEquipmentDocumentEntry.vb:573-603].
+  - Additional Fields Grid: A grid with Field Name (read-only, up to 50 characters) and Value (up to 50 characters); the mandatory flag and field number are hidden [fEquipmentDocumentEntry.vb:406-427].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: The toolbar action asking the main window to start a blank record [fEquipmentDocumentEntry.vb:158-165].
+  Save: The toolbar action that validates and stores the entry [fEquipmentDocumentEntry.vb:428-513].
+  Search: The toolbar action listing the company's entries [fEquipmentDocumentEntry.vb:167-192].
+  Delete: The toolbar action that removes the open entry [fEquipmentDocumentEntry.vb:51-75].
+validations:
+- Select valid Reference Object.
+- Select valid Equipment Name.
+- Select valid Location.
+- Enter Document No..
+- Select valid Document Type.
+- Select valid Issued By Name.
+- Select valid Issued By Address.
+- Enter Amount.
+- Select valid value in row n.
+- Multiple entry for select document type is not allowed for selected equipment.
+- Duplicate Document No. is not allowed
+manages:
+- equipment-document-entry
+uses_concepts:
+- company
+- document-type
+- equipment-category
+- equipment-master
+- functional-location
+- supplementary-field
+method_notes:
+  Delete: Deletes the record through EAM.EMDEDelete.
+  FillValues: Fills the lookup lists through EAM.EMDEFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EMDEFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EMDELoadData.
+  Open: Searches records through EAM.EMDESearchData.
+  Save: Saves the record through EAM.EMDESave.
+  SaveAdditionalFields: Saves the record through EAM.EMDESaveAdditionalFields.
+  ValidateForm: Validates the entry through EAM.EMDEValidate.

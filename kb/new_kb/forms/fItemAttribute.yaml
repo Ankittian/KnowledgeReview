@@ -1,0 +1,47 @@
+form: fItemAttribute
+title: Attribute Master
+module: MD
+kind: master
+summary: The Attribute Master screen (window caption "ItemAttribute") defines item attributes, such as a size, grade or colour,
+  that can be recorded against stock items.
+purpose: |
+  What it is: The group-wide list of item attributes and the subgroups and items each attribute applies to. When it applies: When items need an additional characteristic to be tracked, for example lot-wise or in stock reports (Inferred). Business outcome: Attributes are defined once with a consistent value type and assigned to the right items.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general group box with header fields and an item details group box with the hierarchical grid.
+  - Code Field: Read-only text box.
+  - Attribute Name Field: Mandatory text box, up to 25 characters (BR-01, BR-02).
+  - Attribute Value Type Field: Mandatory dropdown: Numeric, Decimal, Character (BR-03).
+  - Sequence No. Field: Mandatory numeric text box, up to 2 digits (BR-01).
+  - Alias Field: Mandatory text box, up to 10 characters (BR-01, BR-02).
+  - Inactive Field: Checkbox, disabled in the designer.
+  - Item Details Grid: Parent rows: Select, Subgroup Code, Subgroup Name, Group Code, Group Name, Category Code, Category Name; child rows: Select, Item Code, Item Description.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the attribute and its assignments.
+  Search: Standard search with Code, Attribute Name, Alias, Attribute Value Type, Sequence No, Created By, Created Date, sorted
+    by name.
+  Delete: Deletes the loaded attribute after confirmation (MSG-10).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Enter Attribute Name.
+- Enter Alias.
+- Enter Seq No.
+- Duplicate Attribute Name not allowed.
+- Duplicate Alias not allowed.
+- Select valid Attribute Value Type.
+manages:
+- attribute-master
+uses_concepts:
+- company
+- material-category
+method_notes:
+  Delete: Deletes the record through masterdata.MAIADelete.
+  FillValues: Fills the lookup lists through masterdata.MAIAFillValues.
+  LoadData: Loads the selected record through masterdata.MAIALoadData.
+  Open: Searches records through masterdata.MAIASearchData.
+  Save: Saves the record through masterdata.MAIASave.
+  SaveItemDetail: Saves the record through masterdata.MMMMSaveItemAttributeDetail, masterdata.MMMMSaveItemAttributeDetail2008.
+  SaveSubGroupDetail: Saves the record through masterdata.MSGMSaveItemAttribute.
+  ValidateGeneralDetail: Validates the entry through masterdata.MAIAValidate.

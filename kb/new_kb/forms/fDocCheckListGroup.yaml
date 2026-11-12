@@ -1,0 +1,43 @@
+form: fDocCheckListGroup
+title: Check List Document Group
+module: MD
+kind: master
+summary: The Check List Document Group screen maintains named groups of document check list items, such as the set of documents
+  required for a particular kind of export shipment (Inferred).
+purpose: |
+  What it is: Reusable bundles of required documents. When it applies: When a recurring documentation requirement (for example per buyer country or shipment type) needs to be standardised (Inferred). Business outcome: Users pick one group instead of selecting each document every time (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and a check list grid.
+  - Code Field: Read-only text box, 6 characters.
+  - Description Field: Mandatory text box, up to 50 characters (BR-02).
+  - Inactive Field: Disabled checkbox.
+  - Check List Grid: Columns Check List Name (dropdown showing name and code) and Code (read-only, filled from the chosen document).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; empty handlers (BR-09).
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the group and its documents.
+  Search: Standard search with Code, Description, Created By, Created Date, newest first.
+  Delete: Deletes the loaded group after confirmation (MSG-07).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-09).
+validations:
+- Enter Description.
+- Duplicate Description is not allowed.
+- Select atleast one Check List Name.
+- Do you want to save ?
+- Data saved successfully.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- check-list-document-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.DCLGDelete.
+  FillValues: Fills the lookup lists through masterdata.DCLGFillValues.
+  LoadData: Loads the selected record through masterdata.DCLGLoadData.
+  Open: Searches records through masterdata.DCLGSearchData.
+  Save: Saves the record through masterdata.DCLGSave.
+  SaveCheckList: Saves the record through masterdata.DCLGSavemDocCheckListGroupDetail.
+  ValidateForm: Validates the entry through masterdata.DCLGValidate.

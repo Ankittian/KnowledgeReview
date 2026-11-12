@@ -1,0 +1,34 @@
+form: fWorkLogCategory
+title: Work Log Category
+module: MD
+kind: master
+summary: The Work Log Category screen maintains the categories under which maintenance and asset work logs are recorded.
+purpose: |
+  What it is: A master record naming one kind of work log, with an optional link to a broader parent category [fWorkLogCategory.vb:263-321; masterdata.EMWLSave:34-55]. When it applies: When a new kind of work log is to be offered, or when a category is renamed or moved under another parent. Business outcome: Work logs are classified consistently and can be grouped by parent category (BR-01; BR-02; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: The single area holding Code, Category Name and Parent Category Name [fWorkLogCategory.Designer.vb:38-87].
+  - Code Field: A read-only text box labelled "Code" [fWorkLogCategory.Designer.vb:38; fWorkLogCategory.Designer.vb:50].
+  - Category Name Field: A mandatory text box labelled "&Category Name", 100 characters [fWorkLogCategory.vb:41; fWorkLogCategory.Designer.vb:56; fWorkLogCategory.Designer.vb:68].
+  - Parent Category Name Field: An optional drop-down labelled "&Parent Category Name" [fWorkLogCategory.vb:96; fWorkLogCategory.Designer.vb:87].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fWorkLogCategory.vb:171-203].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fWorkLogCategory.vb:136-143].
+  Save: The toolbar action that validates and stores the category [fWorkLogCategory.vb:263-321].
+  Search: The toolbar action that opens a search list [fWorkLogCategory.vb:145-169].
+  Delete: The toolbar action that removes the opened category [fWorkLogCategory.vb:47-80].
+validations:
+- Enter Category Name.
+- Duplicate Category Name not allowed.
+- Saved successfully.
+manages:
+- work-log-category
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.EMWLDelete.
+  FillValues: Fills the lookup lists through masterdata.EMWLFillValues.
+  LoadData: Loads the selected record through masterdata.EMWLLoadData.
+  Open: Searches records through masterdata.EMWLSearchData.
+  Save: Saves the record through masterdata.EMWLSave.
+  ValidateForm: Validates the entry through masterdata.EMWLValidate.

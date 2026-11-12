@@ -1,0 +1,35 @@
+form: fChangeVoucherStatus
+title: Change Voucher Status
+module: FI
+kind: transaction
+summary: 'The Change Voucher Status screen lets an authorised person move many unapproved Payment vouchers of one finance
+  book through the approval steps in a single save: Release, Accept, Reject or Authorized.'
+purpose: |
+  What it is: A bulk approval workspace for unauthorised Payment vouchers with a permanent history of each change. When it applies: An approver needs to release, accept, reject or authorise several payment vouchers at once. Business outcome: Payments move through approval faster, with a trail of who changed what and why (BR-05, BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Finance Book Field: Mandatory list "Finance &Book" [fChangeVoucherStatus.vb:14].
+  - Date Field: Date field "Da&te" with the date of the change; it is stored with each logged change.
+  - Voucher Grid: Columns Select, Voucher No., Voucher Date, Account Name, Particular, Amount, Source Document, Source Document No., Document Status, Created By, Released By, Narration, Change Status, Remarks and Status Detail.
+  - Change Status Column: A list that offers only the statuses allowed from the voucher's Document Status [fChangeVoucherStatus.vb:219-238].
+  - Remarks Column: Free text up to 500 characters per voucher.
+  - Status Detail Pop-up: A small window with the history grid and an "&Ok" button [fChangeVoucherStatus.vb:412-464].
+actions:
+  Toolbar: New and Save work; Open, Delete and LoadData are empty [fChangeVoucherStatus.vb:20-22; fChangeVoucherStatus.vb:54-56;
+    fChangeVoucherStatus.vb:67-69].
+validations:
+- Select valid Finance Book.
+- Select atleast one Voucher.
+- 'Select valid Change Status in row '
+- Contact your vendor,Reference getting -ve
+manages:
+- change-voucher-status
+uses_concepts:
+- account-opening
+- accounting-voucher
+- company
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FCVSFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FCVSFillValuesDependent.
+  SaveVoucherDetail: Saves the record through Finance.FCVSSave.
+  ValidateForm: Validates the entry through Finance.FCVSValidate.

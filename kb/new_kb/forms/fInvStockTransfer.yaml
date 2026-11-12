@@ -1,0 +1,132 @@
+form: fInvStockTransfer
+title: Stock Transfer
+module: MM
+kind: transaction
+summary: The Stock Transfer screen (menu caption "Material Stock Transfer") moves stock out of one warehouse and into another,
+  inside the company or across company, division and warehouse boundaries, and records material-nature conversions on the
+  same document [fInvStockTransfer.Designer.vb:1292].
+purpose: |
+  What it is: A numbered transaction document that issues stock from specific lots of a From warehouse and, for one-step transfers, receives the same value into a To warehouse, optionally in another company, division or stock nature. When it applies: Whenever material must change warehouse, company, division or stock nature, either freely (Direct) or against a purchase order freight route or a work order. Business outcome: Lot-wise stock, its valuation and the inter-book finance entries stay consistent across the sending and receiving locations.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: The document control strip (number, date, status, division, repeat-entry button) above a main tab set: General Details, PO Detail (renamed per source), Finance Posting, Receiving Finance Posting, Custom Field and Disposal Posting; the General Details tab holds the header fields and a lower tab set with Issue Detail and Receipt Detail [fInvStockTransfer.Designer.vb:1145-1188].
+  - Document No., Date, Status and Division (document control): Shared document control with financial-year and division validation (division validation only when the company uses divisions) and a repeat-entry button [fInvStockTransfer.Designer.vb:1193-1203] [fInvStockTransfer.vb:366-370] [fInvStockTransfer.vb:191].
+  - Stock Transfer Type Field: Mandatory dropdown of active transfer types (BR-01, BR-04) [fInvStockTransfer.Designer.vb:603].
+  - Transfer To Company / Transfer To Division / Transfer To Field: Dropdown whose label changes with the type: group companies (with default finance book in the name), divisions, or disabled "Transfer To" for Warehouse and Material [fInvStockTransfer.vb:3070-3084] [fInvStockTransfer.Designer.vb:622].
+  - Source Document Field: Mandatory dropdown; list depends on the type and defaults to the source flagged default (BR-05) [fInvStockTransfer.Designer.vb:534].
+  - From Warehouse and To Warehouse Fields: Mandatory dropdowns with code and division [fInvStockTransfer.Designer.vb:494-514].
+  - Party Name and Party Location Fields: Dropdowns of recipient parties and their locations; first location auto-selected [fInvStockTransfer.vb:3618-3642] [fInvStockTransfer.Designer.vb:391-427].
+  - Processing Type Field: Mandatory dropdown 1 Step / 2 Step [fInvStockTransfer.Designer.vb:474].
+  - Stock Nature Conversion Field: Dropdown of the six conversions, default Normal [fInvStockTransfer.Designer.vb:382] [fInvStockTransfer.vb:392].
+  - Requested By and Driver Name Fields: Editable dropdowns of names already used on this company's transfers [Inventory.IMSTFillValues:39-51] [fInvStockTransfer.Designer.vb:584] [fInvStockTransfer.Designer.vb:661].
+  - Transporter Name, Vehicle No., LR No. and LR Date Fields: Transporter dropdown; Vehicle No.
+  - Reference No. & Date and Remarks Fields: Free text: reference up to 50 characters, remarks up to 1,000 on screen [fInvStockTransfer.vb:314-315] [fInvStockTransfer.Designer.vb:724-742].
+  - Ex. Challan No. and Excise Challan Date Fields: Challan number (50 characters) and a check-box date [fInvStockTransfer.Designer.vb:540] [fInvStockTransfer.Designer.vb:552-562].
+  - Order Tab (PO Detail / Work Order Detail): Grid of eligible orders with "Select", order number and date (and supplier for PO) [fInvStockTransfer.vb:3604-3616] [Inventory.IMSTRefDocDetail:305-325].
+  - Issue Detail Grid: Lines with select box, Item Code / Item Description (with item picker button and information icon), Make, Tech.
+  - Lot Details Pop-up: Lot grid with select, item, attribute, LOT No., received document and date, PO No., party, heat numbers and serial (heat-wise lots only), BIN card, stock quantity, rate and quantity, with a quantity total [fInvStockTransfer.vb:2330-2405].
+  - Serial Number Pop-up: Unissued serial numbers of the chosen lots with a select box; "Ok" and "Cancel" [fInvStockTransfer.vb:1817-1847].
+  - Stock Details Pop-up: Read-only stock summary of the line's item by make, cost centre, department, project, reservation and stock type [fInvStockTransfer.vb:1782-1812] [Inventory.IMSTFillValues:116-126].
+  - Asset Detail Pop-up: Asset tags of the chosen lots with received document, flag, asset and tag numbers, serial, tag, deduction and balance quantities and the quantity to transfer [fInvStockTransfer.vb:4144-4190].
+  - Receipt Detail Grid: Item Code / Item Description, Make, Tech.
+  - BarCode Group: "Item Code" scan box (10 characters), an "Ok" button with no handler, and a last-scan status label [fInvStockTransfer.Designer.vb:1227-1269].
+  - Copy Item from Sales Order Button: Small button beside the issue grid [fInvStockTransfer.Designer.vb:1209-1215].
+  - Finance Posting, Receiving Finance Posting and Disposal Posting Tabs: Shared voucher controls with account grids [fInvStockTransfer.vb:3644-3937].
+  - Custom Field Tab and Notes: Shared custom-field grid and notes control [fInvStockTransfer.vb:375-376] [fInvStockTransfer.Designer.vb:746-752].
+  - Repeat Entry (Ctrl+Y or repeat button): Copies a chosen earlier transfer into a new document (BR-44).
+  - Regenerate Voucher (Ctrl+Alt+V): Keyboard action on the Finance Posting or Receiving Finance Posting tab (BR-47).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search (Open): Standard search list.
+  Delete: Standard toolbar Delete with confirmation.
+validations:
+- Authorized Stock Transfer can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Some of selected Asset Tag(s) are unauthorized.
+- Some of selected Asset Tag(s) have Document Date greater than current Document Date.
+- Select valid Stock Transfer Type.
+- Select valid Transfer To Company.
+- Select valid Transfer To Division.
+- Transfer to same Division is not allowed.
+- Select valid Source Document.
+- Select valid From Warehouse.
+- Select valid To Warehouse.
+- Select valid Party Name.
+- Select valid Party Location.
+- Select valid Processing Type.
+- Select valid Requested By.
+- LR Date can't be greater than Document Date.
+- Select Excise Challan Date .
+- Excise Challan Date can't be greater than Document Date.
+- Select valid Stock Nature From.
+- Select atleast one order Detail.
+- Select atleast one Item Code.
+- Item is not mapped with selected warehouse  in row n.
+- Quantity can't be empty or zero in row n.
+- Quantity can't be greater than <stock> in row n.
+- Stock Qty. should be equal to <quantity> in row n.
+- You have selected Lot Of Route. in row n.
+- Serial No. detail should be same as issued Quantity in row n.
+- Total Tag Qty. is not equal to total LOT Quantity.
+- Number of Lot can not be more than 255
+- All the items selected should be of Capital Nature only if any one is of Capital Nature.
+- Processing Type should be 2 Step if capital nature type item(s) selected.
+- Select atleast one Warehouse.
+- Select valid Item Code in row n.
+- Receipt Qty. can't be empty or zero in row n.
+- Rate  can't be empty in row n.
+- Amount  can't be empty in row n.
+- BIN No. is empty in row n . Do you want to continue ? (Yes /No)
+- select valid BIN No. in row n.
+- 'Make is not LInked with receipt Item '
+- Transfer Quantity can't be greater than PO Qty(With Tolerance) - <qty>
+- Sum of amount should be equal to issued Amount.
+- Please Select same Item as in Issued Detail
+- Duplicate Warehouse and Item Code is not allowed.
+- Qty can't be greater than stock Qty. <balance> in row n.
+- Quantity should equal to <quantity>
+- Quantity can't be greater than Stock Qty.
+- Qty. can't be empty or zero in row n.
+- Qty. is not equal to Total LOT Quantity in row n.
+- Qty. can't be greater than Balance Qty.
+- Default FB is not set against this.
+- Finance Book is not mapped.
+- Multiple Input or Output can not be selected
+- 'amount Difference in Issue <amount> and receiveing Detail '
+- Difference in Voucher and Lot -- ...
+- Not found in Lot
+- Not found in Voucher
+- Not found in Voucher 2nd
+- Document No. <number> saved successfully.
+- Scanning Failed.
+- Select Stock Transfer Type.
+- Select <Transfer To label>.
+- Select Source Document.
+- Select From Warehouse.
+- Select To Warehouse.
+manages:
+- stock-transfer
+uses_concepts:
+- accounting-voucher
+- company
+- inter-unit-stock-transfer
+- multi-item-opening
+- pack-slip
+- picking
+- service-order
+- service-order-amendment
+- single-item-opening
+method_notes:
+  CustomValidation: Validates the entry through ODTInvStockTransfer.ProcedureName.
+  Delete: Deletes the record through Inventory.IMSTDelete.
+  FillValues: Fills the lookup lists through Inventory.IMSTFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMSTFillValuesDependent.
+  FillValuesLotAsset: Fills the lookup lists through Inventory.IMSTFillValuesLotAsset.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  GetItemInfo: Runs through Inventory.IMSTGetItemInfo.
+  ItemLotDetail: Runs through Inventory.IMSTItemLotDetail.
+  LoadData: Loads the selected record through Inventory.IMSTLoadData.
+  LoadRepeatedEntry: Searches records through Inventory.IMSTSearchData.

@@ -1,0 +1,29 @@
+form: fFormExchangeRateSetting
+title: Form Exchange Rate Type
+module: ADM
+kind: transaction
+summary: The Form Exchange Rate Type screen defines, for each application form, which kinds of exchange rate the form may
+  use and which kind it uses by default.
+purpose: |
+  What it is: A configuration that links each form to the exchange rate types it supports and to one default type [fFormExchangeRateSetting.vb:218-245; GlobalData.SFERFillValues:23-48]. When it applies: When the organisation decides which rate kind (standard, buying, selling) a document type uses. Business outcome: Documents use the intended exchange rate kind consistently.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Form Detail Layout: One grid on a window captioned "Form Exchange Rate Type" [fFormExchangeRateSetting.Designer.vb:52; fFormExchangeRateSetting.vb:34].
+  - Form Detail Grid: A grid whose rows cannot be deleted and which has a filter row; the default filter operator is "Contains" [fFormExchangeRateSetting.vb:156-158].
+  - Module Column: A read-only text column (BR-08), 90 pixels wide [fFormExchangeRateSetting.vb:162-163].
+  - Form Column: A read-only text column, 140 pixels wide [fFormExchangeRateSetting.vb:165-166].
+  - Form Code Column: A read-only text column, 55 pixels wide [fFormExchangeRateSetting.vb:168-169].
+  - Standard Rate, Buying Rate and Selling Rate Columns: Three editable tick columns, widths 75, 60 and 60 pixels; the grid has a tick box on its header [fFormExchangeRateSetting.vb:171-174; fFormExchangeRateSetting.vb:11; fFormExchangeRateSetting.vb:43].
+  - Default Column: An editable drop-down of exchange rate types, 100 pixels wide [fFormExchangeRateSetting.vb:36; fFormExchangeRateSetting.vb:176].
+  - Form No. Column (hidden): A hidden numeric form key [fFormExchangeRateSetting.vb:178].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Standard actions whose code is empty [fFormExchangeRateSetting.vb:21-24; fFormExchangeRateSetting.vb:71-91; fFormExchangeRateSetting.vb:247-253].
+actions:
+  New: The toolbar action that asks the main window for a new record [fFormExchangeRateSetting.vb:62-69].
+  Save: The toolbar action that saves every listed form [fFormExchangeRateSetting.vb:184-216].
+validations:
+- Select valid Default in row N.
+manages:
+- form-exchange-rate-type
+method_notes:
+  FillValues: Fills the lookup lists through GlobalData.SFERFillValues.
+  SaveFormDetail: Saves the record through GlobalData.SFERSaveMain.

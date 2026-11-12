@@ -1,0 +1,68 @@
+form: fResourceReporting
+title: Service Order Resource Reporting Detail
+module: PM
+kind: transaction
+summary: The Service Order Resource Reporting Detail screen records the time that an individual resource (a technician, crew
+  or machine from the EAM resource master) worked against a Maintenance Service Order.
+purpose: |
+  What it is: A quick way to record resource time against a service order without opening the full report [fResourceReporting.vb:682-727]. When it applies: When resource work on an authorized or in-progress service order needs to be recorded (BR-01; BR-02). Business outcome: Resource time is available to the service order, to the amendment screen and to customer invoicing (BR-14).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single editable grid (window title "ResourceReporting") with no header fields [fResourceReporting.Designer.vb:20-34; fResourceReporting.Designer.vb:55].
+  - Customer Name Column: Drop-down of customers [fResourceReporting.vb:95].
+  - Customer Location Column: Drop-down of locations, filtered to the chosen customer when the cell is edited [fResourceReporting.vb:96; fResourceReporting.vb:574-576].
+  - Document No Column: Drop-down of service order numbers with the order date, filtered to the chosen customer [fResourceReporting.vb:98; fResourceReporting.vb:578-580].
+  - Document Date Column: The date of the chosen order; read-only [fResourceReporting.vb:610; fResourceReporting.vb:761].
+  - Resource Name Column: Drop-down of the resources planned on the chosen order, with code and rate unit [fResourceReporting.vb:99; fResourceReporting.vb:582-584].
+  - Rate Unit Column: Unit name (hours or days); read-only [fResourceReporting.vb:625-627].
+  - Task Description Column: Editable drop-down of earlier task descriptions; new text may be typed, up to 300 characters [fResourceReporting.vb:101; CustomerService.CSRRSave:12].
+  - Service Order Qty Column: The planned quantity of the resource on the order; read-only [fResourceReporting.vb:634-636].
+  - Qty Column: Quantity of the resource used, numeric with three decimals [fResourceReporting.vb:102].
+  - Start Time and End Time Columns: Date and time entries shown as day/month/year with hours and minutes and AM or PM [fResourceReporting.vb:639-640].
+  - Total Time Column: Calculated time, editable; whole days for daily resources, hh.mm for hourly resources, right aligned [fResourceReporting.vb:586-596; fResourceReporting.vb:619-621; fResourceReporting.vb:784-798].
+  - Remarks Column: Free text up to 500 characters [fResourceReporting.vb:622].
+  - Hidden Columns: Rate unit number, resource number, start date and end date, kept for calculations [fResourceReporting.vb:628-633].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fResourceReporting.vb:180-211].
+actions:
+  New: Asks the main window to open a fresh form [fResourceReporting.vb:144-150].
+  Save: Validates, asks for confirmation, then saves every filled row in one transaction [fResourceReporting.vb:647-681].
+  Search: Opens the shared search list of entries for the company and year, showing order number, start, end, resource, creator
+    and date [fResourceReporting.vb:153-176; CustomerService.CSRRSearchData:20-35].
+  Delete: Deletes the opened entry after confirmation [fResourceReporting.vb:49-73].
+validations:
+- Some data already exists at same Date.
+- Some Unauthorized Entry exists aganist same selected Document.
+- Select Customer Location in row <n>.
+- Select Document No.  in row <n>.
+- Select same Document No. in row <n>.
+- Select Resource Name in row <n>.
+- Select Task Description in row <n>.
+- Enter Qty in row <n>.
+- Qty cannot be greater than Service Order Qty in row<n>.
+- Start Time can't be empty or zero in row <n>.
+- End Time can't be empty or zero in row <n>.
+- Total Time can't be empty or zero in row <n>.
+- 'Invalid Time : minute should be less than 60.'
+- Total Time can't be greater or less than Start or End Time
+- Start Time <dd/MM/yyyy hh:mm tt> can't be OverLap.
+- End Time <dd/MM/yyyy hh:mm tt> can't be OverLap.
+- End Time can't less than Start Time.
+- Start Time can't less than Document Date.
+- End Time can't less than Document Date
+- Enter atleast one Resource Details.
+- Duplicate Document No. And Resource Name not allowed.
+- Saved successfully.
+manages:
+- service-order-resource-reporting-detail
+uses_concepts:
+- eam-resource-master
+- maintenance-service-order
+- maintenance-service-order-amendment
+- service-order-reporting
+method_notes:
+  Delete: Deletes the record through CustomerService.CSRRDelete.
+  FillValues: Fills the lookup lists through CustomerService.CSRRFillValues.
+  LoadData: Loads the selected record through CustomerService.CSRRLoadData.
+  Open: Searches records through CustomerService.CSRRSearchData.
+  SaveResourceDetail: Saves the record through CustomerService.CSRRSave.
+  ValidateForm: Validates the entry through CustomerService.CSRRValidate.

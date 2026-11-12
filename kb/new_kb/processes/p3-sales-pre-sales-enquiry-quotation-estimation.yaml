@@ -1,0 +1,30 @@
+key: p3-sales-pre-sales-enquiry-quotation-estimation
+name: 'Sales: Pre-sales (enquiry, quotation, estimation) (Phase 3)'
+module: SD
+status: active
+summary: Phase 3 screens of the pre-sales (enquiry, quotation, estimation) group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Pre-sales (enquiry, quotation, estimation)' (Sales). The steps follow the plan order, not a verified business sequence: Customer Enquiry, Enquiry Rejection, Quotation, Revised Quotation, Quotation Closing.
+steps:
+- order: 1
+  name: Record Customer Enquiry
+  form: fCustomerEnquiry
+- order: 2
+  name: Record Enquiry Rejection
+  form: fEnquiryRejection
+- order: 3
+  name: Record Quotation
+  form: fSalesQuotation
+- order: 4
+  name: Record Revised Quotation
+  form: fRevisedSalesQuotation
+- order: 5
+  name: Record Quotation Closing
+  form: fQuotationClosing
+concepts:
+- customer-enquiry
+- enquiry-rejection
+- quotation
+- revised-quotation
+- quotation-closing

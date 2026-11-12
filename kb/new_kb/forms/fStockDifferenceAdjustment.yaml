@@ -1,0 +1,45 @@
+form: fStockDifferenceAdjustment
+title: Stock Difference Adjustment
+module: FI
+kind: transaction
+summary: The Stock Difference Adjustment screen compares, for a Finance Book and a period, what the ledger holds against what
+  the stock records hold for each stock account, and posts a journal that removes the difference.
+purpose: |
+  What it is: A document that lists stock accounts whose ledger balance differs from the stock-record value, and corrects them through a journal [Finance.FSDAFillValuesDependent:229-268; Finance.FSDAFinancePosting:43-82]. When it applies: At period end, or whenever the ledger and the stock records are found to disagree. Business outcome: The ledger and the stock valuation agree; each correction is recorded with the amounts that caused it (BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared document control carrying Document Status, Finance Book, Document Date, Document No.
+  - From Date Field: Date picker labelled "From Date", disabled [fStockDifferenceAdjustment.Designer.vb:133; fStockDifferenceAdjustment.Designer.vb:148].
+  - Remarks Field: Text box labelled "Remarks", up to 1000 characters, optional [fStockDifferenceAdjustment.Designer.vb:168-173; fStockDifferenceAdjustment.vb:522].
+  - Adjustment Detail Grid: Tab "Adjustment Detail" with columns Select, Stock Account, Adjustment Amount, Type and Adjustment Account.
+  - Finance Posting Tab: Tab "Finance Posting" with the embedded posting control, hidden until the status is Authorized [fStockDifferenceAdjustment.Designer.vb:193-195; fStockDifferenceAdjustment.vb:774-785].
+actions:
+  New: Resets the form through the main window; also after Save and Delete [fStockDifferenceAdjustment.vb:170-177; fStockDifferenceAdjustment.vb:240-257].
+  Save: Validates, confirms and saves the document and, if authorized, its journal.
+  Search: Opens the common list of documents for the company and year [fStockDifferenceAdjustment.vb:179-204].
+  Delete: Deletes the open document and its journal.
+validations:
+- Select atleast one Stock Account.
+- Enter Stock Account in row N.
+- Adjustment Amount can't be empty or zero in row N.
+- Type can't be empty or zero in row N.
+- Select valid Adjustment Account in row N.
+- Authorized Stock Difference Adjustment can't be updated.
+- Document No. <number> saved successfully.
+- Finance Book is closed for this Document Date.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+manages:
+- stock-difference-adjustment
+uses_concepts:
+- accounting-voucher
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FSDADelete.
+  FillValues: Fills the lookup lists through Finance.FSDAFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSDAFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FSDALoadData.
+  Open: Searches records through Finance.FSDASearchData.
+  Save: Saves the record through Finance.FSDASave.
+  SaveAdjustmentDetail: Saves the record through Finance.FSDASaveStockDiffAdjustmentDetail.
+  ValidateForm: Validates the entry through Finance.FSDAValidate.

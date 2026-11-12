@@ -1,0 +1,43 @@
+form: fDriverInformation
+title: Driver Information
+module: MD
+kind: master
+summary: The Driver Information screen maintains the master list of drivers.
+purpose: |
+  What it is: A master record of each driver, with personal, employment and licence details [fDriverInformation.vb:324-422; masterdata.EMDISave:63-116]. When it applies: When a driver is engaged, or when licence, contact or salary details change. Business outcome: Documents that need a driver pick from one controlled list, and the same driver name or licence number cannot be entered twice for a company (BR-03; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Three group boxes: General Detail, License Detail and Other Detail [fDriverInformation.Designer.vb:314; fDriverInformation.Designer.vb:417; fDriverInformation.Designer.vb:429].
+  - Code Field: A read-only text box [fDriverInformation.Designer.vb:81-87].
+  - Employee Name Field: An optional drop-down of employees with Date Of Joining as a second column [fDriverInformation.vb:112].
+  - Driver Name Field: A mandatory text box, up to 50 characters, trimmed on save [fDriverInformation.vb:52; fDriverInformation.Designer.vb:104; fDriverInformation.vb:343].
+  - Address Fields (Address 1, 2, 3): Three optional text boxes, up to 100 characters each [fDriverInformation.Designer.vb:122; fDriverInformation.Designer.vb:140; fDriverInformation.Designer.vb:149].
+  - City, State and Country Fields: Three optional drop-downs [fDriverInformation.vb:108-111].
+  - Contact No. Field: An optional text box, up to 50 characters [fDriverInformation.Designer.vb:215].
+  - Date of Joining Field: A date picker in dd/MM/yyyy format [fDriverInformation.Designer.vb:238-246].
+  - Salary Field: A mandatory numeric text box with two decimals, up to 10 characters [fDriverInformation.vb:52; fDriverInformation.vb:104; fDriverInformation.Designer.vb:271].
+  - Inactive Field: A check box labelled "Inactive", disabled [fDriverInformation.Designer.vb:316-323].
+  - License Detail Group: License No.
+  - Other Detail Group: Aadhar No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fDriverInformation.vb:216-242].
+actions:
+  New: The toolbar action that starts a blank record [fDriverInformation.vb:179-189].
+  Save: Validates and saves the driver.
+  Search: Opens the shared search dialog filled with the company's drivers [fDriverInformation.vb:191-214].
+  Delete: Deletes the open driver.
+validations:
+- Enter Driver Name.
+- Enter Salary.
+- Duplicate Driver Information not allowed.
+- Duplicate Licenese No. not allowed.
+manages:
+- driver-information
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.EMDIDelete.
+  FillValues: Fills the lookup lists through masterdata.EMDIFillValues.
+  LoadData: Loads the selected record through masterdata.EMDILoadData.
+  Open: Searches records through masterdata.EMDISearchData.
+  Save: Saves the record through masterdata.EMDISave.
+  ValidateForm: Validates the entry through masterdata.EMDIValidate.

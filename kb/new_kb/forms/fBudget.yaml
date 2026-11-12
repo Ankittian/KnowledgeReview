@@ -1,0 +1,65 @@
+form: fBudget
+title: Budget
+module: MM
+kind: transaction
+summary: The Budget screen lets a company define a spending budget for a validity period.
+purpose: |
+  What it is: A register of approved spending limits per company, per validity period, split across divisions and departments, item sub groups and items, or cost centers. When it applies: When a financial year or period starts and the company fixes how much each division, item group or cost center may spend. Business outcome: Indents and purchase orders can be checked against a recorded limit instead of an unrecorded intention ([Inventory.MMPRBudgetValidation:45-56]; [Purchase.PMPOBudgetValidation:47-59]).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The upper area with the budget header fields, the three read-only totals and the Authorize box.
+  - Budget Code Field: Text box labelled "Budget &Code", maximum 30 characters, mandatory [fBudget.Designer.vb:295; fBudget.Designer.vb:307; fBudget.vb:25].
+  - Budget Entry Date Field: Date picker labelled "Budget Entry Da&te", mandatory [fBudget.Designer.vb:339; fBudget.vb:25].
+  - Budget Description Field: Text box labelled "Budget &Description", maximum 100 characters, mandatory [fBudget.Designer.vb:326; fBudget.Designer.vb:198].
+  - Budget Type Field: Dropdown labelled "Budget &Type", mandatory, showing Division, Item and Cost Center [fBudget.Designer.vb:225; fBudget.vb:80-85].
+  - Budget Validity From and To Fields: Two date pickers labelled "Budget Validity &From " and "Budget Validity &To", both mandatory [fBudget.Designer.vb:207; fBudget.Designer.vb:216; fBudget.vb:25].
+  - Budget Amount, Utilized Amount and Balance Amount Fields: Three read-only boxes labelled "Budget Amount", "Utilized Amount" and "Balance Amount" that are not tab stops [fBudget.Designer.vb:155-171; fBudget.Designer.vb:317-320].
+  - Authorize Field: Check box labelled "&Authorize" [fBudget.Designer.vb:117].
+  - Budget Grid: A two-level grid whose content depends on the Budget Type; the caption is hidden and the parent row expands to child rows [fBudget.vb:721-730].
+  - Grid Row Selection Behaviour: The first column "Select" of each band.
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty handlers [fBudget.vb:193-199; fBudget.vb:1188-1193].
+actions:
+  New: Toolbar New [fBudget.vb:20].
+  Save: Toolbar Save [fBudget.vb:21].
+  Search: Toolbar Open, which shows a search list [fBudget.vb:22; fBudget.vb:160-190].
+  Delete: Toolbar Delete [fBudget.vb:23].
+  Navigation: The Navigation option is enabled on the toolbar [fBudget.vb:24].
+validations:
+- Can't be deleted as some record exist against this entry.
+- Document No. <Budget Code>  saved successfully.
+- Authorized entry can't be updated.
+- Authorized Entry can't be updated.
+- Enter Budget Code.
+- Budget Entry Date must be in Financial Year.
+- Enter Budget Description.
+- Select valid Budget Type.
+- Budget Validity To can't be equal to or less than Budget Validity From.
+- Duplicate Budget Code is not allowed.
+- Budget Validity From Date overlap with existing Budget.
+- Budget Validity To Date overlap with existing Budget.
+- Select atleast one Divison Name.
+- Select atleast one Department Name.
+- Select atleast one Item SubGroup.
+- Select atleast one Item.
+- Select atleast one Cost Center.
+- Enter Budget Amount in row
+- 'Utilized Amount can''t be greater than Budget Amount in row '
+- '... greater then Budget Amount in row '
+- 'Utilized Qty can''t be greater than Quantity in row '
+- Department's total Budget Amount can't be greater then Division Budget Amount.
+- Department's total Utilized Amount can't be greater then Division Utilized Amount.
+- Child Cost Center total Budget Amount can't be greater than Parent Cost Center Budget Amount.
+- Child Cost Center total utilized Amount can't be greater than Parent Cost Center utilized Amount.
+manages:
+- budget
+method_notes:
+  Delete: Deletes the record through Inventory.ADBCDelete.
+  FillValues: Fills the lookup lists through Inventory.ADBCFillValues.
+  LoadData: Loads the selected record through Inventory.ADBCLoadData.
+  Open: Searches records through Inventory.ADBCSearchData.
+  Save: Saves the record through Inventory.ADBCSave.
+  SaveBudgetDeptDetail: Saves the record through Inventory.ADBCSaveBudgetDeptDetail.
+  SaveBudgetDivisionDetail: Saves the record through Inventory.ADBCSaveBudgetDivisionDetail.
+  SaveBudgetItemDetail: Saves the record through Inventory.ADBCSaveBudgetItemDetail.
+  SaveCostCenterDetail: Saves the record through Inventory.ADBCSaveCostCenterDetail.
+  ValidateForm: Validates the entry through Inventory.ADBCValidate.

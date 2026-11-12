@@ -1,0 +1,48 @@
+form: fSalesPerson
+title: Sales Person
+module: MD
+kind: master
+summary: The Sales Person screen (window caption "SalesPerson") maintains the people who are credited with sales activity.
+purpose: |
+  What it is: The enterprise list of sales persons, each tied to a sales group, with contact details for non-employees. When it applies: When a new employee or outside agent starts handling sales, or when a person's group or details change. Business outcome: Sales documents and reports can attribute business to a named person and group (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A main group with Code, Sales Person Type, Name, Sales Group, Sales Person Name and Inactive, and a "Detail" group with address and contact fields.
+  - Code Field: Read-only text box.
+  - Sales Person Type Field: Option set with Employee and Other; no default after New (BR-01).
+  - Name Field: Mandatory combo (marked mandatory on open).
+  - Sales Group Field: Mandatory dropdown of authorised sales groups (BR-04).
+  - Sales Person Name Field: Mandatory text box, up to 100 characters (BR-05).
+  - Inactive Field: Checkbox, disabled in design.
+  - Address Fields: Three optional text lines under Address, up to 100 characters each.
+  - City, State and Country Fields: Optional dropdowns (BR-03).
+  - Contact No., Email and Designation Fields: Optional text boxes, up to 50, 300 and 100 characters.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in the screen's code but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the sales person.
+  Search: Standard search window with Code, Sales Person Type, Sales Person Name, Sales Group, Inactive, Created By, Created
+    Date, sorted by name.
+  Delete: Deletes the loaded sales person after confirmation (MSG-10).
+  Navigation: First, Previous, Next, Last are not coded on this screen; any navigation is provided by the standard toolbar
+    (Inferred).
+validations:
+- Select valid Sales Person Type.
+- Select valid Name.
+- Enter Name.
+- Select valid Sales Group.
+- Enter Sales Person Name.
+- Duplicate Sales Person Name not allowed.
+manages:
+- sales-person
+uses_concepts:
+- company
+- sales-group
+method_notes:
+  Delete: Deletes the record through masterdata.MDSPDelete.
+  FillValues: Fills the lookup lists through masterdata.MDSPFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.MDSPFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.MDSPLoadData.
+  Open: Searches records through masterdata.MDSPSearchData.
+  Save: Saves the record through masterdata.MDSPSave.
+  ValidateForm: Validates the entry through masterdata.MDSPValidate.

@@ -1,0 +1,68 @@
+form: fMaintenanceServiceOrderAmendment
+title: Maintenance Service Order Amendment
+module: PM
+kind: transaction
+summary: The Maintenance Service Order Amendment screen lets a user revise the service, item (parts) and resource lines of
+  a Maintenance Service Order after the order has been authorized.
+purpose: |
+  What it is: A way to change the services, parts and resources of an order that is already in force, without reopening the order document [fMaintenanceServiceOrderAmendment.vb:1204-1290]. When it applies: When scope, quantity or price changes after authorization, for example more parts are needed or an extra resource is engaged. Business outcome: The order total stays correct and work already reported or invoiced cannot be undone by the amendment (BR-04; BR-05; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel with the selected order's details above three tabs: Service Detail, Item Detail and Resource Detail [fMaintenanceServiceOrderAmendment.designer.vb:212-220].
+  - Service Order No. Field: The only mandatory field: a drop-down of orders showing Service Order No and Service Order Date [fMaintenanceServiceOrderAmendment.vb:197; fMaintenanceServiceOrderAmendment.vb:287].
+  - Service Order Date Field: Read-only display of the order date [fMaintenanceServiceOrderAmendment.designer.vb:239; fMaintenanceServiceOrderAmendment.vb:2044].
+  - Read-only Header Fields: Customer Name, Location, Order Type, Service Order Category, Source Document, Ref.
+  - Estimated Start Date and Estimated End Date Fields: Date fields that are disabled and filled from the order [fMaintenanceServiceOrderAmendment.designer.vb:663; fMaintenanceServiceOrderAmendment.designer.vb:684; fMaintenanceServiceOrderAmendment.vb:2040-2041].
+  - Remarks Field: Text box of up to 1000 characters filled from the order; the designer does not make it read-only [fMaintenanceServiceOrderAmendment.designer.vb:706; fMaintenanceServiceOrderAmendment.vb:2043].
+  - Service Detail Grid: Same columns as the order screen's Service Detail grid [fMaintenanceServiceOrderAmendment.vb:958-1018].
+  - Item Detail Grid: Same columns as the order's parts grid [fMaintenanceServiceOrderAmendment.vb:1049-1091].
+  - Resource Detail Grid: Same columns as the order's resource grid [fMaintenanceServiceOrderAmendment.vb:1138-1174].
+  - Other Toolbar Actions (Open, Delete, Print, Preview, Export, Email): Open, Delete, Print, Preview, Export and Mail are disabled while the form is open; their handlers are empty, and LoadData does nothing [fMaintenanceServiceOrderAmendment.vb:317-329; fMaintenanceServiceOrderAmendment.vb:205-213; fMaintenanceServiceOrderAmendment.vb:342-350; fMaintenanceServiceOrderAmendment.vb:364-372].
+actions:
+  New: Starts a blank amendment through the main window [fMaintenanceServiceOrderAmendment.vb:352-362].
+  Save: Validates and stores the revised lines.
+validations:
+- Select valid service order.
+- Select valid Subcontract Location in row <n>.
+- Select valid Pricing S No in row <n>.
+- Select valid rate type in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Quantity can't be greater than Bal Qty. in row <n>.
+- Quantity can't be less than <reported quantity> in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Amount can't be empty or zero in row <n>.
+- Amount can't be greater than Bal Amount in row <n>.
+- Amount can't be less than <invoiced amount> in row <n>.
+- Select atleast one Service Detail.
+- Select valid rate unit in row <n>.
+- Estimated Time Required can't be empty or zero in row <n>.
+- 'Invalid Time : minute should be less than 60.'
+- 'Invalid Time : only numeric value is allowed.'
+- Unable to delete reporting/invoice exists for selected service(s).
+- Unable to delete reporting/invoice exists for selected resource(s).
+- 'Quantity can not be less than Issued Quantity for '
+- Duplicate Service Description is not allowed for same pricing s no.
+- Duplicate Item Description,Make is not allowed.
+- Duplicate Resource Name is not allowed.
+manages:
+- maintenance-service-order-amendment
+uses_concepts:
+- company
+- customer-service-invoice
+- eam-resource-master
+- equipment-master
+- maintenance-service-order
+- service-call
+- service-contract
+- service-order-reporting
+- service-order-resource-reporting-detail
+method_notes:
+  FillGrid: Runs through CustomerService.CMSOFillGrid.
+  FillValues: Fills the lookup lists through CustomerService.CMSOFillValues.
+  GetInvoiceReportingDetail: Runs through CustomerService.CMSAGetInvoiceReportingDetail.
+  LoadCustomerLocation: Runs through GlobalData.VendorLocationSelect.
+  Save: Saves the record through CustomerService.CMSASave, CustomerService.CMSOAuthorize.
+  SavePartsList: Saves the record through CustomerService.CMSOSavePartsList.
+  SaveResourceDetail: Saves the record through CustomerService.CMSOSaveResourceDetail.
+  SaveServiceDetail: Saves the record through CustomerService.CMSOSaveServiceDetail.
+  ucmbServiceOrder_ValueChanged: Loads the selected record through CustomerService.CMSOFillValuesDependent, CustomerService.CMSOLoadData.

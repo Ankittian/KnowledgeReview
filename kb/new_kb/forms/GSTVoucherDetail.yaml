@@ -1,0 +1,21 @@
+usercontrol: GSTVoucherDetail
+title: GST voucher detail control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded GST section and tax rule detail of a bill.
+purpose: |
+  Determines the GST return section and tax rule of the bill lines and saves the GST detail (GSTVoucherDetailGetSection / TaxRule / VoucherGSTDetailSave).
+functional_description: |
+  Embedded in: fBillEntryEROS, fCommissionBill, fDrCrNote, fFreightInvoice, fGSTAdvanceAdjustment, fGSTAdvanceReceipt, fGeneralPIReceipt, fOutwardBillEntry, fServiceBill, fSundryPayment, fSundryReceipt, fSupplementaryInvoice, fVTPLDrCrNote.
+  On-screen fields: GST Tax Rule.
+uses_concepts:
+- hsn-sac-code
+method_notes:
+  Delete: Deletes the record through Finance.GSTVoucherDetailDelete.
+  FillValues: Fills the lookup lists through Finance.GSTVoucherDetailFillValues.
+  LoadData: Loads the selected record through Finance.GSTVoucherDetailLoadData.
+  Save: Saves the record through Finance.VoucherGSTDetailItemWiseSave, Finance.VoucherGSTDetailSave.
+  SetSummary: Runs through Finance.GSTVoucherDetailGetSection, Finance.GSTVoucherDetailTaxRule.
+  ucmbGSTTaxRule_ValueChanged: Fills the lookup lists through Finance.GSTVoucherDetailFillValuesDependent.

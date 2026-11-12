@@ -1,0 +1,82 @@
+form: fWorkLog
+title: WorkLog
+module: PM
+kind: transaction
+summary: The WorkLog screen is the maintenance shift diary.
+purpose: |
+  What it is: A numbered document that records maintenance activity of a shift: logged events, task plan, resources, items, involved employees, comments and costing [fWorkLog.vb:1074-1207]. When it applies: For each shift or day of maintenance work. Business outcome: A traceable maintenance diary per equipment and shift, and a ready list of follow-up tasks with the spare items they need (BR-03 to BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "WorkLog" with the document control, a General Details group, an equipment group (equipment log only) and a tab control [fWorkLog.Designer.vb:840; fWorkLog.Designer.vb:772-790].
+  - Document Control: The shared control with number, date, status, division and a repeat-entry button [fWorkLog.vb:167; fWorkLog.vb:60].
+  - Work Log Category, Status and Responsible Person Fields: Mandatory dropdowns "Work Log Category" and "Status", and mandatory "Responsible Person" which can be typed (up to 100 characters) [fWorkLog.vb:59; fWorkLog.Designer.vb:624; fWorkLog.Designer.vb:746; fWorkLog.Designer.vb:685; fWorkLog.Designer.vb:672].
+  - Log Type Field: Mandatory dropdown "Log Type", defaulting to the default type on a new document [fWorkLog.Designer.vb:825; fWorkLog.vb:212-215; fWorkLog.vb:227].
+  - Shift, Shift Incharge and Employee Name Fields: Dropdown "Shift", editable dropdown "Shift Incharge" (up to 100 characters) and dropdown "Employee Name" [fWorkLog.Designer.vb:643; fWorkLog.Designer.vb:664; fWorkLog.Designer.vb:651; fWorkLog.Designer.vb:726].
+  - Equipment Log Grid: Columns S.No., Reference Object (Equipment or Location), Equipment/Location, Entry Time and Log Description (up to 1000 characters, edited in a pop-up) [fWorkLog.vb:2195-2226; EAM.EAWLFillValues:251-293].
+  - Daily Task Tab: A Maintenance Category dropdown and a grid with Reference Object, Equipment/Location, Task Name, Spent Time (In Hrs), Description (up to 1000 characters, edited in a pop-up) and Status [fWorkLog.Designer.vb:254; fWorkLog.vb:2388-2416].
+  - Task Detail Tab: A tree grid with Task Id, Task Name (chosen or typed, up to 300 characters), Code, Execute On, Subcontract, Assign To, Estimated Duration(Hr), Work Center, Cost Center, S.No.
+  - Resource Detail Tab: A grid with Task Id, Task Name, Resource Name, Code, Quantity (three decimals) and Estimated Duration(Hr) [fWorkLog.vb:987-1011; fWorkLog.vb:147-148].
+  - Item Detail Tab: A grid with Task Id, Task Name, Item Code, Item Description, Make, Technical Grade, Unit, Replacement On, Is Replacement, Quantity (three decimals) and a button to pick several items at once [fWorkLog.vb:1038-1073; fWorkLog.vb:65-85; fWorkLog.vb:150].
+  - Employee Involved Tab: A grid with Emp Code, Emp Name, Designation and Mobile No; choosing a code or a name fills the other [fWorkLog.vb:2264-2297; fWorkLog.vb:2319-2326].
+  - Comments Tab: Four fixed lines (Technical, Project Manager, Store, Fleet) with a Comment edited in a pop-up (up to 1000 characters) [EAM.EAWLFillValues:313-318; fWorkLog.vb:2298-2317; fWorkLog.Designer.vb:393].
+  - Costing Detail Tab: Boxes Total Repair Cost and Recovery Amount and Company Liability (two decimals) and Days Required To Resolve (whole number) [fWorkLog.vb:155-158].
+actions:
+  New: Starts a fresh document [fWorkLog.vb:338-345; fWorkLog.vb:408-424].
+  Save: Validates, then saves header, the log grid for the chosen type, tasks, resources, items, employees and comments in
+    one transaction [fWorkLog.vb:1074-1207].
+  Search: Opens the standard search window for the current company and year, limited to the user's divisions [fWorkLog.vb:347-372;
+    EAM.EAWLSearchData:19-43; EAM.EAWLSearchData:75-103].
+  Delete: Deletes the open document after the standard confirmation [fWorkLog.vb:88-118].
+validations:
+- Select valid Work Log Category.
+- Select valid Status.
+- Select valid Shift Incharge.
+- Select valid Responsible Person.
+- Select valid Log Type.
+- Select atleast one Object Name. .
+- Select valid entry time in row<n>.
+- Enter Log Description in row<n>.
+- Enter Equipment/Location in row <n>.
+- Enter Task Name in row <n>.
+- Select Execute On in row <n>.
+- Select Work Center in row <n>.
+- Resource Name can't be empty or zero in row<n>.
+- Quantity can't be empty or zero in row<n>.
+- Estimated Duration can't be empty or zero in row<n>.
+- Select Item Code in row <n>.
+- Select Replacement On On in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- 'Invalid Time : minute should be less than 60.'
+- Duplicate Item Description not allowed for same Task Id.
+- Duplicate Resource Name not allowed for same Task Id.
+- Child row exists,so can't delete this entry.
+- Enter log description.
+- Enter Comment.
+- Enter description.
+- Authorized WorkLog can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+- Tasks couldnot not be deleted if used in Resource or Item.
+- Estimated Duration can't be empty or zero in row <n>.
+manages:
+- worklog
+uses_concepts:
+- company
+- eam-resource-master
+- equipment-master
+- functional-location
+- maintenance-category-task
+- work-center
+- work-log-category
+method_notes:
+  Delete: Deletes the record through EAM.EAWLDelete.
+  FillValues: Fills the lookup lists through EAM.EAWLFillValues.
+  LoadData: Loads the selected record through EAM.EAWLLoadData.
+  Open: Searches records through EAM.EAWLSearchData.
+  Save: Saves the record through EAM.EAWLSave.
+  SaveComments: Saves the record through EAM.EAWLSaveComment.
+  SaveDailyLogDetail: Saves the record through EAM.EAWLSaveDailyLog.
+  SaveEmployeeInvolved: Saves the record through EAM.EAWLSaveEmployeeInvolved.
+  SaveEquipmentDetail: Saves the record through EAM.EAWLSaveEquipmentDetail.
+  SaveItemDetail: Saves the record through EAM.EAWLSaveItemDetail.

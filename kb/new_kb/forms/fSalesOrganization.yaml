@@ -1,0 +1,46 @@
+form: fSalesOrganization
+title: Sales Organization
+module: MD
+kind: master
+summary: The Sales Organization screen maintains the sales organisations of the group and assigns to each the companies, or
+  company divisions, that it covers.
+purpose: |
+  What it is: The top-level sales structure of the group, linking each sales unit to the companies or divisions it sells for. When it applies: When a new sales unit is formed or the company/division coverage changes. Business outcome: Sales documents and reports can be grouped and controlled by sales organisation (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and a company/division grid.
+  - Code Field: Read-only text box, 6 characters.
+  - Sales Oraganization Field: Mandatory text box, up to 50 characters; label spelt "Sales Oraganization" (BR-01).
+  - Inactive Field: Checkbox.
+  - Division Detail Grid: Columns Select (checkbox, default unticked), Company Name and Division Name (read-only); company and division identifiers hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the organisation and its coverage.
+  Search: Standard search list with Code, Sales Oraganization, Inactive, Created By, Created Date.
+  Delete: Deletes the loaded organisation after confirmation (MSG-08).
+validations:
+- Enter Sales Oraganization.
+- Duplicate Sales Organization Name not allowed.
+- Select atleast one row.
+- Do you want to save ?
+- Data saved successfully.
+- Some entry exists againts this Sales Organization so can't update.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- sales-organization
+uses_concepts:
+- company
+- sales-agreement
+- sales-order
+- sales-order-amendment
+method_notes:
+  Delete: Deletes the record through masterdata.MDSODelete.
+  FillValues: Fills the lookup lists through masterdata.MDSOFillValues.
+  LoadData: Loads the selected record through masterdata.MDSOLoadData.
+  Open: Searches records through masterdata.MDSOSearchData.
+  Save: Saves the record through masterdata.MDSOSave.
+  SaveDivisionDetail: Saves the record through masterdata.MDSOSaveDivisionDetail.
+  ValidateGeneralDetail: Validates the entry through masterdata.MDSOValidate.

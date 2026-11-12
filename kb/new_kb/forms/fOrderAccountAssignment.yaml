@@ -1,0 +1,29 @@
+form: fOrderAccountAssignment
+title: Order Account Assignment
+module: FI
+kind: transaction
+summary: The Order Account Assignment screen lets Finance review and change the ledger accounts that an existing order will
+  use when it is later invoiced, received or booked.
+purpose: |
+  What it is: A per-order list of accounts for each accounting purpose of the order [Finance.FOAMFillValuesOrderNo:34-295; Finance.FOAMSaveOrderDetail:26-157]. When it applies: When the proposed accounts of an order must be corrected after the order exists. Business outcome: Later postings for the order use the corrected accounts (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: Four header fields (Order Type, Order No., Order Date, Finance Book) above the assignment grid [fOrderAccountAssignment.Designer.vb:56; fOrderAccountAssignment.Designer.vb:75; fOrderAccountAssignment.Designer.vb:94; fOrderAccountAssignment.Designer.vb:115].
+  - Order Type Field: Mandatory dropdown "Order Type" [fOrderAccountAssignment.vb:14; fOrderAccountAssignment.vb:46].
+  - Order No. Field: Mandatory dropdown "Order No." showing the order number and date [fOrderAccountAssignment.vb:14; fOrderAccountAssignment.vb:294].
+  - Order Date Field: Read-only text "Order Date" [fOrderAccountAssignment.Designer.vb:82].
+  - Finance Book Field: Read-only dropdown, captioned "Profit Center" when the company treats finance books as profit centers, otherwise "Finance Book" [fOrderAccountAssignment.vb:21-25; fOrderAccountAssignment.Designer.vb:103].
+  - Account Assignment Grid: Columns Account Type, Particular (both read-only) and Account Name (a dropdown showing Account Name and Account Group); hidden keys AccountTypeNo, Id and Flag; for orders other than types 1 to 3 an "Editable" and "ARDNo" column also appear [fOrderAccountAssignment.vb:178-206; Finance.FOAMFillValues:19-25].
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email, Navigation): Only New and Save are enabled on the toolbar; the other handlers do nothing [fOrderAccountAssignment.vb:16-19; fOrderAccountAssignment.vb:31-33; fOrderAccountAssignment.vb:59-61; fOrderAccountAssignment.vb:72-109].
+actions:
+  New: Resets the screen through the main window [fOrderAccountAssignment.vb:63-70; fOrderAccountAssignment.vb:110-116].
+  Save: Validates and saves in one transaction [fOrderAccountAssignment.vb:213-237].
+validations:
+- Select valid Order Type.
+- Select valid Order No.
+manages:
+- order-account-assignment
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FOAMFillValues.
+  FillValuesOrderNo: Fills the lookup lists through Finance.FOAMFillValuesOrderNo.
+  FillValuesOrderType: Fills the lookup lists through Finance.FOAMFillValuesOrderType.

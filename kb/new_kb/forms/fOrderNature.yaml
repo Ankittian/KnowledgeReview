@@ -1,0 +1,43 @@
+form: fOrderNature
+title: Order Nature
+module: MD
+kind: master
+summary: The Order Nature screen (window caption "OrderNature") maintains the natures used to classify sales orders and bills
+  of material in the VTPL production area.
+purpose: |
+  What it is: A group-wide list of order natures with type, BOM label prefixes and activity contractor defaults. When it applies: When a new category of order is introduced or its prefixes or contractor defaults change. Business outcome: Orders and BOMs are classified consistently and drive numbering prefixes and contractor assignment (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general detail group box, a prefix grid group box and a hidden activity contractor group box.
+  - Code Field: Read-only text box.
+  - Order Nature Field: Mandatory text box, up to 50 characters (BR-01, BR-02).
+  - Order Type Field: Option set TLT / Non-TLT, default TLT (BR-03).
+  - Railway Field: Checkbox, hidden by default.
+  - Prefix Detail Grid: Columns Select, BOM Label (read-only), Prefix (max 2); rows cannot be deleted.
+  - Activity Contractor Setup Grid: Columns: unlabelled select box, Alias, Activity Name, Code, Sequence No., Assignment Setup, Base Activity, Contractor Name (dropdowns for the last three); activity identifier hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the nature and rewrites prefixes and activity setup.
+  Search: Standard search with Code, Order Nature, Is TLT, Inactive, Created By, Created Date, sorted by name.
+  Delete: Deletes the loaded nature after confirmation (MSG-07).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Enter Order Nature.
+- Duplicate order nature not allowed.
+- Enter valid prefix in row n.
+manages:
+- order-nature
+uses_concepts:
+- company
+- sales-order
+- sales-order-amendment
+method_notes:
+  Delete: Deletes the record through masterdata.MDONDelete.
+  FillValues: Fills the lookup lists through masterdata.MDONFillValues.
+  LoadData: Loads the selected record through masterdata.MDONLoadData.
+  Open: Searches records through masterdata.MDONSearchData.
+  Save: Saves the record through masterdata.MDONSave.
+  SaveActivityContractorSetupDetail: Saves the record through masterdata.MDONSaveActivityContractorSetup.
+  SavePrefixDetail: Saves the record through masterdata.MDONSavePrefixDetail.
+  ValidateForm: Validates the entry through masterdata.MDONValidate.

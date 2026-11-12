@@ -1,0 +1,63 @@
+form: fQuotationClosing
+title: Quotation Closing
+module: SD
+kind: transaction
+summary: The Quotation Closing screen records the closure of an authorized sales quotation that will not turn into an order.
+purpose: |
+  What it is: A formal, approvable record that a quotation, or some of its items, is closed as not converted, with reasons and competitor intelligence. When it applies: When the customer informs that the order went elsewhere, or the quotation has lapsed (Inferred examples). Business outcome: The open-quotation pipeline stays accurate, and the business learns why it lost and to whom.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Strip: Shared control for Document No.
+  - General Detail and Competitor Detail Tabs: Two tabs, "General Detail" and "Competitor Detail" [fQuotationClosing.Designer.vb:354-359].
+  - Quotation No. Field and Search Button: Mandatory dropdown "&Quotation No." with a "..." button that opens a search over the same list (quotation number and date, customer, customer location, enquiry number and date) [fQuotationClosing.vb:997-1036].
+  - Quotation Date, Customer Name, Location, Enquiry No. and Enquiry Date Fields: Read-only text boxes [fQuotationClosing.Designer.vb:171-259].
+  - Closing Reason Field: Dropdown "&Closing Reason".
+  - Remark Field: Optional text "Remar&k", up to 1000 characters [fQuotationClosing.vb:60].
+  - Notes Control: Print-area notes with a Default flag.
+  - Item Detail Grid: Columns Select (with a select-all header checkbox), Item Code, Item Description, Unit, Make, Tech.
+  - Tech. Specification Pop-up: A read-only text display (1000) with Ok and Cancel [fQuotationClosing.Designer.vb:424-448].
+  - Competitor Details Pop-up: An item-level competitor grid (Party Name 100, Location 200, Quoted Amount, Delivery Period, Remark 500) with Ok and Cancel [fQuotationClosing.vb:492-516].
+  - Competitor Detail Grid: Document-level grid: Party Name and Location (lists of earlier entries, free entry), Quoted Amount (2 decimals), Delivery Period (whole number), Remark (500) [fQuotationClosing.vb:402-423].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fQuotationClosing.vb:236-251] [fQuotationClosing.vb:989-995].
+actions:
+  New: Standard New, handled by the main window [fQuotationClosing.vb:200-207].
+  Save: Validates and saves the closing and its details in one transaction [fQuotationClosing.vb:518-611].
+  Search: Opens the standard search with the company's closings of the current financial year [fQuotationClosing.vb:209-234].
+  Delete: Deletes the loaded closing after confirmation [fQuotationClosing.vb:22-47].
+validations:
+- Do you want to save ?
+- Document No. {number} saved successfully.
+- Authorized Quotation Closing can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Document Status.
+- Select valid {Division label}.
+- Enter Document No.
+- Select valid Document No. or create new Document No.
+- Enter Document No. or select valid Document No.
+- Document Date should be between Financial Start and End Date.
+- Select valid Quotation No.
+- Select atleast one Item.
+- Select/Enter valid Closing Reason in row {n}.
+- Select valid Location in row {n}.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- quotation-closing
+uses_concepts:
+- company
+- customer-enquiry
+- quotation
+- revised-quotation
+method_notes:
+  Delete: Deletes the record through Sales.SDQCDelete.
+  FillValues: Fills the lookup lists through Sales.SDQCFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDQCFillValuesDependent.
+  LoadData: Loads the selected record through Sales.SDQCLoadData.
+  Open: Searches records through Sales.SDQCSearchData.
+  Save: Saves the record through Sales.SDQCSave.
+  SaveCompetitorDetail: Saves the record through Sales.SDQCSaveCompetitorDetail.
+  SaveItemCompetitorDetail: Saves the record through Sales.SDQCSaveItemCompetitorDetail.
+  SaveItemDetail: Saves the record through Sales.SDQCSaveItemDetail.
+  SaveNotesDetail: Saves the record through Sales.SDQCSaveNotesDetail.

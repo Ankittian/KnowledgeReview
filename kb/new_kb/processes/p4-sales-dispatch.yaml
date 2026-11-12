@@ -1,0 +1,30 @@
+key: p4-sales-dispatch
+name: 'Sales: Dispatch (Phase 4)'
+module: SD
+status: active
+summary: Phase 4 screens of the dispatch group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Dispatch' (Sales). The steps follow the plan order, not a verified business sequence: Dispatch Planning, Dispatch Advice, Picking, Pack Slip, Receipt Acknowledgement.
+steps:
+- order: 1
+  name: Record Dispatch Planning
+  form: fDispatchPlanning
+- order: 2
+  name: Record Dispatch Advice
+  form: fDispatchAdvise
+- order: 3
+  name: Record Picking
+  form: fPicking
+- order: 4
+  name: Record Pack Slip
+  form: fPackSlip
+- order: 5
+  name: Record Receipt Acknowledgement
+  form: fReceiptAcknowledgement
+concepts:
+- dispatch-planning
+- dispatch-advice
+- picking
+- pack-slip
+- receipt-acknowledgement

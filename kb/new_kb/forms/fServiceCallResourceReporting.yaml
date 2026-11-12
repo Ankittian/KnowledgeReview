@@ -1,0 +1,45 @@
+form: fServiceCallResourceReporting
+title: Service Call Resource Reporting
+module: PM
+kind: transaction
+summary: The Service Call Resource Reporting screen lets a service resource record the time spent on a service call.
+purpose: |
+  What it is: A time log record that ties one resource, one service call, one date and a duration together with a remark [fServiceCallResourceReporting.vb:323-333; CustomerService.ESCRSave:29-55]. When it applies: After a resource has worked on a service call and needs to report the effort. Business outcome: Effort per call and per resource is captured for follow-up and costing (Inferred); entries cannot be made against calls in other statuses (BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Layout: A single group of fields stacked in this order: Call Log ID, Resource Name, Service Call Id, Entry Date, Duration, Remark [fServiceCallResourceReporting.Designer.vb:55-151].
+  - Call Log ID Field: A read-only text box, disabled [fServiceCallResourceReporting.Designer.vb:46].
+  - Resource Name Field: A mandatory drop-down [fServiceCallResourceReporting.vb:34].
+  - Service Call Id Field: A mandatory drop-down with columns Service Call Id, Service Call Date, Service Call Time, Subject, Equipment, Item Description, Serial No, Assign To and Status [fServiceCallResourceReporting.vb:34; fServiceCallResourceReporting.vb:88].
+  - Entry Date Field: A mandatory date picker showing dd/MM/yyyy [fServiceCallResourceReporting.Designer.vb:101-103].
+  - Duration Field: A mandatory decimal text box with two decimals [fServiceCallResourceReporting.vb:80; fServiceCallResourceReporting.vb:84].
+  - Remark Field: A mandatory text box of up to 500 characters [fServiceCallResourceReporting.vb:81].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Print, Preview, Export and Email are empty [fServiceCallResourceReporting.vb:175-207].
+actions:
+  New: Asks the main window to open a new blank entry [fServiceCallResourceReporting.vb:140-147].
+  Save: Validates, asks for save confirmation and saves in one transaction [fServiceCallResourceReporting.vb:313-360].
+  Search: Opens the search list of entries and loads the chosen one [fServiceCallResourceReporting.vb:149-173].
+  Delete: Deletes the loaded entry after confirmation [fServiceCallResourceReporting.vb:40-67].
+validations:
+- Select valid Resource Name.
+- Select valid Service Call Id.
+- Entry date can not be less than service call Date.
+- Duration can not be empty or zero.
+- Duration can not be more than 24 Hr.
+- Duration should be in correct formate of HH.MM.
+- Enter Remark.
+- Entry already exists for selected Resource + Service Call + Entry Date.
+- Entry Saved successfully.
+manages:
+- service-call-resource-reporting
+uses_concepts:
+- eam-resource-master
+- equipment-master
+- service-call
+method_notes:
+  Delete: Deletes the record through CustomerService.ESCRDelete.
+  FillValues: Fills the lookup lists through CustomerService.ESCRFillValues.
+  LoadData: Loads the selected record through CustomerService.ESCRLoadData.
+  Open: Searches records through CustomerService.ESCRSearchData.
+  Save: Saves the record through CustomerService.ESCRSave.
+  ValidateForm: Validates the entry through CustomerService.ESCRValidate.

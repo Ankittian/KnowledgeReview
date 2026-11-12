@@ -1,0 +1,73 @@
+form: fTyreRepairEntry
+title: Tyre Repair Entry
+module: PM
+kind: transaction
+summary: 'The Tyre Repair Entry screen records the outcome of repair and retread work on tyres: for each tyre it captures
+  the repair status reached (repair completed, retread completed, rejected and so on), the tread depth and kilometres at that
+  time, the repair cost, who the work is assigned to and, for retreads, the new tread depth, threshold and expected life.'
+purpose: |
+  What it is: A transaction document that records the result and cost of repair or retread work per tyre and moves each tyre to its resulting status [fTyreRepairEntry.vb:736-831; EAM.TTRESaveTyreRepairEntryDetail:34-73]. When it applies: When tyres come back from repair or retread, or are rejected. Business outcome: Tyre condition, life stage, cost and next status are updated through one controlled document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control, the header fields Source Document, Repair Request No., Repair Request Date, Repair Category, Supplier Name, Supplier Location and Remarks, and a tab control with the tabs "Repair Detail" and "Custom Field" [fTyreRepairEntry.Designer.vb:253-412].
+  - Document Control Fields: The shared document control with Document Status, Division, Document Date and Document No.
+  - Source Document and Repair Request Fields: Source Document and Repair Category are compulsory; Repair Request No.
+  - Supplier Name and Location: Two lists; picking a supplier loads its locations and selects the first one [fTyreRepairEntry.vb:983-998].
+  - Remarks Field: An optional text box up to 500 characters [fTyreRepairEntry.vb:100; fTyreRepairEntry.vb:697-701].
+  - Repair Detail Grid: A grid with a tick box (Select, shown only for request-based entries), Entry Type, Vehicle, Current Position, Tyre Serial No, a selection button, Current Status (read-only), Repair Status, Current NSD, Current KM, Current HRS, Repair Cost, Retread Detail (an edit button), Assign To and Remarks; New NSD, Threshold NSD and the expected life columns are hidden and filled through the pop-up [EAM.TTREF
+  - Retread Detail Pop-up: A small dialog with New NSD, Threshold NSD, Expected Life (KM), Expected Life (Month) and Ok and Cancel buttons [fTyreRepairEntry.Designer.vb:143-210; fTyreRepairEntry.vb:1089-1128].
+  - Custom Field Tab: The shared custom field grid [fTyreRepairEntry.vb:196; fTyreRepairEntry.vb:910-934].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a new record [fTyreRepairEntry.vb:203-210].
+  Save: The toolbar action that validates and saves [fTyreRepairEntry.vb:645-735].
+  Search: The toolbar action that opens a document search [fTyreRepairEntry.vb:212-237].
+  Delete: The toolbar action that removes the open document [fTyreRepairEntry.vb:58-82].
+validations:
+- Authorized TyreRepairEntry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Service Receipt Note not found for following tyre serial no. - <serial numbers>
+- Gate Pass In not found for following tyre serial no. - <serial numbers>
+- Select valid Source Document.
+- Select valid Repair Request No.
+- Select valid Repair Category.
+- Select valid Supplier Name.
+- Select valid Supplier Location.
+- Select Vehicle in row N.
+- Select Current Position in row N.
+- Select Tyre Serial No in row N.
+- Select Repair Status in row N.
+- Enter New NSD in row N.
+- Assign To can't be empty in row N.
+- Remarks can't be empty in row N.
+- Select at least one Tyre Serial No.
+- Duplicate Tyre Serial No is not allowed.
+- Enter New NSD.
+- Threhold NSD must be less than New NSD.
+- Document No. <number> saved successfully.
+- Some Tyre Repair Entry exists after current Repair Entry. Cannot Delete.
+- Some Tyre Repair Request exists after current Repair Entry. Cannot Delete.
+- Document is not authorized. Reversal is only allowed for authorized entries.
+- 'Reversal blocked: Tyre [serial] has a later transaction in Document [number] (Form n). Please reverse that document first.'
+manages:
+- tyre-repair-entry
+uses_concepts:
+- axle-wheel-configuration
+- company
+- equipment-master
+- supplementary-field
+- tyre-master
+- tyre-repair-category
+- tyre-repair-request
+method_notes:
+  Delete: Deletes the record through EAM.TTREDelete.
+  FillValues: Fills the lookup lists through EAM.TTREFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.TTREFillValuesDependent.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through EAM.TTRELoadData.
+  Open: Searches records through EAM.TTRESearchData.
+  Save: Saves the record through EAM.TTREAuthorize, EAM.TTRESave.
+  SaveCustomFieldDetail: Saves the record through EAM.TTRESaveTyreRepairEntryCustomFieldDetail.
+  SaveRepDetails: Saves the record through EAM.TTRESaveTyreRepairEntryDetail.
+  ValidateForm: Validates the entry through EAM.TTREValidate.

@@ -1,0 +1,120 @@
+form: fGatePassOut
+title: Gate Pass Out
+module: MM
+kind: transaction
+summary: The Gate Pass Out screen records material that physically leaves the premises through the gate when the movement
+  is not a normal sales dispatch.
+purpose: |
+  What it is: A gate document that records outward movement of material by type, with the party, transport details and item quantities. When it applies: Whenever material leaves the gate other than through a sales invoice: returns to parties, loans, subcontracting, repairs and service, or a gate pass for a delivery challan. Business outcome: Stock is reduced at the right value, material that must come back can be tracked against a Gate Pass In, and the business has a dated record of who took what out.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: Division, document number, date and status (Initial, Release, Authorized).
+  - General Details Tab: The header tab with party, GST, person, warehouse, transport and remarks fields.
+  - Gate Pass Type Field: A selection list of the division's types.
+  - Source Document Field: Read-only text with the type's source document.
+  - Ref Document No. Field: A selection of authorized Delivery Challans.
+  - Party Name and Location Fields: The vendor list by type and the vendor's locations.
+  - Service Request No. Field: A list of authorized, unused service requests with stock-controlled items.
+  - Transaction Type, Sub Supply Type, Dispatch From and Dispatch From Location Fields: GST movement fields.
+  - Dept. Name, Person Name and Warehouse Fields: Department and warehouse lists by division; Person Name accepts free text.
+  - Returnable Date Field: A date with a tick box, enabled only for types 4, 7 and 13.
+  - Transport Fields: Transporter Name, Driver Name, Vehicle No., Freight Basis, LR / MR No.
+  - Define Transportation Route Checkbox: Clears and locks transporter, vehicle, driver and freight basis, and shows the route grid.
+  - Item Details Grid: The item lines: Select, Reference No, Reference Date, Item Code, Item Description, Make, Unit, HSN & SAC Code, Balance Qty., Current Stock, On Date Stock, Despatch Qty., Rate, Amount, Estimated Value, Cost Center, S.
+  - Serial Number, Lot Details, Stock Details and SCO Lot Pop-ups: - Serial Number pop-up: lists or accepts serials.
+  - Contractor Material Grid: Item Description (open contractor Gate Pass In lines), Tech.
+  - Transportation Route, Finance Posting, Notes and Custom Field Tabs: The route legs, the loan journal voucher, notes, and company custom fields.
+  - Voucher Rebuild Shortcut (Ctrl+Alt+V): A hidden shortcut that asks to save, then re-saves the document's voucher.
+actions:
+  New, Save, Open, Delete and Navigation: The standard toolbar.
+  Print, Preview, Export and Email: Output through the gate pass out report.
+validations:
+- Authorized Gate Pass Out can't be updated.
+- Select valid Gate Pass Type.
+- Select a Delivery Challan first
+- Select valid Party Name.
+- Select valid Location.
+- Enter or Select valid Person Name.
+- Select valid Service Request No.
+- Select valid Sub Supply Type.
+- Select valid Transaction Type.
+- Select valid Dispatch From.
+- Select valid Dispatch From Location.
+- Bill From Location GSTIN No and Dispatch From Location GSTIN No should not be same when Transaction Type is <type>.
+- Select valid Warehouse.
+- Select valid Freight Basis.
+- Select LR Date.
+- Enter LR No.
+- LR Date can't be greater than Document Date.
+- Select Wt Date.
+- Enter Wt. Slip No.
+- Wt. Slip Date can't be greater than Document Date.
+- Select Excise Challan Date .
+- Enter Excise Challan No.
+- Excise Challan Date can't be greater than Document Date.
+- Select Returnable Date.
+- Returnable Date can't be less than Document Date.
+- Select eWay-Bill Date.
+- eWay-Bill Date can't be greater than Document Date.
+- Select valid Delivery Mode
+- Select atleast one Item.
+- Document Date can't be Less than Reference Date <date>.
+- Return Date is greater than Document Date .
+- Dispatch Qty. can't be zero or empty in row n.
+- Dispatch Qty. can't be greater then Balance Qty. in row n.
+- Select valid HSN & SAC Code in row n.
+- Estimated Value can't be empty in row n.
+- Despatch Qty. can't be greater than Balance Material issued Quantity
+- 'Material is not issued against this sub contract '
+- Dispatch Qty. can't be greater than <stock> in row n.
+- Selected Serial Number should be equal to No. of Dispatch Qty. in row n.
+- Stock Qty. should be equal to <qty> in row n.
+- Select atleast one Item Description.
+- Select valid Unit in row n.
+- Quantity can't be zero or empty in row n.
+- Quantity can't be greater than Balance Qty. in row n.
+- Duplicate Document No. is not allowed.
+- Document Setting is not per Setting <code>
+- 'Rate for Reference No. : <no> ... must be <rate>'
+- Document No. <no> saved successfully.
+- Authorized Entry can't be updated.
+- Duplicate Item Name and Make is not allowed.
+- Duplicate Item Description is not allowed.
+- Duplicate Serial Number is not allowed.
+- Qty can't be greater than stock Qty. <n> in row n.
+- Qty. must be equal to despatch Qty. <q> in row n.
+- Quantity should equal to <q>
+- Quantity can't be greater than Stock Qty.
+- ' Selected Serial Numbers should be equal to Despatch Qty.'
+- Quantity can't be greater than Issued Qty. <n> in row n.
+- Sum of Qty should be equal to despatch qty. <q>
+- Quantity can't be greater than Issued Qty.
+- Select valid Freight Type in row n.
+- Select valid From Location in row n.
+- Select valid To Location in row n.
+- From & To Location can't be same in row n.
+- Select valid Route For transportation .
+- No Detail Found
+manages:
+- gate-pass-out
+uses_concepts:
+- accounting-voucher
+- company
+- gate-pass-in
+- material-return
+- raw-material-issue
+- service-request
+- stock-adjustment
+- stock-item-group
+- value-stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.MGPODelete.
+  FillValues: Fills the lookup lists through Inventory.MGPOFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.MGPOFillValuesDependent.
+  FillValuesDependentGrid: Fills the lookup lists through Inventory.MGPOFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  ItemLotDetail: Runs through Inventory.MGPOItemLotDetail.
+  LoadData: Loads the selected record through Inventory.MGPOLoadData.
+  Open: Searches records through Inventory.MGPOSearchData.
+  Save: Saves the record through Inventory.MGPOAuthorize, Inventory.MGPOSave.
+  SaveContractorMaterial: Saves the record through Inventory.MGPOSaveContractorMaterialDetail.

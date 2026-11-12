@@ -1,0 +1,18 @@
+key: p3-sales-returns-certificates
+name: 'Sales: Returns & certificates (Phase 3)'
+module: SD
+status: active
+summary: Phase 3 screens of the returns & certificates group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Returns & certificates' (Sales). The steps follow the plan order, not a verified business sequence: Sales Return, Test Certificate.
+steps:
+- order: 1
+  name: Record Sales Return
+  form: fSalesReturn
+- order: 2
+  name: Record Test Certificate
+  form: fTestCertificate
+concepts:
+- sales-return
+- test-certificate

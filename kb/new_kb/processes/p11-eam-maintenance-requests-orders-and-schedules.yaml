@@ -1,0 +1,78 @@
+key: p11-eam-maintenance-requests-orders-and-schedules
+name: 'EAM: Maintenance requests, orders and schedules (Phase 11)'
+module: PM
+status: active
+summary: Phase 11 screens of the maintenance requests, orders and schedules group in EAM.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Maintenance requests, orders and schedules' (EAM). The steps follow the plan order, not a verified business sequence: Change Maintenance Request Status, Clearance Permit, Maintenance Category Task, Maintenance Order, Maintenance Order Amendment, Maintenance Order Closing, Maintenance Reporting, Maintenance Request, Maintenance Schedule, Maintenance Schedule Change Status, Maintenance Schedule Occurrence, Maintenance Service Order, Maintenance Service Order Amendment, Service Contract Occurrence, Service Order Reporting, Shutdown Work List, WorkLog.
+steps:
+- order: 1
+  name: Record Change Maintenance Request Status
+  form: fChangeMaintenanceRequestStatus
+- order: 2
+  name: Record Clearance Permit
+  form: fClearancePermit
+- order: 3
+  name: Record Maintenance Category Task
+  form: fMaintenanceCategoryTask
+- order: 4
+  name: Record Maintenance Order
+  form: fMaintenanceOrder
+- order: 5
+  name: Record Maintenance Order Amendment
+  form: fMaintenanceOrderAmendment
+- order: 6
+  name: Record Maintenance Order Closing
+  form: fMaintenanceOrderClosing
+- order: 7
+  name: Record Maintenance Reporting
+  form: fMaintenanceReporting
+- order: 8
+  name: Record Maintenance Request
+  form: fMaintenanceRequest
+- order: 9
+  name: Record Maintenance Schedule
+  form: fMaintenanceSchedule
+- order: 10
+  name: Record Maintenance Schedule Change Status
+  form: fMaintenanceScheduleChangeStatus
+- order: 11
+  name: Record Maintenance Schedule Occurrence
+  form: fMaintenanceScheduleOccurrence
+- order: 12
+  name: Record Maintenance Service Order
+  form: fMaintenanceServiceOrder
+- order: 13
+  name: Record Maintenance Service Order Amendment
+  form: fMaintenanceServiceOrderAmendment
+- order: 14
+  name: Record Service Contract Occurrence
+  form: fServiceContractOccurance
+- order: 15
+  name: Record Service Order Reporting
+  form: fServiceOrderReporting
+- order: 16
+  name: Record Shutdown Work List
+  form: fShutdownWorkList
+- order: 17
+  name: Record WorkLog
+  form: fWorkLog
+concepts:
+- change-maintenance-request-status
+- clearance-permit
+- maintenance-category-task
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-order-closing
+- maintenance-reporting
+- maintenance-request
+- maintenance-schedule
+- maintenance-schedule-change-status
+- maintenance-schedule-occurrence
+- maintenance-service-order
+- maintenance-service-order-amendment
+- service-contract-occurrence
+- service-order-reporting
+- shutdown-work-list
+- worklog

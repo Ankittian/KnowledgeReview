@@ -1,0 +1,50 @@
+form: fTransactionAccountMapping
+title: Transaction Account Mapping
+module: ADM
+kind: transaction
+summary: The Transaction Account Mapping screen tells the finance posting engine which ledger account to use for a given transaction
+  (form) in given finance books, from a given date.
+purpose: |
+  What it is: A dated setting that links a transaction to an account, or to a set of tax charge and account pairs, for chosen finance books [fTransactionAccountMapping.vb:360-410; Finance.FIASSaveMain:24-50]. When it applies: When a company sets up finance posting for a transaction, or when the account used for it changes from a new date. Business outcome: Postings pick their accounts from configuration instead of manual choice, and conflicting definitions are stopped (BR-09; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with Effective From, Setting Type, Transaction Name, the Finance Book grid, and below it one of two lower panels [fTransactionAccountMapping.Designer.vb:196-208; fTransactionAccountMapping.Designer.vb:222].
+  - Effective From Field: A date picker labelled "Effective From" in the format dd/MM/yyyy [fTransactionAccountMapping.Designer.vb:53; fTransactionAccountMapping.Designer.vb:68].
+  - Setting Type Field: A mandatory dropdown with the values "Transaction Level" and "TDC Level" [fTransactionAccountMapping.vb:13; fTransactionAccountMapping.vb:66].
+  - Transaction Name Field: A mandatory dropdown of transactions [fTransactionAccountMapping.vb:13; fTransactionAccountMapping.vb:67].
+  - Finance Books Grid: A grid with a tick column and the read-only columns Code, Finance Book and COA Name, with a filter row; the book number is hidden [fTransactionAccountMapping.vb:320-345].
+  - Account Name Field: A mandatory dropdown showing Account Name and Group Name, on the Transaction Level panel [fTransactionAccountMapping.vb:69; fTransactionAccountMapping.Designer.vb:138-139].
+  - Tax Category Field: A mandatory dropdown on the TDC panel [fTransactionAccountMapping.vb:70; fTransactionAccountMapping.Designer.vb:185-186].
+  - Account Mapping Compulsary Field: A tick box on the TDC panel [fTransactionAccountMapping.Designer.vb:167-171].
+  - TDC Detail Grid: A grid with columns TDC Name (list shows TDC Name and Code) and Account Name (list shows Account Name and Group Name) [fTransactionAccountMapping.vb:72-73; fTransactionAccountMapping.vb:346-359].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Not implemented; the handlers are empty [fTransactionAccountMapping.vb:147-162; fTransactionAccountMapping.vb:527-533].
+actions:
+  Save: Saves the mapping with its finance books and TDC rows.
+  New: Passes the request to the main window's standard New handling and focuses Setting Type [fTransactionAccountMapping.vb:109-118].
+  Search: Opens the common search window [fTransactionAccountMapping.vb:120-145].
+  Delete: Deletes the loaded mapping.
+validations:
+- Select valid Setting Type.
+- Select valid Transaction Name.
+- Select atleast one Finance Book.
+- Select valid Account Name.
+- 'Selected Account Name is not mapped with Finance Book '
+- Select valid Tax Category.
+- Select atleast one TDC Name.
+- Select valid Account Name in row N.
+- ' in row N.'
+- Duplicate TDC Name and Account Name not allowed.
+- Duplicate Transaction Name on same Effective From and Finance Book not allowed.
+- Duplicate Tax Category on same Effective From and Finance Book not allowed.
+manages:
+- transaction-account-mapping
+method_notes:
+  Delete: Deletes the record through Finance.FIASDelete.
+  FillValues: Fills the lookup lists through Finance.FIASFillValues.
+  FillValuesTaxCategory: Fills the lookup lists through Finance.FIASFillValuesTaxCategory.
+  LoadData: Loads the selected record through Finance.FIASLoadData.
+  Open: Searches records through Finance.FIASSearchData.
+  Save: Saves the record through Finance.FIASSaveMain.
+  SaveFinanceBooks: Saves the record through Finance.FIASSaveFB.
+  SaveTDCDetail: Saves the record through Finance.FIASSaveTDCDetail.
+  ValidateForm: Validates the entry through Finance.FIASValidate.

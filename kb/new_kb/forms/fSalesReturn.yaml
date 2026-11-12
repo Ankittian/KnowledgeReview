@@ -1,0 +1,111 @@
+form: fSalesReturn
+title: Sales Return
+module: SD
+kind: transaction
+summary: The Sales Return screen records goods that a customer sends back, either against a gate entry, an authorized tax
+  invoice, a commercial invoice, or directly without any reference document.
+purpose: |
+  What it is: A transaction document that records quantities, values and reasons for goods returned by a customer, linked to the original sales or gate-entry documents. When it applies: When returned material physically arrives (gate entry) or when a returned invoice quantity must be credited to the customer. Business outcome: Returned stock is received into inventory at a traceable rate, the customer's receivable is reduced through the posted voucher, and over-return beyond the invoiced quantity is prevented (BR-15, BR-17).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: The shared document number control at the top: document number (with prefix), document date, division and status.
+  - General Details Tab: First tab containing the general header group, the reference document grid and the "other details" group.
+  - Customer Name Field: Mandatory searchable list (name, code) of party cards active for the company (BR-03, BR-07).
+  - Customer Information Icon: Small information icon next to the customer; double-click opens a pop-up.
+  - Location Field: Mandatory list of the customer's locations (header shown as "Customer Location") (BR-03).
+  - Source Document Field: Mandatory list of active source types; defaults to "Tax Invoice" (BR-03, BR-08).
+  - Bill No. and Bill Date Fields: Mandatory text (30 characters) and date of the customer's return challan or bill (BR-03, BR-04).
+  - Wt. Slip No. and Wt. Slip Date Fields: Optional text (50 characters) and optional date (BR-04).
+  - LR No. and LR Date Fields: Optional text (30 characters) and optional date (BR-04).
+  - eWay-Bill No., Way Date and eWay-Bill Validity Date Fields: Optional text (50 characters) with its date (label "Way Date") and an optional validity date (BR-04, BR-06).
+  - IRN, Ack. No. and Ack. Date Fields: Text (IRN up to 1000 characters on screen, Ack.
+  - Reference Document Grid: Grid with a selection tick, document number, document date and (for Gate Entry and Tax Invoice) "Source Document" columns; other columns are hidden.
+  - Other Details Group: "Transporter Name" (mandatory list), "Driver Name" (30 characters), "Vehicle No." (15 characters), "Freight Type" (mandatory list), "From Location" and "To Location" (lists), "Warehouse" (mandatory list), "Rejection Reason" (header default), "Customer Complaint No." (optional list of authorized complaints of the location), currency control, notes control and "Remarks" (1000 characters).
+  - Item Detail Grid: Grid below the tabs with selection tick, "Invoice No.", "Commercial Invoice No.", "Gate Entry No.", "Customer Complaint No.", "Sales Order No.", "Item Id", "Mark No.", "Item Code", search button, information icon, "Item Description", "HSN & SAC Code" (with HSN search), "Make", "Item Attribute", "Tech.
+  - Tax Detail Tab: Shared tax control (document and per-item taxes) and the tax concession form control.
+  - Custom Field Tab: Shared custom field control for this document type.
+  - Finance Posting, GST Posting and Expense Posting Tabs: Read-only voucher proposals (types, accounts and amounts locked).
+  - Other Toolbar Actions (Print, Print Preview, Export, Email): Enabled on the toolbar [fSalesReturn.vb:211-216] but their routines are empty [fSalesReturn.vb:549-581].
+actions:
+  New: Standard toolbar action handled by the main window.
+  Save: Validates and saves the whole return in one transaction.
+  Open (Search): Opens the common search window.
+  Delete: Deletes the loaded return after MSG-47.
+  Navigation: First / Previous / Next / Last, enabled for this form [fSalesReturn.vb:210].
+validations:
+- Do you want to save ?
+- Document No. <number> saved successfully.
+- Authorized SalesReturn can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- IRN Doesn't exists for this Entry. Do you want to continue?
+- IRN already exists for this Entry. Do you want to continue?
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Source Document.
+- Enter Bill No.
+- Bill Date can't be greater than Document Date.
+- Select valid Wt. Slip Date.
+- Wt. Slip Date. can't be greater than Document Date.
+- Select valid LR Date.
+- LR Date. can't be greater than Document Date.
+- Select valid Transporter Name.
+- Select valid Freight Type.
+- Select valid From Location.
+- Select valid To Location.
+- Select valid Warehouse.
+- Select eWay-Bill Date.
+- eWay-Bill Date can't be greater than Document Date.
+- Do you want to continue?
+- Select atleast one Ref. Doc. No.
+- Document Date can't be less than <reference date caption> of row <n>.
+- Currency of all selected document should be same.
+- ' GST is Applied in Tax Invoice but GST in Tax Detail is missing. Do you want to continue?  '
+- ' GST is not Applied in Tax Invoice but GST in Tax Detail exists. Do you want to continue?  '
+- Invoice should of same Source doucment.
+- Gate Entry should of same Source doucment.
+- All Invoice should be of same Consignee Location.
+- Total Selected Invoices are more than one. Do you want to continue?
+- Total selected Invoices can't be more than one.
+- Sales Return can be created against only one Tax Invoice. Do you want to continue?
+- Sales Return can be created against only one Tax Invoice.
+- Select atleast one Item.
+- Select valid Unit in row <n>.
+- Challan Qty. can't be empty or zero in row <n>.
+- Received Qty. can't be greater than (Invoice Qty. + Tolerance Qty.)- Pre. Return Qty. in row <n>.
+- Received Qty. can't be empty or zero in row <n>.
+- Received Qty. is greater than Challan Qty. in row <n>,do you want to continue?
+- Rate can't be empty or zero in row <n>.
+- Basic Amount can't be empty or zero in row <n>.
+- Net Amount can't be empty or zero in row <n>.
+- Select or enter rejection reason in row <n>.
+- Duplicate Item Description is not allowed for same make and item attribute.
+- Do you want to delete ?
+- Data deleted successfully.
+- Unable to delete,IRN exists against this Sales Return.
+- Some data already exists against this record.
+- Data saved successfully.
+manages:
+- sales-return
+uses_concepts:
+- accounting-voucher
+- company
+- delivery-challan
+- dispatch-challan
+- proforma-invoice
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-order-shipment-detail
+- tax-invoice
+method_notes:
+  CreateExpenseVoucher: Runs through Sales.SDSRGetExpensePosting.
+  CreateVoucher: Runs through Sales.SDSRFillValueDocumentDetails.
+  Delete: Deletes the record through Sales.SDSRDelete.
+  FillItemDetail: Runs through Sales.SDSRFillItemDetails.
+  FillRefDetails: Runs through Sales.SDSRFillRefDetails.
+  FillValues: Fills the lookup lists through Sales.SDSRFillValues.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  GetCustomerInfo: Runs through Sales.SDSRGetCustomerInfo.
+  GetItemInfo: Runs through Sales.SDSRGetItemInfo.
+  LoadData: Loads the selected record through Sales.SDSRLoadData.

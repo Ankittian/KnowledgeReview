@@ -1,0 +1,78 @@
+form: fResourceMaster
+title: Resource Master
+module: MD
+kind: master
+summary: The Resource Master screen defines the resources (people, machines and similar) that production work can be assigned
+  to and planned against.
+purpose: |
+  What it is: A master record that describes one production resource, its capacity and calendar, and where it is located [fResourceMaster.vb:143-198; fResourceMaster.vb:768-854]. When it applies: When a new machine, work centre or worker is made available for production, or when its capacity, calendar or location changes. Business outcome: Production and planning work against one agreed resource list with known capacity.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: "- Main Layout Area: A single window with the resource fields and a Buffer Time group [fResourceMaster.Designer.vb:446-1260].\n\
+  - Code Field and Fast Entry Link: A read-only text box that cannot be tabbed into, with the caption \"Code\" shown as a\
+  \ link carrying the tip \"Switch to fast entry mode.\" [fResourceMaster.Designer.vb:1218-1224; fResourceMaster.vb:40-41].\n\
+  - Resource Name Field: A mandatory text box, up to 100 characters, with leading and trailing spaces removed [fResourceMaster.vb:24;\
+  \ fResourceMaster.Designer.vb:1196; fResourceMaster.vb:779].\n- Description Field: An optional text box, up to 250 characters\
+  \ [fResourceMaster.Designer.vb:1038; fResourceMaster.vb:780].\n- Resource Type Field: A mandatory drop-down [fResourceMaster.vb:24;\
+  \ fResourceMaster.vb:98].\n- Resource Nature Field: A mandatory drop-down labelled \"Resource Nature\" [fResourceMaster.Designer.vb:1251;\
+  \ fResourceMaster.vb:24].\n- Employee Name / Contractor Name Field: An optional drop-down, hidden on opening; the label\
+  \ reads \"Employee Name\" for Own and \"Contractor Name\" for Rent [fResourceMaster.vb:33-34; fResourceMaster.vb:676-683].\n\
+  - Resource Category Field: A mandatory drop-down showing category name and code [fResourceMaster.vb:100].\n- Classification\
+  \ Field: A mandatory drop-down [fResourceMaster.vb:102].\n- No. Of Resources Field: A mandatory whole-number text box, up\
+  \ to 4 characters [fResourceMaster.vb:31; fResourceMaster.Designer.vb:473].\n- Capacity /Hrs. Field: A mandatory decimal\
+  \ text box with two decimals, up to 5 characters [fResourceMaster.vb:28; fResourceMaster.Designer.vb:1208].\n- Capacity\
+  \ Unit Field: A mandatory drop-down showing unit and code [fResourceMaster.vb:103].\n- Calendar Field: A mandatory drop-down\
+  \ showing calendar, code, start date and end date (dd/mm/yyyy) [fResourceMaster.vb:105; fResourceMaster.vb:619-620].\n-\
+  \ Resource Capacity Level Field: A mandatory drop-down [fResourceMaster.vb:106].\n- No Capacity Check Field: An optional\
+  \ tick box [fResourceMaster.Designer.vb:1061].\n- Cost Center Field: An optional drop-down showing cost center and code\
+  \ [fResourceMaster.vb:108].\n- Workshop Name Field: A mandatory drop-down [fResourceMaster.vb:109].\n- Production Unit Field:\
+  \ A read-only text box that cannot be tabbed into [fResourceMaster.Designer.vb:581-585].\n- Location Field: An optional\
+  \ text box, up to 50 characters [fResourceMaster.Designer.vb:452].\n- Queue Time and Wait Time Fields: Two optional decimal\
+  \ text boxes in hours, each up to 5 characters, in the group \"Buffer Time\" [fResourceMaster.vb:29-30; fResourceMaster.Designer.vb:540;\
+  \ fResourceMaster.Designer.vb:561].\n- Inactive Field: A tick box that is disabled [fResourceMaster.Designer.vb:490].\n\
+  - Fast Entry Grid Container: A full-window group box with an editable grid with columns Resource Name, Description, Resource\
+  \ Type, Resource Nature, Resource Category, Classification, No of Resources, Capacity/Hrs, Capacity Unit, Calender, Resource\
+  \ Capacity Level, No Capacity Check, Cost Center, WorkShop Name, Location, Production Unit, Queue Time, Wait Time, Employee\
+  \ Name and a read-only Remarks column, plus an Import button \n- Other Toolbar Actions (Print, Preview, Export, Email):\
+  \ Standard toolbar actions with empty handlers [fResourceMaster.vb:239-245; fResourceMaster.vb:714-720].\n"
+actions:
+  Switch Back to Detail Mode: The link that hides Fast Entry [fResourceMaster.vb:731-733].
+  Import: The Import button reads an Excel workbook whose sheet is named "PCRM" and loads the columns Resource Name, Description,
+    Resource Type, Resource Nature, Resource Category, Classification, No of Resources, Capacity/Hrs, Capacity Unit, Calender,
+    Resource Capacity Level, No Capacity Check, Cost Center, WorkShop Name, Location, Production Unit, Queue Time, Wait Time
+    and Employee Name into the grid [fRe
+  New: The toolbar action that asks the main window to start a blank record [fResourceMaster.vb:200-210].
+  Save: The toolbar action that validates and stores the resource [fResourceMaster.vb:460-598].
+  Search: The toolbar action that opens a search dialog listing the resources of the logged-in company with Code, Resource
+    Name, Resource Type, Resource Nature, Resource Category, Classification, No.
+  Delete: The toolbar action that removes the open resource [fResourceMaster.vb:51-82].
+  Navigation: First, Previous, Next and Last are enabled on the toolbar [fResourceMaster.vb:22].
+validations:
+- Duplicate Resource Name is not allowed.
+- Select valid Unit.
+- Select valid Resource Type.
+- Select valid Resource Nature.
+- Select valid Resource Category.
+- Select valid Classification.
+- No. Of Resources can't be zero or empty.
+- No. Of Resources should be 1.
+- Capacity/Hrs. can't be zero or empty.
+- Select valid Capacity Unit.
+- Select valid Calendar.
+- Select valid Resource Capacity Level.
+- Select valid Work Shop Name.
+- 'Invalid Time : minute should be less than 60.'
+- Your excel should consists of sheet with name PCRM. Do you want to continue?
+- Refer remarks for saved status.
+manages:
+- resource-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.PCRMDelete.
+  FillValues: Fills the lookup lists through masterdata.PCRMFillValues.
+  LoadData: Loads the selected record through masterdata.PCRMLoadData.
+  Open: Searches records through masterdata.PCRMSearchData.
+  SaveMain: Saves the record through masterdata.PCRMSave.
+  ValidateForm: Validates the entry through masterdata.PCRMValidate.
+  ucmbNature_ValueChanged: Fills the lookup lists through masterdata.PCRMFillValues.
+  ugdFastEntry_AfterCellUpdate: Fills the lookup lists through masterdata.PCRMFillValues.

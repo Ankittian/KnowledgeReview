@@ -1,0 +1,37 @@
+form: fRateContractorList
+title: Items for Rate Contract
+module: MM
+kind: transaction
+summary: The Items for Rate Contract screen (window caption "Material Rate Contract List") is an analysis screen that lists
+  items which should be put under a rate contract.
+purpose: |
+  What it is: A list of regularly consumed items not yet covered by a valid material agreement. When it applies: When purchasing plans annual rate contracts for procurement units that run consumption-based replenishment. Business outcome: Items with steady consumption are identified for rate contracts, with suggested quantity, value and candidate suppliers.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Procurement Unit Selection Area: Top grid with a "Select" checkbox and the read-only "Procurement Unit" name (BR-01).
+  - Item Detail Tab: Tab "Item Detail" with the item grid.
+  - Item Grid: Read-only columns "GoHead Document No.", "Group", "Sub Group", "Item Code", "Item Description", "UOM", an information icon, "Consumption Pattern", "Consumption Rate", "Suggested Qty", and a "Suggested Vendor" button (BR-12).
+  - Suggested Vendor Popup: Popup grid with "Supplier Name", "Vendor Source", "No.
+  - Group Summary Tab: Tab "Group Summary" with the read-only "Total PO" box and a three-level grid Group, Sub Group, Item (BR-07, BR-08).
+  - Other Toolbar Actions (Open, Delete, Print, Preview, Export, Email): Standard actions with empty implementations (BR-14).
+actions:
+  New: Clears the screen through the main window (BR-15).
+  Save: The only toolbar action enabled for the screen (BR-13).
+validations:
+- Item Information
+- Vendor Information
+manages:
+- items-for-rate-contract
+uses_concepts:
+- company
+- material-agreement
+- purchase-order-amendment
+- state-master
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.MRCLFillValues.
+  FillValuesDependent: Fills the lookup lists through Optimization.OISSFillValuesDependent.
+  Save: Saves the record through Optimization.OLSSSave.
+  ShowData: Fills the lookup lists through Optimization.MRCLFillValuesDependent.
+  ugdItemDetail_BeforeRowEditTemplateDisplayed: Runs through Optimization.MRCLItemVendorDetail.
+  ugdItemDetail_DoubleClickCell: Runs through Optimization.MRCLGetItemInfo.
+  ugdVendor_DoubleClickCell: Runs through Optimization.MRCLGetVendorInfo.

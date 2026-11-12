@@ -1,0 +1,205 @@
+form: fSalesOrderAmendment
+title: Sales Order Amendment
+module: SD
+kind: transaction
+summary: The Sales Order Amendment screen revises an existing, authorized sales order without creating a new order number.
+purpose: |
+  What it is: A numbered revision (amendment 1, 2, 3, …) of an authorized sales order that records what changed and why ("Amendment Reason"), while keeping the original document number and date. When it applies: When a customer changes quantities, rates, schedules, delivery points, payment terms or other conditions after the order has been authorized. Business outcome: The order history is preserved revision by revision, and downstream operations always work on the latest authorized terms (BR-43).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area and Tabs: A header band with the order and amendment identity, and a tab set: "General Information", "Other Information", "Shipment Detail", "Billing Detail", "Tax Detail", "Document Required", "Export Detail", "Inspection Detail", "Cost Detail", "Terms & Condition", "Account Assignment", "Custom Field" and "Multi-Level Authorization" [fSalesOrderAmendment.designer.vb:4087-4125].
+  - Sales Order No. Field: Mandatory dropdown listing "Sales Order No", "Sales Order Date" and "Customer Name" of eligible orders (BR-01).
+  - Amendment Number Display: Read-only number beside "Sales Order No." [fSalesOrderAmendment.designer.vb:4060].
+  - Sales Order Date and Division Name Fields: Read-only displays of the original order date and division [fSalesOrderAmendment.designer.vb:4718] [fSalesOrderAmendment.designer.vb:4662].
+  - Document Date Field: Mandatory date of the amendment.
+  - Document Status Field: Mandatory dropdown: Initial, Release, Authorized (BR-11).
+  - Inherited Header Fields (Read-Only): "Order Type", "Source Document", "Ref.
+  - Editable General Information Fields: "Sales Person Name", "Sales Classification", "Supply Type", "Booking Time" (when the setting is on), "Validity Date", "Project Code", "Lift" (for divisions configured to show lifts), "Vessel Name", "Remarks", "Amendment Reason", "SD Applicable" with "Security Deposit %", "Cash Discount" with "Level", "Basis" and "Value", "Additional Cost" and "Distributor" (agreement orders).
+  - Currency Control: Shared currency selector with conversion rate.
+  - Item Details Grid: The main grid.
+  - Shipment Detail Tab: "Freight Type" and the consignee grid ("Consignee Name", "Consignee Location", "Consignee Contact Person", "From Location", "To Location", "Freight Rate Type", "Freight Rate", "Freight Order").
+  - Billing Detail Tab: "Bill To Party", "Location", "Pay Term Code", the payment terms grid, "CT1/ CT3 No.
+  - Other Tabs: "Tax Detail" (document taxes), "Document Required" ("Document Group" and documents with "No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Registered on the toolbar but empty on this screen [fSalesOrderAmendment.vb:1170-1176] [fSalesOrderAmendment.vb:5501-5507].
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Open (Search): Standard toolbar Open showing a search list of amendments.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last are registered for the screen [fSalesOrderAmendment.vb:75].
+validations:
+- Transaction on back date are disabled.
+- Transaction on future date are disabled.
+- Do you want to save ?
+- Sales Order No. <document no.> saved successfully.
+- Authorized Sales Order can't be updated.
+- Sales Organization is not set for login company and Division.
+- Quantity can't be less than Dispatch Quantity.
+- Quantity can't be less than Invoice Quantity.
+- Quantity can't be less than Total Production Planned Quantity.
+- Selected wrong Combination (<combination>) for Item (<item>).
+- Select valid Sales Order No.
+- Document Date should be in financial year.
+- Document Date can't be less than Sales Order Date.
+- Select valid Document Status.
+- Validity Date can't be less than Document Date.
+- Sales Order validity cannot be more than Sales Agreement.
+- Enter valid Amendment Reason.
+- Select valid Freight type.
+- Select valid Supply Type.
+- GST can not be applied when Supply Type is Export Without Payment.
+- Only IGST is applicable when Supply Type is Export With Payment.
+- IGST should be applied when Supply Type is Export With Payment.
+- GST can not be applied when Supply Type is SEZ Without Payment.
+- Only IGST is applicable when Supply Type is SEZ With Payment.
+- IGST should be applied when Supply Type is SEZ With Payment.
+- SGST or CGST is not applicable for inter state sales.
+- IGST is not applicable for intra state sales.
+- ',Do you want to continue?'
+- Select sales person name.
+- Select Sales Classification.
+- GST not selected. Do you want to save?
+- Specification Detail not found. Do you want to save?
+- Unable to save, Specification detail not found.
+- Select valid Order Nature No.
+- Select valid LOI Date.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row <n>.
+- Select valid From Location in row <n>.
+- Select valid ToLocation in row <n>.
+- Select valid Freight Rate Type in row <n>.
+- Freight Rate can't be empty in row <n>.
+- Duplicate Consignee Name and Consignee Location is not allowed.
+- Select valid Bill To Party.
+- Select valid Location.
+- Select atleast one Payment Term.
+- Select valid Payment Type in row <n>.
+- Select/Enter valid Payment Description in row <n>.
+- Select valid Payment Mode in row <n>.
+- Credit Days can't be empty in row <n>.
+- Remark of last payment terms must have keyword 'Final Stage'
+- Unable to delete,some entry exists for this pay code.
+- No. of Copy can't be empty or zero in row <n>.
+- Duplicate Document Name is not allowed.
+- Select atleast one Item Code.
+- Enter Particular.
+- Select valid Unit in row <n>.
+- Select valid Attribute Value in row <n>
+- Enter value for mandatory quality parameter  in row <n>.
+- Enter value for atleast one quality parameter in row <n>.
+- Select valid Processing Type in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Quantity can't be greater than Balance Agreement Qty.+ Tolerance Qty. in row <n>.
+- Previous SO Qty. (<a>) + Current Total SO Qty. (<b>) can't be greater than Agreement Qty.+ Tolerance Qty. (<c>).
+- Quantity can be less then or equal to DO Qty. in row <n>.
+- Rate is empty or zero in row <n> do you want to continue.
+- Rate should be equal to <total> in row <n>.
+- Rate should be between tolerance range <min>-<max> in row <n>.
+- Tolerance selection is not allowed,remove it from row <n>.
+- Tolerance(-) is not allowed in row <n>. Do you want to continue?
+- Tolerance(-) is not allowed in row <n>.
+- Enter Tolerance(+) or Tolerance(-).
+- Tolerance(+) can't be greater than 100.
+- Tolerance(-) can't be greater than 100.
+- Attribute Booking Natrue is Variant so duplicate Item Description not allowed in row <n>.
+- Duplicate Item Code and Item Description is not allowed.
+- Duplicate Item,Make and Attributes not allowed.
+- HSN & SAC Code is not selected in row <n>. Do you want to continue?
+- Select HSN & SAC Code in row <n>.
+- Estimated Amount can't be empty or zero in row <n>.
+- Select Estimated Start Date in row <n>.
+- Estimated Start Date Can't be less than Document Date in row <n>.
+- Select Estimated End Date in row <n>.
+- Estimated End Date Can't be less than Estimated Start Date in row <n>.
+- Selected Freight order is not mapped for select items.
+- Sales Order Amendment is not possible,as DRR is authorized.
+- Project code can't be empty
+- Select valid Inco Term.
+- Select atleast one Cost Head of Insurance type.
+- Select atleast one Cost Head of Freight type.
+- Select atleast one Cost Head of Cost type.
+- Select valid Customer's Contact Person.
+- Select valid Method Of Shipment.
+- Select valid Type Of Dispatch.
+- Select valid Place Of Receipt.
+- Select valid Port Of Loading.
+- Select valid Port Of Discharge.
+- Select valid Place Of Delivery.
+- Select valid Pre Carriage.
+- Select valid Country Of Origin.
+- Select valid Country Of Final Destination.
+- Select valid Conatct Person Name.
+- Select Valid Bank Name.
+- Enter Packing Instructions.
+- Select either GST or Bond No. and Date.
+- Select LUT No. or Bond No. and Date.
+- Select atleast one Inspection By.
+- Duplicate Inspection By and Reference Document is not allowed.
+- Select valid Inspection By in row <n>.
+- Select valid Reference Document in row <n>.
+- Inspection By can not be Internal Team when Reference Document is Commercial Invoice in row <n>.
+- Select atleast one Cost Head.
+- Select Unit in row <n>.
+- Select Currency in row <n>.
+- Rate can't be empty or zero in row <n>.
+- For same currency, Exchange Rate (General Information) should be equal to Exchange Rate of Cost Head in row <n>.
+- Select atleast one Billing Refermce in row <n>.
+- Select atleast one form in Billing Reference.
+- Duplicate Cost Head is not allowed.
+- Can not authorize as last level is not approved.
+- Document Status can't be Authorized for multi level Authorization
+- Can't authorize, Limit exceeds from configuration.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+- Unable to Authorize.Sales Order BOM Entry is not released
+- Unable to Authorize.BOM revision is not generated.
+- Select valid Account Name in row <n>.
+- Select valid Basis.
+- Enter First CF.
+- Enter Second CF.
+- Duplicate Quality Parameter is not allowed.
+- Select valid Attribute.
+- Select valid Attribute Booking Nature.
+- Value can't be empty or zero  in row <n>.
+- Enter lower limit  in row <n>.
+- Enter upper limit  in row <n>.
+- Qty. can't be empty or zero  in row <n>.
+- Rate can't be empty or zero  in row <n>.
+- Amount can't be empty or zero  in row <n>.
+manages:
+- sales-order-amendment
+uses_concepts:
+- attribute-master
+- check-list-document-group
+- company
+- cost-group
+- cost-head
+- customer-enquiry
+- delivery-challan
+- dispatch-challan
+- lut-master
+- order-nature
+- pricing-factor
+- quotation
+- revised-quotation
+- sale-account-posting-rule
+- sales-agreement
+- sales-order
+- sales-order-change-status
+- sales-order-shipment-detail
+- sales-organization
+- sales-person
+- tax-invoice
+- vendor-group
+method_notes:
+  Delete: Deletes the record through Sales.SDSODelete.
+  FillFreightOrderDetail: Runs through Sales.SDSOFillFreightOrder.
+  FillItemCombo: Runs through Sales.SDSOFillItemCombo.
+  FillRefDocCombo: Runs through Sales.SDSOFillRefDocCombo.
+  FillValueDependent: Fills the lookup lists through Sales.SDSOFillValuesDependent.
+  FillValues: Fills the lookup lists through Sales.SDSOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through Sales.SDSOFillValuesAccountAssignment.
+  GetItemPriceSetting: Runs through Sales.SDSOGetItemAttributePriceDetail.
+  GetSpecificationDetail: Runs through Sales.SDQEGetSpecificationDetail.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.

@@ -1,0 +1,44 @@
+form: fEnquiryType
+title: Enquiry Type
+module: MD
+kind: master
+summary: The Enquiry Type screen maintains the types used to classify customer enquiries, together with the default commercial
+  content each type carries.
+purpose: |
+  What it is: A group-wide list of enquiry types with default payment terms, terms and conditions and custom fields. When it applies: When the sales team needs a new way of classifying incoming enquiries, or a type's defaults change. Business outcome: Consistent classification and commercial defaults for customer enquiries (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general details group box at the top and a tab control with Payment Terms, Terms & Conditions and Custom Fields.
+  - Code Field: Read-only text box, 6 characters.
+  - Enquiry Type Field: Mandatory text box, up to 50 characters (BR-01, BR-02).
+  - Pay Term Code Field: Optional dropdown showing Code and Description of sales pay term templates.
+  - Payment Terms Grid: Columns Pay Code (max 10), Payment Type (dropdown), Payment Description (dropdown of descriptions used before, free text allowed, max 300), Pay Value % (decimal, 2 places), Credit Days (whole number, up to 5 digits), Remarks (max 500).
+  - Terms & Conditions Tab: Shared terms and conditions control with a group selector and a grid of Head Name and Terms N Condition; terms are editable.
+  - Custom Fields Tab: Shared custom fields control showing Field Name and Field Value.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the type and rewrites its three detail sets.
+  Search: Standard search with Code, Enquiry Type, Inactive, Created By, Created Date, sorted by name.
+  Delete: Deletes the loaded type after confirmation (MSG-08).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Enter Enquiry Type.
+- Duplicate Enquiry Type not allowed.
+- Select/Enter valid Payment Description in row n.
+- Credit Days can't be empty or zero in row n.
+manages:
+- enquiry-type
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MDETDelete.
+  FillValues: Fills the lookup lists through masterdata.MDETFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.MDETFillValueDependent.
+  LoadData: Loads the selected record through masterdata.MDETLoadData.
+  Open: Searches records through masterdata.MDETSearchData.
+  Save: Saves the record through masterdata.MDETSave.
+  SaveCustomFieldDetail: Saves the record through masterdata.MDETSaveCustomFieldDetail.
+  SavePaymentTermsDetail: Saves the record through masterdata.MDETSavePaymentTerms.
+  SaveTermsNConditions: Saves the record through masterdata.MDETSaveTnCDetail.
+  ValidateForm: Validates the entry through masterdata.MDETValidate.

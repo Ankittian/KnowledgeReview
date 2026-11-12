@@ -1,0 +1,200 @@
+form: fSalesAgreement
+title: Sales Agreement
+module: SD
+kind: transaction
+summary: The Sales Agreement screen records a commercial agreement with a customer (or an agent) that later sales orders are
+  raised against.
+purpose: |
+  What it is: A customer-specific commercial commitment that states what may be sold, at what rate or value, in which quantity, under which payment, tax and delivery terms, and for which period. When it applies: When the sales team concludes a rate contract, a quantity contract or a value contract with a customer or agent before individual orders are placed. Business outcome: Later sales orders are raised against an approved agreement; agreed rates and quantities are enforced and agreement balances can be tracked (BR-27, BR-37).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout and Tabs: A window titled "Sales Agreement" [fSalesAgreement.designer.vb:3845] with a document-number header and tabs: "General Information", "Payment Terms & Tax Detail", "Export Detail", "Inspection Detail", "Consignee Detail", "Cost Detail", "Terms & Condition" and "Multi-Level Authorization" [fSalesAgreement.designer.vb:3754-3777].
+  - Document Number, Date, Status and Division: Shared document-number control: prefix, document number, document date, document status, division and a repeated-entry button.
+  - Order Type Field: Mandatory dropdown "Order Type"; lists only Non-Turn Key, Trading and Job Work for agreements (BR-06).
+  - Source Document and Ref. Doc. No. Fields: Mandatory dropdown "Source Document" (default Direct) and dropdown "Ref.
+  - Customer Name and Customer Location Fields: Dropdowns; the first location is selected automatically [fSalesAgreement.vb:2730-2732].
+  - Agent and Distributor Fields: Agent dropdown with an information label; Distributor dropdown visible only when the distributor setting is on [fSalesAgreement.vb:514-520].
+  - Sales Category, Supply Type and Sales Classification Fields: Mandatory "Sales Category"; mandatory "Supply Type" whose list depends on the category; optional "Sales Classification" with a configured default [fSalesAgreement.vb:485-487].
+  - Agreement Type, Qty. Validation, Agreement Qty. and Agreement Unit Fields: Mandatory "Agreement Type" and "Qty.
+  - Agreement Period (From Date / To Date): Two dates in the "Agreement Period" group.
+  - Sales Person Name, Booking Time, Freight Type, Cust. Ref. No., Cust. Ref. Date and Remarks: Sales person dropdown; booking time (shown only if the company maintains booking time [fSalesAgreement.vb:414-420]); freight type (default from master, hidden for Export); free-text customer reference number and optional date; remarks.
+  - Additional Cost and QC Required Check Boxes: "Additional Cost" (visible only when the company shows additional cost) and "QC Required".
+  - Item Details Grid: Grid of agreement lines with "Item Code", "Item Description", "Make", "Unit", "Quantity", "Rate", "Basic Amount", "Tax", "Net Amount", "Processing Type", "Tech.
+  - Item Popups (Item Information, Specification, Tolerance, Cash Discount, Rate, Activity, Price Code): Row popups for attribute combination and pricing factors, quality parameters, item tolerance, item cash discount, rate bifurcation, activities and (when enabled) item price-setting selection.
+  - Payment Terms & Tax Detail Tab: "Pay Term Code" dropdown, payment terms grid ("Pay Code", "Payment Type", "Payment Description" up to 300 characters, "Pay Value %", "Payment Mode", "Credit Days", "Remarks" up to 500 characters [fSalesAgreement.vb:4751-4778]), document tax control, and "Cash Discount" group (Level, Basis, Value).
+  - Export Detail Tab: Contact person, bank, buyer contact, notify party details, Inco Terms, method of shipment, type of dispatch, place of receipt, ports, place of delivery, pre-carriage, countries, packing instruction, bill-to party and location, bond number and date, declaration amount, LUT number and expiry.
+  - Consignee Detail Tab: "Freight Type" and consignee grid ("Consignee Name", "Consignee Location", "Consignee Contact Person", "From Location", "To Location", "Freight Rate Type", "Freight Rate", "Freight Order", "Remarks").
+  - Inspection Detail Tab: Grid of "Inspection By" and "Reference Document".
+  - Cost Detail Tab: Cost grid ("Cost Head", "Vendor", "Agreement No.", "Quantity", "Unit", "Currency", "Rate", "Amount", base and export currency amounts, "Billing Reference") and "Inco Terms".
+  - Terms & Condition Tab: Shared terms-and-conditions control with group and heads; editable.
+  - Multi-Level Authorization Tab: Shared authorization control listing levels, approvers and actions.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print and Preview run the "rptSalesAgreement" report for the loaded agreement [fSalesAgreement.vb:28] [fSalesAgreement.vb:950-968]; Export and Email are enabled on the toolbar but their handlers are empty [fSalesAgreement.vb:4018-4024].
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search (Open): Toolbar Open showing the shared search list.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last, enabled through the toolbar option list [fSalesAgreement.vb:64].
+validations:
+- Authorized Sales Agreement can't be updated.
+- Authorized Sales Order can't be updated.
+- Duplicate Document No. is not allowed.
+- Sales Organization is not set for login company.
+- Can not authorize as last level is not approved.
+- Select valid Order Type.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Ref. Doc. Date.
+- Select valid Customer Name or Agent.
+- Select valid Distributor.
+- Select valid Agent.
+- Select valid Customer Location.
+- Select valid Agreement Type.
+- Select valid Qty. Validation.
+- Agreement Qty. can't be empty or zero.
+- Select valid Agreement Unit.
+- Select valid Sales Category.
+- Select Quantity as Agreement Type.
+- Validity From date can't be less than Document Date.
+- Validity To Date can't be less than Validity From Date.
+- Enter Customer Reference No.
+- Select Customer Reference Date.
+- Select valid Supply Type.
+- Select sales person name.
+- Select Sales Classification.
+- GST can not be applied when Supply Type is Export Without Payment.
+- Only IGST is applicable when Supply Type is Export With Payment.
+- IGST should be applied when Supply Type is Export With Payment.
+- GST can not be applied when Supply Type is SEZ Without Payment.
+- Only IGST is applicable when Supply Type is SEZ With Payment.
+- IGST should be applied when Supply Type is SEZ With Payment.
+- Select valid Inco Term.
+- Select atleast one Cost Head of Insurance type.
+- Select atleast one Cost Head of Freight type.
+- Select atleast one Cost Head of Cost type.
+- Select valid Cash Discount Level.
+- Select valid Cash Discount Basis.
+- Cash Discount Value can't be empty or zero.
+- Document Status can't be Authorized for multi level Authorization
+- Select atleast one Payment Term.
+- Duplicate Pay Code is not allowed.
+- Duplicate Payment Type and Payment Description is not allowed.
+- Select/Enter valid Payment Description in row n.
+- Select valid Payment Mode in row n.
+- All Payment Mode should be <mode>.
+- Credit Days can't be empty in row n.
+- Select atleast one Item Code.
+- Select valid Unit in row n.
+- Select valid Attribute Value in row n
+- Enter value for mandatory quality parameter  in row n.
+- Select valid Processing Type in row n.
+- Quantity can't be empty or zero in row n.
+- Rate can't be empty or zero in row n.
+- Basic Amount  can't be empty or zero in row n.
+- Select valid Cash Discount Basis in row n.
+- Cash Discount Value can't be empty or zero in row n.
+- Cash Discount Value can't be greater than Rate in row n.
+- Attribute Booking Natrue is Variant so duplicate Item Description not allowed in row n.
+- Select quality parameter  in row n.
+- Tolerance(-) is not allowed in row n. Do you want to continue?
+- Tolerance(-) is not allowed in row n.
+- Specification is empty in row n. Do you want to continue?
+- Select Specification in row n.
+- Rate should be equal to <sum> in row n.
+- Duplicate Item Code and Item Description is not allowed.
+- Duplicate Item,Make and Attributes not allowed.
+- Select valid Attribute.
+- Select valid Attribute Booking Nature.
+- Select valid Value in row n
+- Duplicate Pricing Factor is not allowed.
+- Value can't be empty or zero  in row n.
+- Enter lower limit  in row n.
+- Enter upper limit  in row n.
+- Duplicate Quality Parameter is not allowed.
+- Enter Tolerance(+) or Tolerance(-).
+- Tolerance(+) can't be greater than 100.
+- Tolerance(-) can't be greater than 100.
+- Tolerance is empty for row no. n . Do you want to continue?
+- Tolerance Can't be empty for row no. n .
+- Agent not selected. Do you want to continue?
+- Select valid agent.
+- Rate should be between tolerance range <min>-<max> in row n.
+- Select valid Basis.
+- Sum of Previous Agreement Qty. and Current Agreement Qty. can not be greater than Credit Limit Qty. Do you want to continue?
+- Sum of Previous Agreement Qty. and Current Agreement Qty. can not be greater than Credit Limit Qty.
+- Select valid Customer's Contact Person.
+- Select valid Method Of Shipment.
+- Select valid Type Of Dispatch.
+- Select valid Place Of Receipt.
+- Select valid Port Of Loading.
+- Select valid Port Of Discharge.
+- Select valid Place Of Delivery.
+- Select valid Pre Carriage.
+- Select valid Country Of Origin.
+- Select valid Country Of Final Destination.
+- Select valid Contact Person Name.
+- Select Valid Bank Name.
+- Enter Packing Instructions.
+- Select valid Bill To Party.
+- Select valid Bill To Location.
+- Select either GST or Bond No. and Date.
+- Select LUT No. or Bond No. and Date.
+- Select valid Freight type.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row n.
+- Select valid From Location in row n.
+- Select valid ToLocation in row n.
+- Select valid Freight Rate Type in row n.
+- Freight Rate can't be empty in row n.
+- Duplicate Consignee Name and Consignee Location is not allowed.
+- Select atleast one Inspection By.
+- Select valid Inspection By in row n.
+- Select valid Reference Document in row n.
+- Inspection By can not be Internal Team when Reference Document is Commercial Invoice in row n.
+- Duplicate Inspection By and Reference Document is not allowed.
+- Select atleast one Cost Head.
+- Select Unit in row n.
+- Select Currency in row n.
+- For same currency, Exchange Rate (General Information) should be equal to Exchange Rate of Cost Head in row n.
+- Select atleast one Billing Refermce in row n.
+- Duplicate Cost Head is not allowed.
+- Select atleast one form in Billing Reference.
+- Agreement No. <number> saved successfully.
+- Selected wrong Combination (<combination>) for Item (<item>).
+- Can't be deleted as some record exist against this entry.
+- Tax Rule is not set against charges.
+manages:
+- sales-agreement
+uses_concepts:
+- attribute-master
+- check-list-document-group
+- company
+- cost-group
+- cost-head
+- customer-enquiry
+- delivery-challan
+- dispatch-challan
+- lut-master
+- order-nature
+- pricing-factor
+- quotation
+- revised-quotation
+- sales-order
+- sales-order-amendment
+- sales-order-change-status
+- sales-order-shipment-detail
+- sales-organization
+- sales-person
+- tax-invoice
+- vendor-group
+method_notes:
+  CustomValidation: Validates the entry through ODTSalesOrder.ProcedureName.
+  Delete: Deletes the record through Sales.SDSODelete.
+  FillFreightOrderDetail: Runs through Sales.SDSOFillFreightOrder.
+  FillItemCombo: Runs through Sales.SDSOFillItemCombo.
+  FillRefDocCombo: Runs through Sales.SDSOFillRefDocCombo.
+  FillValueDependent: Fills the lookup lists through Sales.SDSOFillValuesDependent.
+  FillValues: Fills the lookup lists through Sales.SDSOFillValues.
+  GetAgentInfo: Runs through Sales.SDSOGetAgentInfo.
+  GetCustomerInfo: Runs through Sales.SDSOGetCustomerInfo.
+  GetItemInfo: Runs through Sales.SDSOGetItemInfo.

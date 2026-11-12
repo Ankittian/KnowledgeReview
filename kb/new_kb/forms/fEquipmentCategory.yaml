@@ -1,0 +1,35 @@
+form: fEquipmentCategory
+title: Equipment Category
+module: MD
+kind: master
+summary: The Equipment Category screen maintains the classification of equipment.
+purpose: |
+  What it is: A master record made of a code, a name and an optional parent category [fEquipmentCategory.vb:249-304; masterdata.AMECSave:24-57]. When it applies: When the plant introduces a new kind of equipment or reorganises how equipment is grouped. Business outcome: Every piece of equipment can be classified under a controlled list, and reports can roll equipment up by category and parent category.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single small group box holding Code, Equipment Category, Parent Category and Inactive; the window caption reads "EquipmentCategory" (see Section 13) [fEquipmentCategory.Designer.vb:109-110; fEquipmentCategory.Designer.vb:124].
+  - Code Field: A disabled text box that cannot be tabbed into, labelled "Code" [fEquipmentCategory.Designer.vb:37; fEquipmentCategory.Designer.vb:42; fEquipmentCategory.Designer.vb:51].
+  - Equipment Category Field: A mandatory text box, limited to 50 characters when the screen is first filled; leading and trailing spaces are removed [fEquipmentCategory.vb:43; fEquipmentCategory.vb:85; fEquipmentCategory.vb:212; fEquipmentCategory.vb:267].
+  - Parent Category Field: An optional drop-down showing the category name with the code as a secondary column [fEquipmentCategory.vb:88].
+  - Inactive Field: A disabled tick box labelled "Inactive" [fEquipmentCategory.Designer.vb:91-96].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fEquipmentCategory.vb:159-191].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fEquipmentCategory.vb:124-131].
+  Save: The toolbar action that validates and stores the category [fEquipmentCategory.vb:249-304].
+  Search: The toolbar action that opens a search dialog listing the categories of the logged-in company with Code, Equipment
+    Category, Parent Category, Inactive, Created By and Created Date [fEquipmentCategory.vb:133-157; masterdata.AMECSearchData:16-28].
+  Delete: The toolbar action that removes the open category [fEquipmentCategory.vb:49-75].
+validations:
+- Enter Equipment Category.
+- Duplicate Equipment Category not allowed.
+manages:
+- equipment-category
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AMECDelete.
+  FillValues: Fills the lookup lists through masterdata.AMECFillValues.
+  LoadData: Loads the selected record through masterdata.AMECLoadData.
+  Open: Searches records through masterdata.AMECSearchData.
+  Save: Saves the record through masterdata.AMECSave.
+  ValidateForm: Validates the entry through masterdata.AMECValidate.

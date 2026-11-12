@@ -1,0 +1,45 @@
+form: fStateMaster
+title: State Master
+module: MD
+kind: master
+summary: The State Master screen maintains the states (and union territories) of each country used across the enterprise.
+purpose: |
+  What it is: The enterprise list of states per country with their GST state code and union territory flag. When it applies: When a company starts dealing in a new state or a state's GST attributes have to be set. Business outcome: Consistent state names and GST codes for addresses and tax decisions (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single group box with country, state, union territory, GST code and inactive flag.
+  - Country Name Field: Mandatory dropdown (Country Name, Code); its label is also the link to fast entry, with tooltip "Switch to fast entry mode." (BR-01, BR-09).
+  - State Name Field: Mandatory text box, up to 50 characters (BR-02).
+  - Union Territory Field: Optional checkbox (BR-04).
+  - GST State Code Field: Optional text box, up to 2 characters, no format or uniqueness check (BR-04).
+  - Inactive Field: Checkbox, always disabled.
+  - Fast Entry Grid Container: Grid with Country Name (dropdown of countries), State Name (up to 50 characters) and read-only Remarks; an Import button.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; handlers are empty.
+actions:
+  Switch back to detail mode.: Link at the top of the fast entry area, "Switch back to detail mode.".
+  Import: Import button that loads an Excel sheet named "SMSM" with columns "Country Name" and "State Name" into the fast
+    entry grid, after confirmation MSG-11.
+  New: Standard toolbar New, handled by the main window.
+  Save: Saves the single state, or every filled fast entry row.
+  Search: Standard search with Code, State Name, Country Name, Inactive, Created By, Created Date, sorted by state name.
+  Delete: Deletes the loaded state after confirmation (MSG-09).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-11).
+validations:
+- Select valid Country Name.
+- Enter State Name.
+- Duplicate State Name is not allowed.
+- Successfully Created.
+- Refer remarks for saved status.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+manages:
+- state-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.SMSMDelete.
+  FillValues: Fills the lookup lists through masterdata.SMSMFillValues.
+  LoadData: Loads the selected record through masterdata.SMSMLoadData.
+  Open: Searches records through masterdata.SMSMSearchData.
+  SaveMain: Saves the record through masterdata.SMSMSave.
+  ValidateForm: Validates the entry through masterdata.SMSMValidate.

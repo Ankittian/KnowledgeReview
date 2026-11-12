@@ -1,0 +1,41 @@
+form: fTaxBook
+title: Tax Book
+module: MD
+kind: master
+summary: The Tax Book screen maintains tax books, the groupings of tax categories that the finance and tax set-up uses to
+  classify taxes on documents.
+purpose: |
+  What it is: An enterprise list of tax books that bundle tax categories (Transaction books) or Transaction books (Main books). When it applies: When a new tax regime or tax grouping has to be set up, or an existing grouping changes. Business outcome: Tax codes and tax reports can refer to a named group of taxes instead of individual categories (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header group box with code, name, type and inactive flag, and below it one detail area in which either the category grid or the tax book grid is shown.
+  - Tax Book Code Field: Read-only text box.
+  - Tax Book Name Field: Mandatory text box, up to 50 characters (BR-01).
+  - Tax Book Type Field: Mandatory dropdown, defaulted to "Transaction" (BR-03).
+  - Inactive Field: Checkbox, optional.
+  - Category Details Grid: Columns Select (tick box, default unticked), Category Code and Category Description (read-only); hidden category identifier.
+  - Tax Book Details Grid: Columns Select (tick box), Tax Book Code, Tax Book Name and Tax Category (comma-separated categories of that book, read-only); hidden tax book identifier.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; handlers are empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the tax book and its selected lines.
+  Search: Standard search with Code, Tax Book Name, Tax Book Type, Inactive, Created By, sorted by name.
+  Delete: Deletes the loaded tax book after confirmation (MSG-09).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-10).
+validations:
+- Enter Tax Book Name.
+- Duplicate Tax Book Name not allowed.
+- Select valid Tax Book Type.
+- Select atleast one Category.
+- Select atleast one Tax.
+manages:
+- tax-book
+method_notes:
+  Delete: Deletes the record through Finance.FITBDelete.
+  FillValues: Fills the lookup lists through Finance.FITBFillValues.
+  LoadData: Loads the selected record through Finance.FITBLoadData.
+  Open: Searches records through Finance.FITBSearchData.
+  Save: Saves the record through Finance.FITBSave.
+  SaveCategoryDetails: Saves the record through Finance.FITBSaveCategoryDetail.
+  SaveTaxBookDetails: Saves the record through Finance.FITBSaveDetail.
+  ValidateGeneralDetail: Validates the entry through Finance.FITBValidate.

@@ -1,0 +1,38 @@
+form: fJobControlSheet
+title: Job Control Sheet
+module: MM
+kind: transaction
+summary: 'The Job Control Sheet screen lets a planner schedule and control the two automatic background jobs that run for
+  each Procurement Unit: "Auto Indent", which raises purchase indents for items that have fallen below their planned levels,
+  and "Consumption History", which collects weekly item consumption.'
+purpose: |
+  What it is: A schedule and run state for each automatic job of a Procurement Unit. [Optimization.OJCSFillValuesDependent:19-24] When it applies: When procurement planning is to run unattended, for example daily auto indenting, or when the planner needs to pause or re-run a job. [fJobControlSheet.vb:268-293; fJobControlSheet.vb:340-366] Business outcome: Indents and consumption history are produced on time without manual effort, and the planner can stop or repeat a run.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A "Procurement Unit" dropdown above a job grid, and a hidden "Manually Run Job Between" row-edit panel.
+  - Procurement Unit Field: Dropdown of unit name and Code; mandatory (BR-01).
+  - Job Grid: Grid with columns "Job Name" (read-only), "Fequency" (the caption is misspelled; numeric, up to 3 digits), "Duration Period" (dropdown), "Time" (hh:mm AM/PM), "No.
+  - Status Button: A button in the "Status" column showing "Running" or "Stopped".
+  - Manually Run Job Panel: A row-edit panel opened from the "Manually Run Job" button, with "From Date", "To Date", "Run Job" and "Cancel".
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Search, Delete, Print, Preview, Export and E-mail are empty.
+actions:
+  Save: Validates and saves all job schedules of the unit.
+  New: Clears the form through the standard main window action.
+validations:
+- Select valid Procurement Unit.
+- Enter Frequency In Row N.
+- Select Valid Duration Period In Row N.
+- Select Valid On In Row N.
+- Select Valid Start Date In Row N.
+- Enter No. Of Days In Row N.
+- Sql Agent is not Running
+- Unable to create schedule.
+- Job invoke successfully
+manages:
+- job-control-sheet
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.OJCSFillValues.
+  Save: Saves the record through Optimization.OJCSSave.
+  ubtnInvokeJob_Click: Runs through Optimization.OJCSJobInvoke.
+  ucmbProcurementUnit_ValueChanged: Fills the lookup lists through Optimization.OJCSFillValuesDependent.
+  ugdJobDetail_ClickCellButton: Saves the record through Optimization.OJCSSaveJobUpdate.

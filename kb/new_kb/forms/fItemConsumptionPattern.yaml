@@ -1,0 +1,50 @@
+form: fItemConsumptionPattern
+title: Material Consumption Pattern
+module: MM
+kind: transaction
+summary: The Material Consumption Pattern screen records, for one Optimization Unit and one analysis period, how fast each
+  chosen item is consumed.
+purpose: |
+  What it is: A planning document that fixes, item by item, the planning method, the consumption pattern (Weekly, Bi-Monthly, Monthly, Quarterly or User Defined) and the daily consumption rate for an Optimization Unit [fItemConsumptionPattern.vb:416-428; Optimization.OICPFillValues:60-61]. When it applies: Before planning procurement for an Optimization Unit, once a period of consumption history is available. Business outcome: Purchasing and stock planning work from an agreed, reviewed consumption figure instead of ad-hoc estimates.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The document number control with Entry No., Date, Status, Division and Prefix, then Optimization Unit, the Analysis Period choice and the item filters [fItemConsumptionPattern.vb:471; fItemConsumptionPattern.Designer.vb:454].
+  - Optimization Unit Field: "Optimization &Unit" dropdown; mandatory [fItemConsumptionPattern.vb:89-92; fItemConsumptionPattern.Designer.vb:454].
+  - Analysis Period Options and Dates: Option "&Date Wise" shows "&From Date" and "&To Date"; option "&Financal Year Wise" (spelling as in source) shows the year grid with a Select tick per year [fItemConsumptionPattern.vb:639-647; fItemConsumptionPattern.Designer.vb:523; fItemConsumptionPattern.Designer.vb:544; fItemConsumptionPattern.Designer.vb:553].
+  - Category Name, Group Name and Subgroup Name Fields: Optional filters "&Category Name" ("(All)" is the first row), "Group &Name", "&Subgroup Name"; each lower list refills when the one above changes, and the grids clear [fItemConsumptionPattern.vb:523-544; Optimization.OICPFillValues:46-51].
+  - Show Button: "&Show" loads the item list for the chosen unit, filters and period [fItemConsumptionPattern.vb:545-559; fItemConsumptionPattern.vb:928-988].
+  - Item Detail Grid: The "&Item Detail" tab: Select, Group Name, SubGroup Name, Item Code, Item Description, UOM, Prev Pattern, Prev Rate, Year, Suggested System Pattern, Suggested System Rate, Planning Method, Selected Consumption Pattern, Selected Consumption Rate, with consumed quantity and amount [Optimization.OICPFillValues:21-41; fItemConsumptionPattern.vb:585-636].
+  - Default Consumption Pattern and Update Button: The combo "&Default Consumption Pattern" offers "Copy Prev consumption pattern" (1) and "Copy from suggested consumption pattern" (2); "&Update" copies the choice into every ticked row [Optimization.OICPFillValues:65-67; fItemConsumptionPattern.vb:715-751; fItemConsumptionPattern.Designer.vb:434; fItemConsumptionPattern.Designer.vb:473].
+  - Period Tabs and Selected / Non Selected Tabs: Tabs "&Weekly", "&Bi-Monthly", "&Monthly", "&Quarterly", "Other" show period-wise consumption grids filled on Show; "Se&lected" and "&Non Selected" show consumed amounts grouped by Group, Subgroup and item for ticked and unticked rows [fItemConsumptionPattern.Designer.vb:709-732; fItemConsumptionPattern.vb:980-986; fItemConsumptionPattern.vb:1044-1110].
+actions:
+  Save, Search and Delete: Save validates, asks for confirmation and saves; the search window lists existing entries; Delete
+    removes the loaded entry after confirmation [fItemConsumptionPattern.vb:206-267; fItemConsumptionPattern.vb:290-392].
+validations:
+- Authorized Sales Order can't be updated.
+- Duplicate Document No. is not allowed.
+- Select valid optimization Unit.
+- Select valid Optimization Unit.
+- Select at least one item.
+- Select valid Planning Method in row N.
+- Select valid Consumption Pattern in row N.
+- Select valid Consumption Rate in row N.
+- Select atleast one Year.
+- Select valid Default Consumption Pattern.
+- Authorized entry can't be updated.
+- Go head is prepared against this entry,So you can't delete this entry
+manages:
+- material-consumption-pattern
+uses_concepts:
+- company
+- material-category
+method_notes:
+  Delete: Deletes the record through Optimization.OICPDelete.
+  FillItemDetail: Runs through Optimization.OICPItemDetail.
+  FillValues: Fills the lookup lists through Optimization.OICPFillValues.
+  FillValuesDependent: Fills the lookup lists through Optimization.OISSFillValuesDependent.
+  LoadData: Loads the selected record through Optimization.OICPLoadData.
+  Open: Searches records through Optimization.OICPSearchData.
+  Save: Saves the record through Optimization.OICPSave.
+  SaveItemDetails: Saves the record through Optimization.OICPSaveItemDetail.
+  SaveYearDetail: Saves the record through Optimization.OICPSaveYearDetail.
+  ValidateGeneralDetails: Validates the entry through Optimization.OICPValidate.

@@ -1,0 +1,96 @@
+form: fInputExcisePosting
+title: Input Excise Invoice Posting
+module: FI
+kind: transaction
+summary: The Input Excise Invoice Posting screen records a supplier's excise duty invoice (called a DFT in the screen's narration)
+  so that the company can take input credit for the excise duty it paid.
+purpose: |
+  What it is: A transaction that records the excise duties shown on a supplier's invoice, item by item, and turns them into input credit in the books and in the excise registers. When it applies: When an excise invoice is received from a supplier, normally after the goods were received on a GRN or inward note (BR-09; BR-10). Business outcome: Excise credit is claimed only once per receipt line, is traceable to the receipt and the invoice, and is posted to the right ledger accounts and registers (BR-15; BR-23; BR-24).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: Window "Input Excise Invoice Posting" with the document number control on top and tabs General Detail, Item Detail, Tax Detail, Custom Field, RG Posting and Posting Detail [fInputExcisePosting.Designer.vb:633-653; fInputExcisePosting.Designer.vb:689].
+  - Document Number Control: Shared control for prefix, document number, document date, status (Initial, Release, Authorized), finance book and division (BR-02; BR-20).
+  - Source Document Field: Mandatory dropdown "Source Document" (BR-04; BR-09; MSG-05) [fInputExcisePosting.Designer.vb:184].
+  - Vendor Name and Vendor Location Fields: Mandatory dropdowns "Vendor Name" and "Vendor Location" (BR-04; MSG-06; MSG-07) [fInputExcisePosting.Designer.vb:423; fInputExcisePosting.Designer.vb:491].
+  - Shipping From and Location Fields: Mandatory dropdowns for the manufacturer / dealer and its location (BR-04; MSG-08; MSG-09) [fInputExcisePosting.Designer.vb:414; fInputExcisePosting.Designer.vb:457].
+  - ECC No. Field: Mandatory text, 30 characters (BR-04; BR-08; MSG-10) [fInputExcisePosting.Designer.vb:297].
+  - Invoice No., Invoice Date and Amount Fields: Mandatory "Invoice No." (30 characters), "Invoice Date" (date picker, not after the document date) and "Amount" (decimal, 2 places, non-zero) (BR-03; BR-04; BR-05; MSG-11; MSG-12; MSG-13) [fInputExcisePosting.Designer.vb:254; fInputExcisePosting.vb:122].
+  - Input Type Field: Mandatory dropdown "Input Type": Input or Capital (BR-04; BR-16; MSG-14) [fInputExcisePosting.Designer.vb:248].
+  - Quantity Basis and Unit Options: Option sets "Challan Qty Based" / "Accepted Qty Based" (default Challan) and "Store Unit" / "Purchase Unit" (default Purchase) [fInputExcisePosting.Designer.vb:263-290].
+  - Narration Field: Optional text "Narration", 1000 characters [fInputExcisePosting.Designer.vb:228; fInputExcisePosting.Designer.vb:235].
+  - Currency and Notes Controls: Shared currency control and notes button on the General Detail tab [fInputExcisePosting.Designer.vb:112-115].
+  - GRN / Document Grid: Upper grid of the Item Detail tab listing source documents with a tick column, Document No., Document Date, Challan No.
+  - Item Detail Grid: Lower grid with Select, Order No., Order Date, Document No., Document Date, Item Code, Item Description, Chapter Heading, Technical Specification, Make, Tech.
+  - Tax Detail Tab: Shared tax control on the basic amount, also opened per line from the Tax button [fInputExcisePosting.vb:561-567; fInputExcisePosting.vb:606-630].
+  - Custom Field Tab: Shared custom field control.
+  - RG Posting Tab: Shared excise RG control showing the item and duty summary to be written to RG Part I and Part II.
+  - Posting Detail Tab: Shared finance posting control with the proposed journal voucher.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Print Preview, Export and Email of the voucher report [fInputExcisePosting.vb:118-121].
+  - Maintenance Keys: Ctrl+Alt+V rebuilds the voucher of the loaded posting; Ctrl+Alt+G walks all records and copies a narration update script to the clipboard [fInputExcisePosting.vb:19-107].
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last [fInputExcisePosting.vb:117].
+validations:
+- Authorized Excise Posting can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Duplicate Invoice No. not allowed.
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select valid Mfd. / Dealer Name.
+- Select valid Mfd. / Dealer Location.
+- Enter ECC No.
+- Enter Invoice No.
+- Invoice Date can't be greater than Document Date.
+- Enter Invoice Amount.
+- Select valid Input Type.
+- Select atleast one GRN No.
+- GRN Date can't be greater than Document Date.
+- Select atleast one Item.
+- Enter Chapter Head in row n.
+- Enter DFT Challan Qty. in row n.
+- Enter DFT Qty. in row n.
+- Enter Rate in row n.
+- Enter Basic Amount in row n.
+- Select atleast one item Code.
+- Default account is not set against this form.
+- Document No. <number> saved successfully.
+- Do you want to print?
+- Authorized Input Excise Posting can't be updated.
+- Supplimentary DFT is prepared against this entry.
+- Purchase Bill is prepared against this entry.
+manages:
+- input-excise-invoice-posting
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplementary-invoice
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.IEIPDelete.
+  FillValueDependent: Fills the lookup lists through Finance.IEIPFillValuesDependent.
+  FillValues: Fills the lookup lists through Finance.IEIPFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.IEIPLoadData.
+  Open: Searches records through Finance.IEIPSearchData.
+  Save: Saves the record through Finance.IEIPSave.
+  SaveItemDetail: Saves the record through Finance.IEIPSaveItemDetail.
+  SaveItemTaxDetail: Saves the record through Finance.IEIPSaveItemTaxDetail.
+  SaveNotesDetail: Saves the record through Finance.IEIPSaveNotesDetail.

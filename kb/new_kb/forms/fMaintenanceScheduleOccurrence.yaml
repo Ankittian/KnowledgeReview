@@ -1,0 +1,51 @@
+form: fMaintenanceScheduleOccurrence
+title: Maintenance Schedule Occurrence
+module: PM
+kind: transaction
+summary: The Maintenance Schedule Occurrence screen lets a maintenance planner add, correct or remove a single dated occurrence
+  of a trigger on an authorized Maintenance Schedule.
+purpose: |
+  What it is: A single due point of one trigger of a schedule, identified by schedule, trigger and Occurrence No., with a date, a status and remarks [fMaintenanceScheduleOccurrence.vb:454-525; EAM.EASOSave:39-66]. When it applies: When the automatically generated series needs a manual addition, a date correction or a removal. Business outcome: The occurrence list that drives Maintenance Orders stays correct without re-saving the schedule (BR-04; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "MaintenanceScheduleOccurrence" with the schedule fields at the top, the occurrence fields below and a read-only trigger grid at the bottom [fMaintenanceScheduleOccurrence.designer.vb:304].
+  - Maintenance Schedule No. Field: Mandatory dropdown listing Maintenance Schedule No, Maintenance Schedule Date, Equipment Description/Location and Object Type [fMaintenanceScheduleOccurrence.vb:131; fMaintenanceScheduleOccurrence.vb:304-310].
+  - Maintenance Schedule Date, Equipment Description, Maintenance Type and Maintenance Category Fields: Four read-only text boxes filled from the chosen schedule; the second label reads "Equipment Description" for equipment and "Location" for locations [fMaintenanceScheduleOccurrence.designer.vb:83; fMaintenanceScheduleOccurrence.designer.vb:102; fMaintenanceScheduleOccurrence.designer.vb:121; fMaintenanceScheduleOccurrence.designer.vb:140; fMaintenanceScheduleOccurrence.vb:553-570].
+  - Trigger No. Field: Mandatory dropdown of the schedule's triggers [fMaintenanceScheduleOccurrence.vb:312-318; fMaintenanceScheduleOccurrence.vb:572].
+  - Occurrence No. Field: Read-only text, filled automatically [fMaintenanceScheduleOccurrence.designer.vb:159; fMaintenanceScheduleOccurrence.vb:618].
+  - Occurrence Date Field: Date picker [fMaintenanceScheduleOccurrence.designer.vb:190].
+  - Status Field: Mandatory dropdown "Status" [fMaintenanceScheduleOccurrence.designer.vb:209; fMaintenanceScheduleOccurrence.vb:132].
+  - Remarks Field: Optional text, up to 1000 characters [fMaintenanceScheduleOccurrence.vb:124; fMaintenanceScheduleOccurrence.vb:485].
+  - Trigger Grid: Read-only grid with Trigger Type, Trigger Description, Expected Occurrence Date, Expected Occurrence Value, Previous Occurrence Date, Previous Occurrence Value, Current Occurrence Date and Current Occurrence Value [fMaintenanceScheduleOccurrence.vb:413-447].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that exist but do nothing [fMaintenanceScheduleOccurrence.vb:238-270].
+actions:
+  New: Clears the form for a new occurrence.
+  Save: Validates and saves the occurrence in one transaction.
+  Search: Opens the standard search list of occurrences.
+  Delete: Deletes the loaded occurrence after the standard delete confirmation.
+validations:
+- Select valid Maintenance Schedule No.
+- Select valid Trigger No.
+- Select valid Status.
+- Occurrence Date can't be less than Maintenance Schedule Date.
+- Occurrence Date can't be less than Last occurrence Date.
+- Unable to delete, Maintenance Order (<order numbers>) entry exists.
+- Unable to delete, Maintenance Schedule Change Status (<document numbers>) entry exists.
+- Expected and current occurrence Date is not same, Do you want to continue?
+- Expected and current occurrence Value is not same, Do you want to continue?
+manages:
+- maintenance-schedule-occurrence
+uses_concepts:
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-schedule
+- maintenance-schedule-change-status
+method_notes:
+  Delete: Deletes the record through EAM.EASODelete.
+  FillValues: Fills the lookup lists through EAM.EASOFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EASOFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EASOLoadData.
+  Open: Searches records through EAM.EASOSearchData.
+  Save: Saves the record through EAM.EASOSave.

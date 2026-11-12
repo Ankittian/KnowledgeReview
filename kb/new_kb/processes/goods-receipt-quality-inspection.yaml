@@ -1,0 +1,51 @@
+key: goods-receipt-quality-inspection
+name: Goods Receipt & Quality Inspection
+module: MM
+status: active
+summary: Received material is inspected against QC parameters and specifications before acceptance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  QC and quality parameters and specifications are set up; the gate entry and GRN record the receipt; an inspection intimation sends the lots for inspection and the inspection entry records accepted and rejected quantities and readings.
+steps:
+- order: 1
+  name: Define QC parameters
+  form: fQCParameter
+- order: 2
+  name: Define QC groups
+  form: fQCGroupMaster
+  status: planned
+- order: 3
+  name: Define quality parameters
+  form: fQualityParameter
+- order: 4
+  name: Define quality specifications
+  form: fSpecification
+- order: 5
+  name: Group level QC defaults
+  form: fMaterialGroup
+- order: 6
+  name: Sub group level QC parameters
+  form: fMaterialSubGroupMaster
+- order: 7
+  name: Record the gate inward
+  form: fGateEntry
+- order: 8
+  name: Receive the goods
+  form: fGRN
+- order: 9
+  name: Send the receipt for inspection
+  form: fInspectionIntimation
+- order: 10
+  name: Record the inspection result
+  form: fInspectionEntry
+concepts:
+- qc-parameter
+- qc-group
+- goods-receipt-note
+- quality-parameter
+- quality-specification
+- inspection-intimation
+- quality-inspection
+leads_to:
+- payment-flow
+- inventory-storage

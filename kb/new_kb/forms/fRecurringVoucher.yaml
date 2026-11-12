@@ -1,0 +1,55 @@
+form: fRecurringVoucher
+title: Recurring Voucher
+module: FI
+kind: transaction
+summary: The Recurring Voucher screen sets up a voucher that repeats on a schedule, such as monthly rent, a standing payment
+  or a regular accrual.
+purpose: |
+  What it is: A schedule plus a template voucher that produces dated vouchers automatically. When it applies: A routine entry must be posted at regular intervals. Business outcome: Routine postings are made on time without manual entry (BR-06, BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: Document number, date, finance book, status and prefix of the recurring voucher.
+  - Voucher Type Field: Mandatory list "&Voucher Type" offering Journal, Payment and Receipt [Finance.FIRVFillValues:20]; the template area changes to that voucher type [fRecurringVoucher.vb:598-625].
+  - Template Source Field: Mandatory list "Template &Source" from system configuration.
+  - Effective From and Effective To: "Effec&tive From" date field, and read-only "Effective To" showing the last generated date [fRecurringVoucher.vb:677-680].
+  - No. Of Executions and Duration Fields: Mandatory numeric fields "&No.
+  - Duration Period, On Day and At Date Fields: Mandatory list for the period (Day(s), Week(s), Month(s)) [fRecurringVoucher.vb:691-713]; "On &Day" is enabled only for weeks and required then; "At Da&te" is enabled only for months.
+  - Generated Voucher Status and Exchange Rate Type: Mandatory lists "&Generated Voucher Status" and "E&xchange Rate Type" (Fixed, On Date) [Finance.FIRVFillValues:55-56].
+  - Schedule Grid: Columns Active, Voucher Date and Amount; Amount is read-only and rows cannot be deleted [fRecurringVoucher.vb:370-380].
+  - Template Voucher Grid, Narration and Cheque Printing Option: The shared voucher grid, "&Narration" (up to 1000 characters) and the check box "Applicable For &Cheque Printing".
+validations:
+- Select valid Voucher Type.
+- Select valid Template Source.
+- Effective Date can't be less than Document Date.
+- Enter No. Of Executions.
+- Enter Duration.
+- Select valid Duration Period.
+- Select valid On Day.
+- Min of Voucher Date can't be less than Effective Date.
+- Select valid Generated Voucher Status.
+- Select valid Exchange Rate Type.
+- 'Select Voucher Date in row '
+- Authorized Recurring Voucher can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Finance Book is closed for this Document Date.
+- Contact your vendor,Reference getting -ve
+- Improper Voucher
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- recurring-voucher
+uses_concepts:
+- account-opening
+- accounting-voucher
+- bank-journal
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FIRVDelete.
+  FillValues: Fills the lookup lists through Finance.FIRVFillValues.
+  LoadData: Loads the selected record through Finance.FIRVLoadData.
+  Open: Searches records through Finance.FIRVSearchData.
+  Save: Saves the record through Finance.FIRVSaveMain.
+  SaveDetail: Saves the record through Finance.FIRVSaveDetail.
+  SaveOnDate: Saves the record through Finance.FIRVSaveOnDate.
+  ValidateForm: Validates the entry through Finance.FIRVValidate.

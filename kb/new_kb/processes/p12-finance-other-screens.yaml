@@ -1,0 +1,94 @@
+key: p12-finance-other-screens
+name: 'Finance: Other screens (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the other screens group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Other screens' (Finance). The steps follow the plan order, not a verified business sequence: Bill Entry, Order Account Assignment, Outward Bill Entry, Sundry Receipt, Supplier Advance, Account Opening, Finish Goods Valuation, Freight Invoice, Service Invoice, Layout Opening, Interest Calculator, Order Mapping, Payment Plan Partial Cancellation, Receipt Request, Stock Monthly Locking, Sundry Payment, Supplementary Invoice, Document Cancellation, Policy Employee Mapping, Reference Hold/ Release, Salary Payment Plan.
+steps:
+- order: 1
+  name: Record Bill Entry
+  form: fBillEntryEROS
+- order: 2
+  name: Record Order Account Assignment
+  form: fOrderAccountAssignment
+- order: 3
+  name: Record Outward Bill Entry
+  form: fOutwardBillEntry
+- order: 4
+  name: Record Sundry Receipt
+  form: fSundryReceipt
+- order: 5
+  name: Record Supplier Advance
+  form: fAdvancePassing
+- order: 6
+  name: Record Account Opening
+  form: fSetOpeningBalance
+- order: 7
+  name: Record Finish Goods Valuation
+  form: fFinishGoodsValuation
+- order: 8
+  name: Record Freight Invoice
+  form: fFreightInvoice
+- order: 9
+  name: Record Service Invoice
+  form: fServiceBill
+- order: 10
+  name: Record Layout Opening
+  form: fFSLayoutOpening
+- order: 11
+  name: Record Interest Calculator
+  form: fInterestCalculator
+- order: 12
+  name: Record Order Mapping
+  form: fLCOrderMapping
+- order: 13
+  name: Record Payment Plan Partial Cancellation
+  form: fPaymentPlanPartialCancellation
+- order: 14
+  name: Record Receipt Request
+  form: fReceiptRequest
+- order: 15
+  name: Record Stock Monthly Locking
+  form: fStockMonthlyLocking
+- order: 16
+  name: Record Sundry Payment
+  form: fSundryPayment
+- order: 17
+  name: Record Supplementary Invoice
+  form: fSupplementaryInvoice
+- order: 18
+  name: Record Document Cancellation
+  form: fDocumentCancellation
+- order: 19
+  name: Record Policy Employee Mapping
+  form: fPolicyEmployeeMapping
+- order: 20
+  name: Record Reference Hold/ Release
+  form: fReferenceHoldReleaseDetail
+- order: 21
+  name: Record Salary Payment Plan
+  form: fSalaryPaymentPlan
+concepts:
+- bill-entry
+- order-account-assignment
+- outward-bill-entry
+- sundry-receipt
+- supplier-advance
+- account-opening
+- finish-goods-valuation
+- freight-invoice
+- service-invoice
+- layout-opening
+- interest-calculator
+- order-mapping
+- payment-plan-partial-cancellation
+- receipt-request
+- stock-monthly-locking
+- sundry-payment
+- supplementary-invoice
+- document-cancellation
+- policy-employee-mapping
+- reference-hold-release
+- salary-payment-plan

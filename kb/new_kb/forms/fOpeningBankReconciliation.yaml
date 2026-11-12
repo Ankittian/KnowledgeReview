@@ -1,0 +1,31 @@
+form: fOpeningBankReconciliation
+title: Bank Reconciliation Opening
+module: FI
+kind: transaction
+summary: The Bank Reconciliation Opening screen records, for one bank account of one Finance Book, the bank items that were
+  still uncleared on the day bank reconciliation starts.
+purpose: |
+  What it is: The one-time list of items issued or received before the start date but not yet cleared by the bank. When it applies: Once per bank account, when bank reconciliation is introduced, before reconciling for the first time (BR-14). Business outcome: Reconciliation can begin mid-life without re-keying earlier history (BR-04; BR-14).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area and Account Grid: A header and one grid of opening items; form code "FOBR" [fOpeningBankReconciliation.Designer.vb:97; fOpeningBankReconciliation.Designer.vb:125-126].
+  - Finance Book Field: A drop-down, mandatory.
+  - Bank Account Name Field: A drop-down, mandatory, of eligible bank accounts with their group names [fOpeningBankReconciliation.vb:497].
+  - Reconciliation Start Date Field: A date picker in dd/MM/yyyy [fOpeningBankReconciliation.Designer.vb:75-77].
+  - Account Grid: Columns Account Name, Payment Mode, Payment Reference No.
+actions:
+  Save: Validates, asks for confirmation, saves in one transaction, then clears the screen for a new record [fOpeningBankReconciliation.vb:347-395].
+  Open, Delete and Other Toolbar: Open lists saved records (Finance Book, Account Name, Reconciliation Start Date, Created
+    By, Created Date) in a search window [fOpeningBankReconciliation.vb:115-139; Finance.FOBRSearchData:17-28].
+manages:
+- bank-reconciliation-opening
+method_notes:
+  Delete: Deletes the record through Finance.FOBRDelete.
+  FillValues: Fills the lookup lists through Finance.FOBRFillValues.
+  FillValuesDate: Fills the lookup lists through Finance.FOBRFillValuesDate.
+  FillValuesFB: Fills the lookup lists through Finance.FOBRFillValuesFB.
+  LoadData: Loads the selected record through Finance.FOBRLoadData.
+  Open: Searches records through Finance.FOBRSearchData.
+  Save: Saves the record through Finance.FOBRSaveMain.
+  SaveAccountDetail: Saves the record through Finance.FOBRSaveAccountDetail.
+  ValidateForm: Validates the entry through Finance.FOBRValidate.

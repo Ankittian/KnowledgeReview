@@ -1,0 +1,59 @@
+form: fTyreRepairRequest
+title: Tyre Repair Request
+module: PM
+kind: transaction
+summary: The Tyre Repair Request screen is where a user asks for tyres to be repaired or retreaded.
+purpose: |
+  What it is: A transaction document that records which tyres are sent for repair or retread, where, and why [fTyreRepairRequest.vb:508-553; EAM.TTRRSave:77-103]. When it applies: When removed, installed or awaiting-repair tyres need repair, or tyres awaiting retread are sent for retreading. Business outcome: Repair work is requested through a numbered, authorised document, and the retread hand-over is traceable in the tyre history (BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control, the header fields Repair Location, Repair Category, Requested By and Remarks, and a tab control with the tabs "Repair Detail" and "Custom Field Detail" [fTyreRepairRequest.Designer.vb:182-278].
+  - Document Control Fields: The shared document control with Document Status, Division, Document Date and Document No.
+  - Repair Location and Repair Category: Two compulsory lists; the category list shows name and code [fTyreRepairRequest.vb:47; fTyreRepairRequest.vb:102-103].
+  - Requested By and Remarks: Requested By is a list of earlier requesters that also accepts new text (up to 100 characters in the database); Remarks is a multi-line text, limited to 500 characters by the database but not by the box [fTyreRepairRequest.vb:104; fTyreRepairRequest.vb:535-541; EAM.TTRRSave:20-21; fTyreRepairRequest.Designer.vb:242].
+  - Repair Detail Grid: A grid with Entry Type, Vehicle, Current Position, Tyre Serial No, a selection button (Btn), Current Status, Current Life Stage, Repair Description, Current NSD and Remarks; a new row is added when the last row is edited [EAM.TTRRFillValues:46-59; fTyreRepairRequest.vb:634-636].
+  - Repair Description Editor: A pop-up text editor with Ok and Cancel buttons opened from the Repair Description cell; it accepts up to 1000 characters while the grid cell and database keep 500 [fTyreRepairRequest.vb:777-792; fTyreRepairRequest.Designer.vb:106-121; fTyreRepairRequest.vb:470].
+  - Custom Field Detail Tab: The shared custom field grid [fTyreRepairRequest.vb:152; fTyreRepairRequest.vb:690-714].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a new record [fTyreRepairRequest.vb:159-166].
+  Save: The toolbar action that validates and saves [fTyreRepairRequest.vb:493-574].
+  Search: The toolbar action that opens a document search [fTyreRepairRequest.vb:168-193].
+  Delete: The toolbar action that removes the open document [fTyreRepairRequest.vb:53-77].
+validations:
+- Authorized MiningTyreRepairRequest can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Repair Location.
+- Select valid Repair Category.
+- Select valid Vehicle in row no.N.
+- Select valid Current Position in row no.N.
+- Select valid Tyre Serial No in row no.N.
+- Enter Repair Description in row no.N.
+- Select at least one Tyre Serial No.
+- Duplicate Tyre Serial No is not allowed.
+- Document No. <number> saved successfully.
+- Some Tyre Repair Entry exists after current Repair Entry. Can not Delete.
+- Some Tyre Repair Request exists after current Repair Entry. Can not Delete.
+- 'Tyre [serial]: cannot move to Under Retread. Tyre must be in Awaiting Retread status.'
+- Document is not authorized. Reversal is only allowed for authorized entries.
+- 'Reversal blocked: Tyre [serial] has a later transaction in Document [number] (Form n). Please reverse that document first.'
+manages:
+- tyre-repair-request
+uses_concepts:
+- axle-wheel-configuration
+- company
+- equipment-master
+- supplementary-field
+- tyre-master
+- tyre-repair-category
+method_notes:
+  Delete: Deletes the record through EAM.TTRRDelete.
+  FillValues: Fills the lookup lists through EAM.TTRRFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.TTRRFillValuesDependent.
+  LoadData: Loads the selected record through EAM.TTRRLoadData.
+  Open: Searches records through EAM.TTRRSearchData.
+  Save: Saves the record through EAM.TTRRSave.
+  SaveCustomFieldDetail: Saves the record through EAM.TTRRSaveTyreRepairRequestDetail.
+  SaveRepDetails: Saves the record through EAM.TTRRSaveTyreRepairRequestDetail.
+  ValidateForm: Validates the entry through EAM.TTRRValidate.

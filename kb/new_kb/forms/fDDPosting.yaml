@@ -1,0 +1,50 @@
+form: fDDPosting
+title: DD Posting
+module: FI
+kind: transaction
+summary: The DD Posting screen completes a bank payment made by demand draft, NEFT or RTGS.
+purpose: |
+  What it is: The step that records the actual DD, NEFT or RTGS references for a bank payment and clears the holding account against the bank. When it applies: After Bank Journal has posted a DD, NEFT or RTGS payment and the bank has issued the instrument or confirmed the transfer. Business outcome: The bank ledger reflects the real outflow and each payee voucher carries the real reference (BR-08; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area and Payee Grid: A header, a group "Cheque Detail" and one payee grid [fDDPosting.Designer.vb:322].
+  - Paying Unit Field: Drop-down "Paying Unit"; changing it reloads Finance Book [fDDPosting.vb:82; fDDPosting.vb:626-632].
+  - Finance Book Field: Drop-down "Finance Book", or "Profit Center" when configured; changing it reloads Bank Account Name and the Cheque No.
+  - Bank Account Name Field: Drop-down "Bank Account Name"; changing it reloads Cheque No.
+  - Voucher Date Field: Date "Voucher Date", the date of the contra voucher [fDDPosting.vb:505].
+  - Date Range Fields: Check box "Date Range" enabling a group "Date Range" with From and To dates [fDDPosting.vb:723-729; fDDPosting.Designer.vb:186-191].
+  - Cheque No. Field: Mandatory drop-down "Cheque No." showing the reference and date [fDDPosting.vb:25; fDDPosting.vb:233-237].
+  - Payment Mode and Cheque Amount Fields: Read-only displays "Payment Mode" and "Cheque Amount" [fDDPosting.Designer.vb:217; fDDPosting.Designer.vb:238].
+  - Cost Center Field: Drop-down "Cost Center", pre-filled from the bank account [fDDPosting.vb:740].
+  - Currency Control: A read-only currency, rate type and conversion rate taken from the instrument [fDDPosting.vb:87-88; fDDPosting.vb:742-744].
+  - Payee Grid: Columns: Source Document, Source Document No., Unit Name, Payee Type, Payee Name, Payee Location, Amount, Payment Ref.
+actions:
+  Save: Toolbar Save [fDDPosting.vb:346-449].
+  New Action and Other Toolbar: New resets the form [fDDPosting.vb:135-142].
+validations:
+- Select valid Cheque No.
+- Voucher Date can't be less than Cheque Date.
+- Select valid Cost Center.
+- Enter atleast one Payment Ref. No.
+- Select Payment Ref. Date in row N.
+- Payment Ref. Date can't be less than Cheque Date in row N.
+- VoucherValidation
+manages:
+- dd-posting
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- company
+- recurring-voucher
+- reverse-voucher
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FDDPFillValues.
+  FillValuesChequeNo: Fills the lookup lists through Finance.FDDPFillValuesChequeNo.
+  FillValuesDependent: Fills the lookup lists through Finance.FDDPFillValuesDependent.
+  FillValuesFinanceBook: Fills the lookup lists through Finance.FIBPFillValuesFinanceBook.
+  FillValuesPayingUnit: Fills the lookup lists through Finance.FIBPFillValuesPayingUnit.
+  Save: Saves the record through Finance.FDDPSaveMain, Finance.FDDPSaveNarration, Finance.VoucherSaveChildDetail.
+  SavePayeeDetail: Saves the record through Finance.FDDPSavePayeeDetail.
+  SavePaymentDetail: Saves the record through Finance.VoucherSavePaymentDetail.

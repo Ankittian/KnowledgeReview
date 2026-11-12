@@ -1,0 +1,30 @@
+key: p10-reports-other-screens
+name: 'Reports: Other screens (Phase 10)'
+module: RPT
+status: active
+summary: Phase 10 screens of the other screens group in Reports.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 10 forms that the KB validation plan puts in 'Other screens' (Reports). The steps follow the plan order, not a verified business sequence: Day Book, Account Ledger, MIS From Excel, MIS Report, Trial Balance.
+steps:
+- order: 1
+  name: Record Day Book
+  form: fDayBookReport
+- order: 2
+  name: Record Account Ledger
+  form: fAccountLedgerReport
+- order: 3
+  name: Record MIS From Excel
+  form: fImportSheet
+- order: 4
+  name: Record MIS Report
+  form: fMISReportOther
+- order: 5
+  name: Record Trial Balance
+  form: fTrialBalance
+concepts:
+- day-book
+- account-ledger
+- mis-from-excel
+- mis-report
+- trial-balance

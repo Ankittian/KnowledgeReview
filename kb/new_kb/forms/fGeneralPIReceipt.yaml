@@ -1,0 +1,74 @@
+form: fGeneralPIReceipt
+title: General Proforma Invoice Receipt
+module: FI
+kind: transaction
+summary: The General Proforma Invoice Receipt screen records money received from a customer in advance against one or more
+  authorized proforma invoices, before the goods or services are billed.
+purpose: |
+  What it is: A document that records an advance received from a customer against proforma invoices, with the tax content of the advance, and posts it to the books as a Receipt voucher [fGeneralPIReceipt.vb:1498-1906; Finance.GPIRSave:84-152]. When it applies: When a customer pays the amount asked for in a proforma invoice before delivery or billing. Business outcome: The advance is recorded against the invoices (so the open balance of each invoice falls), the bank and customer advance accounts are updated and the tax on the advance is reported (BR-07; BR-11; BR-15; BR-20).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout and Tabs: A document control at the top and the tabs General Detail, Tax Detail, Finance Posting and GST Posting [fGeneralPIReceipt.Designer.vb:570-581].
+  - Document Number, Date, Status and Division Control: The shared document control with document number, date, status, division (finance book) and prefix [fGeneralPIReceipt.vb:285-290; fGeneralPIReceipt.vb:492-494].
+  - Customer Name and Location Fields: Customer Name is a mandatory drop-down of customers (name and code); Location lists the customer's locations and selects the first one automatically [fGeneralPIReceipt.vb:192; fGeneralPIReceipt.vb:1117-1131; fGeneralPIReceipt.Designer.vb:341-360].
+  - Order No. and Order Date Fields: An optional drop-down of the customer's orders with a read-only Order Date [fGeneralPIReceipt.vb:1133-1169; fGeneralPIReceipt.Designer.vb:379-398].
+  - Receipt Mode, Bank Account Name and Cost Center Fields: Receipt Mode (mandatory), Bank Account Name (read-only until a mode other than cash is chosen) and an optional Cost Center [fGeneralPIReceipt.vb:192-193; fGeneralPIReceipt.vb:1172-1180; fGeneralPIReceipt.Designer.vb:209-445].
+  - Cheque Details Fields: Cheque No., Cheque Date, Cheque Amount, Party Bank Name and Branch Name [fGeneralPIReceipt.Designer.vb:160-294; fGeneralPIReceipt.vb:2034-2045].
+  - Basic Amount Fields: Two read-only Basic Amount boxes (one on the General Detail tab and one near the tax grid) [fGeneralPIReceipt.Designer.vb:216-229; fGeneralPIReceipt.Designer.vb:460-473; fGeneralPIReceipt.vb:1409-1412].
+  - Proforma Invoice Grid: A grid of the customer's proforma invoices with Select, Order No., MDN No., Proforma Invoice No., Proforma Date, Gross Amount, Proforma Basic Amount, Balance Amount and Receipt Amount [Finance.GPIRFillValuesSO:49-62; fGeneralPIReceipt.vb:1337-1361].
+  - Item Detail Grid: A grid of the items of the ticked invoices with Order No., Proforma Invoice No., Item Code, Item Description, HSN and SAC Code, Tech.
+  - Tax Detail Tab: The shared tax-on-amount control with item level and document level taxes [fGeneralPIReceipt.vb:236-246; fGeneralPIReceipt.vb:647-665].
+  - Remarks and Notes: A Remarks box (1000 characters) and a notes control with print area, notes and default flag [fGeneralPIReceipt.Designer.vb:313-318; fGeneralPIReceipt.vb:948-968].
+  - Finance Posting and GST Posting Tabs: The proposed Receipt voucher and the GST posting detail [fGeneralPIReceipt.vb:1470-1484; fGeneralPIReceipt.vb:1498-1528].
+  - Toolbar and Hidden Shortcuts: New, Save, Open, Delete, Navigation, Print, Print Preview, Export and E-mail are enabled [fGeneralPIReceipt.vb:175-190].
+validations:
+- Authorized Proforma Invoice Reciept Voucher can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Receipt Mode.
+- Select valid Bank Account Name.
+- Select Cheque Date.
+- Enter Cheque No.
+- Cheque Date can't be greater than Document Date
+- Select valid Branch Name.
+- Select atleast one Proforma Invoice.
+- Document Date can't be less than proform date in row N.
+- Amount can't be empty or zero in row N.
+- Sum of PI Receipt Amount should be equal to Basic Amount.
+- Net amount should be equal to Cheque Amount.
+- Include In Basic can not be selected for GST Taxes.
+- Select atleast one Item Code.
+- Basic Amount can't be empty or zero in row N.
+- Duplicate Item Code and Proforma Invoice No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- general-proforma-invoice-receipt
+uses_concepts:
+- asset-disposal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- input-excise-invoice-posting
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.GPIRDelete.
+  FillValues: Fills the lookup lists through Finance.GPIRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.GPIRFillValuesDependent.
+  FillValuesPIDetail: Fills the lookup lists through Finance.GPIRFillValuesPIDetail.
+  FillValuesSO: Fills the lookup lists through Finance.GPIRFillValuesSO.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.GPIRLoadData.
+  Open: Searches records through Finance.GPIRSearchData.
+  Save: Saves the record through Finance.GPIRSave.
+  SaveItemDetail: Saves the record through Finance.GPIRSaveItemDetail.

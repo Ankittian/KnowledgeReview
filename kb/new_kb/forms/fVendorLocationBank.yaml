@@ -1,0 +1,45 @@
+form: fVendorLocationBank
+title: Bank Detail
+module: MD
+kind: master
+summary: The Bank Detail screen records the bank accounts of vendors, one account per record, tied to a specific vendor location.
+purpose: |
+  What it is: The register of vendor bank accounts per vendor location. When it applies: When a vendor supplies or changes bank account details. Business outcome: Payments can be directed to a verified account and branch (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with all fields.
+  - Code Field: Read-only text box, up to 12 characters.
+  - Vendor Name Field: Mandatory dropdown with vendor name, code and vendor type (BR-01).
+  - Location Field: Mandatory dropdown of the vendor's locations (BR-02).
+  - Bank Name Field: Mandatory dropdown with bank name and code (BR-03).
+  - Branch Name Field: Mandatory dropdown of branches of the chosen bank (BR-04).
+  - IFSC Code Field: Read-only text box.
+  - Account Number Field: Mandatory text box, up to 25 characters (BR-05).
+  - Account Type Field: Optional dropdown (BR-06).
+  - Inactive Field: Checkbox, permanently disabled.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers are empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the account.
+  Search: Standard search with Code, Bank Name, Bank Branch, IFSC Code, Account Number, Vendor Name, Location, Created By,
+    Created Date, sorted by bank and vendor.
+  Delete: Deletes the loaded account after confirmation (MSG-10).
+  Navigation: The screen does not declare its toolbar options; navigation depends on the framework default (Inferred).
+validations:
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Bank Name.
+- Select valid Branch Name.
+- Enter Account Number.
+- Permission denied to delete Bank Person.
+manages:
+- bank-detail
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.VIBDDelete.
+  FillValues: Fills the lookup lists through masterdata.VIBDFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through masterdata.VIBDLoadData.
+  Open: Searches records through masterdata.VIBDSearchData.
+  Save: Saves the record through masterdata.VIBDSaveMain.

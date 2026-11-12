@@ -1,0 +1,59 @@
+form: fSalesOrderChangeStatus
+title: Sales Order Change Status
+module: SD
+kind: transaction
+summary: The Sales Order Change Status screen records a numbered, dated "change status" document that moves an authorized
+  sales order, line by line, to Hold, Cancel, Short Close, In Progress or back to Authorized.
+purpose: |
+  What it is: A controlled, auditable document that changes the operational status of sales order lines. When it applies: When a customer order must be put on hold, resumed, cancelled or short-closed in full or in part. Business outcome: Status changes are justified with a reason, approved through document authorization, and blocked when downstream production or dispatch work would be left orphaned.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Shared document control at the top with division, prefix, document number, document date and document status.
+  - General Detail Area: Panel with "Sales Order No.", reference search button, "Sales Order Date", "Customer Name", "Location Name", "Agent", "Current Status", "Status" and "Reason".
+  - Sales Order No. Field: Mandatory dropdown showing Sales Order No, Sales Order Date, Customer Name, Location Name, Status and Agent.
+  - Reference Sales Order Button: Small search button beside "Sales Order No.".
+  - Sales Order Date, Customer Name, Location Name, Agent and Current Status Fields: Read-only text boxes.
+  - Status Field: Optional dropdown of new order statuses, filtered to the moves allowed from the order's current status.
+  - Reason Field: Editable dropdown of reasons used before on this screen in the company; free text allowed (Inferred).
+  - Item Detail Grid: One row per line of the selected order.
+  - Other Toolbar Actions (Delete, Print, Preview, Export, Email): Not offered; their routines are empty or commented out.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search (Open): Toolbar Open showing the configured search list of change status documents for the company and financial
+    year.
+  Navigation: First / Previous / Next / Last through the search result, provided by the shared toolbar.
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Batch order against this Sales order is open or In-progress for Item : <item> Make : <make> Attribute : <attribute> .'
+- 'Production planning in progress against this order for Item : <item> Make : <make> Combination : <attribute> .'
+- 'Unable to save, as Tax Invoice is not prepared for dispatch planning of this order for Item : <item> Make : <make> Attribute
+  : <attribute> .'
+- Select valid SalesOrder No..
+- Document Date can't be less than Sales Order Date.
+- Select valid Reason.
+- Select status for atleast one Item.
+- Select valid Reason in row <n>.
+- Release Agreement Qty. is not selected in row <n> . Do you want to continue?
+- Release Agreement Qty. is not selected in row <n> .
+- Authorized SalesOrderChangeStatus can't be updated.
+- Document No. <number> saved successfully.
+manages:
+- sales-order-change-status
+uses_concepts:
+- company
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- tax-invoice
+method_notes:
+  FillValues: Fills the lookup lists through Sales.SOCSFillValues.
+  LoadData: Loads the selected record through Sales.SOCSLoadData.
+  Open: Searches records through Sales.SOCSSearchData.
+  Save: Saves the record through Sales.SOCSSave.
+  SaveItemDetail: Saves the record through Sales.SOCSSaveChangeStatusSOItemDetail.
+  ValidateForm: Validates the entry through Sales.SOCSValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through Sales.SOCSFillValues.
+  ubtnReferenceSalesOrder_Click: Searches records through Sales.SOCSSalesOrderSearchForm.
+  ucmbSalesOrderNo_ValueChanged: Fills the lookup lists through Sales.SOCSFillValuesDependent.

@@ -1,0 +1,39 @@
+form: fSkillMaster
+title: Skill Master
+module: MD
+kind: master
+summary: The Skill Master screen maintains the list of skills that maintenance and quality work can require, such as a trade
+  or a certification.
+purpose: |
+  What it is: A master record made of a code, a skill name, a skill type and a skill group [fSkillMaster.vb:303-360; masterdata.AMSKSave:22-58]. When it applies: When the organisation introduces a skill that work or resources must be matched against. Business outcome: Skills come from one controlled list, so planning, resource set-up and reporting speak the same language.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single small window titled "Skill Master" with Code, Skill Name, Skill Type, Skill Group and Inactive [fSkillMaster.designer.vb:151].
+  - Code Field: A read-only text box of up to 6 characters that cannot be tabbed into [fSkillMaster.designer.vb:41-46].
+  - Skill Name Field: A mandatory text box, up to 50 characters, marked as compulsory on load; leading and trailing spaces are removed [fSkillMaster.vb:44; fSkillMaster.designer.vb:61; fSkillMaster.vb:247; fSkillMaster.vb:320].
+  - Skill Type Field: A mandatory drop-down with the type name and code [fSkillMaster.vb:44; fSkillMaster.vb:101].
+  - Skill Group Field: A mandatory drop-down with the group name and code [fSkillMaster.vb:44; fSkillMaster.vb:102].
+  - Inactive Field: A disabled tick box labelled "Inactive" that cannot be tabbed into [fSkillMaster.designer.vb:115-121].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fSkillMaster.vb:189-221].
+actions:
+  New: The toolbar action that asks the main window to start a blank record and clears the record number [fSkillMaster.vb:151-160].
+  Save: The toolbar action that validates and stores the skill [fSkillMaster.vb:303-360].
+  Search: The toolbar action that opens a search dialog listing the skills of the logged-in company with Code, Skill Name,
+    Skill Type, Skill Group, Inactive, Created By and Created Date [fSkillMaster.vb:163-187; masterdata.AMSKSearchData:17-31].
+  Delete: The toolbar action that removes the open skill [fSkillMaster.vb:52-86].
+validations:
+- Enter Skill Name.
+- Select valid Skill Type.
+- Select valid Skill Group.
+- Duplicate Skill Name not allowed.
+manages:
+- skill-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AMSKDelete.
+  FillValues: Fills the lookup lists through masterdata.AMSKFillValues.
+  LoadData: Loads the selected record through masterdata.AMSKLoadData.
+  Open: Searches records through masterdata.AMSKSearchData.
+  Save: Saves the record through masterdata.AMSKSave.
+  ValidateForm: Validates the entry through masterdata.AMSKValidate.

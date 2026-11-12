@@ -1,0 +1,59 @@
+form: fAssetClass
+title: Asset Class
+module: MD
+kind: master
+summary: The Asset Class screen maintains the asset classes of a chart of depreciation (COD).
+purpose: |
+  What it is: A master record that defines a named class of assets inside a chart of depreciation, with its type, nature, reporting group and depreciability, and its asset numbering start per book [fAssetClass.vb:488-573; FixedAsset.AMACSaveMain:30-87]. When it applies: When the asset hierarchy is set up, or when a new class of assets must be accounted for. Business outcome: Assets, depreciation rules and accounts can be attached at class level, and asset numbers follow the book's numbering structure.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Code, COD, Class Name, Parent Class, Asset Type, Class Nature, Asset Class Group, the Depreciable tick and the Asset Number Generation grid [fAssetClass.Designer.vb:190-223].
+  - Code Field: A read-only text box that cannot be tabbed into [fAssetClass.Designer.vb:77-81].
+  - COD Field: A mandatory drop-down of chart-of-depreciation names [fAssetClass.vb:40; fAssetClass.vb:106].
+  - Class Name Field: A mandatory text box, up to 50 characters [fAssetClass.vb:40; fAssetClass.vb:89].
+  - Parent Class Field: An optional drop-down of class names [fAssetClass.vb:588].
+  - Asset Type Field: A mandatory drop-down of asset types [fAssetClass.vb:40; fAssetClass.vb:107].
+  - Class Nature Field: A mandatory drop-down with Inventory and Non Inventory [fAssetClass.vb:40; fAssetClass.vb:108].
+  - Asset Class Group Field: A mandatory drop-down of group names with a Code column [fAssetClass.vb:40; fAssetClass.vb:109].
+  - Depreciable Field: An optional tick box [fAssetClass.Designer.vb:180-183].
+  - Asset Number Generation Grid: A grid with columns DB Name and DB Type (read-only) and Starts From (numeric, up to 4 digits); the book number and numbering basis are hidden.
+  - Fast Entry Grid: A grid with columns COD, Class Name (up to 50), Parent Class, Asset Type, Class Nature, Asset Class Group, Depreciable (default unticked) and Remarks (read-only) [fAssetClass.vb:713-739; FixedAsset.AMACFillValues:40-41].
+  - Code Link (Fast Entry Mode): A link labelled "Code" with the tooltip "Switch to fast entry mode." [fAssetClass.vb:42-43; fAssetClass.Designer.vb:235].
+  - Switch back to detail mode. Link: A link labelled "Switch back to detail mode." in the fast-entry container [fAssetClass.Designer.vb:268].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fAssetClass.vb:158-200].
+actions:
+  Import: An "Import" button that loads an Excel sheet into the fast-entry grid [fAssetClass.Designer.vb:256].
+  New: The toolbar action that asks the main window to start a blank record [fAssetClass.vb:145-152].
+  Save: The toolbar action that stores the class and its numbering values, or all grid rows in fast-entry mode [fAssetClass.vb:385-486].
+  Search: The toolbar action that opens a search dialog listing Code, COD, Class Name, Parent Class, Asset Type, Class Nature,
+    Depreciable, Created By and Created Date [FixedAsset.AMACSearchData:17-33].
+  Delete: The toolbar action that removes the open class [fAssetClass.vb:54-79].
+validations:
+- Select valid COD.
+- Enter Class Name.
+- Select valid Asset Type.
+- Select valid Class Nature.
+- Select a valid Asset Class Group.
+- Duplicate Class Name not allowed.
+- Asset Number Generation is not set against Depreciation Book  in row N.
+- Asset Number Generation is not set against Depreciation Book.
+- Starts From can't be empty or 0  in row N.
+- Starts From can't be empty or 0.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+- Refer remarks for saved status.
+- Successfully Created.
+manages:
+- asset-class
+uses_concepts:
+- asset-group
+- asset-number-structure
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMACDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMACFillValues.
+  FillValuesDependent: Fills the lookup lists through FixedAsset.AMACFillValuesDependent.
+  LoadData: Loads the selected record through FixedAsset.AMACLoadData.
+  Open: Searches records through FixedAsset.AMACSearchData.
+  SaveAccountNumberDetails: Saves the record through FixedAsset.AMACSaveAssetNumberDetail.
+  SaveMain: Saves the record through FixedAsset.AMACSaveMain.
+  ValidateForm: Validates the entry through FixedAsset.AMACValidate.

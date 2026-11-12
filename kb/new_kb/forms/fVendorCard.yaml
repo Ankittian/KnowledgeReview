@@ -1,0 +1,152 @@
+form: fVendorCard
+title: Vendor Card
+module: MM
+kind: master
+users:
+- Purchase officer (inferred)
+- Accounts officer (inferred)
+summary: 'The Vendor Card screen maintains the party master used across the application: transporters, agents, customers,
+  suppliers, contractors and group companies are all created here as "vendors", each with one primary location.'
+purpose: |
+  What it is: A central register of every external or inter-company party the business trades with, together with its primary address, tax identity, contacts and bank accounts. When it applies: When a new supplier, customer, transporter, agent, contractor or group company must be set up, when an approved vendor master request is converted into a party, or when party details change. Business outcome: Documents in purchasing, sales and finance pick parties from one governed list, with validated GST/PAN data and auto-created ledger accounts, which prevents duplicate parties and incorrect tax postings.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Vendor Header Area: The top panel holding the vendor code, type, names, inactive flag and two helper buttons; below it a tab control with the tabs "Communication", "Registration Detail", "Contact Person Detail", "Bank Detail", "Item Detail", "Custom Fields", "Vendor Group", "Tally Account", "Division" and "Company".
+  - Code Field: Read-only text (12 characters) showing the automatic vendor code; its label "Code" is a link with the tooltip "Switch to fast entry mode.".
+  - Copy from Vendor Master Button: Small button beside the header with the tooltip "Copy from Vendor Master.".
+  - Load from Vendor Master Request Button: Small button with the tooltip "Load from Vendor Master Request.".
+  - Vendor Type Field: Dropdown, mandatory, highlighted as compulsory (BR-02).
+  - Vendor Name Field: Text box, mandatory, maximum 100 characters, compulsory highlight (BR-03, BR-04).
+  - Alias Field: Optional text box, maximum 10 characters.
+  - Mailing Name Field: Text box, mandatory, maximum 100 characters, compulsory highlight (BR-05).
+  - Inactive Field: Checkbox.
+  - Communication Tab: The address and GST area of the vendor's location.
+  - Location Code Field: Read-only text (label "Location Code", 12 characters).
+  - Name and Mailing Name Fields (Communication): Two text boxes, both mandatory, 100 characters each, compulsory highlight (BR-08).
+  - Address Field: Three text lines of 100 characters each; the first line is mandatory (BR-08).
+  - City, State and Country Fields: Three dropdowns.
+  - Pincode, Phone No., Fax No., E-Mail and Website Fields: Optional text boxes: Pincode 6, Phone No.
+  - Region Field: Optional dropdown of company-active regions.
+  - PAN No. Field: Text box, maximum 35 characters, but must be exactly 10 characters when validated (BR-10).
+  - Is PAN Operative Field: Optional checkbox.
+  - Manufacturing Type, Vendor Code and CIN No. Fields: Optional dropdown "Manufacturing Type", text "Vendor Code" (300 characters on screen, 30 stored), and text "CIN No." (50 characters on screen, 30 stored).
+  - GST Registration Type Field: Dropdown, mandatory when the GST configuration is active (BR-10).
+  - GSTIN No. and UIN No. Fields: Two text boxes of 15 characters each.
+  - GST Applicable From Field: Date picker with a tick box, format dd/MM/yyy.
+  - Is Shipping Address Field: Optional checkbox.
+  - Is Default Billed To Location and Is Default Consignee Location Fields: Two checkboxes.
+  - Currency Field: Optional dropdown of currencies.
+  - Ship To Location Field: Optional dropdown of the company's own locations.
+  - Registration Detail Tab: The statutory and classification area.
+  - Legacy Tax Registration Fields: Optional text boxes: "LST No." 35, "CST No." 35, "TIN No." 35, "ECC Code" 35, "Range" 30, "Division" 30, "Collectorate" 30, "Premises Code No." 35, "STC No." 35, "Name of Taxable Service" 50, "TAN No." 35, "TDS Circle" 30, "LBT No." 35, "Indian Bureau of Mines No" 30, "ESIC No." 30, "PF No." 35.
+  - Payer's Category, Vendor Group, Industry Type and Business Type Fields: Optional dropdowns.
+  - Company Name Field: Dropdown of group companies not yet linked to another vendor (plus the company already linked to this vendor).
+  - Payment Terms, Tax Group and TNC Group Fields: Optional dropdowns.
+  - MSME Registration and MSME No. Fields: Dropdown "MSME Registration" defaulted to the default registration type; text "MSME No." (35 characters).
+  - S.T. Registration, STRN No. and CNIC No. Fields: Dropdown "S.T.
+  - Contact Person Detail Grid: Editable grid on the "Contact Person Detail" tab.
+  - Bank Detail Grid: Editable grid on the "Bank Detail" tab.
+  - Item Detail Grid: Shared item selection control on the "Item Detail" tab with an extra "Part No." column.
+  - Custom Fields Grid: Shared custom field control on the "Custom Fields" tab, configured for vendor locations.
+  - Vendor Group Grid: Grid on the "Vendor Group" tab with "Select", "Vendor group name", "Address" and "Contact person"; only "Select" is editable.
+  - Tally Account Grid: Grid with "Company" (read-only), "Tally Purchase Account" and "Tally Sales Account" (200 characters each).
+  - Division Grid: Grid with "Select", "Code" and "Division Name" (read-only) and "IsDefault"; rows cannot be deleted.
+  - Company Grid: Grid with "Inactive" (editable), "Company Name" and "Alias" (read-only), and a header tick box to set all.
+  - Fast Entry Grid Container: A full-screen grid with columns "Vendor Type", "Vendor Name", "Alias", "Mailing Name", "Address1", "Address2", "Address3", "City", "State", "Pincode", "Phone No", "Fax No", "Email", "WebSite", "Region", "LST No", "CST No", "TIN No", "ECC Code", "Range", "Division", "Collectorate", "STC No", "Premises Code No", "Name Of Taxable Service", "TAN No", "TDS Circle", "PAN No", "Vendor Group", "Industry T
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  Switch Back to Detail Mode: Link "Switch back to detail mode." at the top right of the fast entry container.
+  Import: Button "Import" in the fast entry container that reads an Excel workbook.
+  New: Standard toolbar New, delegated to the main window, which resets this screen.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open, showing the vendor search list.
+  Delete: Standard toolbar Delete.
+validations:
+- Select valid Vendor Type.
+- Enter Vendor Name.
+- Duplicate Vendor Name not allowed.
+- Duplicate GSTINo ,Want to continue?.
+- Duplicate Location is not allowed.
+- Only One Default Billed To Location is Possible For Same Vendor.
+- Only One Default Consignee Location is Possible For Same Vendor.
+- Enter Mailing Name.
+- Select valid Company Name.
+- Enter Communication Name.
+- Enter Communication Mailing Name.
+- Enter Address.
+- Select valid State.
+- Select valid GST Registration Type.
+- GSTStateCode is not updated in Selected State
+- Enter PAN No.
+- Invalid PAN No.
+- Enter GSTIN No. or UIN No.
+- Enter UIN  No.
+- GSTIN No. should be 15 letters.
+- Invalid GSTIN No.
+- Enter a valid MSME No..
+- Enter a valid STRN No. .
+- MSME Registration is Empty. Do you want to continue?
+- MSME Registration Can't be empty.
+- Phone No. is empty. Do you want to continue?
+- Phone No. Can't be empty.
+- E-mail is empty. Do you want to continue?
+- E-mail No. Can't be empty.
+- PAN No. is empty. Do you want to continue?
+- PAN No. Can't be empty.
+- Contact Person Detail is Empty. Do you want to continue?
+- Enter Contact Person Details for at least one Contact Person.
+- Mobile No. and Phone No. both are empty for Contact Person '<name>'. Do you want to continue?
+- Mobile No. and Phone No. both can not be empty for Contact Person '<name>'.
+- Email is empty for Contact Person '<name>'. Do you want to continue?
+- Email can not be empty for Contact Person '<name>'.
+- Bank Detail is Empty. Do you want to continue?
+- Enter Bank Detail for at least one Bank Account Number.
+- Phone Number is mandatory.
+- Email is mandatory.
+- MSME registration is mandatory.
+- Bank Detail is Empty.
+- GST applicable date is requried. Do you want to continue ?
+- GST applicable date is mandatory.
+- Select valid Bank Branch in row <n>.
+- Select valid Bank Branch.
+- Enter Account Number in row <n>.
+- Enter Account Number.
+- Refer remarks for saved status.
+- Successfully Created.
+- Unable to save,Vendor Request is either Cancel or Completed.
+- Unable to save, Vendor Name or Full Address should be same as selected Vendor Request.
+- Duplicate Account Name  not allowed.(Check Finance)
+- Duplicate Account Name not allowed.
+- Inactive Account can't be updated.
+- Permission denied to delete Vendor Card.
+- Unable to delete this entry,used in ARD
+- Your excel should consists of sheet with name <screen tag>. Do you want to continue?
+manages:
+- vendor
+uses_concepts:
+- account-determination-rule
+- account-group
+- accounting-voucher
+- chart-of-accounts
+- city
+- company
+- currency
+- finance-book
+- ledger-account
+- material-item
+- purchase-bill
+- purchase-order
+- tdc-charge
+- vendor-contact-person
+- vendor-location
+method_notes:
+  Delete: Deletes the record through masterdata.VIVCDelete.
+  DeleteBankDetail: Deletes the record through masterdata.VIBDDelete.
+  DeleteContactPerson: Deletes the record through masterdata.VICPDelete.
+  FillValues: Fills the lookup lists through masterdata.VIVCFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.VIVLFillValuesDependent.
+  LoadVendorDetail: Loads the selected record through masterdata.VIVCLoadData.
+  LoadVendorRequestDetail: Loads the selected record through masterdata.VIRQLoadData.
+  Open: Searches records through masterdata.VIVCSearchData.
+  SaveARD: Saves the record through Finance.FARDSaveMain.
+  SaveAccount: Saves the record through masterdata.FIAMSaveMain, masterdata.FIAMValidate.

@@ -1,0 +1,59 @@
+form: fConsumptionDetail
+title: Consumption Detail
+module: DRM
+kind: transaction
+summary: The Consumption Detail screen records which production Job Cards consumed the discrete raw material that was issued
+  to the shop floor on an authorized Material Issue.
+purpose: |
+  What it is: A document that links one authorized Material Issue to the Job Cards, lots and marks that consumed the material [fConsumptionDetail.vb:34-62; DiscreteRM.DRCDSaveMain:29-50]. When it applies: After discrete raw material has been issued and production starts using it. The screen name is taken from the form name; the window caption in the source is the technical name only (Inferred) [fConsumptionDetail.Designer.vb:789]. Business outcome: Each Job Card has a recorded material consumption in weight, so shortfalls and surpluses against the issue are visible.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header area, a Job Card and Lot grid area, and a summary area with Job Card and lot summaries [fConsumptionDetail.Designer.vb:171-172; fConsumptionDetail.Designer.vb:430-431; fConsumptionDetail.Designer.vb:607].
+  - Document Status Field: A mandatory drop-down labelled "Document Status" with the statuses of the global status list [fConsumptionDetail.vb:25-26; DiscreteRM.DRCDFillValues:24-25].
+  - Issue No. Field: A mandatory drop-down labelled "Issue No." showing Issue No.
+  - Issue Header Display Fields: Read-only text boxes "Issue Date", "Division Name", "Issue To", "Item Name", "Warehouse", "Issue Wt." and "Return Wt."; the label of the person field changes to the Issue To value followed by " Name" (shown in a read-only box) [fConsumptionDetail.Designer.vb:181-292; fConsumptionDetail.Designer.vb:739-761; fConsumptionDetail.vb:1018-1024].
+  - Job Card and Lot Grid: The entry grid with columns Job Card No., Lot No., Heat No., Cast No., TC No., Serial No., Size, JC Issue Pcs., JC Issue Qty.
+  - BOM Detail Pop-up: A pop-up with grid columns Select, Item Id, Item Description, Mark No., Size, Wt./ Pcs, Pcs and Total Qty., and buttons "&OK" and "&Cancel" [fConsumptionDetail.vb:860-892; fConsumptionDetail.Designer.vb:530-539].
+  - Job Card Summary Grid: A read-only grid with Job Card No., Job Card Qty., Prev.
+  - Lot Summary Grid: A read-only grid with Lot No., Issue Pcs., Issue Qty., JC Issue Pcs., JC Issue Qty., Balance Pcs.
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard toolbar actions.
+actions:
+  New: Asks the main window for a blank document [fConsumptionDetail.vb:13-21].
+  Save: Validates and saves the document with all its rows.
+  Search: Lists consumption documents of the current company and year with Issue No., Issue Date, Warehouse, Item Name, Status,
+    Created By and Authorized By, newest first [fConsumptionDetail.vb:228-254; DiscreteRM.DRCDSearchData:18-38].
+  Delete: Deletes the loaded document after the standard delete confirmation [fConsumptionDetail.vb:195-226].
+validations:
+- Select valid Document Status.
+- Select valid Issue No.
+- Authorized Consumption Detail can't be updated.
+- Select atleast one Job Card No.
+- Select valid Lot No. in row N.
+- JC Issue Pcs. can't be empty or 0 in row N.
+- JC Issue Qty. can't be empty or 0 in row N.
+- Duplicate Job Card No. and Lot No. not allowed.
+- Sum of JC Issue Qty. should be equal to X
+- Balance PCs. can't be less than 0 in row N.
+- Balance Qty. can't be less than 0 in row N.
+- Production Entry is done against this Entry
+manages:
+- consumption-detail
+uses_concepts:
+- company
+- discrete-stock-adjustment
+- material-issue-fmaterialissuedrm
+- material-return
+- rawmaterial-opening
+- stock-transfer
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRCDDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRCDFillValues.
+  FillValuesIssueWise: Fills the lookup lists through DiscreteRM.DRCDFillValuesIssueWise.
+  FillValuesItemWise: Fills the lookup lists through DiscreteRM.DRMIFillValuesItemWise.
+  LoadData: Loads the selected record through DiscreteRM.DRCDLoadData.
+  Open: Searches records through DiscreteRM.DRCDSearchData.
+  Save: Saves the record through DiscreteRM.DRCDSaveMain.
+  SaveJobCardDetail: Saves the record through DiscreteRM.DRMISaveJobCardDetail.
+  SaveLotJobCardDetail: Saves the record through DiscreteRM.DRMISaveLotJobCardDetail.
+  SaveMarkDetail: Saves the record through DiscreteRM.DRMISaveMarkDetail.

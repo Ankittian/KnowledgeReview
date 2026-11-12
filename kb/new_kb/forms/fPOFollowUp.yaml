@@ -1,0 +1,35 @@
+form: fPOFollowUp
+title: Purchase Order Follow UP
+module: MM
+kind: transaction
+summary: The Purchase Order Follow UP screen lets a buyer review the open delivery schedules of authorised purchase orders
+  raised in a chosen period and record a follow-up with the supplier.
+purpose: |
+  What it is: A record of each contact with a supplier about an open delivery schedule, with the revised delivery date agreed and a remark. When it applies: When a buyer chases suppliers for pending deliveries of authorised purchase orders. Business outcome: Purchase order schedules reflect the latest committed delivery date and a dated trail of follow-ups is kept per order line (BR-11, BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel with Entry Date, From Date, To Date and Show, and below it the schedule grid with a colour legend.
+  - Entry Date Field: Date picker (dd/MM/yyyy), editable; defaults to the working date (BR-03).
+  - From Date and To Date Fields: Date pickers (dd/MM/yyyy) bounding the purchase order date; both default to the working date (BR-03).
+  - Show Button: Button that reloads the grid for the entered date range.
+  - Schedule Grid: One row per schedule line with columns Select, PO No., PO Date, Vendor, Item Code, Item Description, Unit, Make, Tech.
+  - Vendor Pop-up: Read-only pop-up opened from the Vendor cell button, showing Vendor Name, Location, Contact No., Fax No.
+  - Item Follow-up Pop-up: Read-only pop-up opened from Item Code or Item Description, showing PO No., PO Date, Item Code, Item Description, Schedule Date, a PO Follow UP Details grid (Follow Up Date, New Schedule Date, Remark) and a rejection grid (GRN No., GRN Date, rejected quantity), with an Ok button.
+  - Colour Legend: Coloured labels "Schedule Date till Today", "Next 7 Days" and "After 7 Days" under the grid [fPOFollowUp.Designer.vb:600].
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not enabled; their handlers are empty or commented out (BR-01, BR-18).
+actions:
+  New: Standard toolbar New (BR-01).
+  Save: Records follow-ups for all ticked rows.
+validations:
+- Select atleast one Item.
+- Select valid New Schedule Date in row <n>.
+- New Schedule Date can't be less than PO Date in row <n>.
+- Entry Date can't be less than New Schedule Date in row <n>.
+manages:
+- purchase-order-follow-up
+uses_concepts:
+- purchase-order-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Purchase.POFUFillValues.
+  Save: Saves the record through Purchase.POFUSave.
+  ubtnShow_Click: Fills the lookup lists through Purchase.POFUFillValues.

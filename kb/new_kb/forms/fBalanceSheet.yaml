@@ -1,0 +1,52 @@
+form: fBalanceSheet
+title: Balance Sheet
+module: FI
+kind: transaction
+summary: The Balance Sheet screen (window caption "BalanceSheet") prepares a balance sheet as a stored, versioned statement
+  for a layout, a document date and a Finance Book (or Profit Center).
+purpose: |
+  What it is: A frozen copy of the balance sheet at a date, with its layout structure, amounts and presentation flags. When it applies: At period or year end, or whenever a dated balance sheet must be kept. Business outcome: A reviewable and authorizable statement that does not change when later transactions arrive (BR-04; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header with Description, Document Status, Document Date, FSL Name, Finance Book, Version and a "Show" button, above a statement grid.
+  - Description Field: Text box, mandatory, no maximum on screen [fBalanceSheet.vb:79; fBalanceSheet.vb:358-362].
+  - Document Status Field: Dropdown, mandatory [fBalanceSheet.vb:79; fBalanceSheet.vb:364-368].
+  - Document Date Field: Date picker, format dd/MM/yyyy, default working date [fBalanceSheet.Designer.vb:69; fBalanceSheet.vb:134].
+  - FSL Name Field: Dropdown, mandatory [fBalanceSheet.vb:79; fBalanceSheet.vb:130].
+  - Finance Book Field: Dropdown, mandatory.
+  - Version Field: Read-only number [fBalanceSheet.Designer.vb:129].
+  - Statement Grid: Read-only grid with Particular (indented by level), Amount, Schedule and Level [fBalanceSheet.vb:413-431].
+  - Consolidated Book Grid: Grid with Finance Book, Balance Sheet (dropdown of other saved balance sheets of that book) and hidden book number [fBalanceSheet.vb:671-694; Finance.FSBSFillValuesDependent:24-51].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fBalanceSheet.vb:259-291].
+actions:
+  Show: Button "Show" that builds the statement for the chosen layout, book and date [fBalanceSheet.vb:635-650].
+  New: Clears the screen through the MDI shell [fBalanceSheet.vb:223-230; fBalanceSheet.vb:293-304].
+  Save: Validates and saves the statement.
+  Search: Search dialog with Description, Document Date, FSL Name, Finance Book, Version, Status, Created By and Authorized
+    By for the company and the working year [fBalanceSheet.vb:232-257; Finance.FSBSSearchData:18-35].
+  Delete: Deletes the loaded balance sheet after the standard delete confirmation [fBalanceSheet.vb:93-117].
+validations:
+- Enter Description.
+- Select valid Document Status.
+- Select valid FSL Name.
+- Select valid Finance Book.
+- No data is available.
+- Select atleast one Finance Book.
+- Can't update as above version exists for same Document Date, Finance Book.
+- Authorized Balance Sheet Note can't be updated.
+- Authorized entry can't be updated.
+manages:
+- balance-sheet
+uses_concepts:
+- accounting-voucher
+- company
+- layout
+method_notes:
+  Delete: Deletes the record through Finance.FSBSDelete.
+  FillValues: Fills the lookup lists through Finance.FSBSFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSBSFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FSBSLoadData.
+  Open: Searches records through Finance.FSBSSearchData.
+  Save: Saves the record through Finance.FSBSSaveMain.
+  SaveFBDetail: Saves the record through Finance.FSBSSaveFBDetail.
+  ValidateForm: Validates the entry through Finance.FSBSValidate.

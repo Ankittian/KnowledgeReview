@@ -1,0 +1,38 @@
+form: fMaintenanceReportingExtension
+title: WBS Task Reporting
+module: PM
+kind: transaction
+summary: The WBS Task Reporting screen is meant to let a user report progress and resource usage against the tasks of a project
+  work breakdown structure (WBS), using the same layout as the Maintenance Reporting screen.
+purpose: |
+  What it is: An intended entry screen for reporting the progress of WBS tasks and the resources used, on a given date [fMaintenanceReportingExtension.vb:202-248; fMaintenanceReportingExtension.vb:836-966]. When it applies: Intended for use during project or maintenance work that is planned as a WBS; not usable for storing data in its present state (BR-05). Business outcome: None delivered yet; see Section 13.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Details Area and Grids Layout: A header group box with Entry Date, Project and WBS, and below it a tab control with "Task Detail" and "Resource Detail" [fMaintenanceReportingExtension.Designer.vb:189-194; fMaintenanceReportingExtension.Designer.vb:119-157].
+  - Entry Date Field: A date picker in dd/MM/yyyy format labelled "Entry Date" [fMaintenanceReportingExtension.Designer.vb:104; fMaintenanceReportingExtension.Designer.vb:119].
+  - Project Field: A dropdown labelled "Project" showing Project Code, Project Date, Project Description, Estimated Start Date and Estimated End Date [fMaintenanceReportingExtension.vb:221; fMaintenanceReportingExtension.Designer.vb:138].
+  - WBS Field: A dropdown labelled "WBS" showing WBS Id, WBS Name, Project Code, Project Description, Parent WBS and Parent WBS Description [fMaintenanceReportingExtension.vb:224; fMaintenanceReportingExtension.Designer.vb:157].
+  - Task Detail Grid: The grid described in Section 3; in the layout the Select, MO No., MO Date, Assign To, Delay Reason, Delay Duration and Prev.
+  - Resource Detail Grid: The grid described in Section 3; the Select, document and document date columns and technical columns are hidden, Usage Duration and Task Description are read-only, Start Time and End Time use an hh:mm tt spinner [fMaintenanceReportingExtension.vb:921-960].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fMaintenanceReportingExtension.vb:336-368].
+actions:
+  New: Asks the main window for a new record [fMaintenanceReportingExtension.vb:303-310].
+  Save: The Save routine contains only commented-out code [fMaintenanceReportingExtension.vb:1001-1071].
+  Delete: The Delete routine contains only commented-out code [fMaintenanceReportingExtension.vb:144-196].
+validations:
+- Select valid Reporting Document.
+- Select valid MO No.
+- Entry Date can't be less than MO Date.
+manages:
+- wbs-task-reporting
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-reporting
+- maintenance-request
+method_notes:
+  FillValues: Fills the lookup lists through EAM.EAMPFillValues.
+  Open: Searches records through EAM.EAMPSearchData.

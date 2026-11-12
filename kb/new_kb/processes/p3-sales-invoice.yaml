@@ -1,0 +1,14 @@
+key: p3-sales-invoice
+name: 'Sales: Invoice (Phase 3)'
+module: SD
+status: active
+summary: Phase 3 screens of the invoice group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Invoice' (Sales). The steps follow the plan order, not a verified business sequence: Tax Invoice.
+steps:
+- order: 1
+  name: Record Tax Invoice
+  form: fExciseInvoice
+concepts:
+- tax-invoice

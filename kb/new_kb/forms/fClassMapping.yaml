@@ -1,0 +1,44 @@
+form: fClassMapping
+title: Class Account/ Item Mapping
+module: MD
+kind: master
+summary: The Class Account/ Item Mapping screen links a depreciation book and an asset class to the ledger accounts and the
+  capital items that belong to that class.
+purpose: |
+  What it is: A master record that ties one asset class in one depreciation book to its capital items and to its asset, depreciation, cumulative depreciation and sale profit-and-loss accounts [fClassAccountItemMapping.vb:353-407; FixedAsset.CAIMSaveMain:20-52]. When it applies: When a class is set up for a corporate depreciation book, or when its accounts change. Business outcome: Fixed asset transactions post to predefined accounts, and capital items can be tied to the right class.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Depreciation Book, Finance Book(s), Asset Class, Parent Class and a two-tab control with Item and Account [fClassAccountItemMapping.designer.vb:175-215].
+  - Depreciation Book Field: A mandatory drop-down of corporate depreciation book names [fClassAccountItemMapping.vb:11; fClassAccountItemMapping.vb:62].
+  - Finance Book(s) Field: A read-only text box that cannot be tabbed into [fClassAccountItemMapping.designer.vb:183-187].
+  - Asset Class Field: A mandatory drop-down of class names with a Parent Class column [fClassAccountItemMapping.vb:11; fClassAccountItemMapping.vb:462].
+  - Parent Class Field: A read-only text box that cannot be tabbed into [fClassAccountItemMapping.designer.vb:148-152].
+  - Item Grid: A grid with Select (tick), Item Code and Item Name (read-only), with a filter row that matches text containing the typed value; the item number is hidden; rows cannot be deleted [fClassAccountItemMapping.vb:307-331].
+  - Account Grid: A grid with Account Type (read-only) and Account Name (drop-down); the account type number and in-use flag are hidden; rows cannot be deleted [fClassAccountItemMapping.vb:333-352].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fClassAccountItemMapping.vb:140-172].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fClassAccountItemMapping.vb:104-111].
+  Save: The toolbar action that validates and stores the mapping with its items and accounts [fClassAccountItemMapping.vb:353-407].
+  Search: The toolbar action that opens a search dialog listing Depreciation Book, Asset Class, Created By and Created Date
+    [FixedAsset.CAIMSearchData:17-26].
+  Delete: The toolbar action that removes the open mapping [fClassAccountItemMapping.vb:17-42].
+validations:
+- Select valid Depreciation Book.
+- Select valid Asset Class.
+- Selected Account Name is not link with selected Depreciation Book Finance Book(s) in row N.
+- Transaction(s) performed against this account.
+manages:
+- class-account-item-mapping
+uses_concepts:
+- asset-capitalization
+- asset-class
+- asset-group
+method_notes:
+  Delete: Deletes the record through FixedAsset.CAIMDelete.
+  FillValues: Fills the lookup lists through FixedAsset.CAIMFillValues.
+  FillValuesDBWise: Fills the lookup lists through FixedAsset.CAIMFillValuesDBWise.
+  LoadData: Loads the selected record through FixedAsset.CAIMLoadData.
+  Open: Searches records through FixedAsset.CAIMSearchData.
+  Save: Saves the record through FixedAsset.CAIMSaveMain.
+  SaveAccountDetails: Saves the record through FixedAsset.CAIMSaveAccountDetail.
+  SaveItemDetails: Saves the record through FixedAsset.CAIMSaveItemDetail.

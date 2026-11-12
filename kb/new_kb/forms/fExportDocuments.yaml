@@ -1,0 +1,102 @@
+form: fExportDocuments
+title: Export Documents
+module: SD
+kind: transaction
+summary: 'The Export Documents screen (window caption "ExportDocuments" [fExportDocuments.Designer.vb:1862]) records the shipping
+  and compliance paperwork for one export commercial invoice: the weight certificate, the bill of lading (B/L), the custom
+  house agent and freight forwarder, the shipping bill, the certificate of origin, courier dispatch of the documents, the
+  port of discharge on the B/L, and the g'
+purpose: |
+  What it is: A transaction that collects, against one export commercial invoice, the document numbers and dates the shipping line, customs and the buyer need, and the packing and container breakdown of the goods (BR-05, BR-08). When it applies: After the commercial invoice for an export sales order has been prepared, and before it is authorized [Sales.SDCIValidate:329-339]. Business outcome: The export file for each shipment is complete and checked in one place, and the commercial invoice cannot be authorized for an export order until this record is authorized.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A document number strip on top, a "Commercial Invoice Detail" group with the invoice selector, and a tab control with "Customer Detail", "Packing Details", "Quality Certificate Details", "B/L No.
+  - Document Number Strip: Shared control for prefix, document number, document date, division and status (BR-04).
+  - Commercial Invoice No Field: Mandatory dropdown with columns "Commercial Invoice No", "Document Date", "Customer Name", "Customer Location", "Customer Order No" [fExportDocuments.vb:48-56] (BR-05, BR-06).
+  - Commercial Invoice Date and Customer Order No Fields: Read-only text boxes [fExportDocuments.Designer.vb:1734; fExportDocuments.Designer.vb:1753].
+  - Customer Detail Tab: Read-only "Customer Name", "Customer Location", "Customer Contact Person", "Contact Person No.", "Contact Person E-Mail Id", "Consignee Name", "Consignee Location", "Consignee Contact Person", "Consignee Contact No.", "Consignee E-Mail Id", "Notify Firm Name", "Firm Location", "Notify Contact Person", "Notify Contact No.", "Notify E-Mail Id" [fExportDocuments.Designer.vb:328-607].
+  - Packing Details Tab: Grid "Item Description", "HS Code", "Unit" (read-only), "Container Details" (button), "Gross Weight", "Net Weight" (numbers, 3 decimals), "Remarks" (up to 1,000 characters), with an "Attachment" button [fExportDocuments.vb:788-829; fExportDocuments.vb:172-173].
+  - Container Details Pop-up: Pop-up grid "Container No.", "Seal No.", "Container Type", "Container Size" with "Ok" and "Cancel" buttons [fExportDocuments.Designer.vb:640-678; fExportDocuments.vb:1491-1510].
+  - Quality Certificate Details Tab: Read-only "Certificate No.", "Certificate Date", "Issued By"; editable "Weight Certificate No." (50 characters) and "Weight Certificate Date" (date with tick box); "Attachment" button [fExportDocuments.Designer.vb:717-814].
+  - B/L No. Details Tab: "B/L No." (30), "Date of Issue" (date with tick box), "Booking" (30), "Place of Issue" (30), "Shipping Liner" (50), "Vessel Name" (30), "Voyage" (30), "Remarks" (1,000) and "Attachment" [fExportDocuments.Designer.vb:850-993; fExportDocuments.vb:152-158].
+  - Other Export Details Tab: Groups "Custom Details" ("Custom House Agent", "Freight Forwarder": type-in dropdowns of 100 characters), "Shipping Bill Details" ("Shipping Bill No.", "Shipping Bill Date", "Attachment"), "Certificate Of Origin" ("Certificate No.", "Certificate Date", "Issued By", "Place", "Remarks") and "Courier Details" ("Courier No.", "Docket No.", "Date of Dispatch", "Attachment") [fExportDocuments.Designer.v
+  - Shipping Details Tab: Read-only "Inco Terms", "Method Of Shipment", "Type Of Dispatch", "Place Of Receipt", "Port Of Loading", "Port Of Discharge", "Place Of Delivery", "Pre Carriage", and the editable dropdown "Port Of Discharge (B/L)" [fExportDocuments.Designer.vb:1339-1518].
+  - Insurance Details Tab: Read-only "Policy No.", "Policy Date", "Insurance Certificate No.", "Insurance Certificate Date", "Insurance Amount", "Sum Of Assured Amount" [fExportDocuments.Designer.vb:1558-1676].
+  - Custom Field Tab: Shared custom field grid [fExportDocuments.Designer.vb:1835-1846].
+  - Attachment Grid: Shared document attachment grid, shown under the tabs per section (Quality Certificate, B/L, Shipping Bill, Packing, Courier) (BR-25).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Implemented as empty handlers [fExportDocuments.vb:315-347].
+actions:
+  New: Standard toolbar New, delegated to the main window [fExportDocuments.vb:279-286].
+  Save: Validates and saves header, packing lines, containers, attachments and custom fields.
+  Search: Opens the standard search list of export documents for the current company and year (BR-24) [fExportDocuments.vb:288-312].
+  Delete: Deletes the open document after confirmation (MSG-23) [fExportDocuments.vb:92-118].
+validations:
+- Authorized ExportDocuments can't be updated.
+- Authorized entry can't be updated.
+- Commercial Invoice is Authorized. Entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select Valid Commercial Invoice.
+- Document date can't be less than Commercial Invoice Date.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select Valid Customer Contact Person.
+- Select Valid Contact Person No.
+- Select Valid Contact Person Email-Id.
+- Select Valid Consignee Name.
+- Select Valid Consignee Location.
+- Select Valid Consignee Contact Person.
+- Select Valid Consignee Contact No.
+- Select Valid Consignee EMail-Id.
+- Select Valid Notify Firm Name.
+- Select Valid Firm Location.
+- Select Valid Notify Contact Person.
+- Select Valid Notify Contact No.
+- Select Valid Notify EMail-Id.
+- Certificate No. don't exists in Quality Certificate Details
+- Certificate Date don't exists in Quality Certificate Details
+- Issued by don't exists in Quality Certificate Details
+- Enter Weight Certificate No.
+- Select Weight Certificate Date.
+- Enter B/L No.
+- Select Date of Issue.
+- Enter Booking.
+- Enter Place of Issue.
+- Enter Shipping Liner.
+- Enter Vessel Name.
+- Enter Voyage.
+- Enter Valid Custom House Agent.
+- Enter Valid Freight Forwarder.
+- Enter Shipping Bill No..
+- Select Shipping Bill Date.
+- Enter Certificate No..
+- Select Certificate Date.
+- Enter Issued By.
+- Select Valid Place.
+- Enter Docket No..
+- Select Date of Dispatch.
+- Insurance Certificate No. can't be empty.
+- Select Valid Port of Discharge (B/L).
+- Enter Gross Weight in row <n>.
+- Enter Net Weight in row <n>.
+- Enter at least one  Container detail  in row <n>.
+- Enter Container No. in row <n>.
+- Enter Seal No. in row <n>.
+- Enter Container Type in row <n>.
+- Enter Container Size in row <n>.
+- Document No. <number> saved successfully.
+- Commercial Invoice has been Authorized. This Entry can't be deleted
+manages:
+- export-documents
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Sales.SDEDDelete.
+  FillValues: Fills the lookup lists through Sales.SDEDFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDEDFillValuesDependent.
+  LoadData: Loads the selected record through Sales.SDEDLoadData.
+  Open: Searches records through Sales.SDEDSearchData.
+  Save: Saves the record through Sales.SDEDSave.
+  SaveCustomFields: Saves the record through Sales.SDEDSaveCustomFieldDetail.
+  SaveExportContainerDetails: Saves the record through Sales.SDEDSaveExportDocumentContainerDetail.
+  SaveExportDetails: Saves the record through Sales.SDEDSaveExportDocumentDetail.
+  ValidateForm: Validates the entry through Sales.SDEDValidate.

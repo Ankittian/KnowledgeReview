@@ -1,0 +1,158 @@
+form: fSCOrder
+title: Service Order
+module: MM
+kind: transaction
+summary: The Service Order screen places a subcontract (service) order on a vendor.
+purpose: |
+  What it is: A numbered, versioned order to one vendor and vendor location for services, conversion items or activities. It holds input and output material, rates, schedules, taxes and terms [fSCOrder.vb:2133-2339]. When it applies: When work is given to a subcontractor or service vendor, whether against a quotation, a Service Request or an LOI, or placed directly. Business outcome: A binding, approved order that controls what material leaves for the vendor, what is expected back and at what value (BR-01, BR-24).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared number / date / division / status control, with Document Type, SC Type, SC Nature, Source Document, Ref.
+  - Tab Layout: Top tabs: General, Requisitions, PO Expense Head Detail, Shipping Detail, Transportation Route, Tax, Additional Cost, Expenses, T & C, Payment Terms, Account Assignment, Authorization and Custom Fields.
+  - Source Document and Ref. Doc. No. Fields: Changing the source reloads the reference list.
+  - Vendor Fields: Choosing a vendor picks its first location, copies Pay To, and for an inter-unit vendor forces Inter Unit location and locks it.
+  - Price Type, Billing Nature and Validity Date: Price Type defaults to 1 but is hidden on the screen.
+  - Requisitions Tab: A grid of open Service Request lines with Select, SC Qty., Rate, Schedule Date and nature.
+  - Service Detail and Item Detail Grids: Service lines with sequence, quantity, schedule, warehouse and valuation method.
+  - Mark Detail and Billing Detail Tabs: Mark / work-order selection pop-ups, and bill lines with activity or mark selection, unit, quantity, rate and a unique service description [fSCOrder.vb:4802-4960; fSCOrder.vb:5057-5433; fSCOrder.vb:250].
+  - Shipping Detail Tab: Consignee and location, freight nature and amount, freight order, From / To location, Pay To / Billed To parties and locations with "change" checkboxes, and payment mode [fSCOrder.vb:3619-3635; fSCOrder.vb:1919-1998].
+  - Transportation Route, Expenses and PO Expense Head Tabs: Route levels and legs, other expense lines with party and billing location, and the mapping of the order to PO expense heads [fSCOrder.vb:6313-6341; fSCOrder.vb:6736-6941; fSCOrder.vb:5558-5651].
+  - Tax, Additional Cost, T & C, Payment Terms and Custom Fields: Shared controls for taxes, additional item cost with tolerance, terms, payment schedule and custom fields [fSCOrder.vb:7009-7090; fSCOrder.vb:1240-1330].
+  - Account Assignment Tab: Expense and intermediate accounts per service line.
+  - Authorization Tab: Approval levels and users, with action (approve / reject), comment and a Send Email button [fSCOrder.vb:7092-7197; fSCOrder.vb:7128].
+actions:
+  New, Save, Search and Repeat: The toolbar offers New, Save, Open, Delete, Navigation, Preview, Print, Export and Email [fSCOrder.vb:113-122].
+  Delete: Asks for confirmation and deletes the order version [fSCOrder.vb:139-172].
+  Print, Preview, Export and Email: Use the activity report for Activity orders, otherwise the subcontract order report [fSCOrder.vb:893-919;
+    fSCOrder.vb:5002-5055].
+validations:
+- Authorized SC Order can't be updated.
+- Authorized Entry can't be updated.
+- Select valid Document Type.
+- Select valid Subcontract Type.
+- Select valid Subcontract Nature.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Please do not select Ref Document from dropdown when source document is service request.
+- 'Document Date can''t be greater than Ref. Doc. Date. '
+- 'Document Date can''t be Less than Validity Date. '
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select valid Subcontract Location.
+- Select Inter Unit Vendor Name .
+- Quotation is compulsory for Job Work case
+- Select valid Price Type.
+- Select Mapping With PO Expense Head.
+- Document Status can't be Authorized for multi level Authorization
+- Select atleast one Requisition.
+- Requisition Date can't be greater than Document Date in row n.
+- SC Qty. can't be zero or empty in row n.
+- SC Qty. can't be greater than Balance Qty in row n.
+- '   Rate is zero in row n.'
+- '  Do you want to continue?  '
+- Schedule Date can't be empty in row n.
+- Schedule Date can't be less than Document Date in row n.
+- Subcontractor Nature can not be different from Service request for row n.
+- Rate for Same Item can't be different in row n.
+- Select valid Consignee Name.
+- Select valid Consignee Location.
+- Select valid Freight Nature.
+- Enter Freight Amount.
+- Select valid From Location.
+- Select valid To Location.
+- Select valid Pay To Party.
+- Select valid Pay To Location.
+- Select valid Billed To Party.
+- Select valid Billed To Location.
+- Select valid Payment Mode.
+- Select atleast one service.
+- Quantity can't be zero or empty in row n.
+- Sequence is breaked ,create two SC Order.
+- 'Select atleast one Issuable Input for first Sequence No. '
+- 'Select atleast one Primary Output for Last Sequence No. '
+- Select valid Warehouse.
+- Select atleast one Primary Output.
+- Select valid Valuation Method.
+- Select valid Item Code
+- Quantity can't be 0 or empty
+- 'Enter Rate '
+- Enter Bifercation %
+- No Issueable Input Found against Returnable Input
+- Sum of Bifurcation % should be equal to 100 %.
+- 'Primary Output Item Bifercation % can''t be zero against Service Item '
+- Select atleast one Authorization Group.
+- Entry is release so only authorized person can update this.
+- Select valid action in row n.
+- Enter Rejection comment in row n.
+- Can not authorize as last level is not approved.
+- 'Select a valid Account Name for expense account in row no. '
+- 'Select a valid Account Name for Intermediate account in row no. '
+- 'No Account Assignment entry exists against service item : '
+- Validity Date is not equal to maximum available Schedule Date (dd/MM/yyyy). Do you want to continue?
+- Validity Date must be equal to maximum available Schedule Date (dd/MM/yyyy).
+- Validity Date can't be less than SC Order Date.
+- Select valid Billing Nature.
+- Document No. X saved successfully.
+- Can't select Requistion of Different Product.
+- Account Name is empty for row no. n . Do you want to continue?
+- Account Name can't be empty for row no. n .
+- Duplicate Document No. is not allowed.
+- Gate Pass out is not prepared against service request
+- 'Please select Vendor as in Gatepass '
+- SC Order amount can't be greater than Pre Cal.
+- No standard Rate is Define for selected item.
+- <item> item not mapped with Expense Account and Expense Suspense Account.
+- Data deleted successfully.
+- SC Order Amendment is done againt this SC Order,so you can't delete this entry.
+- Material is issued Against this Order
+- Purchase requisition is prepared Against this Order
+- Select valid Fright Type.
+- Select valid Freight Type.
+- Select atleast one Issuable or Repairable Item.
+- Repairable Item And Output Item can't be defined in same Order.
+- repairable item can't be define for Activity/Conversion
+- Only one Service Request can be selected in case of Repairable
+- Select atleast one Activity in row n.
+- Select atleast one Item ID in row n.
+- Select valid Unit in row n.
+- Rate can't be zero or empty in row n.
+- Enter Service Description in Bill Detail.
+- Duplicate Service Description Not Allowed.
+- Select atleast one Mark.
+- Subcontract location should be X .
+- Order Qty. cant be Different for same Work Order No.
+- Select valid Level.
+- From & To Location can't be same in row n.
+- Select valid Route For transportation .
+- Reference date can't be greater than Document Date in row n.
+- SGST or CGST is not applicable for inter state service order.
+- IGST is not applicable for intra state service order.
+- Quantity can't be empty or 0
+- Rate can't be empty or 0
+- Someone updated this Service Order, please reload.
+- Do you want to delete ?
+- Do you want to save ?
+manages:
+- service-order
+uses_concepts:
+- bill-of-quantity
+- company
+- estimation
+- freight-order
+- freight-order-amendment
+- freight-order-mapping
+- revised-estimation
+- service-agreement
+- service-order-amendment
+- service-rfq
+method_notes:
+  ActivityDetail: Runs through Purchase.SCSOActivityDetail.
+  CustomValidation: Validates the entry through ODTSCOrder.ProcedureName.
+  Delete: Deletes the record through Purchase.SCSODelete.
+  ExpenseDependent: Runs through Purchase.SCSOExpenseDependent.
+  FillItemDetail: Fills the lookup lists through Purchase.SCSOFillValuesItemDetails.
+  FillReqDetail: Fills the lookup lists through Purchase.SCSOFillValuesRefDoc.
+  FillValues: Fills the lookup lists through Purchase.SCSOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through Purchase.SCSOFillValuesAccountAssignment.
+  FillValuesDependent: Fills the lookup lists through Purchase.SCSOFillValuesDependent.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.

@@ -1,0 +1,36 @@
+form: fVehicleGateInAmendment
+title: Gate In - Outward Amendment
+module: MM
+kind: transaction
+summary: This screen is a variant of the base [Gate In - Outward](Functional_Doc_fVehicleGateIn.md) screen and describes only
+  what differs.
+purpose: |
+  What it is: A correction of the customer, location, agent and item list of an authorized gate-in. [fVehicleGateInAmendment.vb:386-410] When it applies: When the customer or load was wrongly recorded after the gate-in was authorized and before weighment is final. [GateEntry.SGPIFillValues:72-81] Business outcome: Keeps the gate-in usable downstream with correct customer data without a new document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The base layout without the document number control; a Vehicle Gate In No.
+  - Vehicle Gate In No. Field: Mandatory list of gate-ins (BR-01, BR-03, MSG-01).
+  - Customer Name, Customer Location and Agent Fields: Same lists as the base screen; changing the customer reloads and preselects its first location.
+  - Read-Only Detail Fields: In time, Transporter Name, Vehicle Type, Vehicle No., Driver Name, Driver Contact No., License No., Driver Detail, Loading Condition, Vehicle Capacity, Description, Remarks, Source Document and Ref Document No.
+  - Item Details Grid: Same grid as the base screen.
+actions:
+  Save: Validates and saves the amendment.
+  Search, New, Delete and Other Toolbar: New and Print/Preview/Export/Email behave as on the [base screen](Functional_Doc_fVehicleGateIn.md#5-form-screen).
+validations:
+- Select valid Vehicle Gate In No.
+- Select valid Customer Name.
+- Select at least one item.
+- Document No. <gate-in number> saved successfully.
+manages:
+- gate-in-outward-amendment
+uses_concepts:
+- company
+- gate-in-outward
+method_notes:
+  Delete: Deletes the record through GateEntry.SGPIDelete.
+  FillValues: Fills the lookup lists through GateEntry.SGPIFillValues.
+  FillValuesDependent: Fills the lookup lists through GateEntry.SGPIFillValuesDependent.
+  LoadDataForGateIn: Loads the selected record through GateEntry.SGPILoadData.
+  Open: Searches records through GateEntry.SGPISearchData.
+  Save: Saves the record through GateEntry.SGPISaveAmendment.
+  SaveItemDetail: Saves the record through GateEntry.SGPISaveItemDetail.

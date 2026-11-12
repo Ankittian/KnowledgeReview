@@ -1,0 +1,55 @@
+form: fMaintenanceScheduleChangeStatus
+title: Maintenance Schedule Change Status
+module: PM
+kind: transaction
+summary: The Maintenance Schedule Change Status screen is a controlled document that puts a maintenance schedule, and its
+  pending occurrences, on hold, cancels them, short-closes them, or releases them back into progress.
+purpose: |
+  What it is: An auditable document recording who changed the status of a schedule or of some of its occurrences, to what, when and why [fMaintenanceScheduleClosing.vb:523-615; EAM.MSCSSave:69-134]. When it applies: When equipment is retired, maintenance is postponed, a contract ends, or a plan is replaced. Business outcome: Status changes are traceable and applied consistently to both the schedule and its occurrences (BR-11; BR-13).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: The window captioned "Maintenance Schedule Change Status" with the document control, the schedule details, Status, Reason, the close option and the occurrence grid [fMaintenanceScheduleClosing.designer.vb:391].
+  - Document Number, Date, Status and Division Controls: The standard document control; Document Status defaults to Initial and can be Release or Authorized [fMaintenanceScheduleClosing.vb:165; fMaintenanceScheduleClosing.vb:201-210].
+  - Maintenance Schedule No. Field: Mandatory dropdown listing Maintenance Schedule No, Maintenance Schedule Date, Object Type and Equipment Description/Location [fMaintenanceScheduleClosing.vb:92; fMaintenanceScheduleClosing.vb:156-162; fMaintenanceScheduleClosing.designer.vb:89].
+  - Schedule Detail Fields: Read-only text boxes for Maintenance Schedule Date, Schedule Description, Reference Object, Equipment Description (relabelled "Location" for locations), Maintenance Type and Maintenance Category [fMaintenanceScheduleClosing.designer.vb:96; fMaintenanceScheduleClosing.designer.vb:116; fMaintenanceScheduleClosing.designer.vb:135; fMaintenanceScheduleClosing.designer.vb:154; fMaintenanceScheduleClosi
+  - Status Field: Mandatory dropdown "&Status" showing only the statuses allowed from the schedule's current status [fMaintenanceScheduleClosing.designer.vb:224; fMaintenanceScheduleClosing.vb:697-703].
+  - Reason Field: Mandatory editable dropdown "&Reason", up to 100 characters [fMaintenanceScheduleClosing.designer.vb:233; fMaintenanceScheduleClosing.designer.vb:331].
+  - Close Maint. Schedule Checkbox: Checkbox "Close Maint.
+  - Occurrence Detail Grid: Grid with Trigger No., Occurrence No., Occurrence Date, Current Status (all read-only), Status (dropdown) and Reason (editable, up to 100 characters) [fMaintenanceScheduleClosing.vb:489-516].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that exist but do nothing [fMaintenanceScheduleClosing.vb:288-320].
+actions:
+  New: Clears the form for a new document.
+  Save: Validates and saves the document and the occurrence rows.
+  Search: Opens the standard search list of change-status documents.
+  Delete: Deletes the loaded document after the standard delete confirmation.
+validations:
+- Select valid Maintenance Schedule No.
+- Document Date can't be less than Maintenance Schedule Date.
+- Select valid Status.
+- Enter or select valid Reason.
+- If you want to close Maintenance schedule then cancel all pending occurrences.
+- Select valid Status in row n.
+- Enter or select valid Reason in row n.
+- Authorized Maintenance Schedule Change Status can't be updated.
+- Close Maint. Schedule is selected, It will stop auto generation of future occurrences, do you want to continue?
+- Document No. <number> saved successfully.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+manages:
+- maintenance-schedule-change-status
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+- maintenance-schedule
+- maintenance-schedule-occurrence
+method_notes:
+  Delete: Deletes the record through EAM.MSCSDelete.
+  FillValues: Fills the lookup lists through EAM.MSCSFillValues.
+  LoadData: Loads the selected record through EAM.MSCSLoadData.
+  Open: Searches records through EAM.MSCSSearchData.
+  Save: Saves the record through EAM.MSCSSave.
+  SaveOccurrenceDetail: Saves the record through EAM.MSCSSaveOccurrenceDetail.
+  ValidateForm: Validates the entry through EAM.MSCSValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through EAM.MSCSFillValuesDependent.
+  ucmbMaintenanceScheduleNo_ValueChanged: Fills the lookup lists through EAM.MSCSFillValuesDependent.

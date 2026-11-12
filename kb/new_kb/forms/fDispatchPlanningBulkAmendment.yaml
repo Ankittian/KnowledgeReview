@@ -1,0 +1,36 @@
+form: fDispatchPlanningBulkAmendment
+title: Dispatch Planning Bulk Amendment
+module: SD
+kind: transaction
+summary: The Dispatch Planning Bulk Amendment screen (window caption "DispatchPlanningBulkAmendment") is a bulk companion
+  to [Dispatch Planning](Functional_Doc_fDispatchPlanning.md) and [Dispatch Planning Amendment](Functional_Doc_fDispatchPlanningAmendment.md)
+  [fDispatchPlanningBulkAmendment.Designer.vb:128].
+purpose: |
+  What it is: A way to close out the unshipped balance of many dispatch plannings at once, by setting each planned quantity to the quantity already invoiced (BR-01, BR-04). When it applies: After goods have been dispatched and invoiced against a planning and the rest of the planned quantity will not be shipped under that planning. Business outcome: The user does not open each planning on the single-planning amendment screen. Plans, advices and invoices agree on one quantity (BR-04, BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Filter Area: A strip at the top of the screen holding the From Date and To Date pickers [fDispatchPlanningBulkAmendment.Designer.vb:37-85].
+  - From Date Field: A date picker in dd/MM/yyyy format, label "From Da&te" [fDispatchPlanningBulkAmendment.Designer.vb:64; fDispatchPlanningBulkAmendment.Designer.vb:80-85].
+  - To Date Field: A date picker in dd/MM/yyyy format, label "To Da&te" [fDispatchPlanningBulkAmendment.Designer.vb:55; fDispatchPlanningBulkAmendment.Designer.vb:71-76].
+  - Dispatch Planning Lines Grid: One grid listing the eligible lines.
+  - Hidden Grid Columns: Item, Make, Combination, Order Detail, Dispatch Planning and Consignee Detail identifiers, and an "UpdatedQty" column holding the invoiced quantity [fDispatchPlanningBulkAmendment.vb:537-546; Sales.SDBAFillValues:37-43].
+  - Search, Navigation and Other Toolbar Actions (Print, Preview, Export, E-mail): Search-style loading is empty, and Print, Preview, Export and E-mail have empty bodies [fDispatchPlanningBulkAmendment.vb:224-226; fDispatchPlanningBulkAmendment.vb:243-275].
+actions:
+  New: The toolbar New command, which asks the main window to start a new record [fDispatchPlanningBulkAmendment.vb:228-237].
+  Save: The toolbar Save command [fDispatchPlanningBulkAmendment.vb:555-613].
+  Delete: The Delete command exists in the form but its whole body is commented out [fDispatchPlanningBulkAmendment.vb:160-192].
+validations:
+- Dispatch Planning Amendment done successfully.
+- 'Tax Invoice Qty has been modified for Dispatch Planning : <planning numbers>. Reload Dispatch Planning.'
+- Not updated correctly. Reload Dispatch Planning.
+- From Date can't be greater than To Date.
+- Select atlease one Order.
+- Quantity can't be empty or zero in row n.
+- Quantity. can't be greater than Balance Planning Qty. in row n.
+- Quantity. can't be greater than Schedule Qty. in row n.
+- Amount can't be empty or 0 in row n.
+manages:
+- dispatch-planning-bulk-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Sales.SDBAFillValues.
+  Save: Saves the record through Sales.SDBASave.

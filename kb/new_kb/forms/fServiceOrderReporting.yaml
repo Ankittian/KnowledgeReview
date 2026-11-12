@@ -1,0 +1,108 @@
+form: fServiceOrderReporting
+title: Service Order Reporting
+module: PM
+kind: transaction
+summary: The Service Order Reporting screen records what was actually done against an authorized Maintenance Service Order.
+purpose: |
+  What it is: A document that records the execution of one authorized service order against its plan: services, parts, resources, solutions, feedback, faults and equipment part changes [fServiceOrderReporting.vb:1361-1428]. When it applies: When work on a service order starts, progresses, is put on hold, or is finished. Business outcome: Actual work, material consumption and customer outcome are available for invoicing and for equipment history, and the service order shows its current outcome status (BR-07; BR-19).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header block with the order details above seven tabs: Service Detail, Item Detail, Resource Detail, Solution Detail, Customer Feedback, Fault Detail and BOM Detail [fServiceOrderReporting.Designer.vb:916-936].
+  - Document Number, Date, Division and Status: The shared document control; changing the division reloads the lists [fServiceOrderReporting.vb:2433-2437].
+  - Customer Name Field: Mandatory drop-down [fServiceOrderReporting.vb:57; fServiceOrderReporting.vb:438-443].
+  - Customer Location Field: Mandatory drop-down labelled "Customer Location"; list header "Location" [fServiceOrderReporting.Designer.vb:473; fServiceOrderReporting.vb:2398-2400; fServiceOrderReporting.vb:445-450].
+  - Service Order No. Field: Mandatory drop-down showing order number and date [fServiceOrderReporting.vb:167; fServiceOrderReporting.vb:452-457].
+  - Read-only Order Fields: Service Order Date, Order Type, Source Document, Ref.
+  - Actual Start Date and Actual End Date Fields: Date-time fields with a tick box; both must be ticked [fServiceOrderReporting.Designer.vb:746; fServiceOrderReporting.Designer.vb:767; fServiceOrderReporting.vb:467-503].
+  - Status Field: Mandatory drop-down of the outcome statuses [fServiceOrderReporting.vb:57; fServiceOrderReporting.vb:505-525].
+  - Reason Field: Editable drop-down (free text allowed), up to 1000 characters, offering reasons used earlier in the company [fServiceOrderReporting.Designer.vb:811; CustomerService.CSSRFillValues:184-190].
+  - Remarks Field: Optional text, up to 1000 characters, trimmed on save [fServiceOrderReporting.Designer.vb:830; fServiceOrderReporting.vb:1404].
+  - Service Detail Grid: Select, Service Description, Pricing S.No., Rate Type, Order Qty., Qty., Start Date, End Date, Total Time, Curent Status, Status and Reason [CustomerService.CSSRFillValues:18-36; fServiceOrderReporting.vb:1078-1121].
+  - Item Detail Grid: Select, Item Code, Item Description, Unit, Make, Order Qty., Qty., Issue Detail (button) and Replacement Date [CustomerService.CSSRFillValues:38-53; fServiceOrderReporting.vb:1138-1177].
+  - Issue Detail Panel: Grid with Select, Issue No., Issue Date, Issued Qty., Rate, Qty.
+  - Resource Detail Grid: Select, Resource Name, Order Qty., Rate Unit, Start Time, End Time, Detail (button) and Total Time [CustomerService.CSSRFillValues:72-85; fServiceOrderReporting.vb:1241-1280].
+  - Resource Schedule Panel: Grid with Start Time, End Time, Total Time, Task Description (up to 100), Qty.
+  - Solution Detail Grid: S.No.
+  - Customer Feedback Grid: Parameter Name and Value [CustomerService.CSSRFillValues:109-113].
+  - Fault Detail Grid: S.No., Fault Description (read-only) and RCA (editable drop-down, new names allowed) [CustomerService.CSSRFillValues:200-215; fServiceOrderReporting.vb:2414-2430].
+  - BOM Detail Grid: Select, Alias, Item Code, Item Description, Unit, Make, Serial No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): The handlers exist but contain no logic [fServiceOrderReporting.vb:297-330].
+actions:
+  New: Starts a blank report through the main window [fServiceOrderReporting.vb:261-268].
+  Save: Validates and stores the report with all its detail.
+  Search: Opens a search dialog listing the company's reports with number, date, customer, location, service order, estimated
+    and actual dates, document status, creator and authorizer [fServiceOrderReporting.vb:270-292; CustomerService.CSSRSearchData:18-38].
+  Delete: Deletes the loaded report after a confirmation.
+validations:
+- Authorized ServiceOrderReporting can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Some data already exists at same Date.
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Service Order No.
+- Document date can not be less than Service Order date.
+- Select valid Actual Start Date.
+- Actual start date can not be less than Service order date.
+- Actual start date can not be greater than document date.
+- Select valid Actual End Date.
+- Actual end date can not be less than Actual start date.
+- Select valid Status.
+- Can select Status Fixed and Completed only when Document Status is Authorized
+- Document can not be Authorized when Status is in Hold or In Progress.
+- Select atleast one Service Detail.
+- Enter Qty. in row <n>.
+- Qty. can not be greater than Order Qty. in row <n>.
+- Qty. Can not be greater than Order Qty. in row <n>.
+- Select valid Start Date in row <n>.
+- Select valid End Date in row <n>.
+- End date can not be less than start date.
+- Select valid Status in row <n>.
+- Total Time can't be empty or zero in row <n>.
+- Start Date can not be less than Actual Start Date.
+- End Date can not be less than Actual End Date.
+- Total Issue Qty. should be equal to Qty. in row <n>.
+- Qty. should be equal to count of BOM in row <n>.
+- Select valid Start Time in row <n>.
+- End time can not be less than start time.
+- 'Select atleast one detail. '
+- Start Time can't be less than resource start time.
+- 'End Time can''t be greater than resource end time. '
+- Qty. can not be more than Issued Qty. in row <n>.
+- Start Time can't be less than resource start time .
+- Select valid End Time in row <n>.
+- Start Time <date time> can't be OverLap.
+- End Time <date time> can't be OverLap.
+- End Time can't less than Start Time.
+- End Time can't be greater than resource end time.
+- Enter Task Description in row <n>.
+- Enter Value in row <n>.
+- New Serial No. can not be empty in row <n>.
+- Unable to save BOM Detail as no stock has been issued for Item Description and Make  in row <n>.
+- Duplicate Parameter Name not allowed.
+- Duplicate Solution not allowed.
+- Document No. <number> saved successfully.
+manages:
+- service-order-reporting
+uses_concepts:
+- company
+- customer-feedback-parameter
+- eam-resource-master
+- equipment-master
+- maintenance-service-order
+- maintenance-service-order-amendment
+- service-call
+- service-contract
+- service-order-resource-reporting-detail
+- solution-knowledge
+method_notes:
+  Delete: Deletes the record through CustomerService.CSSRDelete.
+  FillValues: Fills the lookup lists through CustomerService.CSSRFillValues.
+  GetServiceOrderDetail: Runs through CustomerService.CSSRGetServiceOrderDetail.
+  LoadData: Loads the selected record through CustomerService.CSSRLoadData.
+  Open: Searches records through CustomerService.CSSRSearchData.
+  Save: Saves the record through CustomerService.CSSRSave.
+  SaveBOMDetail: Saves the record through CustomerService.CSSRSaveBOMDetail.
+  SaveCustomerFeedbackDetail: Saves the record through CustomerService.CSSRSaveCustomerFeedback.
+  SaveFaultDetail: Saves the record through CustomerService.CSSRSaveFaultDetail.
+  SaveIssueDetail: Saves the record through CustomerService.CSSRSaveIssueDetail.

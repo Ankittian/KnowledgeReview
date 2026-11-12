@@ -1,0 +1,30 @@
+form: fCashReconcilation
+title: Cash Reconcilation
+module: FI
+kind: transaction
+summary: The Cash Reconcilation screen records a physical cash count against the cash ledger.
+purpose: |
+  What it is: A dated record of the notes physically counted for a cash account, compared with the book balance. When it applies: At each cash count, usually the end of the day or period. Business outcome: Shortages and excesses of cash are noticed and reported (BR-08; BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The document number control (Division, date, number, status), Cash Account, Closing Amount, Difference and one grid of denominations; form code "SWCR", title "Cash Reconcilation" [fCashReconcilation.Designer.vb:62-120; fCashReconcilation.Designer.vb:148-149].
+  - Document Number Control: Division (shown as Finance Book), document date, document number or prefix, and status.
+  - Cash Account Field: A drop-down of cash accounts; changing it reloads the closing amount [fCashReconcilation.vb:432-439; fCashReconcilation.Designer.vb:82-93].
+  - Closing Amount and Difference Fields: Two read-only amounts [fCashReconcilation.Designer.vb:62; fCashReconcilation.Designer.vb:103].
+  - Denomination Grid: Columns Notes (read-only), No.
+actions:
+  Save: Validates, asks for confirmation, saves in one transaction, shows the saved document number, sends the alert if needed
+    and clears the screen [fCashReconcilation.vb:258-326].
+  Open, Delete and Other Toolbar: Open lists the financial year's counts; Delete asks for confirmation; Print, Preview, Export
+    and Email are empty [fCashReconcilation.vb:17-49; fCashReconcilation.vb:163-196; fCashReconcilation.vb:424-430].
+manages:
+- cash-reconcilation
+method_notes:
+  Delete: Deletes the record through Customize.SWCRDelete.
+  FillValues: Fills the lookup lists through Customize.SWCRFillValues.
+  FillValuesDependent: Fills the lookup lists through Customize.SWCRFillValuesDependent.
+  LoadData: Loads the selected record through Customize.SWCRLoadData.
+  Open: Searches records through Customize.SWCRSearchData.
+  Save: Saves the record through Customize.SWCRSave.
+  SaveDetails: Saves the record through Customize.SWCRSaveDetail.
+  ValidateForm: Validates the entry through Customize.SWCRValidate.

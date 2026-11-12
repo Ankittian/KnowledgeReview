@@ -1,0 +1,78 @@
+form: fTyreMovement
+title: Tyre Movement
+module: PM
+kind: transaction
+summary: The Tyre Movement screen records tyre fitment and removal work on vehicles.
+purpose: |
+  What it is: A transaction document that records tyres being fitted to, removed from, replaced on or swapped between wheel positions, with the readings at that moment [fTyreMovement.vb:797-900; EAM.TMOVSaveTyreDetail:36-81]. When it applies: Whenever workshop staff change tyres on a vehicle. Business outcome: The current position and life history of every tyre stays correct, and tyre life can be measured between fitment and removal.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header with the standard document control (Document Status, Division, Document Date and Document No.), the fields Fitment/Removal Date, Shift and Remarks, and a tab control with "Tyre Detail" and "Custom Field" tabs; the window caption is "TyreMovement" [fTyreMovement.Designer.vb:121; fTyreMovement.Designer.vb:140; fTyreMovement.Designer.vb:158; fTyreMovement.Designer.vb:192; fTyreMovement.Desig
+  - Document Control Fields: The shared document control showing status, division, document date and document number, with a repeat button [fTyreMovement.vb:103-107; fTyreMovement.vb:1231-1262].
+  - Fitment/Removal Date Field: A mandatory date picker labelled "Fitment/Removal Date" [fTyreMovement.Designer.vb:121; fTyreMovement.vb:54].
+  - Shift Field: An optional drop-down labelled "Shift" [fTyreMovement.Designer.vb:140; fTyreMovement.vb:121].
+  - Remarks Field: An optional text box labelled "Remarks" (up to 1000 characters in the database) [fTyreMovement.Designer.vb:158; EAM.TMOVSave:18].
+  - Tyre Detail Grid: A grid with columns Action, Vehicle, Tyre Position, Removed Tyre Serial No., Removed Tyre NSD, Removed Tyre KMS, Removed Tyre HRS, Removal Reason, Removed Tyre Status, Removed Tyre Warehouse, Swapped Vehicle, Swapped Tyre Position, Installed Tyre Serial No., Installed Tyre NSD, Installed Tyre KMS, Installed Tyre HRS, Assign To and Remarks (the removed tyre number is a hidden column) [fTyreMovement
+  - Custom Field Tab: An embedded custom-field control on the tab "Custom Field" [fTyreMovement.Designer.vb:195; fTyreMovement.vb:386].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  Repeat: The repeat button of the document control [fTyreMovement.vb:1231-1262].
+  New: The toolbar action that asks the main window for a new record [fTyreMovement.vb:220-227].
+  Save: The toolbar action that validates and saves [fTyreMovement.vb:720-795].
+  Search: The toolbar action that opens a document search [fTyreMovement.vb:229-254].
+  Delete: The toolbar action that removes the open document [fTyreMovement.vb:64-91].
+  Navigation: The navigation toolbar option is enabled for this screen [fTyreMovement.vb:51].
+validations:
+- Authorized Tyre Movement can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select a valid Fitment / Removal Date.
+- Enter at least one Tyre Movement detail.
+- Select a valid Vehicle in row N.
+- Select a valid Tyre Position in row N.
+- Same vehicle + position can not take more then once, Duplicate Vehicle + Position found for row N.
+- Select a valid Action in row N.
+- There is no tyre installed in this position in row N.
+- Enter Removed Tyre NSD in row N.
+- Enter Removed Tyre KMS in row N.
+- Enter Removed Tyre HRS in row N.
+- Select a valid Removal Reason in row N.
+- Select a valid Removed Tyre Status in row N.
+- Select a valid Removed Tyre Warehouse in row N.
+- Select a valid Swapped Vehicle in row N.
+- Vehicle and Swapped Vehicle can not be same when action is Swap (Different Vehicle) row N.
+- Select a valid Swapped Tyre Position in row N.
+- Tyre Position and Swapped Tyre Position can not be same when action is Swap (Same Vehicle)/  Swap (Different Vehicle) row
+  N.
+- Select a valid Installed Tyre Serial No. in row N.
+- Enter Installed Tyre NSD in row N.
+- Enter Installed Tyre KMS in row N.
+- Enter Installed Tyre HRS in row N.
+- Enter Assign To in row N.
+- Document No. <number> saved successfully.
+- 'Cannot install Tyre [serial]: it is already Installed.'
+- 'Cannot remove Tyre [serial]: it is not currently Installed.'
+- 'Replace failed: Tyre [serial] to be removed is not Installed.'
+- 'Replace failed: Tyre [serial] is not eligible for installation. Allowed statuses: In Stock, Removed, Repair Completed,
+  Retread Completed.'
+- 'Swap failed: Tyre [serial] is not currently Installed.'
+- 'Reversal blocked: Tyre [serial] has a later transaction in Document [number] (Form n). Please reverse that document first.'
+manages:
+- tyre-movement
+uses_concepts:
+- axle-wheel-configuration
+- company
+- equipment-master
+- supplementary-field
+- tyre-master
+method_notes:
+  Delete: Deletes the record through EAM.TMOVDelete.
+  FillValues: Fills the lookup lists through EAM.TMOVFillValues.
+  GetTyreForVehicleOnPosition: Runs through EAM.GetTyreVehicleWise.
+  LoadData: Loads the selected record through EAM.TMOVLoadData.
+  Open: Searches records through EAM.TMOVSearchData.
+  Save: Saves the record through EAM.TMOVSave.
+  SaveCustomFields: Saves the record through EAM.TMOVSaveCustomFieldDetail.
+  SaveTyreDetail: Saves the record through EAM.TMOVSaveTyreDetail.
+  ValidateForm: Validates the entry through EAM.TMOVValidate.
+  uDocNoYearly_RepeatedBtnClick: Searches records through EAM.TMOVSearchData.

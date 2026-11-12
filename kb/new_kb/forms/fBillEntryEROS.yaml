@@ -1,0 +1,101 @@
+form: fBillEntryEROS
+title: Bill Entry (EROS)
+module: FI
+kind: transaction
+summary: The Bill Entry screen (form code BNME, EROS client variant) books a supplier, subcontractor or expense bill against
+  a customer sales order so that the cost is charged to the right cost head of that order and the payee is credited in the
+  books.
+purpose: |
+  What it is: A transaction that records a payee's bill as expense of a sales order cost head and as a liability to the payee. When it applies: When a subcontractor, supplier or other payee bills work done for a customer order (BR-04). Business outcome: Order-wise costs are captured against the estimate and posted to the ledger (BR-14; BR-23).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: Window "Bill Entry" with the document number control, a header group, and tabs Service Detail, Tax Detail, Finance Posting and GST Posting [fBillEntryEROS.Designer.vb:725-737; fBillEntryEROS.Designer.vb:768].
+  - Document Number Control: Shared control for prefix, number, date, status, finance book and division (BR-02; BR-21).
+  - Source Document Field: Mandatory dropdown "Source Document" (BR-04; BR-06; MSG-06) [fBillEntryEROS.Designer.vb:685; fBillEntryEROS.vb:177].
+  - Sales Order No. and Sales Order Date Fields: Mandatory dropdown "Sales Order No." (except MDN) and read-only "Sales Order Date" (BR-05; BR-07; MSG-07; MSG-08) [fBillEntryEROS.Designer.vb:647; fBillEntryEROS.Designer.vb:666].
+  - SubContract No. and Pay Code Fields: Dropdowns "SubContract No." and "Pay Code" [fBillEntryEROS.Designer.vb:551; fBillEntryEROS.Designer.vb:589].
+  - Cost Head and Cost Center Fields: Dropdowns "Cost Head" and "Cost Center" [fBillEntryEROS.Designer.vb:570; fBillEntryEROS.Designer.vb:704].
+  - Payee Name and Payee Location Fields: Mandatory dropdown "Payee Name" (100 characters) and read-only "Payee Location" (BR-06; BR-12; MSG-09) [fBillEntryEROS.Designer.vb:298; fBillEntryEROS.Designer.vb:628; fBillEntryEROS.vb:235; fBillEntryEROS.vb:254].
+  - Bill No., Bill Date and Bill Amount Fields: "Bill No." (mandatory, 50 characters), "Bill Date" (checkable date, mandatory, not after document date) and "Bill Amount" (decimal, mandatory except Direct) (BR-08; MSG-13 to MSG-16) [fBillEntryEROS.vb:223-226].
+  - Payment Mode and Narration Fields: Mandatory dropdown "Payment Mode" and free text "Narration" (BR-06; BR-31; MSG-10) [fBillEntryEROS.Designer.vb:370; fBillEntryEROS.Designer.vb:389].
+  - Service Tax Rule and GST Tax Rule Fields: Dropdowns "Service Tax Rule" and "GST Tax Rule" [fBillEntryEROS.Designer.vb:455; fBillEntryEROS.Designer.vb:608].
+  - Estimation Amount, Prev. Bill Amt and Balance Amt Fields: Read-only decimals [fBillEntryEROS.Designer.vb:462-512].
+  - MDN Grid: Grid with Select, MDN No., MRN Date, OR No.
+  - Currency Control: Shared currency control in the header.
+  - Service Detail Grid and Amount: Grid with Description (account), HSN & SAC Code (search button), Amount and GST Tax Rule; Unit, Quantity and Rate are hidden; read-only "Amount" total below [fBillEntryEROS.vb:824-842; fBillEntryEROS.Designer.vb:179; fBillEntryEROS.Designer.vb:190].
+  - Notify To and Notify Button: Dropdown "Notify To" and button "Notify" on the Service Detail tab [fBillEntryEROS.Designer.vb:142; fBillEntryEROS.Designer.vb:162].
+  - Tax Detail Tab: Shared tax control on the bill amount.
+  - Finance Posting and GST Posting Tabs: Shared finance posting control and GST voucher detail control.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Voucher report output [fBillEntryEROS.vb:171-175].
+  - Maintenance Keys: Ctrl+Alt+G on GST Posting rebuilds GST detail; Ctrl+Alt+V on Finance Posting rebuilds the voucher [fBillEntryEROS.vb:55-157].
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last [fBillEntryEROS.vb:169].
+validations:
+- Authorized Bill Entry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Duplicate Bill No. is not allowed.
+- Amount can not exceed the subcontract amount.
+- Select valid Source Document.
+- Select valid Source Document No.
+- Document Date can't be less than Source Document Date.
+- Select valid Payee Name.
+- Select valid Payment Mode.
+- Amount can't be empty or zero.
+- Enter Vendor Bill No.
+- Select Bill Date.
+- Vendor Bill Date can't be greater than Document Date.
+- Vendor Bill Amount can't be empty or zero.
+- Select valid Service Tax Rule.
+- Amount is not equal to total amount in Service Description.
+- Amount can''t be greater than Pre Cal Amount.
+- Amount can''t be greater than Pre Cal Amount.,Do you want to continue
+- Select atleast one MDN.
+- Select atleast one Description
+- Select valid HSN & SAC Code in row n.
+- Amount can't be empty or zero in row n.
+- Sum of Service Amount should be equal to bill Amount <amount>.
+- Duplicate Description not allowed.
+- Account is not created against selected Vendor.
+- Document No. <number> saved successfully.
+- Do you want to print?
+- Bill Amount of Bill Entry <total> exceeds the Balance Amount of PreCal <estimate> .
+- Select valid Sales Order No.
+- Select valid Cost Head.
+- Notify successfully
+manages:
+- bill-entry
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- input-excise-invoice-posting
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Authorize: Runs through Customize.BNMEAuthorize.
+  Delete: Deletes the record through Customize.BNMEDelete.
+  FillValues: Fills the lookup lists through Customize.BNMEFillValues.
+  FillValuesDependent: Fills the lookup lists through Customize.BNMEFillValuesDependent.
+  FillValuesPayeeType: Fills the lookup lists through Customize.BNMEFillValuesPayeeType.
+  FillValuesSourceDocument: Fills the lookup lists through Customize.BNMEFillValuesSourceDocument.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Customize.BNMELoadData.
+  Open: Searches records through Customize.BNMESearchData.
+  ReferenceDetail: Runs through Customize.BNMEReferenceDetail.

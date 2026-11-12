@@ -1,0 +1,53 @@
+form: fVehicleGateOut
+title: Vehicle Gate Out
+module: MM
+kind: transaction
+summary: The Vehicle Gate Out screen records the departure of a vehicle from the factory gate.
+purpose: |
+  What it is: A dated, numbered record that a vehicle which entered the premises has left, with the gate-out time, loading condition and the invoices it took out. [fVehicleGateOut.vb:91-135] When it applies: When a vehicle with an authorized gate-in record leaves the factory, either an outward vehicle (customer dispatch) or an inward Gate Entry vehicle (supplier delivery or return). [GateEntry.VEGOFillValues:22-65] Business outcome: Gives security an auditable departure time per vehicle, ties dispatched invoices to the vehicle that carried them and lets the business tell vehicles that are on site from those that have left. [GateEntry.MISVehicleInOutRegister:56]
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A window captioned "VehicleGateOut" with the document number control on top, a detail panel with the gate-in information and the gate-out entries, and an invoice grid panel at the bottom.
+  - Document Number Control: The shared control with document number, date, division, status and series.
+  - Source Document Field: A dropdown labelled "Source Document" with "Gate In_Outward" and "Gate Entry".
+  - Gate In No. Field: A dropdown labelled "Gate In No." with columns Gate In No, Date, Customer Name, Customer Location, Vehicle No.
+  - Gate-In Detail Fields: Read-only displays: "Gate In Time", "Customer Name", "Customer Location", "Agent", "Transporter Name", "Vehicle Type", "Vehicle No.", "Driver Name", "Driver Contact No", "License No.", "Weighment No.", "Tare Weight" and "Gross Weight".
+  - Gate Out Time Field: A date-time picker labelled "Gate Out Time" with a tick box, initially unticked.
+  - Loading Condition Field: A dropdown labelled "Loading Condition" with "Loaded" and "Empty".
+  - Reason Field: A multi-line text box labelled "Reason", up to 300 characters.
+  - Remarks Field: A multi-line text box labelled "Remarks", up to 1000 characters, optional (BR-18).
+  - Invoice Detail Grid: A grid with columns "Invoice No" (dropdown of eligible invoices showing document number and invoice date), "Invoice Date" (read-only) and "Item Description" (read-only, the distinct items of the invoice joined by commas).
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): The handlers exist but are empty.
+actions:
+  New: The toolbar action that returns the screen to a blank state through the main window.
+  Save: Saves the gate-out after the checks and a confirmation.
+  Search: Opens the search window listing the company's gate-outs for the current year.
+  Delete: Deletes the loaded gate-out after the standard delete confirmation.
+validations:
+- Authorized VehicleGateOut can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select a valid Source Document.
+- Select valid Gate In No.
+- Document Date can't be lesser than Gate in time Date.
+- Select a valid Gate out time.
+- Gate Out time can't be lesser than Gate in time.
+- Loading Condition is mandatory.
+- Invoice no is mandatory
+- Enter Reason for the Entry.
+- Duplicate Invoice No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- vehicle-gate-out
+uses_concepts:
+- company
+- dispatch-advice
+method_notes:
+  Delete: Deletes the record through GateEntry.VEGODelete.
+  FillValues: Fills the lookup lists through GateEntry.VEGOFillValues.
+  FillValuesDependent: Fills the lookup lists through GateEntry.VEGOFillValuesDependent.
+  LoadData: Loads the selected record through GateEntry.VEGOLoadData.
+  Open: Searches records through GateEntry.VEGOSearchData.
+  Save: Saves the record through GateEntry.VEGOSave.
+  SaveInvoiceDetail: Saves the record through GateEntry.VEGOSaveVehicleGateOutInvoiceDetail.
+  ValidateForm: Validates the entry through GateEntry.VEGOValidate.

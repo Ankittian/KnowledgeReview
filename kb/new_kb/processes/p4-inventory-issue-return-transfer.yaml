@@ -1,0 +1,22 @@
+key: p4-inventory-issue-return-transfer
+name: 'Inventory: Issue, return & transfer (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the issue, return & transfer group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Issue, return & transfer' (Inventory). The steps follow the plan order, not a verified business sequence: Stock Transfer, Inter Unit Stock Transfer, QDA in Stock Transfer.
+steps:
+- order: 1
+  name: Record Stock Transfer
+  form: fInvStockTransfer
+- order: 2
+  name: Record Inter Unit Stock Transfer
+  form: fInterUnitStockTransfer
+- order: 3
+  name: Record QDA in Stock Transfer
+  form: fQDAStocktransfer
+concepts:
+- stock-transfer
+- inter-unit-stock-transfer
+- qda-in-stock-transfer

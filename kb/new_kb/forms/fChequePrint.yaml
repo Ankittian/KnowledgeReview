@@ -1,0 +1,62 @@
+form: fChequePrint
+title: Cheque Print
+module: FI
+kind: transaction
+summary: The Cheque Print screen prepares and prints the cheques and other payment instruments for approved payables before
+  the bank payment vouchers are posted.
+purpose: |
+  What it is: A register of cheques and payment instruments prepared for approved payment plan lines and recurring vouchers, with the number, date, payee name and amount of each. When it applies: Before payments are released, whenever the bank account is cheque-printing enabled. Business outcome: Cheque numbers are unique per bank account, amounts include bank charges, and the later voucher reuses the prepared reference (BR-04; BR-05; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area and Payee Grid: A header with bank details, filters and cheque numbers above one grid of payees with nested documents [fChequePrint.vb:1021-1034].
+  - Finance Book Field: Drop-down "Finance Book", or "Profit Center" when configured [fChequePrint.vb:49-55; fChequePrint.Designer.vb:221].
+  - Bank Account Name Field: Mandatory drop-down "Bank Account Name" [fChequePrint.vb:28; fChequePrint.Designer.vb:80].
+  - Payment Date Field: Date "Payment Date", saved as the cheque date [fChequePrint.vb:561; fChequePrint.Designer.vb:99].
+  - Source Document and Ref. No. Fields: Optional drop-downs: Source Document (Recurring Voucher, Payment Plan) and the matching Ref.
+  - Ref. Date Range: Check box "Ref.
+  - Cheque No(s) Fields: Group "Cheque No(s)" with numeric From and To fields of no decimals [fChequePrint.vb:101-102; fChequePrint.Designer.vb:233].
+  - Show Button: Button "Show" [fChequePrint.vb:938-1002].
+  - Payee Grid: Columns: Select, Source Document, Payee Name, Currency, Cheque Passing Amount, Final Amount, Payment Mode, Payment Ref.
+  - Document Rows: Columns: Select, Source Document No., Unit Name, Payee Type, Payee Name, Payee Location, Ref.
+  - Currency Column: Button column opening the shared currency row editor [fChequePrint.vb:402-404; fChequePrint.vb:1074-1081].
+actions:
+  Save: Toolbar Save [fChequePrint.vb:544-639].
+  New, Search, Delete: New resets the form.
+  Print, Preview, Export and Email: Act on every ticked payee row, producing the cheque with Amount, InFavourof, ChequeDate
+    and company [fChequePrint.vb:1100-1219].
+validations:
+- Select valid Finance Book.
+- Select valid Bank Account Name.
+- Select atleast one Account.
+- Amount can't be empty or zero in row N.
+- Enter Payment Ref. No. in row N.
+- Select Payment Ref. Date in row N.
+- Payment Ref. Date should be between Financial Start and End Date  in row N.
+- Enter In Favour of in row N.
+- Duplicate Payment Reference No. <number> is not allowed.
+- Voucher is generated against this entry.
+- Max of Cheque No crossed To Cheque No entered.
+- Cheque Printing is not applicable from this Payment Date.
+- Voucher is created against this cheque.
+- 'Voucher Detail :'
+manages:
+- cheque-print
+uses_concepts:
+- account-opening
+- accounting-voucher
+- bank-journal
+- company
+- recurring-voucher
+- sundry-payment
+- supplier-advance
+method_notes:
+  Delete: Deletes the record through Finance.FICPDelete.
+  FillValues: Fills the lookup lists through Finance.FICPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FICPFillValuesDependent.
+  FillValuesFinanceBook: Fills the lookup lists through Finance.FIBPFillValuesFinanceBook.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FICPFillValuesSourceDocument.
+  LoadData: Loads the selected record through Finance.FICPLoadData.
+  Open: Searches records through Finance.FICPSearchData.
+  Save: Saves the record through Finance.FICPSaveMain.
+  SaveAccountDetail: Saves the record through Finance.FICPSaveDetail.
+  ValidateForm: Validates the entry through Finance.FICPValidate.

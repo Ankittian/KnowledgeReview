@@ -1,0 +1,55 @@
+form: fInsuranceDeclaration
+title: Insurance Declaration
+module: FI
+kind: transaction
+summary: The Insurance Declaration screen (window caption "InsuranceDeclaration", form code FIND) declares, for one Transit
+  Insurance Policy and one date range, the sales invoices (or, for export policies, commercial invoices) that were dispatched
+  under that policy [fInsuranceDeclaration.Designer.vb:797-800; Finance.FINDFillValuesDependent:61-98; Finance.FINDFillValuesDependent:136-178].
+purpose: |
+  What it is: A periodic declaration of insured dispatches against a transit insurance policy, with the premium and tax due on the declared value [Finance.FINDSave:80-108; fInsuranceDeclaration.vb:580-598]. When it applies: At the end of each declaration period agreed with the insurer, per policy. Business outcome: The insurer is told what was dispatched, the premium is computed, and the remaining cover of the policy is tracked (BR-04; BR-07; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared document control carrying Document Status, Finance Book, Document Date, Document No.
+  - Policy No. Field: Dropdown labelled "Policy No.", mandatory, listing Policy No, Policy Date and Insurance Company [fInsuranceDeclaration.vb:64; fInsuranceDeclaration.vb:140; fInsuranceDeclaration.Designer.vb:197].
+  - Insurance Company and Rate Fields: Read-only boxes labelled "Insurance Company" and "Rate", filled from the policy [fInsuranceDeclaration.Designer.vb:204; fInsuranceDeclaration.Designer.vb:421; fInsuranceDeclaration.vb:733-734].
+  - From Date and To Date Fields: Date pickers labelled "From Date" and "To Date".
+  - Show Button: Button labelled "Show" [fInsuranceDeclaration.Designer.vb:335-338; fInsuranceDeclaration.vb:797-806].
+  - Export Policy Fields: "Insurance Certificate No.", "Insurance Certificate Date", "Risk Start Date" and the "Basis of Valuation" group containing the percentage box (additional assured %), "A.
+  - Invoice Grid: Tab "Invoice Detail" with a grid of Select, Company Name, Invoice No., Invoice Date, Customer Name, Vehicle No., Consignee Name, City, State, GSTIN, Item, Qty., Invoice Amount (export only) and "Assured Amount".
+  - Totals and Balance Groups: Read-only boxes Total Qty., Total Amt., Rate, Net Amt., Tax Amt.
+  - Account Detail Tab: Tab "Account Detail" holding the shared tax control; charge type and charge on cannot be edited [fInsuranceDeclaration.Designer.vb:164-174; fInsuranceDeclaration.Designer.vb:368; fInsuranceDeclaration.vb:131-132].
+actions:
+  Toolbar: New, Save, Open, Delete, Navigation, Print, Print Preview, Export and Email [fInsuranceDeclaration.vb:49-62].
+validations:
+- Authorized InsuranceDeclaration can't be updated.
+- Select valid Policy No.
+- Enter an Insurance Certificate No.
+- Insurance Certificate Date can't be greater than From Date.
+- Risk Start Date can't be greater than From Date.
+- Sum of Assured value can't be less than zero.
+- Sum of Assured value can't be greater than hundred.
+- Closing Insurance Amt can't be negative.
+- Closing Premium Amt can't be negative.
+- Select at least one Invoice.
+- To date can't be less then From Date.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- An entry already exists for same period.
+- Export Document for related Commercial Invoice has been Authorized. Can't delete the entry.
+- Document No. <number> saved successfully.
+manages:
+- insurance-declaration
+uses_concepts:
+- accounting-voucher
+- company
+- vehicle-insurance-declaration
+method_notes:
+  Delete: Deletes the record through Finance.FINDDelete.
+  FillValues: Fills the lookup lists through Finance.FINDFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FINDFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FINDLoadData.
+  Open: Searches records through Finance.FINDSearchData.
+  Save: Saves the record through Finance.FINDSave.
+  SaveTaxDetails: Saves the record through Finance.FINDSaveTaxDetail.
+  SaveVocherDetails: Saves the record through Finance.FINDSaveVoucherDetail.
+  ValidateForm: Validates the entry through Finance.FINDValidate.

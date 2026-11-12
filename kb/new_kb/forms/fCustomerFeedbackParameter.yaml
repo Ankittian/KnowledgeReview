@@ -1,0 +1,38 @@
+form: fCustomerFeedbackParameter
+title: Customer Feedback Parameter
+module: MD
+kind: master
+summary: The Customer Feedback Parameter screen maintains the questions or measures that a service engineer records as customer
+  feedback on a service call.
+purpose: |
+  What it is: A master record naming one feedback measure, its Data Type and the items it relates to [fCustomerFeedbackParameter.vb:338-416; masterdata.MCFPSave:36-59]. When it applies: When a new feedback measure is to be offered on service calls, or when an existing one changes. Business outcome: Feedback is collected in a consistent, coded set of parameters (BR-01; BR-02; BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Group Area: A group box at the top holding Code, Parameter Name, Data Type and Inactive [fCustomerFeedbackParameter.designer.vb:107-119].
+  - Code Field: A read-only text box labelled "Code", 6 characters [fCustomerFeedbackParameter.designer.vb:44-46; fCustomerFeedbackParameter.designer.vb:58].
+  - Parameter Name Field: A mandatory text box labelled "Parameter &Name", 50 characters; marked as a compulsory field [fCustomerFeedbackParameter.vb:57; fCustomerFeedbackParameter.designer.vb:64; fCustomerFeedbackParameter.designer.vb:76].
+  - Data Type Field: A mandatory drop-down labelled "Data &Type" [fCustomerFeedbackParameter.vb:57; fCustomerFeedbackParameter.vb:119; fCustomerFeedbackParameter.designer.vb:95].
+  - Inactive Field: A check box labelled "Inactive", disabled [fCustomerFeedbackParameter.designer.vb:99; fCustomerFeedbackParameter.designer.vb:104].
+  - Item Detail Grid: A grid with columns Code, Item Description and Item Type; Code and Item Description are drop-downs over the same item list and Item Type is read-only [masterdata.MCFPFillValues:48-52; fCustomerFeedbackParameter.vb:119-122; fCustomerFeedbackParameter.vb:327].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fCustomerFeedbackParameter.vb:202-238].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fCustomerFeedbackParameter.vb:165-174].
+  Save: The toolbar action that validates and stores the parameter [fCustomerFeedbackParameter.vb:338-394].
+  Search: The toolbar action that opens a search list [fCustomerFeedbackParameter.vb:176-200].
+  Delete: The toolbar action that removes the opened parameter [fCustomerFeedbackParameter.vb:65-99].
+validations:
+- Enter Parameter Name.
+- Select valid Data Type.
+- Duplicate Parameter Name not allowed.
+manages:
+- customer-feedback-parameter
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MCFPDelete.
+  FillValues: Fills the lookup lists through masterdata.MCFPFillValues.
+  LoadData: Loads the selected record through masterdata.MCFPLoadData.
+  Open: Searches records through masterdata.MCFPSearchData.
+  Save: Saves the record through masterdata.MCFPSave.
+  SaveItemdetails: Saves the record through masterdata.MCFPSaveItemDetail.
+  ValidateForm: Validates the entry through masterdata.MCFPValidate.

@@ -1,0 +1,30 @@
+key: p11-eam-meter-readings-logs-and-utilisation
+name: 'EAM: Meter readings, logs and utilisation (Phase 11)'
+module: PM
+status: active
+summary: Phase 11 screens of the meter readings, logs and utilisation group in EAM.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Meter readings, logs and utilisation' (EAM). The steps follow the plan order, not a verified business sequence: LionsConsumptionEntry, Fuel Consumption, Meter Reading, Meter Reading Simplified, Reset Measurement Parameter.
+steps:
+- order: 1
+  name: Record LionsConsumptionEntry
+  form: fLionsConsumptionEntry
+- order: 2
+  name: Record Fuel Consumption
+  form: fFuelConsumption
+- order: 3
+  name: Record Meter Reading
+  form: fMeterReading
+- order: 4
+  name: Record Meter Reading Simplified
+  form: fMeterReadingSimplified
+- order: 5
+  name: Record Reset Measurement Parameter
+  form: fResetMeasurementParameter
+concepts:
+- lionsconsumptionentry
+- fuel-consumption
+- meter-reading
+- meter-reading-simplified
+- reset-measurement-parameter

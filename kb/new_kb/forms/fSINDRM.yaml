@@ -1,0 +1,107 @@
+form: fSINDRM
+title: Store Inward Note (SIN)
+module: DRM
+kind: transaction
+summary: The Store Inward Note (SIN) screen records the stores receipt of discrete raw material that has already passed the
+  gate as a discrete raw material gate entry.
+purpose: |
+  What it is: A transaction that converts a discrete raw material gate entry into a stores receipt against purchase orders, stock transfers, dispatch challans or sales orders, with per-item received and accepted quantities and storage location [fSINDRM.vb:830-998; DiscreteRM.DRSNSaveMain:104-173]. When it applies: After material for the Discrete Raw Material module has been gated in and the gate entry is authorized, and before stock is issued or a bill is booked. Business outcome: Each gate entry is received into stores only once, quantities are checked against order balances and tolerances, and authorized receipts create stock and, where configured, a finance voucher.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Area: The shared yearly document number control at the top: division, document number, document status and document date [fSINDRM.Designer.vb:1497-1516; fSINDRM.vb:188-196].
+  - Main Tab Layout: Tabs "General Details", "Item Detail", "Custom Fields", "Finance Posting" and "Other Detail"; a "Hidden" tab holds internal fields [fSINDRM.Designer.vb:1469-1490].
+  - Source Document Field: Mandatory dropdown "Source Document" with the active source list; the default source is pre-selected on a new SIN [fSINDRM.Designer.vb:755; fSINDRM.vb:203; fSINDRM.vb:217-219].
+  - Vendor Name Field: Mandatory dropdown "Vendor Name" (name, code) [fSINDRM.Designer.vb:1154; fSINDRM.vb:104].
+  - Location Field: Mandatory dropdown "Location" listing the vendor's locations [fSINDRM.Designer.vb:1080; fSINDRM.vb:1324].
+  - Gate Entry No. Field: Mandatory dropdown "Gate Entry No." showing gate entry number and date [fSINDRM.Designer.vb:931; fSINDRM.vb:2092].
+  - Gate Entry Date, Challan No., Challan Date and Transporter Fields: Read-only displays "Gate Entry Date", "Challan No.", "Challan Date" and "Transporter" [fSINDRM.Designer.vb:844-854; fSINDRM.Designer.vb:973-1003].
+  - Maintain Lot Field: Checkbox "Maintain Lot", ticked on a new SIN [fSINDRM.Designer.vb:775; fSINDRM.vb:215].
+  - Vendor Bill No. and Vendor Bill Dated Fields: Optional text "Vendor Bill No." (30 characters) and optional date "Vendor Bill Dated" [fSINDRM.Designer.vb:646-682].
+  - Remarks Field: Optional text "Remarks", up to 1000 characters, trimmed on save [fSINDRM.Designer.vb:951-959; fSINDRM.vb:894].
+  - From Location, To Location and Freight Type Fields: Optional dropdowns "From Location", "To Location" (company locations) and "Freight Type" [fSINDRM.Designer.vb:506; fSINDRM.Designer.vb:526; fSINDRM.Designer.vb:600; fSINDRM.vb:204-206].
+  - Distance and Vehicle Capacity Fields: Optional numeric text "Distance" (8 characters) and "Vehicle Capacity" (13 characters) [fSINDRM.Designer.vb:456-486].
+  - Wt. Slip No. and Wt. Slip Dated Fields: Optional text "Wt.
+  - Ex. Challan No. and Ex. Challan Dated Fields: Optional text "Ex.
+  - Inspection Required Field: Checkbox "Inspection Required" [fSINDRM.Designer.vb:449].
+  - Notes Control: The shared notes control with print area, notes text and default flag [fSINDRM.Designer.vb:934-940; fSINDRM.vb:213-214].
+  - Order Detail Grid: Grid at the top of "Item Detail" with a "Select" tick, "Order No.", "Order Date" and "Order Type"; other columns hidden [fSINDRM.Designer.vb:1159; fSINDRM.vb:1639-1670].
+  - Item Detail Grid: Grid on sub-tab "Item Detail" with Item Code, Item Description, Make, Unit, Tech.
+  - Tech. Specification Pop-up: A button cell that opens a read-only text box with the order's technical specification and a "Cancel" button [fSINDRM.vb:1473-1479; fSINDRM.vb:1533-1542; fSINDRM.vb:2178-2180].
+  - Lot Detail Grid and Indent Pop-up: Sub-tab "Lot Detail" with one row per order and item (Order No., Order Date, Item Description, Make, Order Qty., Prev Received Qty., Balance Qty., Challan Qty., Received Qty.); the Received Qty.
+  - Custom Fields Tab: The shared custom field control for form DRSN [fSINDRM.vb:199; fSINDRM.Designer.vb:1207-1215].
+  - Finance Posting Tab: The shared online posting control showing the journal voucher [fSINDRM.Designer.vb:1292-1314].
+  - Other Detail Tab: Checkboxes "Mechanical Testing", "Visual Inspection", "Doc Review", "Chemical Testing" with "Mechanical Remarks", "Doc Review Remarks" and "Chemical Remarks" [fSINDRM.Designer.vb:1365-1450].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Print Preview, Export and Email of the SIN report "rptSinEntry", passing the SIN number and database name [fSINDRM.vb:99-102; fSINDRM.vb:399-417; fSINDRM.vb:2140-2176].
+  - Voucher Regeneration Shortcut: Keyboard Ctrl+Alt+V [fSINDRM.vb:21-88].
+actions:
+  New: Toolbar New [fSINDRM.vb:94; fSINDRM.vb:358-367].
+  Save: Toolbar Save [fSINDRM.vb:95; fSINDRM.vb:830-998].
+  Search: Toolbar Open showing the common search list [fSINDRM.vb:96; fSINDRM.vb:369-397].
+  Delete: Toolbar Delete [fSINDRM.vb:97; fSINDRM.vb:114-145].
+  Navigation: First / Previous / Next / Last, enabled for this form [fSINDRM.vb:98].
+validations:
+- Authorized SIN can't be updated.
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Inspection Intimation is pending against this SIN.
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Gate Entry No.
+- Gate Entry Date can't be greater than Document Date.
+- Select Wt. Slip Date.
+- Enter Wt. Slip No.
+- Wt Slip Date can't be greater than Document Date.
+- Select Vendor Bill Date.
+- Enter Vendor Bill No.
+- Vendor Bill Date can't be greater than Document Date.
+- Select Excise Challan Date.
+- Excise Challan Date can't be greater than Document Date.
+- Select atleast one Order No.
+- 'Document Date can''t be less than selected Order Date in row '
+- 'PO in row '
+- ' does not belong to selected Gate Entry. Choose a valid PO.'
+- Select atleast one Item.
+- 'Order Qty. can''t be zero or empty in row '
+- 'Received Qty. can''t be zero or empty in row '
+- 'Received Qty. can''t be greater than Balance+Tolerance Qty. in row '
+- 'Challan Qty / Received Qty. can''t be greater than SIN Chalan Tolerance % in row '
+- 'Select valid warehouse in row '
+- 'Total Challan Qty. of item '
+- ' should be equal to Challan Qty. '
+- 'Total Received Qty. of item '
+- ' should be equal to Received Qty. '
+- 'Indent Challan Qty and Order Challan should be same '
+- 'Indent received Qty and Order Received should be same '
+- Received Qty. can't be greater than Balance+Tolerance Qty.
+- 'Document No. '
+- ' saved successfully.'
+- Intimation is not prepared against this Entry.
+- Material is issue against this entry
+- Other bill is posting against this entry
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- Not found in Voucher
+- 'Warehouse should be same as taken in SIN Entry for Item '
+manages:
+- store-inward-note
+uses_concepts:
+- accounting-voucher
+- company
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- rawmaterial-opening
+- sin-lot-entry
+- sin-make-update
+- stock-transfer
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRSNDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRSNFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.DRSNFillValuesDependent.
+  FillValuesOrderDetail: Fills the lookup lists through GateEntry.DRGEFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through DiscreteRM.DRSNLoadData.
+  Open: Searches records through DiscreteRM.DRSNSearchData.
+  Save: Saves the record through DiscreteRM.DRSNAuthorize, DiscreteRM.DRSNSaveMain, Inventory.VoucherVsLotValidation.
+  SaveItemDetails: Saves the record through DiscreteRM.DRSNSaveGateEntryItemDetail.
+  SaveLotDetails: Saves the record through DiscreteRM.DRSNSaveLotDetail.

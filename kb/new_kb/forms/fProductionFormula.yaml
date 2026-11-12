@@ -1,0 +1,62 @@
+form: fProductionFormula
+title: Production Formula
+module: MD
+kind: master
+summary: The Production Formula screen defines a standard recipe for producing a primary item at a work center.
+purpose: |
+  What it is: A master record that fixes, for one work center, the standard consumption, output and expense lines of a production batch of a stated quantity [fProductionFormula.vb:464-531; masterdata.MEPFSave:34-69]. When it applies: When a production process is set up, or when its standard recipe changes. Business outcome: Production runs start from an agreed recipe instead of being typed afresh, and the primary input or output of each formula is always present (BR-09; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Group Area: A header group at the top holding Code, Description, Work Center, Formula Based On, Item Type, Item Description, Unit, Quantity, Remarks and Is Item Editable [fProductionFormula.Designer.vb:309-340].
+  - Code Field: A read-only text box labelled "Code" [fProductionFormula.Designer.vb:143; fProductionFormula.Designer.vb:155].
+  - Description Field: A mandatory text box labelled "&Description", 100 characters [fProductionFormula.vb:11; fProductionFormula.Designer.vb:161; fProductionFormula.Designer.vb:173].
+  - Work Center Field: A mandatory drop-down labelled "&Work Center" [fProductionFormula.vb:11; fProductionFormula.vb:76; fProductionFormula.Designer.vb:192].
+  - Formula Based On Field: A mandatory drop-down labelled "&Formula Based On" with the choices Stock Item Group and Item [fProductionFormula.vb:77; fProductionFormula.Designer.vb:211].
+  - Item Type Field: A mandatory drop-down labelled "Item &Type" listing Primary Input and Primary Output [fProductionFormula.vb:79; fProductionFormula.Designer.vb:230].
+  - Item Description Field: A mandatory drop-down labelled "&Item Description" (or "Stock &Item Group" when the basis is group) [fProductionFormula.vb:777; fProductionFormula.vb:785; fProductionFormula.Designer.vb:249].
+  - Unit Field: A read-only text box labelled "Unit" [fProductionFormula.Designer.vb:256; fProductionFormula.Designer.vb:268].
+  - Quantity Field: A mandatory numeric box labelled "&Quantity", up to 10 characters, 3 decimals [fProductionFormula.vb:55; fProductionFormula.Designer.vb:274; fProductionFormula.Designer.vb:286].
+  - Remarks Field: An optional text box labelled "Remarks", 1000 characters [fProductionFormula.Designer.vb:318; fProductionFormula.Designer.vb:331].
+  - Is Item Editable Field: An optional check box labelled "&Is Item Editable" [fProductionFormula.Designer.vb:335-339].
+  - Consumption Detail Grid: A grid in the group "Consumption Detail" with columns Item Type, Item Description, Stock Item Group, Percentage, Quantity, Loss Percentage, Loss Quantity and Remarks; a hidden item-type helper column is also present [fProductionFormula.Designer.vb:103; masterdata.MEPFFillValues:39-49; fProductionFormula.vb:422-438].
+  - Production Detail Grid: A grid in the group "Production Detail" with columns Item Type, Item Description, Stock Item Group, Percentage, Quantity, Valuation Type, Value and Remarks; a hidden helper column is also present [fProductionFormula.Designer.vb:85; masterdata.MEPFFillValues:52-62; fProductionFormula.vb:736-755].
+  - Expense Detail Grid: A grid in the group "Expense Detail" with columns Expense Head, Expense Type, Expense Value and Remarks [fProductionFormula.Designer.vb:127; masterdata.MEPFFillValues:65-70; fProductionFormula.vb:446-463].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fProductionFormula.vb:183-215].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fProductionFormula.vb:148-155].
+  Save: The toolbar action that validates and stores the formula [fProductionFormula.vb:464-531].
+  Search: The toolbar action that opens a search list [fProductionFormula.vb:157-181].
+  Delete: The toolbar action that removes the opened formula [fProductionFormula.vb:17-42].
+validations:
+- Enter Description.
+- Select valid Work Center.
+- Select valid Formula Based On.
+- Select valid Item Type.
+- Select valid Stock Item Group.
+- Select valid Item Description.
+- Quantity can't be empty or zero.
+- Select at least one Primary Input in Consumption Detail.
+- Select valid Item Description in row N.
+- Select valid Stock Item Group in row N.
+- Select at least one Primary Output in Production Detail.
+- Value can't be empty or zero  in row N.
+- Select valid Expense Type in row N.
+- Duplicate Description not allowed.
+- Duplicate Item not allowed.
+- Duplicate Expense Head not allowed.
+manages:
+- production-formula
+uses_concepts:
+- company
+- work-center
+method_notes:
+  Delete: Deletes the record through masterdata.MEPFDelete.
+  FillValues: Fills the lookup lists through masterdata.MEPFFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.MEPFFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.MEPFLoadData.
+  Open: Searches records through masterdata.MEPFSearchData.
+  Save: Saves the record through masterdata.MEPFSave.
+  SaveConsumptionDetail: Saves the record through masterdata.MEPFSaveConsumptionDetail.
+  SaveExpenseDetail: Saves the record through masterdata.MEPFSaveExpenseDetail.
+  SaveProductionDetail: Saves the record through masterdata.MEPFSaveProductionDetail.
+  ValidateForm: Validates the entry through masterdata.MEPFValidate.

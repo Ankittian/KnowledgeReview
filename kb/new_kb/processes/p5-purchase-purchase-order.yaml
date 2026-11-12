@@ -1,0 +1,14 @@
+key: p5-purchase-purchase-order
+name: 'Purchase: Purchase order (Phase 5)'
+module: MM
+status: active
+summary: Phase 5 screens of the purchase order group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Purchase order' (Purchase). The steps follow the plan order, not a verified business sequence: Bank Guarantee.
+steps:
+- order: 1
+  name: Record Bank Guarantee
+  form: fBankGuaranteeMapping
+concepts:
+- bank-guarantee-fbankguaranteemapping

@@ -1,0 +1,69 @@
+form: fExpenseEntry
+title: Expense Entry
+module: FI
+kind: transaction
+summary: The Expense Entry screen is where an employee's expenses are recorded as a claim.
+purpose: |
+  What it is: A claim document listing an employee's expense lines against the company's expense policy [fExpenseEntry.vb:791-873; ExpenseMgmt.EXENSave:73-157]. When it applies: When an employee has incurred expenses to be reimbursed, or an administrator keys them on the employee's behalf. Business outcome: Expenses are classified, checked against policy and ready for approval.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared control with document number, date, finance book, status and a repeat-entry button [fExpenseEntry.vb:60,143].
+  - General Details Tab: Tab "General Details" with Employee Name, Reporting Type, Expense Description, Remarks, the currency control, notes and the Category Detail grid [fExpenseEntry.Designer.vb:244].
+  - Employee Name Field: A mandatory drop-down labelled "Employee Name" [fExpenseEntry.vb:59; fExpenseEntry.Designer.vb:122].
+  - Reporting Type Field: A mandatory drop-down labelled "Reporting Type" [fExpenseEntry.vb:59; fExpenseEntry.Designer.vb:141].
+  - Expense Description Field: A mandatory text box labelled "Expense Description", up to 100 characters [fExpenseEntry.Designer.vb:147,160].
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fExpenseEntry.Designer.vb:166,179].
+  - Category Detail Grid: The expense line grid with Expense Category, Expense Location, Expense Date, Expense Policy, Per Diem Category (read-only), Payment Mode, Rate, Unit, Quantity (3 decimals), Basic Amount, Tax (button), Net Amount (read-only), Supplementary Field (button), Bill No.
+  - Supplementary Field Panel: A pop-up row-edit panel with "Field Name" and "Value" and buttons "Ok" and "Cancel" [fExpenseEntry.Designer.vb:259-287].
+  - Tax Detail Tab: Tab "Tax Detail" with the shared tax-on-amount control [fExpenseEntry.Designer.vb:247].
+  - Custom Field Tab: Tab "Custom Field" with the shared control [fExpenseEntry.Designer.vb:250].
+  - Repeat Entry Button: A button on the document control [fExpenseEntry.vb:1529-1562].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fExpenseEntry.vb:288-320].
+actions:
+  New: Toolbar action that clears the form [fExpenseEntry.vb:252-259; fExpenseEntry.vb:322-351].
+  Save: Toolbar action that saves the claim [fExpenseEntry.vb:791-873].
+  Search: Toolbar action that opens the search dialog [fExpenseEntry.vb:261-285].
+  Delete: Toolbar action that deletes the opened claim [fExpenseEntry.vb:66-95].
+validations:
+- Authorized ExpenseEntry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Employee Name.
+- Select valid Reporting Type.
+- Enter Expense Description.
+- Enter atleast one Category Details.
+- Select valid Payment Mode
+- ' in row n.'
+- Select valid Unit
+- Quantity can't be empty or zero
+- Basic Amount can't be empty or zero
+- Expense Date cannot be greater than Document Date
+- 'Daily Allowances cannot be greater than '
+- ' in row n ,Do you want to Save?'
+- Enter Reason
+- Enter Supplementary Details
+- 'Bill Date cannot be greater than Document Date '
+- 'Enter Value & '
+- in row n.
+- Duplicate Category Name,Location,Date and Policy  not allowed.
+- Duplicate Field Name not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- expense-entry
+uses_concepts:
+- expense-category
+- expense-category-supplementary-field
+- expense-policy
+- policy-employee-mapping
+method_notes:
+  Delete: Deletes the record through ExpenseMgmt.EXENDelete.
+  FillValues: Fills the lookup lists through ExpenseMgmt.EXENFillValues.
+  FillValuesDependent: Fills the lookup lists through ExpenseMgmt.EXENFillValuesDependent.
+  LoadData: Loads the selected record through ExpenseMgmt.EXENLoadData.
+  LoadRepeatedEE: Searches records through ExpenseMgmt.EXENSearchData.
+  Open: Searches records through ExpenseMgmt.EXENSearchData.
+  Save: Saves the record through ExpenseMgmt.EXENSave.
+  SaveCategoryDetail: Saves the record through ExpenseMgmt.EXENSaveCategoryDetail.
+  SaveCategoryTaxDetail: Saves the record through ExpenseMgmt.EXENSaveCategoryTaxDetail.
+  SaveNotesDetail: Saves the record through ExpenseMgmt.EXENSaveNotesDetail.

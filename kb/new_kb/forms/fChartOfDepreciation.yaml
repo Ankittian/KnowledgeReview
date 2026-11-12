@@ -1,0 +1,27 @@
+form: fChartOfDepreciation
+title: Chart of Depreciation
+module: MD
+kind: master
+summary: The Chart of Depreciation screen (COD) maintains the named charts that organise fixed assets into asset classes,
+  subclasses and groups.
+purpose: |
+  What it is: A master record that names a depreciation structure and ties together the asset classes and groups that belong to it [fChartOfDepreciation.vb:267-316; FixedAsset.AMCDSaveMain:20-54]. When it applies: When a new set of asset classes and groups is needed, for example for a separate depreciation basis, or when an existing structure is to be reused as a starting point. Business outcome: Depreciation books can refer to one named structure, and the same classes and groups can be reused across charts.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Code, COD Name, Copy of COD and two grids [fChartOfDepreciation.designer.vb:124-139].
+  - Code Field: A read-only text box that cannot be tabbed into [fChartOfDepreciation.designer.vb:43-47].
+  - COD Name Field: A mandatory text box, up to 50 characters [fChartOfDepreciation.vb:11; fChartOfDepreciation.vb:59].
+  - Copy of COD Field: An optional drop-down of other COD names [fChartOfDepreciation.vb:65; FixedAsset.AMCDFillValues:33-35].
+  - Depreciation Book Grid: A read-only grid with columns DB Code, DB Name and DB Type; rows cannot be added or deleted [fChartOfDepreciation.vb:226-246].
+  - COD Structure Grid: A read-only grid with columns Particular and Type; the ordering level is hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fChartOfDepreciation.vb:135-167].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fChartOfDepreciation.vb:99-106].
+  Save: The toolbar action that validates and stores the COD [fChartOfDepreciation.vb:267-316].
+  Search: The toolbar action that opens a search dialog listing Code, COD Name, Created By and Created Date [FixedAsset.AMCDSearchData:17-24].
+  Delete: The toolbar action that removes the open COD [fChartOfDepreciation.vb:17-42].
+validations:
+- Enter COD Name.
+- Duplicate COD Name not allowed.
+manages:
+- chart-of-depreciation

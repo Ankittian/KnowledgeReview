@@ -1,0 +1,61 @@
+form: fEquipmentReplacementRequest
+title: Equipment Replacement Request
+module: PM
+kind: transaction
+summary: The Equipment Replacement Request screen is where a user asks for one or more pieces of equipment to be replaced.
+purpose: |
+  What it is: A numbered request, with approval, to replace equipment. When it applies: When equipment is worn out, damaged or obsolete and needs to be replaced, often after a maintenance order shows it. Business outcome: Replacement decisions are documented and approved before any replacement is carried out.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: The document header control, a general block (Source Document, Maintenance Order No.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Source Document Field: Dropdown (Source Document), mandatory, labelled "Source Document.".
+  - Maintenance Order No. Field: Dropdown (Maintenance Order No, Maintenance Order Date), read-only unless the source is value 2.
+  - Requested By Field: Editable dropdown (max 100 characters), mandatory; the list holds names used on earlier authorized requests.
+  - Reason Field: Editable dropdown (max 100 characters), mandatory; the list holds reasons used on earlier authorized requests.
+  - Remark Field: Text box, optional, maximum 1000 characters.
+  - Notes Control: A small embedded control with print area and notes entries, whose default notes come from earlier requests.
+  - Equipment Detail Grid: Grid with Equipment Description, Code, Location, Custodian and Remarks.
+  - Custom Field Tab: Shared custom fields control for this screen.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the request.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened request.
+validations:
+- Select valid Source Document No..
+- Select valid Maintenance Order No..
+- Document Date can't be less than Maintenance Order Date.
+- Enter or Select valid Requested By.
+- Enter or Select valid Reason.
+- Select atleast One Equipment.
+- 'Unable to save,unathorized entry exists for equipment in row no. '
+- 'Unable to save,unathorized entry exists for equipment  '
+- Unauthorized entry Exist For Equipment.
+- Duplicate Equipment Description not allowed.
+- Authorized EquipmentReplacementRequest can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- equipment-replacement-request
+uses_concepts:
+- company
+- equipment-master
+- equipment-replacement
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+method_notes:
+  Delete: Deletes the record through EAM.EAEQDelete.
+  FillValueDependent: Fills the lookup lists through EAM.EAEQFillValuesDependent.
+  FillValues: Fills the lookup lists through EAM.EAEQFillValues.
+  LoadData: Loads the selected record through EAM.EAEQLoadData.
+  Open: Searches records through EAM.EAEQSearchData.
+  Save: Saves the record through EAM.EAEQSave.
+  SaveCustomFieldDetail: Saves the record through EAM.EAEQSaveCustomFieldDetail.
+  SaveEquipmentDetail: Saves the record through EAM.EAEQSaveEquipmentDetail.
+  SaveNotesDetail: Saves the record through EAM.EAEQSaveNotesDetail.
+  ValidateForm: Validates the entry through EAM.EAEQValidate.

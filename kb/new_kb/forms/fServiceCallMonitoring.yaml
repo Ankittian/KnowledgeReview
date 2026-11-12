@@ -1,0 +1,21 @@
+form: fServiceCallMonitoring
+title: Service Call Monitoring
+module: PM
+kind: transaction
+summary: The Service Call Monitoring screen is a live, read-only board of customer service calls.
+purpose: |
+  What it is: A single grid that shows all service calls for the user's company, coloured by priority, so that the workload and its urgency are visible at a glance [fServiceCallMonitoring.vb:65-115; EAM.ESCMFillValues:31-112]. When it applies: Whenever a supervisor or coordinator needs the current state of service calls, without editing them. Business outcome: Urgent calls stand out and late or unassigned calls are noticed without searching call by call (BR-01; BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: One group area holding a small picture button at the top left and, below it, the call grid [fServiceCallMonitoring.Designer.vb:37; fServiceCallMonitoring.Designer.vb:54].
+  - Set Priority Color Button: A picture button with the tooltip "Set Priority Color" [fServiceCallMonitoring.Designer.vb:59].
+  - Choose Priority Color Dialog: A small dialog, captioned "Choose Priority Color", with a grid of priorities and a Color column that opens a colour chooser, and an &Ok button [fChoosePriorityColor.Designer.vb:49; fChoosePriorityColor.Designer.vb:72; fChoosePriorityColor.vb:9-20].
+  - Call Grid: A read-only grid; every cell is locked and columns are 100 wide unless narrowed, such as Call Id, Entry Date, Serial No., Priority, Status, Origin, Call Type and Completion Date [fServiceCallMonitoring.vb:242-272].
+actions:
+  Toolbar: Only the New toolbar option is enabled [fServiceCallMonitoring.vb:130-131].
+manages:
+- service-call-monitoring
+uses_concepts:
+- company
+method_notes:
+  SCMFillValues: Fills the lookup lists through EAM.ESCMFillValues.

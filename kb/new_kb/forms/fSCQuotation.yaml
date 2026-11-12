@@ -1,0 +1,75 @@
+form: fSCQuotation
+title: Service Quotation
+module: MM
+kind: transaction
+summary: The Service Quotation screen records a subcontractor's or service vendor's priced offer against an authorized [Service
+  RFQ](Functional_Doc_fSCRFQ.md).
+purpose: |
+  What it is: The vendor's commercial offer (rates, taxes, delivery days, terms) for the services, conversion jobs or activities requested in a Service RFQ [fSCQuotation.vb:537-594]. When it applies: When a vendor invited on an authorized Service RFQ submits its quotation. Business outcome: Offers arrive in one structured format per RFQ and vendor, so they can be compared and used for agreements and orders (BR-04, BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: The shared document control at the top with document number, date, division and status [fSCQuotation.Designer.vb:1184-1195].
+  - Tabbed Area: Tabs "General Detail", "Tax Detail", "Addition Cost" (hidden until enabled), "Terms & Condition" and "Custom Field", with the service lines grid under the tabs [fSCQuotation.Designer.vb:1099-1114].
+  - Subcontract RFQ No. Field: Mandatory drop-down listing eligible RFQs with number, date and division; read-only once a record is loaded [fSCQuotation.vb:86-88; fSCQuotation.vb:313; fSCQuotation.vb:842-846].
+  - Subcontract RFQ Date, Subcontract Type and Service Description Fields: Three read-only displays [fSCQuotation.Designer.vb:674; fSCQuotation.Designer.vb:757; fSCQuotation.Designer.vb:785].
+  - Vendor Name Field: Mandatory drop-down of invited vendors not yet quoted; read-only on loaded records [fSCQuotation.vb:90-92; fSCQuotation.vb:314].
+  - Location Field: Mandatory drop-down of the vendor's locations [fSCQuotation.vb:94-96; fSCQuotation.vb:1002-1010].
+  - Vendor Quotation No. Field: Mandatory text box, up to 50 characters, trimmed on save [fSCQuotation.Designer.vb:612; fSCQuotation.vb:98-100; fSCQuotation.vb:440-441].
+  - Vendor Quotation Date and Validity Date Fields: Date pickers in dd/MM/yyyy format [fSCQuotation.Designer.vb:312-318; fSCQuotation.Designer.vb:641-647].
+  - Freight Type and Payment Mode Fields: Two mandatory drop-downs [fSCQuotation.vb:106-112].
+  - Credit Days Field: Optional numeric text box of up to 3 digits [fSCQuotation.Designer.vb:530; fSCQuotation.vb:821-822].
+  - Currency Control: Shared control for currency, conversion and rate; validated on save [fSCQuotation.vb:117-119; fSCQuotation.Designer.vb:272-277].
+  - Remarks Field: Optional multi-line text box labelled "Remarks" [fSCQuotation.Designer.vb:793].
+  - Revision No. and Revision Date Fields: Two read-only displays labelled "Revision No." and "Revision Date" [fSCQuotation.Designer.vb:1149-1180].
+  - Print Notes Control: A compact notes control with a print-area choice, placed on the General Detail tab; default notes are offered on a new record [fSCQuotation.Designer.vb:228-234; fSCQuotation.vb:849-850].
+  - Service Lines Grid: Grid under the tabs listing the RFQ lines.
+  - Addition Cost Tab: A grid (Btn, Item Code, Item Description, Unit, Quantity, Rate, Basic Amount) plus "Tolerence Value(in%)" and read-only "Total Tolerance Allowed" [fSCQuotation.vb:1217-1255; fSCQuotation.Designer.vb:851-887].
+  - Tax Detail, Terms & Condition and Custom Field Tabs: Shared controls for document taxes (with tax group), terms and conditions, and custom fields [fSCQuotation.vb:121-135].
+  - Information Windows: Double-click the icon beside Vendor Name for "Vendor Information", or the icon on a line for "Item Information" [fSCQuotation.vb:1126-1180].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Routines exist but are empty [fSCQuotation.vb:751-757; fSCQuotation.vb:1118-1124].
+actions:
+  New: Toolbar New [fSCQuotation.vb:34-43; fSCQuotation.vb:397-419].
+  Save: Toolbar Save [fSCQuotation.vb:422-531].
+  Search: Toolbar Open with the shared search list [fSCQuotation.vb:365-395].
+  Delete: Toolbar Delete [fSCQuotation.vb:323-363].
+  Navigation: First, Previous, Next, Last.
+validations:
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Subcontract RFQ No.
+- Select valid Vendor Name.
+- Select valid Location.
+- Enter Vendor Quotation No.
+- Vendor Quotation Date can't be greater than Document Date.
+- Vendor Quotation Date can't be less than SC RFQ Date.
+- Validity Date can't be less than Document Date.
+- Select valid Freight Type.
+- Select valid Payment Mode.
+- Quantity can't be empty or 0
+- Rate can't be empty or 0
+- Select atleast one Activity
+- Select atleast one item for Service
+- Net Amount can't be less than or equal to 0
+- Delivery Days can't be empty or 0
+- Document No. <number> saved successfully.
+- Can't be deleted as Revision is done against this document.
+- Subcontract order is prepared against this Quotaion.
+- Can't be deleted as above revision exists.
+- Vendor Information
+- Item Information
+manages:
+- service-quotation
+uses_concepts:
+- company
+- revised-service-quotation
+method_notes:
+  Delete: Deletes the record through Purchase.SVQADelete.
+  FillValues: Fills the lookup lists through Purchase.SVQAFillValues.
+  FillValuesDependent: Fills the lookup lists through Purchase.SVQAFillValuesDependent.
+  GetItemInformation: Runs through Purchase.SVQAGetItemInfo.
+  GetVendorInfo: Runs through Purchase.SVQAGetVendorInfo.
+  LoadData: Loads the selected record through Purchase.SVQALoadData.
+  Open: Searches records through Purchase.SVQASearchData.
+  Save: Saves the record through Purchase.SVQASaveMain.
+  SaveAdditionItemDetail: Saves the record through Purchase.SVQASaveAdditionItemDetail.
+  SaveCustomFields: Saves the record through Purchase.SVQASaveCustomFieldDetail.

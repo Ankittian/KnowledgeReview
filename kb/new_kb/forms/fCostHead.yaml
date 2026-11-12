@@ -1,0 +1,56 @@
+form: fCostHead
+title: Cost Head
+module: MD
+kind: master
+summary: The Cost Head screen maintains the individual cost lines (cost heads) that make up sales estimates and pre-calculations,
+  and that also appear on invoices, export cost details, price masters and Inco Term settings.
+purpose: |
+  What it is: The enterprise list of cost lines, each with its grouping, ordering, sign and calculation basis. When it applies: When costing structures are set up or changed, or a new charge such as freight or insurance must be costed. Business outcome: Estimates and documents build their cost and price consistently from the same heads (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: One panel: header fields on the left and right, and below them the Calculation From panel (left) and the % Of panel (right).
+  - Code Field: Read-only text box.
+  - Cost Head Type Field: Mandatory dropdown (BR-01).
+  - Head Name Field: Mandatory text box (marked compulsory), up to 200 characters (BR-02).
+  - Cost Group Field: Mandatory dropdown (marked compulsory) showing Cost Group and Code (BR-03).
+  - S. No. Field: Mandatory numeric text box (marked compulsory), whole numbers, up to 3 digits (BR-04).
+  - Excel Cell Field: Optional text box, up to 10 characters, with the hint "(E.g.
+  - Is Calculate On Item Qty. Field: Optional checkbox (BR-14).
+  - Calculation Nature Field: Mandatory dropdown with Add and Subtract (BR-05).
+  - Multiple Bill Allowed Field: Optional checkbox (BR-14).
+  - Calculation From Grid: Grid with Type and Particular dropdown columns; a new row appears when the last row is edited.
+  - % Of Panel: Percentage Of free-text box (up to 1000 characters) and a grid with Type and Particular.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in code but empty.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the cost head and both detail lists.
+  Search: Standard search with Code, Cost Head, Cost Group, S.No., Cost Head Type, Inactive, Created By, Authorized By.
+  Delete: Deletes the loaded head after confirmation (MSG-16).
+  Navigation: First, Previous, Next and Last come from the standard application toolbar, not this screen's code (Inferred).
+validations:
+- Select valid Cost head type.
+- Enter Head Name.
+- Select valid Cost Group.
+- Enter S. No..
+- Duplicate Cost Head Name not allowed.
+- Duplicate S.No. not allowed.
+- Select valid Calculation Nature.
+- 'Select valid particular in row '
+- 'Can''t select same cost group in row '
+- Duplicate calculation detail not allowed.
+- Duplicate Percent of detail not allowed.
+manages:
+- cost-head
+uses_concepts:
+- company
+- cost-group
+method_notes:
+  Delete: Deletes the record through masterdata.ERCHDelete.
+  FillValues: Fills the lookup lists through masterdata.ERCHFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.ERCHFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.ERCHLoadData.
+  Open: Searches records through masterdata.ERCHSearchData.
+  Save: Saves the record through masterdata.ERCHSave.
+  SaveCalculationfrom: Saves the record through masterdata.ERCHSaveCalculationfrom.
+  SavePercentOf: Saves the record through masterdata.ERCHSavePercentOf.
+  ValidateForm: Validates the entry through masterdata.ERCHValidate.

@@ -1,0 +1,108 @@
+form: fOutwardBillEntry
+title: Outward Bill Entry
+module: FI
+kind: transaction
+summary: The Outward Bill Entry screen books a vendor's bill for services on the outward (export) side, such as freight, clearing
+  or inspection, against cost heads that were estimated on export sales orders.
+purpose: |
+  What it is: A finance document recording a vendor's service bill against cost heads of export sales orders, linked to the outward documents it covers [fOutwardBillEntry.vb:1104-1290; Finance.FOBESave:91-166]. When it applies: When a service vendor bills for costs (for example freight or clearing) incurred on export invoices, dispatch challans or commercial invoices. Business outcome: Actual costs are matched to the estimates in the sales order, provisions are released, the difference is expensed, and the vendor liability is posted (BR-24; BR-26).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Number control, a main group with header fields, and tabs Reference Detail, Service Detail, Tax Detail, Finance Posting and GST Posting [fOutwardBillEntry.Designer.vb:588-627; fOutwardBillEntry.Designer.vb:383-397].
+  - Document No., Date, Finance Book and Status: Shared number control.
+  - Source Document Field: Mandatory dropdown (BR-03; MSG-04).
+  - Customer Name and Customer Location Fields: Optional dropdowns; choosing a customer loads its locations and selects the first [fOutwardBillEntry.vb:2267-2282].
+  - From Date and To Date Fields: Period for sales orders and references.
+  - Sales Order No. Field and Sales Order Date: Optional dropdown with read-only date [fOutwardBillEntry.Designer.vb:522-538].
+  - Cost Head Field: Optional header dropdown including "[All]" [Finance.FOBEFillValues:147-152].
+  - Bill From Party and Bill From Location Fields: Mandatory vendor (100 characters) and location dropdowns; vendor change loads locations and selects the first [fOutwardBillEntry.vb:185; fOutwardBillEntry.vb:2188-2203].
+  - Bill No., Bill Date and Bill Amount Fields: Mandatory Bill No.
+  - Due Days and Due Date Fields: Due Days (numeric, 5 digits) and Due Date; each recalculates the other from Bill Date [fOutwardBillEntry.vb:240-242; fOutwardBillEntry.vb:2695-2727].
+  - Payment Mode, Currency, GST Tax Rule and Narration Fields: Mandatory Payment Mode; currency control; optional header GST Tax Rule copied to all lines; Narration [fOutwardBillEntry.vb:185; fOutwardBillEntry.vb:2593-2605].
+  - Reference Detail Grid: Tick list of reference documents with Reference No., Date, Customer, Location, Sales Order No., Cost Head Vendor, Item Description, Qty., Cost Head; only Select is editable; Total Qty.
+  - Service Detail Grid and Amount: Cost-head lines (see Section 7) and a read-only Amount equal to the total Billing Amount [fOutwardBillEntry.Designer.vb:269; fOutwardBillEntry.vb:1005-1010].
+  - Tax Detail Tab: Shared tax control on Amount [fOutwardBillEntry.vb:275; fOutwardBillEntry.vb:1381-1391].
+  - Finance Posting and GST Posting Tabs: Shared voucher and GST posting controls [fOutwardBillEntry.vb:1594-1622].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Voucher report print, preview, export and e-mail [fOutwardBillEntry.vb:477-496; fOutwardBillEntry.vb:1523-1546].
+  - Hidden Repair Shortcuts: Ctrl+Alt+G on GST Posting rebuilds the GST posting; Ctrl+Alt+V on Finance Posting tries to re-create the voucher [fOutwardBillEntry.vb:63-165].
+actions:
+  New: Starts a new record [fOutwardBillEntry.vb:440-448].
+  Save: Validates and saves header, lines, sales-order split, references, taxes, voucher, GST posting and provision quantities
+    in one transaction [fOutwardBillEntry.vb:1104-1290].
+  Search: Common search of bills of the company and year [fOutwardBillEntry.vb:450-475; Finance.FOBESearchData:19-63].
+  Delete: Deletes the loaded bill after confirmation [fOutwardBillEntry.vb:192-219].
+  Navigation: First / Previous / Next / Last enabled [fOutwardBillEntry.vb:177].
+validations:
+- Authorized Bill Entry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Document Date can't be less than Source Document Date.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select valid Payment Mode.
+- Amount can't be empty or zero.
+- Enter Vendor Bill No.
+- Select Bill Date.
+- Vendor Bill Date can't be greater than Document Date.
+- Vendor Bill Amount can't be empty or zero.
+- Amount is not equal to total Billing Amount in Service Description.
+- Either select GST Tax Rule or Tax in Tax Detail Tab.
+- Bill Amount cannot be less than Net Amount.
+- Due Date can not be less than Bill Date.
+- Select atleast one Description
+- Billing Qty. can't be empty or zero in row n.
+- Select valid HSN & SAC Code in row n.
+- Billing Amount can't be empty or zero in row n.
+- Billing Qty. should be equal to sum of Qty. in SO Wise Qty. Detail in row n.
+- Select valid Unit in row n.
+- GST Rule And GST Taxes can't be selected simultaneously.
+- Billing Qty. is greater than Balance Billing Qty. in row n. Do you want to continue?
+- Billing Qty. can not be greater than Balance Billing Qty. in row n.
+- Select atleast one Reference Document.
+- Cost Head are having different Currencies in Sales Order.
+- Multiple Bill Not Allowed For Ref - <references [cost head]>
+- Entry already exists for following items :<list>
+- Duplicate Cost Head not allowed.
+- Qty. of row number n is greater than Balance Qty. Do you want to continue?
+- Qty. of row number n can not be greater than Balance Qty..
+- Sum of Qty. and Prev. Billed Qty of row no. n is greater than Qty. q in Reference No. r . Do you want to continue?
+- Sum of Qty. should be equal to Billing Qty.
+- Sum of Amount should be equal to Billing Amount
+- Document No. <number> saved successfully.
+- Do you want to print?
+- Finance Book is closed for this Document Date.
+- No Detail Found
+manages:
+- outward-bill-entry
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- input-excise-invoice-posting
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FOBEDelete.
+  FillValues: Fills the lookup lists through Finance.FOBEFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FOBEFillValuesDependent.
+  FillValuesServiceDetail: Fills the lookup lists through Finance.FOBEFillValuesServiceDetail.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FOBEFillValuesSourceDocument.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FOBELoadData.
+  Open: Searches records through Finance.FOBESearchData.
+  Save: Saves the record through Finance.FOBEAuthorize, Finance.FOBESave, Finance.VoucherSaveStatuory.
+  SaveReferenceDetail: Saves the record through Finance.FOBESaveReferenceDetail.

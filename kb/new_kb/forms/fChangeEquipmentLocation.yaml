@@ -1,0 +1,64 @@
+form: fChangeEquipmentLocation
+title: Change Equipment Location
+module: PM
+kind: transaction
+summary: The Change Equipment Location screen is a document that moves one or more pieces of equipment to a new functional
+  location.
+purpose: |
+  What it is: A controlled document that relocates equipment and records who is responsible and who holds custody. When it applies: When equipment is moved to another site, building, department or custodian. Business outcome: The equipment master shows the right location and custodian after approval, and each move keeps a history.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Document header control on top, a general block (Responsible Person, Remarks), a "Duration of Movement" block (From Date, To Date), and the equipment details grid below.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Responsible Person Field: Editable dropdown (max 100 characters), marked mandatory; the list holds names used on earlier authorized documents of the company, and a new name can be typed.
+  - Remarks Field: Text box, optional, maximum 1000 characters.
+  - From Date and To Date Fields: Date pickers with tick boxes, both unticked by default.
+  - Equipment Details Grid: Grid with columns Equipment Description, Effective From, Current Location, Address, New Location, Custodian, Custodian Contact No., Address 1, Address 2, Address 3, City, State, Country, Division, Pin Code, Change Child Part Location, Relocation Reason and Remarks.
+  - Equipment Description Column: Dropdown (Equipment Description, Code), no duplicates.
+  - New Location Column: Dropdown (New Location, Code), mandatory per row.
+  - Custodian and Custodian Contact No. Columns: Custodian is an editable dropdown (max 100 characters) of names used before; the contact number is text (max 30).
+  - Address 1, Address 2, Address 3, City, State, Country and Pin Code Columns: Editable address fields (100 characters each; Pin Code 6) with City, State and Country lists.
+  - Division Column: Dropdown of the company's divisions.
+  - Change Child Part Location Column: Check box, default unticked.
+  - Effective From Column: Time of day (hh:mm tt) with a spinner.
+  - Relocation Reason and Remarks Columns: Text, reason up to 100 characters (mandatory per row), remarks up to 500 (optional).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the document.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened document.
+validations:
+- Enter or Select valid Responsible Person.
+- Select a valid 'From date'.
+- '''From date'' can''t be greater than ''To date''.'
+- 'Unable to save,unathorized entry exists for equipment '
+- ' in row '
+- 'Select valid New Location in row '
+- 'Enter Custodian Contact No. in row '
+- 'New location and current location can''t be same  in row '
+- 'Enter Relocation Reason in row '
+- Select atleast one Equipment Description.
+- Authorized Change Equipment Location can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Equipment not allowed.
+- Duplicate Document No. not allowed.
+- 'Can not select Chlid Equipment for equipment(s) '
+- 'Document No. '
+- ' saved successfully.'
+- Unable to delete,some entry already exists.
+manages:
+- change-equipment-location
+uses_concepts:
+- company
+- equipment-master
+- equipment-replacement
+- functional-location
+method_notes:
+  Delete: Deletes the record through EAM.EACLDelete.
+  FillValues: Fills the lookup lists through EAM.EACLFillValues.
+  LoadData: Loads the selected record through EAM.EACLLoadData.
+  Open: Searches records through EAM.EACLSearchData.
+  Save: Saves the record through EAM.EACLSave.
+  SaveEquipmentDetail: Saves the record through EAM.EACLSaveEquipmentDetail.
+  ValidateForm: Validates the entry through EAM.EACLValidate.

@@ -1,0 +1,39 @@
+form: fCostGroup
+title: Cost Group
+module: MD
+kind: master
+summary: The Cost Group screen maintains the cost groups under which cost heads are classified for estimation and pre-calculation
+  of sales jobs.
+purpose: |
+  What it is: An enterprise list of cost groups, each with a unique name and a unique ordering number, optionally linked to the users responsible for it. When it applies: When costing is set up, when a new cost category is introduced, or when responsibility for a category moves to other users. Business outcome: Cost heads and estimates are grouped and ordered consistently, and cost visibility can be restricted by user (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with the header fields at the top and the user assignment grid below.
+  - Code Field: Read-only text box, up to 6 characters.
+  - Cost Group Name Field: Mandatory text box (marked as a compulsory field), up to 50 characters (BR-01, BR-03).
+  - S. No. Field: Mandatory numeric text box (marked as a compulsory field), whole numbers only, up to 3 digits (BR-02, BR-04).
+  - User Detail Grid: Grid with a Select checkbox (default unticked) and a read-only User column; the user identifier is a hidden column.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in the screen's code but empty.
+actions:
+  New: Standard toolbar New.
+  Save: Creates a new cost group or updates the loaded one, together with its user assignment.
+  Search: Standard search window with Code, Cost Group, S.No., Inactive and Created By.
+  Delete: Deletes the loaded cost group after confirmation (MSG-09).
+  Navigation: First, Previous, Next and Last are provided by the standard application toolbar, not by this screen's code (Inferred).
+validations:
+- Enter Cost Group Name.
+- Enter S. No..
+- Duplicate Cost Group Name not allowed.
+- Duplicate S.No. not allowed.
+manages:
+- cost-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.ERCGDelete.
+  FillValues: Fills the lookup lists through masterdata.ERCGFillValues.
+  LoadData: Loads the selected record through masterdata.ERCGLoadData.
+  Open: Searches records through masterdata.ERCGSearchData.
+  Save: Saves the record through masterdata.ERCGSave.
+  SaveUserDetail: Saves the record through masterdata.ERCGSaveUserDetail.
+  ValidateForm: Validates the entry through masterdata.ERCGValidate.

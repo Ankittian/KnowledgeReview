@@ -1,0 +1,47 @@
+form: fCurrencyMaster
+title: Currency Master
+module: FI
+kind: master
+users:
+- Accounts officer (inferred)
+summary: The Currency Master screen maintains the currencies used across the enterprise.
+purpose: |
+  What it is: The enterprise list of currencies with display and conversion attributes. When it applies: When business starts in a new currency or attributes change. Business outcome: Consistent currency naming and conversion direction (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and a country grid.
+  - Code Field: Read-only text box.
+  - Currency Name Field: Mandatory text box, up to 50 characters on screen (BR-02).
+  - Fractional Currency Name Field: Text box, up to 10 characters; required by validation though not marked mandatory (BR-03).
+  - Notation Field: Mandatory text box, up to 5 characters (BR-03).
+  - Symbol Field: Optional text box, up to 5 characters.
+  - Translation Type Field: Mandatory dropdown (BR-04).
+  - Inactive Field: Checkbox, loaded from the current company's availability.
+  - Country Detail Grid: Select checkbox and read-only Country Name; hidden country identifier; rows cannot be deleted.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the currency and its countries.
+  Search: Standard search with Currency Code, Currency, Notation, Translation Type, Inactive, Created By, Created Date, sorted
+    by currency.
+  Delete: Deletes the loaded currency after confirmation (MSG-10).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-08).
+validations:
+- Enter Currency.
+- Duplicate Currency Name is not allowed.
+- Enter Fractional Currency Name.
+- Enter Notation.
+- Select valid Translation Type.
+- Select atleast one Country Name
+manages:
+- currency
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MDCMDelete.
+  FillValues: Fills the lookup lists through masterdata.MDCMFillValues.
+  LoadData: Loads the selected record through masterdata.MDCMLoadData.
+  Open: Searches records through masterdata.MDCMSearchData.
+  Save: Saves the record through masterdata.MDCMSave.
+  SaveCountryDetail: Saves the record through masterdata.MDCMSaveCountryDetail.
+  ValidateForm: Validates the entry through masterdata.MDCMValidate.

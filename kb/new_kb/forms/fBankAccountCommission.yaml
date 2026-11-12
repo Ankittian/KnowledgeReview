@@ -1,0 +1,68 @@
+form: fBankAccountCommission
+title: Bank Account Commission
+module: ADM
+kind: transaction
+summary: The Bank Account Commission screen defines the bank charges the company bears when it pays through selected bank
+  accounts and payment modes.
+purpose: |
+  What it is: A dated commission scale for payments made through chosen bank accounts and a payment mode, together with the accounts and GST charges that record the commission [fBankAccountCommission.vb:732-780; Config.BPCSSaveMain:24-49]. When it applies: When the bank changes its charges, or the company starts using a payment mode that carries commission. Business outcome: Bank payments can compute commission and its GST automatically, and settings for the same accounts cannot clash (BR-07 to BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields at the top (Description, From Date, To Date, Payment Mode, Time Basis) and a tab control with four tabs: "Account Detail", "Commission Detail", "Finance Book" and "Bank Commission" [fBankAccountCommission.Designer.vb:245-313; fBankAccountCommission.Designer.vb:345-357].
+  - Description Field: A mandatory text box, up to 500 characters [fBankAccountCommission.vb:65; fBankAccountCommission.vb:115; fBankAccountCommission.Designer.vb:245].
+  - From Date Field: A date picker in dd/MM/yyyy, defaulting to the working date [fBankAccountCommission.Designer.vb:249; fBankAccountCommission.vb:121].
+  - To Date Field: A date picker with a tick box, in dd/MM/yyyy; unticked means no end date [fBankAccountCommission.Designer.vb:268-274; fBankAccountCommission.vb:943-949].
+  - Payment Mode Field: A mandatory dropdown [fBankAccountCommission.vb:65; fBankAccountCommission.vb:129].
+  - Time Basis Field: A tick box labelled "Time Basis" [fBankAccountCommission.Designer.vb:313].
+  - Account Detail Grid: A grid with Select, Account Name and Account Group; names and groups are read-only; rows cannot be deleted [fBankAccountCommission.vb:668-690].
+  - Commission Detail Grid: A grid with From Time, To Time (hidden unless Time Basis is ticked), From Amount, To Amount and Commission Amount; amounts have two decimals and up to 12 characters [fBankAccountCommission.vb:117-119; fBankAccountCommission.vb:702-731].
+  - Finance Book Grid: A grid with Select, Finance Book and COA Name; the book, chart and state columns are hidden or read-only; rows cannot be deleted [fBankAccountCommission.vb:951-973].
+  - Bank Commission Account Field: An optional dropdown labelled "Bank Commission Account" showing Account Name, Account Code and Account Group [fBankAccountCommission.vb:130; fBankAccountCommission.Designer.vb:202].
+  - SAC Code Field: An optional dropdown labelled "SAC Code" showing SAC Code and Description [fBankAccountCommission.vb:131; fBankAccountCommission.Designer.vb:211].
+  - GST Account Setting Grid: A grid with Account Type, Account Name, Charge Name, TDC Rule Description and Rate; the last two are read-only; the Rate has two decimals [fBankAccountCommission.vb:116; fBankAccountCommission.vb:120; fBankAccountCommission.vb:1029-1050].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Not implemented; the handlers are empty [fBankAccountCommission.vb:213-245].
+actions:
+  Save: Saves the setting with all its accounts, scale, books and GST rows.
+  New: Passes the request to the main window's standard New handling [fBankAccountCommission.vb:178-185].
+  Search: Opens the common search window [fBankAccountCommission.vb:187-211].
+  Delete: Deletes the loaded setting.
+validations:
+- Enter Description.
+- Select valid Payment Mode.
+- Duplicate Description not allowed.
+- Select atleast one Account Name.
+- State detail is missing in Account Detail in row N.
+- To Amount can't be less than From Amount in row N.
+- Commission Amount can't be empty or zero in row N.
+- Select From Time in row N.
+- Select To Time in row N.
+- Select at least one Finance Book.
+- COA Name for all selected rows should be same.
+- State detail in Finance Book is missing in row N.
+- All Selected FB must belong to same state.
+- Select valid SAC Code.
+- Select Account Name in row N.
+- Select Charge Name in row N.
+- Input and Expense both type of accounts can't be selected
+- Interstate and Intrastate Bank Account cannot be selected simultaneously.
+- Select CGST and SGST in row N.
+- Select IGST  in row N.
+- Duplicate Charge Name is not allowed.
+- Duplicate From Date and To Date can't be selected.
+- Duplicate From Date is not allowed for same Finance Book, Payment Mode, Bank Account.
+- At least one Cheque Printing or Bank Journal entry exists. Can't update the Bank Commission Setting.
+manages:
+- bank-account-commission
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Config.BPCSDelete.
+  FillValues: Fills the lookup lists through Config.BPCSFillValues.
+  LoadData: Loads the selected record through Config.BPCSLoadData.
+  Open: Searches records through Config.BPCSSearchData.
+  Save: Saves the record through Config.BPCSSaveMain.
+  SaveAccount: Saves the record through Config.BPCSSaveAccountDetail.
+  SaveDetail: Saves the record through Config.BPCSSaveDetail.
+  SaveFB: Saves the record through Config.BPCSSaveFB.
+  SaveTaxDetail: Saves the record through Config.BPCSSaveTaxDetail.
+  ValidateForm: Validates the entry through Config.BPCSValidate.

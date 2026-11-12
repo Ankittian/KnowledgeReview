@@ -1,0 +1,38 @@
+form: fGenerateEWayBill
+title: Generate E Way Bill
+module: ADM
+kind: transaction
+summary: The Generate E Way Bill screen lets a user create government E Way Bills for authorised sales tax invoices in bulk.
+purpose: |
+  What it is: A bulk generator that submits outward supply tax invoices to an E Way Bill provider and records the returned E Way Bill number and date on the invoice [fGenerateEWayBill.vb:551-688; Utility.GEWBSaveAPIRequest:44-50]. When it applies: After a tax invoice is authorised and before goods are dispatched. Business outcome: Invoices carry a valid E Way Bill number and an audit trail of every request exists.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A duration panel with dates and Show button, a GSP panel, and an invoice grid with the Generate E Way Bill button [fGenerateEWayBill.Designer.vb:111-136].
+  - From Date Field: A date picker labelled "From Da&te", formatted dd/MM/yyyy [fGenerateEWayBill.Designer.vb:50-65].
+  - To Date Field: A date picker labelled "To Da&te", formatted dd/MM/yyyy [fGenerateEWayBill.Designer.vb:69-84].
+  - GSP API Field: A dropdown labelled "GSP API" showing GSP Name, Code and GSTIN No [fGenerateEWayBill.vb:102; fGenerateEWayBill.Designer.vb:157].
+  - GSTIN No. Field: A read-only text box labelled "GSTIN No." [fGenerateEWayBill.Designer.vb:163-176].
+  - Last Token Generated Date Field: A read-only text box labelled "Last Token Generated Date" [fGenerateEWayBill.Designer.vb:182-205].
+  - Token Generation Status Field: A read-only text box labelled "Token Generation Status" [fGenerateEWayBill.Designer.vb:192-214].
+  - Invoice Grid: A grid with Select, Transaction Type, Sub Type, Document Type, Document No, Document Date, Company Name, Company GSTIN No, Company State, Company Address1, Company Address2, From Place, Company PinCode, Bill To Name, Bill To GSTINNo, Bill To State, Customer Name, Customer Location, Consingee Name, Consignee Address1, Consignee Address2, Consignee Pin Code, Consignee State, To Location, Transporter
+  - Other Toolbar Actions (Save, Delete, Search, Print, Preview, Export, Email): Save and Delete are fully commented out; Open, Email, Export, Preview and Print are empty [fGenerateEWayBill.vb:64-88; fGenerateEWayBill.vb:166-225; fGenerateEWayBill.vb:353-431].
+actions:
+  Show: The "&Show" button [fGenerateEWayBill.Designer.vb:92].
+  Generate E Way Bill: The "&Generate E Way Bill" button [fGenerateEWayBill.Designer.vb:121].
+  New: Asks the main window to start a new record [fGenerateEWayBill.vb:157-164].
+validations:
+- Select valid GSP API.
+- Do you want to generate Eway Bill?
+- Document is already having way bill no.
+- E Way bill already generated but not updated into document,contact your vendor.
+- Process completed,check remarks for status.
+manages:
+- generate-e-way-bill
+uses_concepts:
+- company
+method_notes:
+  FillValues: Fills the lookup lists through Utility.GEWBFillValues.
+  GetAuthToken: Runs through Utility.GEWBGetTokenStatus, Utility.GEWBUpdateEWayBillCredentials.
+  GetRequestId: Runs through Utility.GEWBGetTokenStatus.
+  ubtnGenerate_Click: Saves the record through Utility.GEWBGetTokenStatus, Utility.GEWBSaveAPIRequest.
+  ubtnShow_Click: Fills the lookup lists through Utility.GEWBFillValuesDependent.

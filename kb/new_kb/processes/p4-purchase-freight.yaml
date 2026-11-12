@@ -1,0 +1,22 @@
+key: p4-purchase-freight
+name: 'Purchase: Freight (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the freight group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Freight' (Purchase). The steps follow the plan order, not a verified business sequence: Freight Order, Freight Order Amendment, Freight - Order Mapping.
+steps:
+- order: 1
+  name: Record Freight Order
+  form: fFreightOrder
+- order: 2
+  name: Record Freight Order Amendment
+  form: fFreightOrderAmendment
+- order: 3
+  name: Record Freight - Order Mapping
+  form: fFreightOrderMapping
+concepts:
+- freight-order
+- freight-order-amendment
+- freight-order-mapping

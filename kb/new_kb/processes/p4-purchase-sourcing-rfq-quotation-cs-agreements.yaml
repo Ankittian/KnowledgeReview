@@ -1,0 +1,14 @@
+key: p4-purchase-sourcing-rfq-quotation-cs-agreements
+name: 'Purchase: Sourcing (RFQ, quotation, CS, agreements) (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the sourcing (rfq, quotation, cs, agreements) group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Sourcing (RFQ, quotation, CS, agreements)' (Purchase). The steps follow the plan order, not a verified business sequence: Revised Quotation.
+steps:
+- order: 1
+  name: Record Revised Quotation
+  form: fRevisedQuotation
+concepts:
+- revised-quotation

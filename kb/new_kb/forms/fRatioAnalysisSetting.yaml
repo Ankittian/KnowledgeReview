@@ -1,0 +1,55 @@
+form: fRatioAnalysisSetting
+title: Ratio Analysis Setting
+module: MD
+kind: master
+summary: The Ratio Analysis Setting screen (window caption "RatioAnalysisSetting") defines how a financial ratio is calculated.
+purpose: |
+  What it is: A reusable definition of a ratio: its layout, books, building blocks and formula. When it applies: When a new ratio or a new way of measuring a ratio is needed. Business outcome: Ratios are calculated the same way every time and by book (BR-03; BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header with As On Date, FSL Name, COA Name, Category and Formula with a "Formula" button, above the Finance Book and Section grids.
+  - As On Date Field: Date picker labelled "As On Date", default working date [fRatioAnalysisSetting.vb:129; fRatioAnalysisSetting.Designer.vb:100].
+  - FSL Name Field: Dropdown, mandatory [fRatioAnalysisSetting.vb:63; fRatioAnalysisSetting.vb:118].
+  - COA Name Field: Read-only text [fRatioAnalysisSetting.Designer.vb:131].
+  - Category Field: Dropdown, mandatory [fRatioAnalysisSetting.vb:63; fRatioAnalysisSetting.vb:135].
+  - Formula Field: Read-only text, up to 1000 characters, mandatory [fRatioAnalysisSetting.Designer.vb:218; fRatioAnalysisSetting.vb:110; fRatioAnalysisSetting.vb:322-326].
+  - Finance Book Grid: Grid with Select and Finance Book; book and layout keys are hidden [fRatioAnalysisSetting.vb:458-471].
+  - Section Grid: Grid with Section (dropdown), Particular (text, up to 100), "Add/Deduct Detail" and "Description" buttons, Show Detail and Show Description check boxes; SNo is hidden and numbered automatically [fRatioAnalysisSetting.vb:501-529; fRatioAnalysisSetting.vb:496-499].
+  - Add/Deduct Detail Pop-up: Row editor with Operation, Type and Particular and "Ok" and "Cancel" buttons [fRatioAnalysisSetting.Designer.vb:161-169].
+  - Description Pop-up: Same layout as the Add/Deduct pop-up [fRatioAnalysisSetting.vb:1016-1038].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fRatioAnalysisSetting.vb:231-263].
+actions:
+  Formula: Button "Formula" that opens a formula builder offering the section names as operands, without the information,
+    logical and text functions [fRatioAnalysisSetting.vb:919-952; fRatioAnalysisSetting.vb:955-990].
+  New: Clears the screen through the MDI shell [fRatioAnalysisSetting.vb:195-202; fRatioAnalysisSetting.vb:265-275].
+  Save: Validates and saves the setting.
+  Search: Search dialog with As On Date, FSL Name, Category and Created By [fRatioAnalysisSetting.vb:204-229; masterdata.FRASSearchData:17-26].
+  Delete: Deletes the loaded setting after the standard delete confirmation [fRatioAnalysisSetting.vb:69-95].
+validations:
+- Select valid FSL Name.
+- Select valid Category.
+- Select atleast one Finance Book.
+- Select atleast one Section.
+- Enter Particular in row N.
+- Select atleast one Description.
+- Select valid Type in row N.
+- Select valid Particular in row N.
+- Enter Formula.
+- Duplicate Type and Particular is not allowed.
+- Duplicate Ratio Analysis Setting can not be created.
+manages:
+- ratio-analysis-setting
+uses_concepts:
+- asset-group
+- layout
+method_notes:
+  Delete: Deletes the record through masterdata.FRASDelete.
+  FillValues: Fills the lookup lists through masterdata.FRASFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.FRASFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.FRASLoadData.
+  Open: Searches records through masterdata.FRASSearchData.
+  Save: Saves the record through masterdata.FRASSaveMain.
+  SaveDescription: Saves the record through masterdata.FRASSaveDescription.
+  SaveFinanceBookDetail: Saves the record through masterdata.FRASSaveFBDetail.
+  SaveOtherAddDeduct: Saves the record through masterdata.FRASSaveOtherAddDeduct.
+  SaveSectionDetail: Saves the record through masterdata.FRASSaveSectionDetail.

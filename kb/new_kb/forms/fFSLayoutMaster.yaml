@@ -1,0 +1,37 @@
+form: fFSLayoutMaster
+title: Layout
+module: MD
+kind: master
+summary: The Layout screen (window caption "FSLayoutMaster") creates the named financial statement layouts, called FSL Names,
+  that the statement screens use.
+purpose: |
+  What it is: A named statement layout linked to a chart of accounts and a set of Finance Books. When it applies: When a new reporting format is needed for one or more books. Business outcome: Statements are prepared against a defined layout and chart (BR-01; BR-02; BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header with Code, FSL Name, COA Name and Inactive, above a Finance Book grid.
+  - Code Field: Read-only text [fFSLayoutMaster.Designer.vb:42].
+  - FSL Name Field: Text box, mandatory, maximum 100 characters [fFSLayoutMaster.vb:46; fFSLayoutMaster.vb:87].
+  - COA Name Field: Dropdown, mandatory, listing all charts [fFSLayoutMaster.vb:46; fFSLayoutMaster.vb:91].
+  - Inactive Field: Check box labelled "Inactive" [fFSLayoutMaster.Designer.vb:98].
+  - Finance Book Grid: Grid with Select, Finance Book and FB Type; Finance Book and FB Type are read-only; book number and chart are hidden [fFSLayoutMaster.vb:283-292].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fFSLayoutMaster.vb:169-201].
+actions:
+  New: Clears the screen through the MDI shell [fFSLayoutMaster.vb:133-140; fFSLayoutMaster.vb:203-212].
+  Save: Validates and saves the layout and its books.
+  Search: Search dialog listing Code, FSL Name, COA Name, Inactive and Created By [fFSLayoutMaster.vb:142-167; masterdata.FFSLSearchData:17-25].
+  Delete: Deletes the loaded layout after the standard delete confirmation [fFSLayoutMaster.vb:52-77].
+validations:
+- Enter FSL Name.
+- Select valid COA Name.
+- Select atleast one Finance Book.
+- Duplicate FSL Name not allowed.
+manages:
+- layout
+method_notes:
+  Delete: Deletes the record through masterdata.FFSLDelete.
+  FillValues: Fills the lookup lists through masterdata.FFSLFillValues.
+  LoadData: Loads the selected record through masterdata.FFSLLoadData.
+  Open: Searches records through masterdata.FFSLSearchData.
+  Save: Saves the record through masterdata.FFSLSaveMain.
+  SaveFBDetail: Saves the record through masterdata.FFSLSaveFBDetail.
+  ValidateForm: Validates the entry through masterdata.FFSLValidate.

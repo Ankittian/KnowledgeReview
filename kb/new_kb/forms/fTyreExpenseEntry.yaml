@@ -1,0 +1,51 @@
+form: fTyreExpenseEntry
+title: Tyre Expense Entry
+module: PM
+kind: transaction
+summary: The Tyre Expense Entry screen records money spent on individual tyres, such as fitting charges, balancing or other
+  costs that are not part of a purchase or a repair document.
+purpose: |
+  What it is: A transaction document that books expense amounts against tyres, together with the life stage and status the tyre had when the expense was booked [fTyreExpenseEntry.vb:528-584; EAM.TEXESaveTyreDetail:27-46]. When it applies: Whenever a cost is incurred on a tyre outside the purchase and the repair documents. Business outcome: Total cost of ownership per tyre and per life stage can be measured.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control at the top, Remarks and a read-only Total Amount, and a tab control with "Tyre Detail" and "Custom Field" tabs; the window caption is "TyreExpenseEntry" [fTyreExpenseEntry.Designer.vb:90; fTyreExpenseEntry.Designer.vb:123; fTyreExpenseEntry.Designer.vb:153; fTyreExpenseEntry.Designer.vb:156; fTyreExpenseEntry.Designer.vb:187].
+  - Document Control Fields: The shared document control with Document Status, Division, Document Date and Document No.
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fTyreExpenseEntry.Designer.vb:123; fTyreExpenseEntry.vb:100].
+  - Total Amount Field: A read-only numeric display labelled "Total Amount" with two decimals [fTyreExpenseEntry.Designer.vb:70; fTyreExpenseEntry.Designer.vb:90; fTyreExpenseEntry.vb:105-106].
+  - Tyre Detail Grid: A grid with columns Entry Type, Vehicle, Position, Tyre Serial No, Current Status, Current Stage, Expense Description, Expense Amount and Remarks [EAM.TEXEFillValues:104-113; fTyreExpenseEntry.vb:410-433].
+  - Custom Field Tab: An embedded custom-field control on the tab "Custom Field" [fTyreExpenseEntry.Designer.vb:156; fTyreExpenseEntry.vb:111].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a new record [fTyreExpenseEntry.vb:178-187].
+  Save: The toolbar action that validates and saves [fTyreExpenseEntry.vb:440-526].
+  Search: The toolbar action that opens a document search [fTyreExpenseEntry.vb:190-214].
+  Delete: The toolbar action that removes the open document [fTyreExpenseEntry.vb:53-85].
+validations:
+- Authorized TyreExpenseEntry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- At least one entry should be present.
+- Vehicle can't be empty  in row N.
+- Position can't be empty  in row N.
+- Select valid Tyre Serial No  in row N.
+- Expense Amount can't be empty or zero in row N.
+- Tier doesn't exists
+- Authorized Expense No. can't be updated
+- No expense entry found.
+- Document No. <number> saved successfully.
+manages:
+- tyre-expense-entry
+uses_concepts:
+- axle-wheel-configuration
+- equipment-master
+- supplementary-field
+- tyre-master
+method_notes:
+  Delete: Deletes the record through EAM.TEXEDelete.
+  FillValues: Fills the lookup lists through EAM.TEXEFillValues.
+  GetTyreForVehicleOnPosition: Runs through EAM.GetTyreVehicleWise.
+  LoadData: Loads the selected record through EAM.TEXELoadData.
+  Open: Searches records through EAM.TEXESearchData.
+  Save: Saves the record through EAM.TEXESave.
+  SaveTyreDetails: Saves the record through EAM.TEXESaveTyreDetail.
+  ValidateForm: Validates the entry through EAM.TEXEValidate.

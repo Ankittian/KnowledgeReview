@@ -1,0 +1,103 @@
+form: fSundryReceipt
+title: Sundry Receipt
+module: FI
+kind: transaction
+summary: 'The Sundry Receipt screen records money received from a payer for reasons other than a normal sales invoice: a customer''s
+  advance against a proforma invoice, a return of earnest money deposit or security deposit, an employee''s advance receipt,
+  a response to a receipt request, or a direct receipt from a named party.'
+purpose: |
+  What it is: A receipt document that captures who paid, how much, against which source document and under which reference, with optional service and tax detail [fSundryReceipt.vb:885-1082; Finance.FISRSaveMain:83-178]. When it applies: When money or a deposit refund is received that is not covered by a regular invoice receipt. Business outcome: The receipt is recorded once per source document, posted to the right account, and available for matching against open references (BR-12; BR-14; BR-17).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header and Tabs Layout: A header area with the document-number control, the source, payer and amount fields, and a tab control below with "Service Detail", "Tax Detail", "Finance Posting" (hidden until needed) and "GST Posting" [fSundryReceipt.Designer.vb:706-716; fSundryReceipt.vb:153].
+  - Document Number Control (Document No., Date, Status, Finance Book): The shared document control.
+  - Source Document Field: A mandatory dropdown "Source Document" (BR-02; MSG-01) [fSundryReceipt.Designer.vb:377; fSundryReceipt.vb:610-614].
+  - Source Document No. Field: A dropdown "Source Document &No." showing number, date and amount; mandatory unless the source document is code 3 (BR-02; MSG-02) [fSundryReceipt.vb:616-621].
+  - Date and Requested Amount Fields: Two read-only boxes "Date" and "Requested Amount" [fSundryReceipt.Designer.vb:270; fSundryReceipt.Designer.vb:327; fSundryReceipt.Designer.vb:339; fSundryReceipt.Designer.vb:282].
+  - Request Type Field: A mandatory dropdown "R&equest Type" (BR-02; MSG-03) [fSundryReceipt.vb:630-634].
+  - Payer Type Field: A mandatory dropdown "&Payer Type" (BR-02; MSG-04) [fSundryReceipt.vb:636-640].
+  - Payer Name Field: A dropdown "Payer &Name", up to 100 characters.
+  - Payer Location Field: A read-only dropdown "Payer &Location" filled with the first location [fSundryReceipt.Designer.vb:187; fSundryReceipt.Designer.vb:198; fSundryReceipt.vb:1468-1470].
+  - Amount Field: A numeric box "Amo&unt", 12 characters, 2 decimals, mandatory and non-zero (BR-05; MSG-08; MSG-09) [fSundryReceipt.vb:205-206; fSundryReceipt.vb:664-679].
+  - Reference No. Field: A text box "Reference &No.", up to 50 characters, mandatory (BR-06; MSG-10) [fSundryReceipt.vb:200; fSundryReceipt.vb:686-690].
+  - Reference Date Field: A date picker "Reference Da&te"; it may not be after the Document Date (BR-06; MSG-11) [fSundryReceipt.vb:692-696].
+  - Reference Amount Field: A numeric box "Reference A&mount", 12 characters, 2 decimals, mandatory and non-zero (BR-06; MSG-12) [fSundryReceipt.vb:202-203; fSundryReceipt.vb:698-702].
+  - Project Name Field: An optional dropdown "Project &Name" [fSundryReceipt.vb:237; fSundryReceipt.vb:954-958].
+  - Reference Period Checkbox and Date Range: A checkbox "&Reference Period" and a group "Reference Period" with "From Da&te" and "To Da&te" (BR-07; MSG-13) [fSundryReceipt.Designer.vb:404; fSundryReceipt.Designer.vb:509; fSundryReceipt.vb:704-708].
+  - Receipt Mode Field: A mandatory dropdown "Receipt &Mode" (BR-08; MSG-14) [fSundryReceipt.vb:710-714].
+  - Cheque/DD/UTR No. and Date Fields: A text box "Cheque/DD/UTR &No." and a date picker "Cheque/DD/UTR Da&te" [fSundryReceipt.Designer.vb:227; fSundryReceipt.Designer.vb:244].
+  - Cost Center Field: A dropdown "&Cost Center" [fSundryReceipt.vb:246].
+  - Currency Control: The shared currency control (currency, conversion and rate) [fSundryReceipt.vb:235; fSundryReceipt.vb:682-684].
+  - Narration Field: A text box "&Narration" [fSundryReceipt.vb:960].
+  - Service Detail Grid: A grid with Description, HSN & SAC Code (read-only; a button opens an HSN search), Unit, Quantity (3 decimals), Rate and Amount (2 decimals).
+  - Tax Detail Tab: The shared tax-on-amount control, calculated directly on Amount [fSundryReceipt.vb:217; fSundryReceipt.vb:231; fSundryReceipt.vb:777].
+  - Finance Posting Tab: The shared posting grid showing the Journal Voucher lines [fSundryReceipt.vb:1700-1773].
+  - GST Posting Tab: The shared GST posting control [fSundryReceipt.vb:222-225; fSundryReceipt.vb:1703-1727].
+  - GST Posting Repair Shortcut: A hidden keyboard shortcut Ctrl+Alt+G on the "GST Posting" tab that rebuilds the voucher lines and re-saves the GST posting of the loaded receipt after a standard save confirmation [fSundryReceipt.vb:96-146].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fSundryReceipt.vb:393-408; fSundryReceipt.vb:1506-1512].
+actions:
+  New: Standard toolbar New [fSundryReceipt.vb:356-364].
+  Save: Saves a new or existing receipt.
+  Search: Opens the search window listing receipts of the company and year with Document No., Document Date, Finance Book,
+    Source Document, Source Document No., Request Type, Payer Type, Payer Name, Vendor Reference No., Vendor Reference Date,
+    Status, Created By and Authorized By, newest first [fSundryReceipt.vb:366-391; Finance.FISRSearchData:21-49].
+  Delete: Deletes the loaded receipt after the standard delete confirmation [fSundryReceipt.vb:159-187].
+validations:
+- Select valid Source Document.
+- Select valid Source Document No.
+- Select valid Request Type.
+- Select valid Payer Type.
+- Enter Payer Name.
+- Select valid Payer Name.
+- Select valid Payer Location.
+- Amount can't be empty or zero.
+- Amount is not equal to total amount in Service Description.
+- Enter Vendor Reference No.
+- Vendor Reference Date can't be greater than Document Date.
+- Vendor Reference Amount can't be empty or zero.
+- To Date can't be less than From Date.
+- Select valid Receipt Mode.
+- Enter Cheque/DD/UTR No.
+- Select Cheque/DD/UTR Date.
+- Select atleast one Description
+- Amount can't be empty or zero in row <n>.
+- Authorized Sundry Receipt can't be updated.
+- Document No. <number> saved successfully.
+- Select valid Cost Center.
+- Advance account is not created against this Payee Name.
+- Imprest account is not created against this Payee Name.
+- Customer Receivable deposit account is not created against this Payee Location.
+- Supplier Payable deposit account is not created against this Payee Location.
+- Customer Receivable account is not created against this Payee Location.
+- Supplier Payable account is not created against this Payee Location.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized Entry can't be updated.
+- Document Date can't be less than Source Document Date.
+- VoucherValidation
+manages:
+- sundry-receipt
+uses_concepts:
+- asset-disposal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- receipt-request
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FISRDelete.
+  FillValues: Fills the lookup lists through Finance.FISRFillValues.
+  FillValuesPayerType: Fills the lookup lists through Finance.FISRFillValuesPayerType.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FISRFillValuesSourceDocument.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FISRLoadData.
+  Open: Searches records through Finance.FISRSearchData.
+  Save: Saves the record through Finance.FISRSaveMain.
+  SaveServiceDetailGD: Saves the record through Finance.FISRSaveServiceDetail.
+  SaveTaxDetail: Saves the record through Finance.FISRSaveTaxDetail.

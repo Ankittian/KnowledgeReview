@@ -1,0 +1,92 @@
+form: fFunctionalLocation
+title: Functional Location
+module: PM
+kind: transaction
+summary: 'The Functional Location screen maintains the places in a plant where equipment sits and work is done: a building,
+  a line, a station or a bay.'
+purpose: |
+  What it is: A master record for a physical or organisational place in the plant, with its hierarchy, ownership, custodian, address and maintenance-relevant attributes [fFunctionalLocation.vb:1170-1321; EAM.EAFLSave:61-133]. When it applies: When a plant is set up or extended, when equipment is to be installed at a new place, or when custody, address or maintenance attributes of a place change. Business outcome: Maintenance teams have one coded, unique list of places, with their safety, skill, tools, resource, measurement, warranty and certificate information, to attach equipment and work to (BR-01; BR-02; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "Functional Location" with a header block (Code, Location Name, Alias, Parent Location, Location Type, Asset Name, Is Critical, Inactive) above a tab control with six tabs [fFunctionalLocation.Designer.vb:1092; fFunctionalLocation.Designer.vb:962-979].
+  - Code Field: A read-only text box of up to 20 characters that cannot be tabbed into [fFunctionalLocation.Designer.vb:770-777].
+  - Location Name Field: A mandatory text box of up to 300 characters, trimmed on save [fFunctionalLocation.Designer.vb:795; fFunctionalLocation.vb:63-65; fFunctionalLocation.vb:1182].
+  - Alias Field: An optional text box of up to 10 characters; the former mandatory check is commented out "while working for UMOJA" [fFunctionalLocation.Designer.vb:813; fFunctionalLocation.vb:547-555].
+  - Parent Location Field: An optional drop-down showing Parent Functional Location and Code [fFunctionalLocation.vb:163].
+  - Location Type Field: A mandatory drop-down showing Location Type and Code [fFunctionalLocation.vb:63-65; fFunctionalLocation.vb:174].
+  - Asset Name Field: An optional drop-down showing Asset Name and Code [fFunctionalLocation.vb:165].
+  - Is Critical and Inactive Fields: Two tick boxes; Is Critical is disabled by the meter-reading lock, Inactive is marked compulsory on load [fFunctionalLocation.vb:63-65; fFunctionalLocation.vb:298-318].
+  - Reference Location Button: A small button next to Code that opens the search list [fFunctionalLocation.Designer.vb:885-891; fFunctionalLocation.vb:2226-2253].
+  - Cost Center, Work Center, Division Name and Department Name Fields: Drop-downs on the General Detail tab, showing name and code.
+  - Custodian Name, Custodian Contact No. and Date Of Custody Fields: A custodian drop-down (name with contact number), a contact text box of up to 30 characters and a date picker.
+  - Address, City, State, Country and Pincode Fields: Three address lines of up to 100 characters, City, State and Country drop-downs, and Pincode of up to 6 characters [fFunctionalLocation.Designer.vb:376; fFunctionalLocation.Designer.vb:394; fFunctionalLocation.Designer.vb:403; fFunctionalLocation.Designer.vb:469].
+  - Supplementary Group and Supplemental Detail Grid: A group drop-down and a grid with Supplementary Field, Value and Remarks (500 characters); the data type column is hidden [fFunctionalLocation.vb:904-923].
+  - Skill Group and Skill Detail Grid: A group drop-down and a grid with Skill Name and a read-only Code [fFunctionalLocation.vb:1860-1872].
+  - Measurement Group, Measurement Date and Measurement Detail Grid: A group drop-down, a date picker and a grid with Measurement Parameter, Measurement Date, Value, Alert Condition, Alert Value and Remarks [fFunctionalLocation.vb:961-990].
+  - Safety Instruction Group and Safety Detail Grid: A group drop-down and a grid with Safety Instruction and a read-only Code [fFunctionalLocation.vb:2040-2051].
+  - Tools Detail Grid: A grid with Item Description and a read-only Code, drawn from the item master [fFunctionalLocation.vb:1992-2003].
+  - Resource Detail Grid: A grid with Resource Group and Resource Name; the resource list narrows to the chosen group [fFunctionalLocation.vb:993-1008; fFunctionalLocation.vb:1012-1025].
+  - Warranty Detail Grid: A grid with Warranty Type, Warranty No, Warranty Date, Issued By, Expiry Date and Remarks [fFunctionalLocation.vb:1808-1827].
+  - Certificate Detail Grid: A grid with Certificate Name, Certificate Date, Issued By, Expiry Date and Remarks [fFunctionalLocation.vb:1027-1044].
+  - Fast Entry Grid Container: A grid with Location Name, Alias, Parent Location, Location Type, Asset Name, Is Critical, Address 1 to 3, City, State, Country, Pincode, Cost Center, Work Center, Custodian, Custodian Contact No, Date Of Custody, Division Name, Department Name and a read-only Remarks column [EAM.EAFLFillValues:405-427; fFunctionalLocation.vb:2288-2299].
+  - Switch Back to Detail Mode Link: The link "Switch back to detail mode." at the top right of the fast entry container [fFunctionalLocation.Designer.vb:1011].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  Import: An "&Import" button in fast entry mode that reads an Excel sheet into the fast entry grid [fFunctionalLocation.Designer.vb:999;
+    fFunctionalLocation.vb:2255-2286].
+  New: The toolbar action asking the main window to start a blank record [fFunctionalLocation.vb:349-357].
+  Save: The toolbar action that validates and stores the location and its child rows [fFunctionalLocation.vb:1048-1168].
+  Search: The toolbar action that lists the company's locations in a search dialog [fFunctionalLocation.vb:362-390].
+  Delete: The toolbar action that removes the open location [fFunctionalLocation.vb:77-112].
+validations:
+- Enter Location Name.
+- Duplicate Location Name not allowed.
+- Duplicate Alias not allowed.
+- Select valid Location Type.
+- Enter Custodian Contact No.
+- Enter Date Of Custody.
+- Select valid Division Name.
+- Select valid Value in row n.
+- Select only one measurement parameter for Hour.
+- Enter value in row n.
+- Select valid Certificate Date in row n.
+- Expiry date can not be less than Certificate date.
+- Select valid Warranty No in row n.
+- Select valid Warranty Date in row n.
+- Select valid Expiry Date in row n.
+- Expiry date can not be less than Warranty date.
+- 'Invalid Time : minute should be less than 60 in row n.'
+- 'Invalid Time : minute should be less than 10 in row n.'
+- 'Invalid Time : minute should be less than 100 in row n.'
+- Duplicate Safety Instruction not allowed.
+- Duplicate Skill Name not allowed.
+- Duplicate Item Description not allowed.
+- Duplicate Resouce Group And Resource Name not allowed.
+- Duplicate Measurement Parameter not allowed.
+- Duplicate Supplementary Field not allowed.
+- Duplicate Certificate Name and Certificate Date not allowed.
+- Duplicate Warranty Type,Warranty No. and Warranty Date not allowed.
+- Your excel should consists of sheet with name EAFL. Do you want to continue?
+- Refer remarks for saved status.
+- Successfully Created.
+manages:
+- functional-location
+uses_concepts:
+- eam-resource-master
+- measurement-parameter-group
+- safety-instruction-group
+- skill-master
+- supplementary-field
+- supplementary-field-group
+- work-center
+method_notes:
+  Delete: Deletes the record through EAM.EAFLDelete.
+  FillValues: Fills the lookup lists through EAM.EAFLFillValues.
+  LoadData: Loads the selected record through EAM.EAFLLoadData.
+  Open: Searches records through EAM.EAFLSearchData.
+  SaveCertificateDetails: Saves the record through EAM.EAFLSaveCertificateDetails.
+  SaveMain: Saves the record through EAM.EAFLSave.
+  SaveMeasurementDetails: Saves the record through EAM.EAFLSaveMeasurementDetails.
+  SaveResourceGroupDetails: Saves the record through EAM.EAFLSaveResourceGroupDetails.
+  SaveSafetyDetail: Saves the record through EAM.EAFLSaveSafetyDetail.
+  SaveSkillDetail: Saves the record through EAM.EAFLSaveSkillDetail.

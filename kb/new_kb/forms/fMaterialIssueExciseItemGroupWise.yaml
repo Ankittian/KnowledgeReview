@@ -1,0 +1,81 @@
+form: fMaterialIssueExciseItemGroupWise
+title: Raw Material Issue
+module: MM
+kind: transaction
+summary: The Raw Material Issue screen (window caption "Material Issue", form code IGMI) issues stock from a warehouse to
+  a department by Stock Item Group rather than by individual item.
+purpose: |
+  What it is: A stores document that records the consumption of raw or intermediate material, grouped by Stock Item Group, from a warehouse to a department. When it applies: When a department draws material for production or use and the stores team issues it by material group (for example a grade or excise group) rather than item by item. Business outcome: Stock is reduced from the correct lots in first-in-first-out order, valued at lot rates, and charged to the department and cost centre (BR-12, BR-20).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Shared document control at the top with "Document &No." (series and yearly number), "Document Da&te", "Document St&atus" and a division field labelled "&Name" by the control, plus a repeated-entry button.
+  - Issue Detail Tab: First tab "Issue &Detail" holding the header fields.
+  - Item Type Field: Dropdown "Item &Type" listing raw material and intermediate types; validated but not marked as compulsory.
+  - Warehouse Field: Mandatory dropdown "&Warehouse" (name, code, division).
+  - Department Field: Mandatory dropdown "&Department" (name, code, division).
+  - Reference No. & Date Field: Optional text box labelled "Reference No.
+  - Issue To Field: Mandatory dropdown "Issue &To" (employee, contractor, vendor).
+  - Employee Name / Contractor Name / Vendor Name Field: Mandatory dropdown whose label is "Employee &Name", "Contractor &Name" or "Vendor &Name" depending on "Issue To" (name, code).
+  - Remarks Field: Optional multi-line text box "Remar&ks", 1000 characters, trimmed on save.
+  - Notes Control: Small shared notes button with print area and default flag.
+  - Custom Field Tab: Tab "&Custom Field" with the shared custom field control.
+  - Finance Posting Tab: Tab "Finance P&osting" with the shared voucher control.
+  - Stock Item Group Grid: Grid with columns "Code", "Stock Item Group", "Unit", "Cost Center", "Quantity", "Lot Details" (button), "Current Stock", "On Date Stock", "Stock Details" (button), "Rate", "Amount", "Remarks"; a hidden "CC" column.
+  - Lot Details Popup: Row popup listing the group's available lots: "Select", "Item Description", "Make", "Tech Grade", "Item Attribute", "Cost Center", "LOT No.", "Received Doc No.", "Received Doc Date", "PO No.", "PO Date", "Supplier", "Stock Qty.", "BIN Card No.", optional "Heat No.
+  - Stock Details Popup: Read-only row popup showing, per member item, "Item Description", "Make", cost centre, "Department", "Project", "Stock Qty.", "Is Reserved", "Stock Type", with "O&k".
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Preview, Export and Email of the material issue report.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open showing the search list.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last are enabled in the toolbar options.
+validations:
+- Authorized Material Issue can't be updated.
+- Authorized Entry can't be updated.
+- Select valid Item Type.
+- Select valid WareHouse.
+- Select valid Department.
+- Select valid Issue To.
+- Select valid Employee Name.
+- Select atleast one Stock Item Group.
+- Quantity can't be zero or empty in row <n>.
+- Quantity can't be greater than <stock> in row <n>.
+- Document Date cannot be less than selected Received Document Date ' in row <n>.
+- Stock Qty. should be equal to <qty> in row <n>.
+- Duplicate Stock Item Group is not allowed
+- Quantity can't be greater than Stock Qty.
+- Qty can't be greater than stock Qty. <balance> in row <n>.
+- Quantity should equal to <qty>
+- Department does not belong to Division.
+- Document No. <number> saved successfully.
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- Not found in Voucher
+- Production Entry is done against this Entry
+- GRN is received against this S.C.O, so you can't delete this
+- Select valid Document Status.
+- Enter Document No.
+- Document Date should be between Financial Start and End Date.
+manages:
+- raw-material-issue
+uses_concepts:
+- accounting-voucher
+- company
+- gate-pass-out
+- material-return
+- purchase-order-amendment
+- stock-adjustment
+- stock-item-group
+- value-stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.IMMIDelete.
+  FillValues: Fills the lookup lists through Inventory.IMMIFillvalues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMMIFillValuesDependent.
+  ItemLotDetail: Runs through Inventory.IMMIExciseItemGroupLotDetail.
+  LoadData: Loads the selected record through Inventory.IMMILoadData.
+  Open: Searches records through Inventory.IMMISearchData.
+  Save: Saves the record through Inventory.IMMISave, Inventory.VoucherVsLotValidation.
+  SaveExciseItemGroupDetail: Saves the record through Inventory.IMMISaveExciseItemGroupDetail.
+  SaveItemDetails: Saves the record through Inventory.IMMISaveMaterialIssueItemDetail.
+  SaveLotDetail: Saves the record through Inventory.IMMISaveMaterialIssueLotDetail.

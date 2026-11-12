@@ -1,0 +1,32 @@
+key: inventory-storage
+name: Inventory Storage & Issue
+module: MM
+status: active
+summary: Stores, bins and units hold received stock, which is issued to departments and cost centers.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Warehouses and bins hold stock; sub groups decide bin management; material is issued from stores against requests and cost centers.
+steps:
+- order: 1
+  name: Define warehouses
+  form: fWarehouse
+- order: 2
+  name: Define bins
+  form: fBINCard
+- order: 3
+  name: Bin and storage settings of sub groups
+  form: fMaterialSubGroupMaster
+- order: 4
+  name: Units of stock
+  form: fUnitMaster
+- order: 5
+  name: Issue material
+  form: fMaterialIssue
+concepts:
+- warehouse
+- bin
+- material-issue
+- unit-of-measure
+- material-sub-group
+leads_to:
+- preventive-maintenance

@@ -1,0 +1,38 @@
+key: p11-eam-other-screens
+name: 'EAM: Other screens (Phase 11)'
+module: PM
+status: active
+summary: Phase 11 screens of the other screens group in EAM.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Other screens' (EAM). The steps follow the plan order, not a verified business sequence: Axle–Wheel Configuration, Incident Entry, Incident Review, Insurance Claim, Production Entry, TripSheet, WBS Task Reporting.
+steps:
+- order: 1
+  name: Record Axle–Wheel Configuration
+  form: fVehicleAxleLayout
+- order: 2
+  name: Record Incident Entry
+  form: fIncidentEntry
+- order: 3
+  name: Record Incident Review
+  form: fIncidentReview
+- order: 4
+  name: Record Insurance Claim
+  form: fInsuranceClaim
+- order: 5
+  name: Record Production Entry
+  form: fProductionEntrySimplified
+- order: 6
+  name: Record TripSheet
+  form: fTripSheet
+- order: 7
+  name: Record WBS Task Reporting
+  form: fMaintenanceReportingExtension
+concepts:
+- axle-wheel-configuration
+- incident-entry
+- incident-review
+- insurance-claim
+- production-entry
+- tripsheet
+- wbs-task-reporting

@@ -1,0 +1,60 @@
+form: fBG
+title: Bank Guarantee
+module: FI
+kind: transaction
+summary: The Bank Guarantee screen (window caption "Bank Guarantee") records a bank guarantee that a vendor gives to the company
+  as security for advances against purchase orders.
+purpose: |
+  What it is: A document recording one vendor bank guarantee received, with its bank, dates, amount and allocation to purchase orders [fBG.vb:272-361; Finance.FMBGSaveMain:54-101; Finance.FMBGSaveDetail:21-37]. When it applies: When a vendor whose purchase orders require a bank guarantee hands one over. Business outcome: The company can tell how much of each order's required guarantee is covered and how much is still open.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "Bank Guarantee" with a document header control and a main group holding the guarantee fields, with a grid of source documents in a second group [fBG.designer.vb:857; fBG.designer.vb:151-175; fBG.designer.vb:128].
+  - Document Header: The shared document control with Finance Book, Document No., Document Date and Document Status [fBG.vb:421; fBG.vb:35].
+  - Vendor Name and Location Fields: Two mandatory drop-downs [fBG.vb:22; fBG.vb:59-69].
+  - Source Document Field: A mandatory drop-down [fBG.vb:22; fBG.vb:71-75].
+  - Bank Name and Branch Name Fields: Two mandatory drop-downs; branch choices follow the bank, the first branch is selected, and Country, State, City, Branch Code and IFSC Code are shown read-only [fBG.vb:77-87; fBG.vb:502-516; fBG.vb:601-619; fBG.designer.vb:233-313].
+  - BG No. Field: A mandatory text box of up to 50 characters [fBG.vb:22; fBG.designer.vb:604; fBG.vb:89-93].
+  - BG Date, Validity Date and Validity Days Fields: Two date pickers and a mandatory numeric Validity Days of 3 digits [fBG.designer.vb:213; fBG.vb:412].
+  - BG Amount Field: A mandatory numeric text box of 12 characters with 2 decimals [fBG.vb:22; fBG.vb:413; fBG.designer.vb:567].
+  - Remarks Field: An optional text box [fBG.vb:303].
+  - Source Document Grid: A grid with Source Document No., Date, Currency, Exchange Rate, Total BG Amt., Prev.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fBG.vb:386-392; fBG.vb:633-639].
+actions:
+  New: Asks the main window for a blank record [fBG.vb:10-18].
+  Save: Validates, asks confirmation and stores the guarantee [fBG.vb:272-361].
+  Search: Opens the shared search dialog with Document No., Document Date, Finance Book, Vendor Name, Source Document, Bank
+    Name, Bank Branch, BG No., BG Date, Validity Date, BG Amount, Status, Created By and Authorized By [fBG.vb:229-257; Finance.FMBGSearchData:19-26].
+  Delete: Deletes the open guarantee after confirmation [fBG.vb:194-227].
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Bank Name.
+- Select valid Bank Branch.
+- Enter BG No.
+- BG Date can't be greater than Document Date.
+- Validity Date can't be less than BG Date.
+- BG Amount can't be empty or 0.
+- Duplicate Source Document No. is not allowed.
+- Can't select Purchase Order with Date greater than BG Date.
+- Total Source Document BG Amt. should be equal to BG Amount.
+- BG Amount is used in advance passing, so you can't delete this entry.
+- Document No. <number> saved successfully.
+manages:
+- bank-guarantee
+uses_concepts:
+- company
+- supplier-advance
+method_notes:
+  Delete: Deletes the record through Finance.FMBGDelete.
+  FillValues: Fills the lookup lists through Finance.FMBGFillValues.
+  FillValuesBankBranch: Fills the lookup lists through GlobalData.FillValuesBankBranch.
+  FillValuesDependent: Fills the lookup lists through Finance.FMBGFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FMBGLoadData.
+  Open: Searches records through Finance.FMBGSearchData.
+  Save: Saves the record through Finance.FMBGSaveMain.
+  SaveSourceDocument: Saves the record through Finance.FMBGSaveDetail.
+  ValidateForm: Validates the entry through Finance.FMBGValidate.

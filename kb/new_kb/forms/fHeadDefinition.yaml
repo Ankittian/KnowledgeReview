@@ -1,0 +1,45 @@
+form: fHeadDefinition
+title: Head Definition
+module: MD
+kind: master
+summary: The Head Definition screen maintains the list of Terms and Conditions heads, such as the headings under which clauses
+  are written on orders and quotations.
+purpose: |
+  What it is: A master record that names a terms and conditions head and lists the forms on which the head applies [fHeadDefinition.vb:241-266; fHeadDefinition.vb:398-427]. When it applies: When a new clause heading is needed for order or quotation documents, or when a heading should apply to another form. Business outcome: Documents show only the heads meant for them, and one head list is shared by the whole enterprise.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window with Code, Head Description, Inactive and a grid of applicable forms [fHeadDefinition.designer.vb:100-141].
+  - Code Field and Fast Entry Link: A read-only text box that cannot be tabbed into, with the caption "Code" shown as a link that carries the tip "Switch to fast entry mode." [fHeadDefinition.designer.vb:100-105; fHeadDefinition.vb:38-39].
+  - Head Description Field: A mandatory text box, up to 50 characters, marked compulsory on load; leading and trailing spaces are removed [fHeadDefinition.vb:33; fHeadDefinition.designer.vb:121; fHeadDefinition.vb:405].
+  - Inactive Field: A tick box that is disabled [fHeadDefinition.designer.vb:107].
+  - Form Details Grid: A grid with columns Select, Form Code and Form Caption.
+  - Fast Entry Grid Container: A full-window group box with a grid of Head Description and Remarks, an Import button and a link "Switch back to detail mode." [fHeadDefinition.vb:325-336; fHeadDefinition.designer.vb:212-232].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fHeadDefinition.vb:269-275; fHeadDefinition.vb:317-323].
+actions:
+  Switch Back to Detail Mode: The link that hides Fast Entry and returns to the single head layout [fHeadDefinition.vb:334-336].
+  Import: The Import button reads an Excel workbook whose sheet is named "ADHD" and loads the column Head Description into
+    the Fast Entry grid, adding a Remarks column [fHeadDefinition.vb:338-367; fHeadDefinition.designer.vb:312].
+  New: The toolbar action that asks the main window to start a blank record [fHeadDefinition.vb:11-19].
+  Save: The toolbar action that validates and stores the head and its form ticks [fHeadDefinition.vb:188-239].
+  Search: The toolbar action that opens a search dialog listing the heads of the logged-in company with Code, Head Description,
+    Inactive, Created By and Created Date [masterdata.ADHDSearchData:17-28].
+  Delete: The toolbar action that removes the open head [fHeadDefinition.vb:124-151].
+  Navigation: First, Previous, Next and Last are enabled on the toolbar [fHeadDefinition.vb:30].
+validations:
+- Enter Head Description.
+- Duplicate Head Description is not allowed.
+- Successfully Created.
+- Your excel should consists of sheet with name ADHD. Do you want to continue?
+- Refer remarks for saved status.
+manages:
+- head-definition
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.ADHDDelete.
+  FillValues: Fills the lookup lists through masterdata.ADHDFillValues.
+  LoadData: Loads the selected record through masterdata.ADHDLoadData.
+  Open: Searches records through masterdata.ADHDSearchData.
+  SaveMain: Saves the record through masterdata.ADHDSave.
+  SaveTCHeadFormDetail: Saves the record through masterdata.ADHDSaveTCHeadFormDetail.
+  ValidateForm: Validates the entry through masterdata.ADHDValidate.

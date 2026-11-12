@@ -1,0 +1,39 @@
+form: fItemSupplementalInformation
+title: Item Supplemental Information
+module: MM
+kind: transaction
+summary: The Item Supplemental Information screen records extra descriptive values, such as identifying marks defined as supplementary
+  fields on the item, against a specific received lot of an item.
+purpose: |
+  What it is: A set of values for the item's supplementary fields, attached to one received document line (lot) and optionally to one serial number of that lot. [Inventory.ISUISave:31-44] When it applies: After material has been received on an MRN or billed on a Purchase Bill and the unit-level details of the item, for example per-unit identifiers, must be recorded. [Inventory.ISUIFillValues:13-14] Business outcome: Each received lot or serial number carries its own supplementary details instead of only the item-level defaults held on the item master.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A single window with a "General Detail" group of header fields and a "Supplementary Detail" group holding the grid.
+  - Document Type Field: Dropdown with "MRN" and "Purchase Bill"; mandatory (BR-01).
+  - Item Description Field: Dropdown showing Item Description and Code; mandatory (BR-01, BR-12).
+  - Document No. Field: Dropdown showing Document No., Document Date and Supplier Name; mandatory (BR-01).
+  - Document Date Field: Read-only text box.
+  - Supplier Name Field: Read-only text box.
+  - Serial No. Field: Dropdown of serial numbers; mandatory only when the list has serial numbers (BR-02).
+  - Supplementary Detail Grid: Grid with visible columns "Supplementary Field" (read-only), "Value Type" (read-only) and "Supplementary Field Value" (up to 100 characters); the field number and value type number are hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions that are empty on this screen.
+actions:
+  New: Clears the form through the standard main window action and forgets the opened entry.
+  Save: Validates and saves the supplementary values.
+  Search: Opens the standard search window listing saved entries with Document Type, Document No., Serial No and Item Description.
+  Delete: Deletes the opened entry after confirmation.
+validations:
+- Select valid Document Type.
+- Select valid Item Description.
+- Select valid Document No.
+- Select valid Serial No.
+- Enter Supplementary Field Value in row N.
+manages:
+- item-supplemental-information
+method_notes:
+  Delete: Deletes the record through Inventory.ISUIDelete.
+  FillValueDependent: Runs through Inventory.ISUIFillValueDependent.
+  FillValues: Fills the lookup lists through Inventory.ISUIFillValues.
+  LoadData: Loads the selected record through Inventory.ISUILoadData.
+  Open: Searches records through Inventory.ISUISearchData.
+  Save: Saves the record through Inventory.ISUISave.

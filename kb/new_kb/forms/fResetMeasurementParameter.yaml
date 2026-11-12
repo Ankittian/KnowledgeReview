@@ -1,0 +1,56 @@
+form: fResetMeasurementParameter
+title: Reset Measurement Parameter
+module: PM
+kind: transaction
+summary: The Reset Measurement Parameter screen records the moment a meter on an equipment or a functional location is reset
+  or replaced, for example an odometer or hour meter that goes back to zero.
+purpose: |
+  What it is: A document that states, for one equipment or location and one date, which meters were reset and their values before and after the reset [fResetMeasurementParameter.vb:566-658; fResetMeasurementParameter.vb:659-687]. When it applies: When a meter is reset, rolled over or replaced. Business outcome: Running totals and next-reading checks stay continuous, so a reset is not mistaken for a wrong reading (BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "ResetMeasurementParameter" with the document control (number, date, status, division), a header group and one Measurement Details grid [fResetMeasurementParameter.Designer.vb:180].
+  - Document Number, Date, Status and Division Control: The shared document control [fResetMeasurementParameter.vb:127; fResetMeasurementParameter.vb:587-598].
+  - Reference Object Field: Mandatory dropdown "Reference Object" [fResetMeasurementParameter.Designer.vb:59; fResetMeasurementParameter.vb:44-46; fResetMeasurementParameter.vb:322-327].
+  - Equipment Description / Location Field: Mandatory dropdown labelled "Equipment Description", or "Location" when the Reference Object is Location; shows Description and Code [fResetMeasurementParameter.Designer.vb:79; fResetMeasurementParameter.vb:129; fResetMeasurementParameter.vb:329-333].
+  - Reset Date Field: Date and time picker "Reset Date", defaulting to now on a new document [fResetMeasurementParameter.Designer.vb:98; fResetMeasurementParameter.vb:117].
+  - Remarks Field: Optional text box "Remarks" up to 1000 characters, trimmed on save [fResetMeasurementParameter.Designer.vb:104; fResetMeasurementParameter.Designer.vb:117; fResetMeasurementParameter.vb:616].
+  - Measurement Details Grid: Columns Select, Measurement Parameter, Unit, Previous Reading Value, Previous Total Reading, Previous Reading Date, Reading Type, Reading Before Reset, Reading After Reset [fResetMeasurementParameter.vb:514-563; EAM.EARPFillValues:21-39].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fResetMeasurementParameter.vb:224-257].
+actions:
+  New: Starts a fresh document [fResetMeasurementParameter.vb:188-195; fResetMeasurementParameter.vb:258-272].
+  Save: Validates and saves the document and its parameter rows in one transaction [fResetMeasurementParameter.vb:566-658].
+  Search: Opens the standard search window of this company and year [fResetMeasurementParameter.vb:197-222].
+  Delete: Deletes the open document after the standard confirmation [fResetMeasurementParameter.vb:72-104].
+validations:
+- Authorized ResetMeasurementParameter can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Reference Object.
+- Select valid <Reference Object name>.
+- Reset Date can't be greater than Document Date.
+- Select valid Reading Type in row <n>.
+- Enter Reading Before Reset in row <n>.
+- Enter Reading After Reset in row <n>.
+- Unable to save,some entry exists for parameter <parameter> of selected object after measurement date.
+- Unable to save,some unauthorized entry exist against selected <Reference Object name>.
+- Select atleast one Measurement Detail.
+- 'Invalid Time : minute should be less than 60 in row <n>.'
+- Document No. <number> saved successfully.
+- Unable to save,some unauthorized entry exist for selected object.
+- Meter Reading Date can't be less than Opening Reading Date (<date>).
+manages:
+- reset-measurement-parameter
+uses_concepts:
+- equipment-master
+- functional-location
+- meter-reading
+- tripsheet
+method_notes:
+  Delete: Deletes the record through EAM.EARPDelete.
+  FillValues: Fills the lookup lists through EAM.EARPFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EARPFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EARPLoadData.
+  Open: Searches records through EAM.EARPSearchData.
+  Save: Saves the record through EAM.EARPSave.
+  SaveMeasurementDetails: Saves the record through EAM.EARPSaveParaDetail.
+  ValidateForm: Validates the entry through EAM.EARPValidate.

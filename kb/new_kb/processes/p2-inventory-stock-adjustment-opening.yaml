@@ -1,0 +1,18 @@
+key: p2-inventory-stock-adjustment-opening
+name: 'Inventory: Stock adjustment & opening (Phase 2)'
+module: MM
+status: active
+summary: Phase 2 screens of the stock adjustment & opening group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 2 forms that the KB validation plan puts in 'Stock adjustment & opening' (Inventory). The steps follow the plan order, not a verified business sequence: Stock Adjustment, Value Stock Adjustment.
+steps:
+- order: 1
+  name: Record Stock Adjustment
+  form: fStockAdjustment
+- order: 2
+  name: Record Value Stock Adjustment
+  form: fStockValueAdjustment
+concepts:
+- stock-adjustment
+- value-stock-adjustment

@@ -1,0 +1,16 @@
+usercontrol: uDepreciation
+title: uDepreciation control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded user control uDepreciation used by fAssetDisposal, fDepreciation.
+purpose: |
+  User control uDepreciation embedded in fAssetDisposal, fDepreciation. Its stored procedures: FixedAsset.AMADFillValues, FixedAsset.AMADFillValuesDependent, FixedAsset.DepreciationSaveAssetTagDetail.
+functional_description: |
+  Embedded in: fAssetDisposal, fDepreciation.
+method_notes:
+  FillSummary: Fills the lookup lists through FixedAsset.AMADFillValuesDependent.
+  FillValues: Fills the lookup lists through FixedAsset.AMADFillValues.
+  FillValuesDependent: Fills the lookup lists through FixedAsset.AMADFillValuesDependent.
+  SaveDepreciationAssetTagDetail: Saves the record through FixedAsset.DepreciationSaveAssetTagDetail.

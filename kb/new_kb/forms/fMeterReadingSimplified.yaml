@@ -1,0 +1,65 @@
+form: fMeterReadingSimplified
+title: Meter Reading Simplified
+module: PM
+kind: transaction
+summary: The Meter Reading Simplified screen is a fast, one-grid way to record the daily odometer and hour-meter readings
+  of all vehicles or machines at a location.
+purpose: |
+  What it is: A quick-entry document that records one reading of the Milo meter and one of the Hr meter per equipment, for many equipment at one location, with the day's Trip/Load and Driver [fMeterReadingSimplified.vb:578-678; fMeterReadingSimplified.vb:679-759]. When it applies: At the end of a shift or day when a site records the meters of its whole fleet. Business outcome: Fleet readings are captured in one pass instead of one document per equipment, while still passing the same date-order and duplicate checks (BR-08; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "MeterReadingSimplified" with the document control (number, date, status, division), a header group and one equipment grid [fMeterReadingSimplified.designer.vb:225].
+  - Document Number, Date, Status and Division Control: The shared document control [fMeterReadingSimplified.vb:111; fMeterReadingSimplified.vb:599-619].
+  - Location Name Field: Dropdown "Location Name" [fMeterReadingSimplified.designer.vb:65].
+  - Measurement Taken By Field: Mandatory dropdown "Measurement Taken By" listing names used earlier [fMeterReadingSimplified.designer.vb:84; fMeterReadingSimplified.vb:46; fMeterReadingSimplified.vb:362-366].
+  - Shift Field: Optional dropdown "Shift" [fMeterReadingSimplified.designer.vb:103; fMeterReadingSimplified.vb:634-638].
+  - Measurement Date Field: Date and time picker "Measurement Date" [fMeterReadingSimplified.designer.vb:112].
+  - Reading Type Field: Mandatory dropdown "Reading Type" [fMeterReadingSimplified.designer.vb:131; fMeterReadingSimplified.vb:46].
+  - Remarks Field: Optional text box "Remarks" trimmed on save [fMeterReadingSimplified.designer.vb:168; fMeterReadingSimplified.vb:640].
+  - Equipment Detail Grid: One row per equipment of the location: Select, Equipment Name, Alias, Prev Reading Date (Milo), Prev Reading Date (Hr), Prev Reading (Milo), Prev Reading (Hr), Reading (Milo), Reading (Hr), Prev.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fMeterReadingSimplified.vb:230-262].
+actions:
+  New: Starts a fresh document [fMeterReadingSimplified.vb:188-195; fMeterReadingSimplified.vb:264-281].
+  Save: Validates and saves the document and its readings in one transaction [fMeterReadingSimplified.vb:578-678].
+  Search: Opens the standard search window of this company, year and user, restricted to multiple-object readings [fMeterReadingSimplified.vb:197-228].
+  Delete: Deletes the open document after the standard confirmation [fMeterReadingSimplified.vb:52-83].
+validations:
+- Authorized MeterReadingSimplified can't be updated.
+- Select valid Measurement Taken By.
+- Select valid Reading Type.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Entry already exists on same Measurement Date.
+- Unable to save, some unauthorized entry exists for selected equipments.
+- Unable to save, some entry exists after selected date.
+- Select at least one row.
+- Enter Reading (Milo) in row <n>.
+- Reading (Milo) can't be less then Prev Reading (Milo) in row <n>.
+- Enter Reading (Hr) in row <n>.
+- Reading (Hr) can't be less then Prev Reading (Hr) in row <n>.
+- Enter Trip/Load in row <n>.
+- Select Driver in row <n>.
+- 'Invalid Time : minute should be less than 60 in row <n>.'
+- Measurement date is not same as document date, do you want to change it?
+- Document No. <number> saved successfully.
+manages:
+- meter-reading-simplified
+uses_concepts:
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-schedule
+- maintenance-schedule-occurrence
+- meter-reading
+- tripsheet
+- utalization-description
+method_notes:
+  Delete: Deletes the record through EAM.EAMRDelete.
+  FillEquipment: Fills the lookup lists through EAM.MTRRFillValuesDependent.
+  FillValues: Fills the lookup lists through EAM.MTRRFillValues.
+  LoadData: Loads the selected record through EAM.EAMRLoadData.
+  Open: Searches records through EAM.EAMRSearchData.
+  Save: Saves the record through EAM.EAMRSave.
+  ValidateEquipmentDetail: Validates the entry through EAM.EAMRValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through EAM.MTRRFillValues.

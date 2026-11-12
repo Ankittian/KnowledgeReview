@@ -1,0 +1,54 @@
+form: fVTPLDrCrNote
+title: VTPL Debit Credit Note
+module: FI
+kind: transaction
+summary: This screen is a variant of the [VTPL Invoices](Functional_Doc_fVTPLInvoices.md) screen, built the same way as the
+  [VTPL Sales Return](Functional_Doc_fVTPLSalesReturn.md).
+purpose: |
+  What it is: A numbered copy of one Authorized Tax Invoice debit or credit note with its own IRN, acknowledgement, voucher and GST posting. [fVTPLDrCrNote.vb:510-690; Sales.VSEISave:87-162] When it applies: For companies where the e-invoice and GST output of Tax Invoice notes must come from this copy; such companies are excluded from the IRN check of the base note. [Finance.FIDCValidate:35-38] Business outcome: E-invoice, GST and accounts come from a controlled copy whose amounts equal the base note.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Header with number, status, date and division, and tabs General Detail, Tax Detail, Finance Posting and GST Posting.
+  - Header Fields: From Date, To Date and Show; Ref.
+  - Item Detail Grid: Copied lines with unit, quantity, rate, basic and net amount; Basic = Qty x Rate; rows cannot be deleted (BR-13).
+  - Shortcuts: Ctrl+Alt+G re-creates GST posting after confirmation; Ctrl+Alt+V shows MSG-15; a narration shortcut copies update statements to the clipboard.
+actions:
+  Save, Search, New and Delete: Save, Search and Delete as the VTPL family; E-mail, Export, Preview and Print are empty.
+validations:
+- Authorized VTPL Invoices can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Ref. Doucment No.
+- Document No. should be same as Ref. Document No.
+- Document Date should be same as Ref. Document Date.
+- Selected Tax Invoices have different Customer Locations. Debit/Credit Note cannot be created for Tax Invoices with different
+  Customer Locations.
+- Select valid Unit in row <n>.
+- Quantity can not be empty or 0 in row <n>.
+- Rate can not be empty or 0 in row <n>.
+- Basic Amount should be equal to Ref. Doucment Basic Amt. in row <n>.
+- Net Amount should be equal to Ref. Document Net Amt. in row <n>.
+- Not found in Lot
+- GST Voucher Posting is not found
+- Document No. <number> saved successfully.
+- Facility of REVOUCHER Entry is unavaliable.Please do it manually.
+manages:
+- vtpl-debit-credit-note
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- debit-credit-note
+- reverse-voucher
+method_notes:
+  Delete: Deletes the record through Sales.VSEIDelete.
+  FillValues: Fills the lookup lists through Sales.VSEIFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.VSEIFillValuesDependent.
+  LoadData: Loads the selected record through Sales.VSEILoadData.
+  Open: Searches records through Sales.VSEISearchData.
+  Save: Saves the record through Finance.VoucherSaveChildDetail, Inventory.VoucherVsLotValidation, Sales.VSEISave.
+  SaveItemDetail: Saves the record through Sales.VSEISaveItemDetail.
+  SaveItemTaxDetail: Saves the record through Sales.VSEISaveItemTaxDetail.
+  SaveTaxDetail: Saves the record through Sales.VSEISaveTaxDetail.
+  ValidateForm: Validates the entry through Sales.VSEIValidate.

@@ -1,0 +1,35 @@
+form: fSOChangeCustomStatus
+title: Sales Order Change Custom Status
+module: SD
+kind: transaction
+summary: The Sales Order Change Custom Status screen lets sales staff record a new company-defined ("custom") status against
+  open sales order items in bulk.
+purpose: |
+  What it is: A dated follow-up log of business-defined statuses (for example production or customer stages) attached to individual sales order item lines. When it applies: Whenever sales or order-desk staff review open orders and need to record where each line stands. Business outcome: Order progress is tracked line by line with a remark and date, beyond the system's own order status, and is visible in reports.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Top panel with "Entry Date", "From Date", "To Date" and the "Show" button.
+  - Entry Date Field: Date picker, format dd/MM/yyyy; no mandatory marker and no range check.
+  - From Date and To Date Fields: Two date pickers, format dd/MM/yyyy.
+  - Show Button: Button "Show".
+  - Sales Order Item Grid: Grid listing one row per open sales order item line.
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not offered; only New and Save are enabled on this screen, and the routines behind the others are empty or commented out.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+validations:
+- Select atleast one Item.
+- Select valid Current Status in row <n>.
+- Enter Current Remark in row <n>.
+manages:
+- sales-order-change-custom-status
+uses_concepts:
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-order-custom-status
+- sales-order-status-category
+method_notes:
+  FillValues: Fills the lookup lists through Sales.SOFUFillValues.
+  Save: Saves the record through Sales.SOFUSave.
+  ubtnShow_Click: Fills the lookup lists through Sales.SOFUFillValues.

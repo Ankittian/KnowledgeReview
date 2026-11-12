@@ -1,0 +1,47 @@
+form: fPaymentPlanPartialCancellation
+title: Payment Plan Partial Cancellation
+module: FI
+kind: transaction
+summary: The Payment Plan Partial Cancellation screen lets Finance withdraw individual reference lines from existing payment
+  plans without cancelling the whole plan.
+purpose: |
+  What it is: A controlled removal of selected lines from payment plans before any payment is made [Finance.PPPCSaveReferenceDetail:26-86; Finance.PaymentPlanDetails:17-33]. When it applies: When a planned payment must be withdrawn but the rest of the plan stays. Business outcome: References and documents are released and the unpaid balance is restored, without deleting the whole plan (BR-03; BR-04; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header group with Payee Type, Payee Name, Payment Plan No., Date and a Show button above the plan line grid [fPaymentPlanPartialCancellation.Designer.vb:99-145].
+  - Payee Type Field: Optional dropdown "Payee Type" [fPaymentPlanPartialCancellation.vb:42; fPaymentPlanPartialCancellation.Designer.vb:130].
+  - Payee Name Field: Optional dropdown "Payee Name"; a change reloads the Payment Plan list [fPaymentPlanPartialCancellation.vb:323-328; fPaymentPlanPartialCancellation.Designer.vb:149].
+  - Payment Plan No. Field: Optional dropdown "Payment Plan No." listing plans of the company that have no paid line at all [fPaymentPlanPartialCancellation.vb:48; Finance.PPPCFillValuesPaymentPlan:22-29].
+  - Date Field: Read-only text "Date" showing the date of the chosen plan [fPaymentPlanPartialCancellation.Designer.vb:62-64; fPaymentPlanPartialCancellation.vb:330-335].
+  - Show Button: Button "Show" [fPaymentPlanPartialCancellation.Designer.vb:111].
+  - Plan Line Grid: Columns: tick box (no caption), Unit Name (hidden outside head office), Finance Book (captioned "Profit Center" when the company treats finance books as profit centers), Payment Plan No., Payment Plan Date, Payee Type, Payee Name, Payee Location, Source Document, Reference No., Reference Date, Due Date, Reference Amount, Passing Amount; two hidden keys.
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Delete, Load and Open do nothing and the other handlers are empty [fPaymentPlanPartialCancellation.vb:19-21; fPaymentPlanPartialCancellation.vb:59-61; fPaymentPlanPartialCancellation.vb:72-109].
+actions:
+  New: Resets the screen through the main window [fPaymentPlanPartialCancellation.vb:63-70; fPaymentPlanPartialCancellation.vb:110-116].
+  Save: Cancels the ticked lines in one transaction [fPaymentPlanPartialCancellation.vb:259-306].
+validations:
+- Select atleast one Reference.
+- Either Select valid Payee Name/ Payment Plan No.
+- Contact your vendor,Reference getting -ve
+manages:
+- payment-plan-partial-cancellation
+uses_concepts:
+- account-opening
+- asset-disposal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  FillValues: Fills the lookup lists through Finance.PPPCFillValues.
+  FillValuesOnShow: Fills the lookup lists through Finance.PPPCFillValuesOnShow.
+  FillValuesPayeeType: Fills the lookup lists through Finance.FIPPFillValuesPayeeType.
+  FillValuesPaymentPlan: Fills the lookup lists through Finance.PPPCFillValuesPaymentPlan.
+  Save: Saves the record through Finance.PPPCSaveReferenceDetail.

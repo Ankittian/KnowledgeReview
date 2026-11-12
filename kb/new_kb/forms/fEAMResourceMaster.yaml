@@ -1,0 +1,58 @@
+form: fEAMResourceMaster
+title: EAM Resource Master
+module: MD
+kind: master
+summary: The EAM Resource Master screen defines the resources that maintenance work can draw on, such as a crew or a class
+  of workers.
+purpose: |
+  What it is: A master record that describes a maintenance resource: its classification, head-count, hourly rate, notification contact, skills, employees and the company or division units that may use it [fEAMResourceMaster.vb:465-541; masterdata.EMRMSave:34-77]. When it applies: When a plant sets up a crew or labour class that is later planned or logged against equipment and work. Business outcome: Maintenance planning and work logging use a controlled list of resources with known capacity and skills.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general-detail box (Code, Resource Name, Resource Group, Resource Type, Resource Nature, No.
+  - Code Field: A read-only text box of up to 6 characters that cannot be tabbed into [fEAMResourceMaster.Designer.vb:156-161].
+  - Resource Name Field: A mandatory text box, up to 50 characters; leading and trailing spaces are removed [fEAMResourceMaster.vb:46; fEAMResourceMaster.Designer.vb:176; fEAMResourceMaster.vb:289; fEAMResourceMaster.vb:481].
+  - Resource Group Field: A mandatory drop-down [fEAMResourceMaster.vb:46; fEAMResourceMaster.vb:117].
+  - Resource Type Field: A mandatory drop-down [fEAMResourceMaster.vb:46; fEAMResourceMaster.vb:118].
+  - Resource Nature Field: A mandatory drop-down [fEAMResourceMaster.vb:46; fEAMResourceMaster.vb:120].
+  - No. Of Resources Field: A mandatory whole-number box of up to 4 digits [fEAMResourceMaster.vb:46; fEAMResourceMaster.vb:105; fEAMResourceMaster.Designer.vb:251].
+  - Rate Per Hr Field: An optional decimal box with two decimals, up to 15 characters [fEAMResourceMaster.vb:106; fEAMResourceMaster.Designer.vb:312].
+  - Notification User Field: An optional drop-down of active users, plus the user already on the open resource [fEAMResourceMaster.vb:126; masterdata.EMRMFillValues:107-111].
+  - Inactive Field: A disabled tick box labelled "Inactive" [fEAMResourceMaster.Designer.vb:267-272].
+  - Skill Detail Grid: A grid with the columns Skill Name (drop-down) and Code (read-only), and a Skill Group helper drop-down [fEAMResourceMaster.vb:434-447; fEAMResourceMaster.vb:121].
+  - Employee Detail Grid: A grid with the columns Employee Name (drop-down) and Emp Code (read-only) [fEAMResourceMaster.vb:449-463; fEAMResourceMaster.vb:621-642].
+  - Organisation Detail Grid: A grid with the columns Select (tick, off by default), Company and Division; company and division numbers are hidden [fEAMResourceMaster.vb:736-746].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fEAMResourceMaster.vb:226-259].
+actions:
+  New: The toolbar action that asks the main window to start a blank record, places the cursor in Resource Name and selects
+    the Skill Detail tab [fEAMResourceMaster.vb:185-197].
+  Save: The toolbar action that validates and stores the resource with its three grids [fEAMResourceMaster.vb:465-541].
+  Search: The toolbar action that opens a search dialog listing resources with Code, Resource Name, Resource Group, Resource
+    Type, Resource Nature, No.
+  Delete: The toolbar action that removes the open resource [fEAMResourceMaster.vb:54-91].
+validations:
+- Enter Resource Name.
+- Select valid Resource Group.
+- Select valid Resource Type.
+- Select valid Resource Nature.
+- Enter No. Of Resources.
+- Duplicate Resource Name not allowed.
+- Duplicate Skill Name not allowed.
+- Duplicate Employee Name not allowed.
+- Select atleast one Company/Division.
+- Employee detail should not exceed No. of resources.
+manages:
+- eam-resource-master
+uses_concepts:
+- company
+- skill-master
+method_notes:
+  Delete: Deletes the record through masterdata.EMRMDelete.
+  FillValues: Fills the lookup lists through masterdata.EMRMFillValues.
+  LoadData: Loads the selected record through masterdata.EMRMLoadData.
+  Open: Searches records through masterdata.EMRMSearchData.
+  Save: Saves the record through masterdata.EMRMSave.
+  SaveDivision: Saves the record through masterdata.EMRMSaveDivisionDetails.
+  SaveEmployeeDetail: Saves the record through masterdata.EMRMSaveEmployeeDetail.
+  SaveSkillDetail: Saves the record through masterdata.EMRMSaveSkillDetail.
+  ValidateForm: Validates the entry through masterdata.EMRMValidate.
+  ucmbSkillGroup_ValueChanged: Fills the lookup lists through masterdata.EMRMFillValuesDependent.

@@ -1,0 +1,34 @@
+form: fAssetNumberStructure
+title: Asset Number Structure
+module: MD
+kind: master
+summary: The Asset Number Structure screen defines, for each corporate depreciation book, how asset numbers are built.
+purpose: |
+  What it is: A setting that records the numbering basis, padding and optional start number of asset numbers for one depreciation book [fAssetNumberStructure.vb:222-274; FixedAsset.AMANSaveMain:22-57]. When it applies: When a corporate depreciation book is introduced, or when its asset numbering basis is changed. Business outcome: Asset numbers follow one declared rule per book instead of being set ad hoc.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single group box holding the four fields [fAssetNumberStructure.designer.vb:108-121].
+  - Depreciation Book Field: A mandatory drop-down listing book names [fAssetNumberStructure.vb:11; fAssetNumberStructure.vb:71].
+  - Padding Field: A mandatory text box accepting one numeric character [fAssetNumberStructure.vb:58-59].
+  - Asset Number Based On Field: A mandatory drop-down with Class Wise, Asset Subclass, Asset Group and Depreciation Book [fAssetNumberStructure.vb:72].
+  - Asset Number Starts From Field: A numeric text box, up to 4 digits, read-only until the basis is Depreciation Book [fAssetNumberStructure.vb:60-61; fAssetNumberStructure.vb:65-67; fAssetNumberStructure.vb:276-285].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fAssetNumberStructure.vb:140-172].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fAssetNumberStructure.vb:104-111].
+  Save: The toolbar action that validates and stores the structure [fAssetNumberStructure.vb:222-274].
+  Search: The toolbar action that opens a search dialog listing Depreciation Book, Padding, Asset Number Based On, Asset Number
+    Starts From, Created By and Created Date [FixedAsset.AMANSearchData:17-31].
+  Delete: The toolbar action that removes the open structure [fAssetNumberStructure.vb:17-42].
+validations:
+- Select valid Depreciation Book.
+- Enter Padding.
+- Select valid Asset Number Based On.
+- Enter Asset Number Starts From.
+manages:
+- asset-number-structure
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMANDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMANFillValues.
+  LoadData: Loads the selected record through FixedAsset.AMANLoadData.
+  Open: Searches records through FixedAsset.AMANSearchData.
+  Save: Saves the record through FixedAsset.AMANSaveMain.

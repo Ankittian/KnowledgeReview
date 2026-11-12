@@ -1,0 +1,22 @@
+key: p2-purchase-purchase-order
+name: 'Purchase: Purchase order (Phase 2)'
+module: MM
+status: active
+summary: Phase 2 screens of the purchase order group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 2 forms that the KB validation plan puts in 'Purchase order' (Purchase). The steps follow the plan order, not a verified business sequence: Purchase Order Amendment, Purchase Order Follow UP, Supplier Advance Request.
+steps:
+- order: 1
+  name: Record Purchase Order Amendment
+  form: fPOAmendment
+- order: 2
+  name: Record Purchase Order Follow UP
+  form: fPOFollowUp
+- order: 3
+  name: Record Supplier Advance Request
+  form: fAdvanceRequest
+concepts:
+- purchase-order-amendment
+- purchase-order-follow-up
+- supplier-advance-request

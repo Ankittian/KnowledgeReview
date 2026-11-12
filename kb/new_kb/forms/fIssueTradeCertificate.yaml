@@ -1,0 +1,44 @@
+form: fIssueTradeCertificate
+title: Issue Trade Certificate
+module: SD
+kind: transaction
+summary: The Issue Trade Certificate screen records that a trade certificate has been issued to a customer against a sales
+  invoice.
+purpose: |
+  What it is: A dated, numbered issue of a trade certificate against an invoice. [fIssueTradeCertificate.vb:383-405] When it applies: When a customer is given a trade certificate for an invoice, including repeat issues for the same invoice. [Sales.SITCFillValuesDependent:31] Business outcome: Keeps a history of which certificate was issued, when, and in what sequence for each invoice.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: One data entry area with the issue fields and read-only invoice details.
+  - Issue Date Field: A date picker shown as dd/MM/yyyy.
+  - Source Document Field: Mandatory list "Tax Invoice" / "Commercial Invoice".
+  - Invoice No. Field: Mandatory list showing Invoice No, Invoice Date, Customer Name and Location.
+  - Invoice Date, Customer Name, Location, Invoice Amount, Receipt Amount and Issue No. Fields: Read-only displays; amounts shown with two decimals.
+  - Trade Certificate No. Field: Mandatory list of valid certificates showing Trade Certificate and Code.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Opens a blank record.
+  Save: Validates and saves the issue.
+  Search: Search dialog listing Issue Date, Source Document, Invoice No., Issue No., Trade Certificate, Created By and Modified
+    By for the company, newest first.
+  Delete: Deletes the loaded issue after the standard confirmation (MSG-08).
+validations:
+- Select valid Source Document.
+- Select valid Invoice No.
+- Select valid Trade Certificate No.
+- Issue Date can't be less than Invoice Date.
+- Issue Date can't be less then Last Certificate Issue Date.
+- Unable to update,next issue certificate exists.
+- Unable to delete,next issue certificate exists.
+- Unable to delete,next issue cerificate exists.
+manages:
+- issue-trade-certificate
+uses_concepts:
+- accounting-voucher
+- trade-certificate-master
+method_notes:
+  Delete: Deletes the record through Sales.SITCDelete.
+  FillValues: Fills the lookup lists through Sales.SITCFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SITCFillValuesDependent.
+  LoadData: Loads the selected record through Sales.SITCLoadData.
+  Open: Searches records through Sales.SITCSearchData.
+  Save: Saves the record through Sales.SITCSave.

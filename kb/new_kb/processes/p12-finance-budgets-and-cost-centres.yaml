@@ -1,0 +1,26 @@
+key: p12-finance-budgets-and-cost-centres
+name: 'Finance: Budgets and cost centres (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the budgets and cost centres group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Budgets and cost centres' (Finance). The steps follow the plan order, not a verified business sequence: Expense Entry, Expense Approval, Expense Advance, Expense Policy.
+steps:
+- order: 1
+  name: Record Expense Entry
+  form: fExpenseEntry
+- order: 2
+  name: Record Expense Approval
+  form: fExpenseApproval
+- order: 3
+  name: Record Expense Advance
+  form: fExpenseAdvance
+- order: 4
+  name: Record Expense Policy
+  form: fExpensePolicy
+concepts:
+- expense-entry
+- expense-approval
+- expense-advance
+- expense-policy

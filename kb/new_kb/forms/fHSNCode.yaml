@@ -1,0 +1,43 @@
+form: fHSNCode
+title: HSN SAC Master
+module: MM
+kind: master
+users:
+- Tax administrator (inferred)
+summary: The HSN SAC Master screen maintains HSN codes for goods and SAC codes for services, as used under GST.
+purpose: |
+  What it is: The list of tax classification codes with default GST rates and the items assigned to them. When it applies: When a new code is needed, rates change, or items are classified. Business outcome: Correct GST classification and rate defaults per item (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields at the top and an item grid below.
+  - HSN Type Field: Dropdown with Goods and Service; required by validation though not marked mandatory (BR-01).
+  - Code Field: Mandatory text box, up to 8 characters (BR-02, BR-03).
+  - Chapter Field: Optional text box, up to 2 characters (BR-04).
+  - Description Field: Optional text box, up to 500 characters.
+  - CGST Rate, SGST Rate, IGST Rate, UTGST Rate Fields: Optional dropdowns of tax charges (BR-05).
+  - Inactive Field: Checkbox.
+  - Item Detail Grid: Select checkbox and read-only SubGroup, Item Code, Item Name; item identifier hidden.
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the code and its items.
+  Search: Standard search with Code, HSN Type, Description, Items (item list followed by " ...
+  Delete: Deletes the loaded code after confirmation (MSG-07).
+validations:
+- Select HSN Type.
+- Enter HSN SAC Code.
+- Duplicate HSN & SAC Code is not allowed
+manages:
+- hsn-sac-code
+uses_concepts:
+- material-item
+- material-sub-group
+- tdc-charge
+method_notes:
+  Delete: Deletes the record through masterdata.HSNSDelete.
+  FillValues: Fills the lookup lists through masterdata.HSNSFillValues.
+  LoadData: Loads the selected record through masterdata.HSNSLoadData.
+  Open: Searches records through masterdata.HSNSSearchData.
+  Save: Saves the record through masterdata.HSNSSave.
+  SaveCompetitorDetails: Saves the record through masterdata.HSNSSaveDetail.
+  ValidateGeneralDetail: Validates the entry through masterdata.HSNSValidate.

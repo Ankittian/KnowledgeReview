@@ -1,0 +1,67 @@
+form: fSpecification
+title: Specification
+module: MM
+kind: master
+users:
+- Quality controller (inferred)
+summary: 'The Specification screen maintains quality specifications: named sets of quality parameters with expected values
+  or ranges, applied to items, item sub groups or grades, and optionally restricted to particular customers or suppliers.'
+purpose: |
+  What it is: The quality standard that material must meet, by item, sub group or grade, and by customer or supplier where relevant. When it applies: When a product standard or customer requirement is agreed. Business outcome: Inspection compares results against one agreed standard.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Window titled "Specification" with a header and tabs "Quality Parameter Detail", "Supplier/ Customer Detail" (renamed "Customer" or "Supplier") and "Item Detail".
+  - Code Field: Read-only text box.
+  - Specification Field: Text box, mandatory, maximum 100 characters (BR-01).
+  - Specification Type Field: Dropdown, mandatory (BR-02).
+  - Item / Item Subgroup / Grade Option: Option set; Item is selected on New (BR-06).
+  - Quality Parameter Detail Grid: Columns Code and Quality Parameter (lists, kept in sync), QP Type and Unit (read-only), Value, Range (button) (BR-03, BR-04).
+  - Range Editor: Pop-up with Lower Limit and Upper Limit (maximum 14 characters, decimals per parameter), Ok and Cancel.
+  - Customer / Supplier Grid: Columns Select, Code, Name, Location; only Select editable (BR-05).
+  - Item Detail Grid: Select plus read-only Item Code, Item Description, Unit, Subgroup, Group, Category, Grade Code, Grade, Grade Category, shown per level (BR-06).
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard actions.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open with columns Code, Specification, Specification Type, Created By, Authorized By.
+  Delete: Standard toolbar Delete.
+validations:
+- Enter Specification.
+- Select valid Specification Type.
+- Duplicate specification not allowed.
+- Select atleast one Quality Parameter.
+- Duplicate code and qualitiy parameter is not allowed.
+- Enter lower limit.
+- Enter upper limit.
+- Select atleast one customer.
+- Select atleast one supplier.
+- Select atleast one item detail.
+- Select atleast one item subgroup.
+- 'Specification already defined for '
+- ' items.'
+- ' vendor and items.'
+- ' vendor and subgroups.'
+- ' vendor and grades.'
+manages:
+- quality-specification
+uses_concepts:
+- company
+- material-category
+- material-group
+- material-item
+- material-sub-group
+- quality-parameter
+- unit-of-measure
+- vendor
+- vendor-location
+method_notes:
+  Delete: Deletes the record through masterdata.QMSPDelete.
+  FillValues: Fills the lookup lists through masterdata.QMSPFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.QMSPFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.QMSPLoadData.
+  Open: Searches records through masterdata.QMSPSearchData.
+  Save: Saves the record through masterdata.QMSPSave.
+  SaveItemDetail: Saves the record through masterdata.QMSPSaveItemDetail.
+  SaveQualityParameterDetail: Saves the record through masterdata.QMSPSaveQualityParameterDetail.
+  SaveVendorDetail: Saves the record through masterdata.QMSPSaveVendorDetail.
+  ValidateForm: Validates the entry through masterdata.QMSPValidate.

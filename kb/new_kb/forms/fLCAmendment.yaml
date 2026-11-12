@@ -1,0 +1,73 @@
+form: fLCAmendment
+title: Letter of Credit Amendment
+module: FI
+kind: transaction
+summary: The Letter of Credit Amendment screen records a numbered revision of an Authorized letter of credit (LC).
+purpose: |
+  What it is: A revision record of an LC with its own number, date, status, documents, notes and vouchers [fLCAmendment.vb:625-823; Finance.FILCSaveMain:201-251]. When it applies: When the bank and the party agree to change an Authorized LC. Business outcome: The LC keeps a history of changes, and only the increase in amount or charges is posted.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "LC Amendment" with LC No., LC Date, Finance Book, Amendment No., Document Date and Document Status at the top, and the same tabs as the LC screen [fLCAmendment.designer.vb:1456; fLCAmendment.designer.vb:1338-1394].
+  - LC No. Field: A mandatory drop-down listing Document No.
+  - LC Date, Finance Book and Amendment No. Fields: Read-only displays [fLCAmendment.vb:1280-1284].
+  - Document Date Field: A date picker for the amendment date [fLCAmendment.vb:1073-1079].
+  - Document Status Field: A mandatory drop-down [fLCAmendment.vb:20; fLCAmendment.vb:365].
+  - Locked LC Fields: Opening Bank Name and Country, Financial Doc.
+  - Editable LC Fields: Last Date of Shipment, Expiry Date, LC Amount and Remarks stay editable; LC Amount keeps its 12-character limit and 2 decimals; Validity, the calculated amounts and LC Status are read-only [fLCAmendment.vb:128-129; fLCAmendment.designer.vb:522; fLCAmendment.designer.vb:605; fLCAmendment.designer.vb:738].
+  - Document Detail Grid, Notes and Custom Fields: The same grid, notes control and custom fields as on the LC screen, loaded from the chosen LC and editable [fLCAmendment.vb:1254-1257; fLCAmendment.vb:582-601].
+  - LC Payable Posting and Other Charges Posting Tabs: The same posting controls as on the LC screen [fLCAmendment.vb:1287-1454].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fLCAmendment.vb:296-328].
+actions:
+  New: Asks the main window for a blank record and moves focus to LC No.
+  Save: Checks back-dating, validates, asks confirmation and stores the amendment [fLCAmendment.vb:625-823].
+  Search: Opens the shared search dialog listing amendments with Document No., Amendment Date, Amendment No., Finance Book,
+    Opening Bank Name, Financial Doc.
+  Delete: Deletes the open amendment after confirmation [fLCAmendment.vb:78-107].
+validations:
+- Select valid LC No.
+- Document Date can't be less than LC Date.
+- Select valid Document Status.
+- Authorized LC Amendment can't be updated.
+- Authorized data can't be updated.
+- Select valid Opening Bank Name.
+- Select valid Opening Bank Country.
+- Enter Financial Doc. No..
+- Select valid Nature.
+- Select valid Trade Type.
+- Select valid LC Category.
+- Select valid LC Type.
+- Select valid Location.
+- Select valid Due Date Based On.
+- Enter LC Amount.
+- Select valid Negotiating and Discounting Bearer.
+- Usance Period can't be empty or 0.
+- Expiry Date can't be less than Last Date of Shipment.
+- Validity Day(s) can't be less than 0.
+- Can't be deleted as above amendment exists.
+- Select valid Customer/ Supplier Name.
+- Copies/ Originals can't be empty or 0 in row <n>.
+- Document No. <number> saved successfully.
+- Supplier Pre Payment Account is not set against this Supplier.
+- Customer Pre Payment Account is not set against this Customer.
+- Bank Limit is not created against this Opening Bank Name.
+- Account Detail is missing.
+- Select valid Account Name in row <n>.
+- Finance Book is closed for this Document Date.
+manages:
+- letter-of-credit-amendment
+uses_concepts:
+- bank-limit
+- company
+- letter-of-credit
+- order-mapping
+method_notes:
+  Delete: Deletes the record through Finance.FILCDelete.
+  FillValues: Fills the lookup lists through Finance.FILCFillValues.
+  FillValuesBank: Fills the lookup lists through Finance.FILCFillValuesBank.
+  FillValuesDependent: Fills the lookup lists through Finance.FILCLoadData.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FILCLoadData.
+  Open: Searches records through Finance.FILCSearchData.
+  Save: Saves the record through Finance.FILCSaveMain.
+  SaveCustomFieldDetail: Saves the record through Finance.FILCSaveCustomFieldDetail.
+  SaveDocumentDetail: Saves the record through Finance.FILCSaveDocumentDetail.

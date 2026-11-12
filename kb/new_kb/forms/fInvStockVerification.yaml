@@ -1,0 +1,60 @@
+form: fInvStockVerification
+title: Physical Stock Verification
+module: MM
+kind: transaction
+summary: The Physical Stock Verification screen records a count of physical stock in one warehouse.
+purpose: |
+  What it is: A dated, numbered count document for one warehouse and ownership that compares counted quantities with book quantities, item by item and bin by bin. [fInvStockVerification.vb:561-617; Inventory.IPSVSave:66-103] When it applies: When a warehouse is physically counted and the count must be formally recorded and authorized before any correction is booked. Business outcome: Gives an authorized, auditable count and the difference per item. A later stock adjustment is offered only for authorized counts with a difference. [Inventory.MMSAFillValuesDependent:56-59]
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header area (document number control, Warehouse, OwnerShip, Remar&ks and an Import button), a tab control with General Detail and Custom Field tabs, and a Notes control.
+  - Document Number, Date, Division and Status Control: The shared document control showing the document number, document date, division and status.
+  - Warehouse Field: Mandatory dropdown showing Warehouse and Code.
+  - OwnerShip Field: Mandatory dropdown with Own and Party.
+  - Remar&ks Field: Free text for the document, up to 1,000 characters.
+  - Item Detail Grid: The count grid with the columns Item Code, Item Description, Make, Item Attribute, Unit, Opening Qty., Verification Date, In Qty., Out Qty., As Per System Qty., Actual Qty., Diff Qty.
+  - Opening Qty., In Qty., Out Qty. and Actual Qty. Pop-ups: Pop-up grids showing the bin-wise quantities of the active row: opening, received, issued and counted.
+  - Item Attribute Pop-up: A pop-up with Base Attribute, an Attribute dropdown, a grid of Attribute Name and Attribute Value, and Ok and Cance&l buttons.
+  - Custom Field Tab and Notes: The shared custom field grid for form code IPSV and the shared notes control.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  Import: The &Import button loads rows from an Excel sheet named IPSV with columns Item Code, Item Description, Make, Item
+    Attribute, Unit, Opening Qty., Verification Date, In Qty., Out Qty., As Per System Qty., Actual Qty., Diff Qty., Remarks.
+  New: Opens a blank verification through the main window.
+  Save: Validates the document, asks for the standard save confirmation, then saves the header, all item rows and their bin
+    quantities in one transaction.
+  Search: Opens the search dialog listing verifications of the logged-in company and year with Verification No., Verification
+    Date, Division, Warehouse, Created By, Released By and Authorized By.
+  Delete: Deletes the displayed verification after the standard delete confirmation.
+validations:
+- Authorized Stock Verification can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Warehouse.
+- Select valid OwnerShip.
+- Enter Actual Qty. in row N.
+- BIN Detail Qty. should be equal to X in row N.
+- Select valid Verfication Date in row N.
+- No Item Detail found
+- Verification can't be less than Document Date.
+- Enter Qty. in row N.
+- Select valid Attribute Value in row N
+- Select valid Attribute.
+- Duplicate Item,Make and Attributes not allowed.
+- Select valid warehouse.
+- Select valid Ownership.
+- Your excel should consists of sheet with name IPSV. Do you want to continue?
+- Document No. <number> saved successfully.
+manages:
+- physical-stock-verification
+method_notes:
+  Delete: Deletes the record through Inventory.IPSVDelete.
+  FillValues: Fills the lookup lists through Inventory.IPSVFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IPSVFillValuesDependent.
+  ImportSheet: Runs through Inventory.IPSVgetItemAttribute.
+  ItemAttributeDetail: Runs through Inventory.IPSVFillItemAttributeDetail.
+  ItemStockDetail: Runs through Inventory.IPSVItemStockDetail.
+  LoadData: Loads the selected record through Inventory.IPSVLoadData.
+  Open: Searches records through Inventory.IPSVSearchData.
+  Save: Saves the record through Inventory.IPSVSave.
+  SaveINBIN: Saves the record through Inventory.IPSVSaveINBINDetail.

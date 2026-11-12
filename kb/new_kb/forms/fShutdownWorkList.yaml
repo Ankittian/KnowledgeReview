@@ -1,0 +1,56 @@
+form: fShutdownWorkList
+title: Shutdown Work List
+module: PM
+kind: transaction
+summary: The Shutdown Work List screen defines a reusable plan of the work done when a group of equipment is shut down.
+purpose: |
+  What it is: A master record holding the equipment affected by a shutdown, the planned tasks, and the resources and items needed for each task [fShutdownWorkList.vb:743-805; EAM.ESWLSave:27-44]. When it applies: When maintenance prepares the standard plan for shutting down equipment. Business outcome: One agreed work plan per equipment, ready to be pulled into a maintenance order (BR-03; Section 4).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header and Detail Layout: The header (Code, Inactive, Shutdown Description) sits at upper left with the Equipment grid at upper right; below is a tab control with "Task Detail", "Resource Detail" and "Item Detail" [fShutdownWorkList.designer.vb:170-172; fShutdownWorkList.designer.vb:227-233].
+  - Code Field: A read-only text box labelled "Code" [fShutdownWorkList.designer.vb:142; fShutdownWorkList.designer.vb:154].
+  - Inactive Field: A check box labelled "Inactive", disabled [fShutdownWorkList.designer.vb:158; fShutdownWorkList.designer.vb:163].
+  - Shutdown Description Field: A mandatory text box labelled "Shutdown Description", 300 characters [fShutdownWorkList.vb:99; fShutdownWorkList.designer.vb:192; fShutdownWorkList.designer.vb:205].
+  - Equipment Detail Grid: A grid with Equipment Code and Equipment Description columns; both are dropdowns of the same equipment, and choosing one fills the other [fShutdownWorkList.vb:979-1020; fShutdownWorkList.vb:575-588].
+  - Task Detail Grid: A grid with Task Id (read-only), Task Name (dropdown, up to 300 characters), Code (read-only), Subcontract (check box, default off), Assign To (up to 100 characters), Estimated Duration(Hr), Work Center and Cost Center; the internal row id and task number are hidden [fShutdownWorkList.vb:599-634].
+  - Resource Detail Grid: A grid with Task Id, Task Name, Resource Name, Code (read-only), Quantity (up to 3 decimals) and Estimated Duration(Hr) [fShutdownWorkList.vb:661-682; fShutdownWorkList.vb:163-166].
+  - Item Detail Grid: A grid with Task Id, Task Name, Item Code, Item Description, a button column, Unit (read-only), Make, Technical Grade, Quantity (3 decimals) and Is Replacement (default off) [fShutdownWorkList.vb:709-742; fShutdownWorkList.vb:168-169].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fShutdownWorkList.vb:294-326].
+actions:
+  New: Asks the main window for a new record [fShutdownWorkList.vb:260-267].
+  Save: Validates, asks for confirmation and saves the header and four child lists in one transaction [fShutdownWorkList.vb:743-805].
+  Search: A search list of the company's work lists with Code, Shutdown Description, Equipment(s), Created By, Modified By
+    and Inactive [EAM.ESWLSearchData:17-34; fShutdownWorkList.vb:269-292].
+  Delete: Deletes the opened work list after confirmation [fShutdownWorkList.vb:106-142].
+validations:
+- Enter Shutdown Description.
+- Select atleast one equipment.
+- Estimated Duration(Hr) can't be empty or zero
+- ' in row '
+- Select atleast one Task Name.
+- Quantity can't be empty or zero
+- 'Invalid Time : minute should be less than 60.'
+- Duplicate Task Name not allowed.
+- Duplicate Equipment Description not allowed.
+- Duplicate Item Description not allowed for same Task Id.
+- Duplicate Resource Name not allowed for same Task Id.
+- 'Following duplicate equipment(s) not allowed '
+- Unable to delete,Resource or Item Detail exists for selected Task(s).
+manages:
+- shutdown-work-list
+uses_concepts:
+- eam-resource-master
+- equipment-category
+- equipment-master
+- work-center
+method_notes:
+  Delete: Deletes the record through EAM.ESWLDelete.
+  FillValues: Fills the lookup lists through EAM.ESWLFillValues.
+  LoadData: Loads the selected record through EAM.ESWLLoadData.
+  Open: Searches records through EAM.ESWLSearchData.
+  Save: Saves the record through EAM.ESWLSave.
+  SaveEquipmentDetail: Saves the record through EAM.ESWLSaveEquipmentDetail.
+  SaveItemDetail: Saves the record through EAM.ESWLSaveItemDetail.
+  SaveResourceDetail: Saves the record through EAM.ESWLSaveResourceDetail.
+  SaveTaskDetail: Saves the record through EAM.ESWLSaveTaskDetail.
+  ValidateEquipmentDetail: Validates the entry through EAM.ESWLValidate.

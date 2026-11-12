@@ -1,0 +1,62 @@
+form: fDispatchPlanningAmendment
+title: Dispatch Planning Amendment
+module: SD
+kind: transaction
+summary: The Dispatch Planning Amendment screen is a variant of the [Dispatch Planning](Functional_Doc_fDispatchPlanning.md)
+  screen (window caption "DispatchPlanningAmendment").
+purpose: |
+  What it is: A way to correct an Authorized dispatch planning in place: planned quantities, shipment splits (consignee, location, warehouse, schedule date), the Planning Period and the lines included (BR-01, BR-11). When it applies: After a planning is Authorized and customer, stock or logistics conditions change before the goods are dispatched. Business outcome: The plan stays the single reference for downstream advices, without the user having to create a second planning for the same order line (BR-08, BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header strip, an Order Detail tab and a Custom Field tab.
+  - Dispatch Planning No. Field: A mandatory drop-down listing Authorized plannings by document number and year, with the planning date (BR-01, BR-02).
+  - Amendment Date Field: A date picker, shown as dd/MM/yyyy, defaulting to the system date [fDispatchPlanningAmendment.Designer.vb:348-358].
+  - Planning Period: From Date and To Date Fields: Two date pickers, pre-filled from the planning and editable.
+  - Remarks Field: A text box for the planning remarks.
+  - Sales Organization, Sales Category and Dispatch Planning Date Fields: Read-only displays filled from the chosen planning [fDispatchPlanningAmendment.Designer.vb:324-325; fDispatchPlanningAmendment.Designer.vb:306-307; fDispatchPlanningAmendment.Designer.vb:430-431].
+  - Order Detail Grid: As on the base screen.
+  - Shipment Detail Popup: The popup of consignee, location, attribute, schedule date, warehouse and quantity rows, as on the base screen.
+  - Other Toolbar Actions (Search, Delete, First, Previous, Next, Last, Print, Preview, Export, Email): Not offered.
+actions:
+  New: Opens a fresh amendment screen through the main window [fDispatchPlanningAmendment.vb:231-240].
+  Save: Validates the screen, asks for confirmation, then saves the amendment (BR-13).
+validations:
+- Select valid Dispatch Planning No.
+- Amendment Date can't be less than Dispatch Planning Date.
+- To Date can't be less than Amendment Date.
+- From Date can't be greater than To Date.
+- Amendment date can't be less than sales order date.
+- Select atlease one Order.
+- Can't select more than one Order.
+- Can't select multiple sales order.
+- Quantity can't be empty or zero in row <n>.
+- Quantity. can't be greater than Balance Planning Qty. in row <n>.
+- Quantity. can't be greater than Schedule Qty. in row <n>.
+- Amount can't be empty or 0 in row <n>.
+- Select valid Consignee Location in row <n>.
+- Select Schedule Date in row <n>.
+- Select valid Warehouse in row <n>.
+- Select atleast one Shipment Detail.
+- Total Quantity should be equal to <qty> in row <n>.
+- Total Quantity should be equal to <qty>.
+- Schedule Date can't be less than amendment date in row <n>.
+- Duplicate Consignee Name is not allowed for same Consignee Location and Attribute.
+- 'There exists unauthorized dispatch planning for Sales Order : <no>, Item : <item>, Make : <make>, Attribute : <attribute>'
+- 'There exists Dispatch Advice for Sales Order : <no>, Item : <item>, Make : <make>, Attribute : <attribute>'
+- 'Dispatch Planning quantity can not be less than Dispatch Advice quantity for Sales Order : <no>, Item : <item>, Make :
+  <make>, Attribute : <attribute>'
+- Do you want to continue?
+manages:
+- dispatch-planning-amendment
+uses_concepts:
+- company
+method_notes:
+  CustomValidation: Validates the entry through ODTDispatchPlanning.ProcedureName.
+  FillValues: Fills the lookup lists through Sales.SDDPFillValues.
+  Fillvaluesdependent: Fills the lookup lists through Sales.SDDPFillValuesDependent.
+  Save: Saves the record through Sales.SDPASave.
+  SaveConsigneeDetail: Saves the record through Sales.SDDPSaveConsigneeDetail.
+  SaveCustomFieldDetail: Saves the record through Sales.SDDPSaveCustomFieldDetail.
+  SaveNotesDetail: Saves the record through Sales.SDDPSaveNotesDetail.
+  SaveOrderDetail: Saves the record through Sales.SDDPSaveOrderDetail.
+  ValidateOrderDetail: Validates the entry through Sales.SDDPValidate.

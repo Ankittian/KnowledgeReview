@@ -1,0 +1,99 @@
+form: fVendorAgreement
+title: Material Agreement
+module: MM
+kind: transaction
+summary: The Material Agreement screen records a purchase agreement (rate contract) with a supplier for materials over a fixed
+  agreement period.
+purpose: |
+  What it is: A contract with a supplier location that fixes item rates, quantities or values, commercial terms and taxes for a period. When it applies: When purchasing negotiates a rate contract, either directly or on the basis of an authorized quotation. Business outcome: Purchase orders can be raised against agreed terms within the validity period, and the agreement value is controlled.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Strip: The top strip showing series, Document No., Date, Status and Division, with a Repeat button.
+  - Tabbed Header Area: Six tabs: "General Details", "Shipping and Account Details", "Payment Terms", "Tax Detail", "Terms and Conditions", "Custom Fields".
+  - Source Document Field: Mandatory drop-down ("Direct" / "Quotation"); defaults to "Direct" (BR-01, BR-02).
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Drop-down of quotations (Ref Doc No, Document Date) and a read-only date.
+  - Vendor Name, Location and Contact Person Name Fields: Vendor Name and Location are mandatory drop-downs; Contact Person Name is optional (BR-05).
+  - Agreement Type Field: Mandatory drop-down "Rate", "Quantity", "Amount" (BR-07).
+  - Agreement Value Field: Read-only numeric display, 2 decimals (BR-08).
+  - Agreement Period Group (From Date, To Date): Two mandatory date pickers in dd/MM/yyy format (BR-06).
+  - Recurring, Recurring Frequency, Create PO Without Indent and Allow Alternate Item In PO Checkboxes: Optional checkboxes and a frequency drop-down (BR-21, BR-22, BR-25).
+  - Currency Control: Shared currency selector with conversion rate (BR-32).
+  - Remarks Field: Optional text, up to 1000 characters, trimmed on save.
+  - Freight Type, Freight RateType, Freight Amount and Location Fields: Freight Type is a mandatory drop-down; Freight RateType ("Per Unit", "Fixed", "Per Trip"), Freight Amount (2 decimals, 10 characters) and Location are optional (BR-09).
+  - Pay To Party, Pay To Location and Change Pay To Party: Mandatory drop-downs, disabled until "Change Pay To Party" is ticked (BR-09, BR-10).
+  - Bill To Party, Bill To Location and Change Bill To Party: Mandatory drop-downs, disabled until "Change Bill To Party" is ticked (BR-09, BR-10).
+  - Payment Mode Field: Mandatory drop-down (Cash, DD, NEFT, RTGS, Cheque, LC, and others) (BR-09).
+  - Payment Terms, Tax Detail, Terms and Conditions and Custom Fields Tabs: Shared controls for payment terms, document-level taxes on amount, T&C (editable), and configured custom fields (BR-33).
+  - Item Details Grid: Grid with columns Select, Item Code, item lookup button, Item Description, Make, Chapter Heading, Tech.
+  - Tolerance Popup: Popup with "Tolerance Basis" (mandatory), "Tolerance(-)" and "Tolerance(+)" (3 decimals), "O&K" and "Cance&l" (BR-20).
+  - Tech. Specification Popup: Text popup up to 1000 characters with "Ok" and "Cancel".
+  - Item Schedule Popup: Popup grid (Item Description, Make, From Date, To Date, Qty.) with "Auto Fill", "Ok" and "Cancel" (BR-23, BR-24).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Daily-print report of the agreement (BR-34).
+actions:
+  Import: '"Import" button that reads item lines from an Excel sheet named "PMPC" (BR-29).'
+  New: Clears the screen through the main window.
+  Save: Validates and saves the agreement with all details.
+  Search: Opens the search list of agreements (BR-28).
+  Delete: Deletes the open agreement (BR-26).
+  Navigation: First / Previous / Next / Last are enabled for the screen by the main window.
+validations:
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Ref. Doc. Date.
+- Select valid Vendor Name.
+- Select valid Vendor Location.
+- Select valid Agreement Type.
+- From Date can't be less than Document Date.
+- To Date can't be less than or equal to From Date.
+- Recurring Option can only be selected only if Agreement Type is Quantity.
+- Schedule Date should be between Agreement Period.
+- Select valid Freight Type.
+- Select valid Pay To Party.
+- Select valid Pay To Location.
+- Select valid Bill To Party.
+- Select valid Bill To Location.
+- Select valid Payment Mode.
+- Select atleast one Item.
+- Only single item can be selected.
+- Duplicate Item Code and Make is not allowed
+- Chapter Heading is not Linked with selected Item. <item>.
+- Rate can't be zero or empty in row <n>.
+- Quantity can't be zero or empty in row <n>.
+- Amount can't be zero or empty in row <n>.
+- Sum of Qty. (Schedule) should be equal to Quantity in row <n>.
+- Authorized Vendor Agreement can't be updated.
+- Authorized Agreement can't be updated.
+- Duplicate Agreement No. is not allowed.
+- Authorized Entry can't be updated.
+- Document No. <number> saved successfully.
+- PO is Prepared against this Agreement ,so you can't delete this entry.
+- Select valid Tolerance Basis.
+- Your excel should consists of sheet with name PMPC. Do you want to continue?
+- Some items are not valid or duplicate. View log for detail.
+- Excel is not in valid format.
+- Select a Valid agreement Type.
+- Row <n>- Inserted.
+- Row <n>- Item Code/Item Description doesn't exists or duplicate.
+- Sum of Qty. should be equal to Quantity(Item Detail).
+- Select To Date in row <n>.
+- To Date should be greater than or equal to From Date<n>.
+- From Date should come in between Agreement Period From Date and To Date in row<n>.
+- To Date should come in between Agreement Period From Date and To Date in row<n>.
+- Schedule date should not overlap for row<n>.
+- Enter Qty. in row<n>.
+manages:
+- material-agreement
+uses_concepts:
+- company
+- purchase-order-amendment
+method_notes:
+  Delete: Deletes the record through Purchase.PMPCDelete.
+  FillRefDocDetail: Runs through Purchase.PMPCFillRefDocDetail.
+  FillValueDependent: Fills the lookup lists through Purchase.PMPCFillValuesDependent.
+  FillValues: Fills the lookup lists through Purchase.PMPCFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Purchase.PMPCLoadData.
+  Open: Searches records through Purchase.PMPCSearchData.
+  Save: Saves the record through Purchase.PMPCSave.
+  SaveItemDetails: Saves the record through Purchase.PMPCSaveAgreementItemDetail.
+  SaveItemScheduleDetail: Saves the record through Purchase.PMPCSaveItemScheduleDetail.

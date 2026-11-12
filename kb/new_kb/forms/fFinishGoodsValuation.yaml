@@ -1,0 +1,58 @@
+form: fFinishGoodsValuation
+title: Finish Goods Valuation
+module: FI
+kind: transaction
+summary: The Finish Goods Valuation screen revalues the closing stock of a finished-goods stock account as on a chosen date.
+purpose: |
+  What it is: A dated valuation of the closing stock of one finished-goods stock account, with its supporting invoice-wise valuation detail, tax charges and resulting vouchers [fFinishGoodsValuation.vb:769-821; fFinishGoodsValuation.vb:851-899]. When it applies: At period end or on any date for which the books must show finished goods at their valued amount. Business outcome: The stock account in the books agrees with the valuation, and the difference is taken to a Change in Inventory account (BR-09; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Tabbed Layout: Tabs "General" and "Tax Detail" always; "Finance Posting Stock" and "Finance Posting Taxes" are hidden until the status is Authorized [fFinishGoodsValuation.Designer.vb:638-651; fFinishGoodsValuation.vb:960-985].
+  - Document Status Field: Dropdown labelled "Document Status", mandatory [fFinishGoodsValuation.Designer.vb:408; fFinishGoodsValuation.vb:86].
+  - Finance Book Field: Dropdown labelled "Finance Book" (or "Profit Center"), mandatory [fFinishGoodsValuation.Designer.vb:427; fFinishGoodsValuation.vb:86; fFinishGoodsValuation.vb:90-96].
+  - As On Date Field: Date picker labelled "As On Date"; defaults to the working date [fFinishGoodsValuation.Designer.vb:446; fFinishGoodsValuation.vb:151].
+  - Account Name Field: Dropdown labelled "Account Name" with the account group, mandatory [fFinishGoodsValuation.Designer.vb:465; fFinishGoodsValuation.vb:839].
+  - Ratio Analysis Category Field: Optional dropdown labelled "Ratio Analysis Category" [fFinishGoodsValuation.Designer.vb:526; fFinishGoodsValuation.vb:754-761].
+  - Invoice To Date Field: Optional date picker labelled "Invoice To Da&te" [fFinishGoodsValuation.Designer.vb:546; fFinishGoodsValuation.vb:545-549].
+  - Opening Balance and Closing Qty. Fields: Read-only boxes, with a Dr/Cr marker beside Opening Balance [fFinishGoodsValuation.Designer.vb:474-507; fFinishGoodsValuation.Designer.vb:623].
+  - GP Ratio, GP Ratio Cost, Cost/ MT, Cost, NRV/ MT and NRV Fields: "GP Ratio (%)" is editable (maximum 6 characters, two decimals); the others are read-only [fFinishGoodsValuation.Designer.vb:174-290; fFinishGoodsValuation.vb:145; fFinishGoodsValuation.vb:1195-1199].
+  - Valuation Detail Grid: Grid with Invoice Date, Qty., Rate and Amount.
+  - Tax Detail Tab: The shared tax-on-amount control with Tax Group and charge lines [fFinishGoodsValuation.Designer.vb:52; fFinishGoodsValuation.vb:230-233; fFinishGoodsValuation.vb:381].
+  - Finance Posting Stock and Finance Posting Taxes Tabs: The stock journal review and the tax reversal voucher review, filled when status is set to Authorized [fFinishGoodsValuation.vb:906-952; fFinishGoodsValuation.vb:998-1068].
+actions:
+  New: Resets the form via the main window; also after Save and Delete [fFinishGoodsValuation.vb:249-256].
+  Save: Validates and saves the valuation and, on authorization, the vouchers.
+  Search: Opens the common list of valuations for the company and year [fFinishGoodsValuation.vb:258-283].
+  Delete: Deletes the open valuation and its vouchers.
+validations:
+- Select valid Document Status.
+- Select valid Finance Book.
+- Select valid Profit Center.
+- Select valid Account Name.
+- Detail is not available.
+- Amount can't be empty or zero in row N.
+- Authorized Finish Goods Valuation can't be updated.
+- Authorized entry can't be updated.
+- Duplicate entry not allowed.
+- VoucherValidation
+manages:
+- finish-goods-valuation
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- layout
+- ratio-analysis
+- reverse-voucher
+method_notes:
+  Delete: Deletes the record through Finance.FFGVDelete.
+  FillValues: Fills the lookup lists through Finance.FFGVFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FFGVFillValuesDependent, Finance.FFGVLoadData.
+  FillValuesFB: Fills the lookup lists through Finance.FFGVFillValuesFB.
+  LoadData: Loads the selected record through Finance.FFGVLoadData.
+  Open: Searches records through Finance.FFGVSearchData.
+  Save: Saves the record through Finance.FFGVSaveMain, Finance.VoucherSaveChildDetail.
+  SaveTaxDetail: Saves the record through Finance.FFGVSaveTaxDetail.
+  SaveValuationDetail: Saves the record through Finance.FFGVSaveDetail.
+  ValidateForm: Validates the entry through Finance.FFGVValidate.

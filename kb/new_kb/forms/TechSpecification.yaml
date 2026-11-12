@@ -1,0 +1,17 @@
+usercontrol: TechSpecification
+title: Technical specification control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded technical specification grid of an item line.
+purpose: |
+  Picks a technical specification group and captures the specification values of an item line (TechSpecificationFillValues / FillValuesDependent).
+functional_description: |
+  Embedded in: fRevisedQuotation.
+  On-screen fields: Tech. Specification Group Name.
+uses_concepts:
+- tech-specification-head
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.TechSpecificationFillValues.
+  FillValuesTechSpecificationDetail: Fills the lookup lists through masterdata.TechSpecificationFillValuesDependent.

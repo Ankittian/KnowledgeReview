@@ -1,0 +1,127 @@
+form: fGatePassIn
+title: Gate Pass In
+module: MM
+kind: transaction
+summary: 'The Gate Pass In screen records material that physically enters the premises through the gate: contractor material,
+  direct returnable and non-returnable receipts, receipts against an earlier Gate Pass Out, loans taken or returned, replaceable
+  items received against a Gate Pass Out raised from a GRN, subcontract material received back against a Subcontract Order
+  or Dispatch Challan, items received '
+purpose: |
+  What it is: A gate document that records inward movement of material by type, with the party's challan, transport details and item quantities. When it applies: Whenever material arrives at the gate that is not a normal purchase receipt, or that comes back against an earlier outward gate pass, loan, subcontract order or service document. Business outcome: Outstanding outward material is closed off, loan and returned material enters stock with the right valuation, and the business has a dated record of who brought what in.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: The shared document-number control at the top: Division (when divisions apply), document number, document date and status.
+  - General Details Tab: Upper tab set with "General Details", "Transportation Route" (hidden until ticked), "Finance Posting" (hidden until applicable) and "Custom Field".
+  - Gate Pass Type Field: Dropdown, mandatory (BR-03).
+  - Source Document Field: Read-only text, 50 characters.
+  - Party Name Field: Dropdown, mandatory, with a search button that opens a search list of the same parties (BR-05).
+  - Location Field: Dropdown of the party's locations, mandatory.
+  - Ref Doc No. Field: Dropdown showing "Ref Doc No" and "Ref Doc Date"; disabled except for type 11 (BR-07).
+  - Challan No./Date and Dated Fields: Party challan number (text, 30 characters, mandatory) and date (date picker, mandatory).
+  - Ex. Challan No. and Ex. Challan Date Fields: Editable dropdown of open excise challans of the location (number may also be typed) and date picker with tick box.
+  - Dept. Name Field: Dropdown of departments, optional.
+  - Person Name Field: Editable dropdown, mandatory; the list offers names already used on earlier gate passes in of the company.
+  - Person Contact No. Field: Text, 20 characters, optional.
+  - Warehouse Field: Dropdown showing Warehouse, Code and Division; mandatory.
+  - Returnable Date Field: Date picker with tick box.
+  - Transporter Name, Driver Name and Vehicle No. Fields: Transporter dropdown (transporter-type vendors), editable Driver Name dropdown of earlier names (50 characters), Vehicle No.
+  - LR / MR No. and LR / MR Date Fields: Text (30 characters) and date picker with tick box; typing a number ticks the date automatically.
+  - Freight Basis Field: Dropdown of freight types ("TOPAY", "FOR", "FOR As Actual" and others), marked mandatory.
+  - WT. Slip No. and WT. Slip Date Fields: Text (30 characters) and date picker with tick box; when weighment applies, a selection list and read-only date text are shown instead (BR-26).
+  - eWay-Bill No. and eWay-Bill Date Fields: Text (50 characters) and date picker with tick box.
+  - Define Transportation Route Checkbox: Checkbox.
+  - Arrival Time and Departure Time Fields: Date-time pickers with tick box, defaulted to the current time and unticked on New.
+  - Freight Rate Type, Freight Rate and Advance Amount Fields: Dropdown of freight rate types, and two numeric fields with 2 decimals (13 characters).
+  - Remarks Field: Text, 300 characters, optional.
+  - Notes Control: Shared notes grid with print area, notes text and default flag.
+  - Item Details Grid: Lower tab "Item Details" with columns "Select", "Reference No", "Reference Date", "GRN No." (captioned "SC Order No." for type 11), "Item ID", "Mark No.", item button, "Item Code", "Item Description", "Unit", "Make", "Tech.
+  - Tech. Description Pop-up: Row pop-up with a 1000-character text box and "Ok"/"Cancel".
+  - Serial Number Pop-up: Row pop-up grid with "Serial Number", "Item Description", "Make", "Select" and buttons "Ok"/"Cancel".
+  - Requisition Detail Pop-up: Row pop-up grid with "Select", "Requisition No.", "Requisition Date", "Qty.", "Pre.
+  - Contractor Material Grid: Lower tab "Contractor Material" with "Item Description" (100 characters), "Tech.
+  - Transportation Route Grid: Tab "Transportation Route" with "Freight Type", "From Location", "To Location"; new rows are added automatically.
+  - Finance Posting Tab: Shared finance posting control showing the journal voucher for the receipt.
+  - Custom Field Tab: Shared custom-field grid for this screen.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Preview and Export of the "Gate Pass In" daily print report; Email attaches the exported report through the internal mail dialog or Outlook depending on the mail setting.
+  - Voucher Rebuild Shortcut (Ctrl+Alt+V): Hidden keyboard shortcut that regenerates and re-saves the voucher of a loaded document.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search: Toolbar Open.
+  Delete: Toolbar Delete.
+  Navigation: First / Previous / Next / Last, enabled through the standard toolbar.
+validations:
+- 'Rate for Reference No. : <no> ... must be <rate>'
+- Against selected Gate Pass out, Gate Entry exist and Received Qty can't be greater than balance Qty for Item <items>
+- Select valid Gate Pass Type.
+- Select valid Party Name.
+- Select valid Location.
+- Select valid Ref Doc No.
+- Document Date can't be less than Ref Doc Date.
+- Enter Challan No.
+- Challan Date can't be greater than Document Date.
+- Enter or Select valid Person Name.
+- Select valid Warehouse.
+- Select LR Date.
+- Enter LR No.
+- LR Date can't be greater than Document Date.
+- Select Wt Date.
+- Enter Wt. Slip No.
+- Wt. Slip Date can't be greater than Document Date.
+- Select Excise Challan Date .
+- Enter Excise Challan No.
+- Excise Challan Date can't be greater than Document Date.
+- Select Returnable Date.
+- Returnable Date can't be less than Document Date.
+- Select valid Freight Basis.
+- Select eWay-Bill Date.
+- eWay-Bill Date can't be greater than Document Date.
+- 'Do you want to continue? '
+- Select atleast one Item.
+- Select atleast one Item Description.
+- Select valid Unit in row <n>.
+- Document Date can't be Less than Reference Date <date>.
+- Receive Qty. can't be zero or empty in row <n>.
+- Receive Qty. can't be greater then Balance Qty. in row <n>.
+- Sum oF Requisition Detail should be equal to <qty> in row <n>.
+- ' Selected Serial Numbers should be equal to Receive Qty. in row <n>.'
+- ' Selected Serial Numbers should be equal to Receive Qty.'
+- Duplicate Serial Number is not allowed.
+- Receive Qty. can't be greater than Qty. <balance> in row <n>.
+- Receive Qty. can't be greater than Qty.
+- Select valid Freight Type in row <n>.
+- Select valid From Location in row <n>.
+- Select valid To Location in row <n>.
+- From & To Location can't be same in row <n>.
+- Select valid Route For transportation .
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- Can not delete Gate Pass In as Tyre Repair Entry exists.
+- No Detail Found
+- Authorized Gate Pass In can't be updated.
+- Duplicate Item Name and Make is not allowed.
+- Return Date is greater than Document Date .
+- Quantity can't be zero or empty in row <n>.
+- Duplicate Item Description is not allowed.
+manages:
+- gate-pass-in
+uses_concepts:
+- accounting-voucher
+- company
+- gate-pass-out
+- material-return
+- raw-material-issue
+- service-request
+- stock-adjustment
+- value-stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.MGPIDelete.
+  FillRefDoc: Runs through Inventory.MGPIFillRefDoc.
+  FillValues: Fills the lookup lists through Inventory.MGPIFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.MGPIFillValuesDependent.
+  FillValuesDependentGrid: Fills the lookup lists through Inventory.MGPIFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Inventory.MGPILoadData.
+  Open: Searches records through Inventory.MGPISearchData.
+  Save: Saves the record through Inventory.MGPIAuthorize, Inventory.MGPISave.
+  SaveContractorMaterial: Saves the record through Inventory.MGPISaveContractorMaterialDetail.

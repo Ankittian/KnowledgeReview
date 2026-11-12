@@ -1,0 +1,51 @@
+form: fAuthorizationGroup
+title: Authorization Group
+module: MD
+kind: master
+summary: The Authorization Group screen defines who approves a given type of document and in what order.
+purpose: |
+  What it is: A rule set linking a document type, optional attribute ranges and companies to an ordered list of approvers. When it applies: When approval responsibilities are set up or change, for example new approvers or new value limits. Business outcome: Documents are approved by the right people in the right sequence (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header group box and three grid group boxes (approval rules, companies, approval hierarchy).
+  - Code Field: Read-only text box.
+  - Description Field: Mandatory text box, up to 300 characters on screen (BR-01).
+  - Document Name Field: Mandatory dropdown with form name and form code (BR-02).
+  - Approval Nature Field: Mandatory dropdown (BR-03).
+  - Approval Rule Grid: Columns Attribute (dropdown), From Range and To Range (numbers, two decimals).
+  - Company Detail Grid: Columns Select (tick), Company Name and Company Code (read-only); hidden company identifier.
+  - Approval Hierarchy Grid: Columns Level (Level 01 to Level 10), User (dropdown of active users) and Printing Caption (up to 50 characters).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers present but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the group and all three detail lists.
+  Search: Standard search with Code, Description, Document Name, Approval Nature, Created By, Created Date, Modified By, Modified
+    Date, newest first.
+  Delete: Deletes the loaded group after confirmation (MSG-15).
+  Navigation: Not declared by this screen; framework default applies (Inferred).
+validations:
+- Enter a valid Descritption.
+- Salect a valid Document Name.
+- Select a valid Approval Nature
+- Enter From-Range for Row No.
+- Enter To-Range for Row No.
+- Duplicate Attribute is not allowed.
+- 'Select a valid User for row no. '
+- 'Enter a printing caption for row no. '
+- Select at least one User.
+- Duplicate user is not allowed.
+- Select at least one attribute.
+manages:
+- authorization-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AUGRDelete.
+  FillValues: Fills the lookup lists through masterdata.AUGRFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.AUGRFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.AUGRLoadData.
+  Open: Searches records through masterdata.AUGRSearchData.
+  Save: Saves the record through masterdata.AUGRSave.
+  SaveApprovalHierarchy: Saves the record through masterdata.AUGRSaveAuthorizationGroupApprovalHierarchy.
+  SaveApprovalRule: Saves the record through masterdata.AUGRSaveAuthorizationGroupAttributeDetail.
+  SaveCompanyDetail: Saves the record through masterdata.AUGRSaveAuthorizationGroupCompanyDetail.

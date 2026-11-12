@@ -1,0 +1,59 @@
+form: fChangeEquipmentOwner
+title: Change Equipment Owner
+module: PM
+kind: transaction
+summary: The Change Equipment Owner screen records a change of the customer who owns customer-owned equipment.
+purpose: |
+  What it is: A controlled document that transfers customer-owned equipment to a new customer and location. When it applies: When a customer sells or transfers equipment that the company services, or when a service contract moves to another customer location. Business outcome: Service calls, contracts and invoices follow the right customer after approval.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: The document header control, the source fields (Source Document, Ref.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Source Document Field: Dropdown (Source Document) with Equipment and Service Contract, mandatory.
+  - Ref. Document No. Field: Dropdown (Ref Doc No, Ref Doc Date, Customer Name, Customer Location), marked mandatory.
+  - Ref. Document Date Field: Read-only text.
+  - Equipment Description Field: Dropdown (Equipment Description, Code, Customer Name), marked mandatory.
+  - Old Customer Name and Customer Location Fields: Two read-only text boxes in the "Old Customer" block.
+  - Customer Name Field (New Customer): Dropdown (Customer Name, Code), mandatory.
+  - Customer Location Field (New Customer): Dropdown (Customer Location, Code), mandatory.
+  - Equipment Grid: Grid with columns Equipment Description, Code and Last Owner Change Date; hidden columns hold the equipment number and customer location.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the document.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened document.
+validations:
+- Select valid Source Document.
+- Select valid Ref. Document No.
+- Document date can't be less than Ref Doc Date.
+- Select valid Equipment Description
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Old and new customer location can not be same.
+- Document date can't be less than last owner change date.
+- 'Some active contract exists for equipment '
+- 'Some unauthorized entry exists for equipment(s) '
+- 'Back date entry is not allowed for equipment(s) '
+- Authorized Change Equipment Owner can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+- Some entry already exists for selected equipment(s) after document date
+manages:
+- change-equipment-owner
+uses_concepts:
+- company
+- equipment-master
+- service-contract
+method_notes:
+  Delete: Deletes the record through CustomerService.CHEODelete.
+  FillValues: Fills the lookup lists through CustomerService.CHEOFillValues.
+  FillValuesDependent: Fills the lookup lists through CustomerService.CHEOFillValuesDependent.
+  LoadCustomerLocation: Runs through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through CustomerService.CHEOLoadData.
+  Open: Searches records through CustomerService.CHEOSearchData.
+  Save: Saves the record through CustomerService.CHEOSave.
+  SaveEquipmentDetail: Saves the record through CustomerService.CHEOSaveEquipmentDetail.
+  Validate: Validates the entry through CustomerService.CHEOValidate.

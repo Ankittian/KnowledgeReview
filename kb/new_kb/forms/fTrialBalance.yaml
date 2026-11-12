@@ -1,0 +1,46 @@
+form: fTrialBalance
+title: Trial Balance
+module: RPT
+kind: transaction
+summary: The Trial Balance screen is a read-only Finance report, opened from Finance Reports with form code FMTB, that lists
+  the account groups of a Chart Of Account with their opening balance, period debit, period credit and closing balance for
+  a chosen Finance Book and date range.
+purpose: |
+  What it is: An on-screen trial balance by account group for a Finance Book, Chart Of Account and period, with drill-down to accounts, break-ups, ledgers and vouchers [fTrialBalance.vb:14; fTrialBalance.vb:1456-1459; clsMISFinanceReports.vb:716-728]. When it applies: At month-end or year-end, for audit queries, and whenever a manager wants group-wise balances. Business outcome: Shows where balances sit and whether debits and closing balances agree, without exporting data first.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Report Workspace: A window titled "Trial Balance" with a header strip (Finance Book, COA, name label, From and To), an Explorer bar of actions, a results grid and a chart panel [fTrialBalance.designer.vb:578; fTrialBalance.designer.vb:345-375].
+  - Finance Book Field: A drop-down labelled "Finance &Book" (or "&Profit Center"), filled from the books of the login company, plus all companies' books for a head-office login [fTrialBalance.vb:165-181; fTrialBalance.vb:189-195; Finance.TrialBalanceConfiguration:21-46].
+  - COA Field: A drop-down labelled "&COA" filled from the chosen book [fTrialBalance.designer.vb:199; fTrialBalance.vb:1339-1348].
+  - Name Label: A read-only label showing "Group Name : ..." for the group on screen [clsMISFinanceReports.vb:1299-1348; fTrialBalance.designer.vb:333].
+  - From and To Display: Read-only dates in dd/MM/yyyy, changed through Ctrl F2 : Period [fTrialBalance.vb:183-184; clsMISFinanceReports.vb:2085-2115].
+  - Export With Borders Check Box: A check box "&Export With Borders", ticked at start [fTrialBalance.vb:186-187; fTrialBalance.vb:1462-1468].
+  - Results Grid: A read-only grid with filter row and bottom totals; group rows are bold, account rows normal [fTrialBalance.vb:321-322; fTrialBalance.vb:566-611; clsMISFinanceReports.vb:1600-1609].
+  - Group Configuration Dialog (F12): The dialog "Account Group Summary Configuration" with "Net Transaction Only", "Show Closing Balance", "Show Opening" (the label of the graph option), "Show &Transaction", "E&xpand All Groups" and "Show &Zero Closing Also"; periodicity is locked [fTrialBalance.vb:116-126; fConfigDlyBrkup.Designer.vb:65-83; fConfigDlyBrkup.Designer.vb:208-243].
+  - Detail / Condensed Action (Alt F1): Toggles "Alt F1 : Details" and "Alt F1 : Condensed" [clsMISFinanceReports.vb:2172-2213].
+  - Period Action (Ctrl F2): A dialog with "From Da&te" and "To Da&te" [clsMISFinanceReports.vb:2085-2115; fConfigDate.vb:30-58].
+  - Ledger Action (F4): A searchable list titled "Account Ledger" with the label "Ledger &Name"; in group view it lists account groups [clsMISFinanceReports.vb:2031-2083; Finance.AccountSearchData:19-27].
+  - Led-Wise Action (Ctrl F5): Toggles the flat ledger-wise listing; the item reads "Ctrl F5 : Led-Wise" or "Ctrl F5 : Grouped" [clsMISFinanceReports.vb:1895-1905].
+  - Break-Up Actions (Alt F6, Alt F7, Alt F5): Daily, Monthly and Quarterly period views of the group on screen [clsMISFinanceReports.vb:2117-2170; fTrialBalance.vb:73-78].
+  - Columnar Actions (Alt F8, Ctrl Shift F8): Columnar view of an account ledger and its return item [fTrialBalance.vb:63-64; fTrialBalance.vb:79-80].
+  - Drill-Down Action (Double-Click or Enter): Opens the row's sub-group, account break-up, period ledger or source voucher [fTrialBalance.vb:288-290; fTrialBalance.vb:1228-1236; clsMISFinanceReports.vb:578-711].
+  - Back Action (Esc): Steps back through the views visited [clsMISFinanceReports.vb:1731-1893; fTrialBalance.vb:56-58].
+actions:
+  Print, Print Preview, Export and Close: Ctrl P prints, Ctrl R previews, Ctrl T exports, Ctrl L closes; F5 reloads [fTrialBalance.vb:81-90;
+    fTrialBalance.vb:1275-1282].
+validations:
+- Select valid From Date.
+- Select valid To Date.
+- To date can't be less than From Date.
+- Select valid Ledger Name.
+- Error occured while exporting.
+- Error Occured while exporting file
+manages:
+- trial-balance
+uses_concepts:
+- company
+method_notes:
+  AccountSearchData: Searches records through Finance.AccountSearchData.
+  ReportHeader: Runs through masterdata.ReportHeader.
+  fTrialBalance_Load: Runs through Finance.TrialBalanceConfiguration.
+  ucmbCOA_ValueChanged: Runs through Finance.MISMainGroup.

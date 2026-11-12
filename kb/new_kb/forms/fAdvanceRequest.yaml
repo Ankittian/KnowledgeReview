@@ -1,0 +1,76 @@
+form: fAdvanceRequest
+title: Supplier Advance Request
+module: MM
+kind: transaction
+summary: The Supplier Advance Request screen (window caption "Advance Request") records a request to pay a supplier an advance
+  that is due under the payment terms of an authorised purchase order, sub-contract order or material agreement.
+purpose: |
+  What it is: A controlled request for an advance payment to a supplier, tied to a specific payment term of an order or agreement. When it applies: When an order's down-payment term falls due, or the supplier raises a proforma invoice for an advance. Business outcome: Advances never exceed what the order's terms allow plus tolerance, and every advance is traceable to its source term (BR-13, BR-14, BR-21).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A document header (number, prefix, division, status, date) above one panel of request fields.
+  - Document Header Control: Shared control with document number, prefix, division, Document Date and status; validates financial year and division [fAdvanceRequest.designer.vb:1281].
+  - Vendor Name Field: Mandatory dropdown (Vendor Name, Code) (BR-03).
+  - Location Field: Mandatory dropdown of the vendor's locations (BR-03).
+  - Source Document Field: Mandatory dropdown: P.O., S.C.O., Material Agreement (BR-04).
+  - Source Document No. Field: Mandatory dropdown (number, date) (BR-04, BR-05).
+  - Source Document Date Field: Read-only date of the source document.
+  - Currency Control: Shared currency and rate control, read-only, filled from the source document (BR-17).
+  - Payment Type Field: Mandatory dropdown of the source document's down-payment terms still available (BR-06).
+  - Proforma Invoice No., Proforma Invoice Date and Proforma Invoice Amount Fields: Text (up to 50 characters), date, and amount (numeric, 2 decimals, up to 12 characters).
+  - Payment Mode Field: Mandatory dropdown of payment modes (BR-03).
+  - Agreement Schedule Field: Dropdown of agreement schedules (period and item) with a balance, hidden unless Source Document is Material Agreement (BR-16).
+  - Pay To and Pay To Location Fields: Dropdowns of vendors and their locations, hidden unless Source Document is Material Agreement (BR-16).
+  - Calculated Read-only Fields: Advance On, Basic Amount, Net Amount, Advance Amount, Advance Percent, Prev.
+  - Request Percent and Request Amount Fields: Mandatory numeric fields, 2 decimals (percent up to 6 characters, amount up to 12).
+  - Remarks Field: Optional free text, stored up to 1000 characters [Finance.FMARSaveMain:33].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print and Preview of the payment advice for the loaded request (BR-23); Export and Email not implemented.
+actions:
+  New: Standard toolbar New.
+  Save: Validates and creates or updates the request.
+  Search: Standard search over requests of the current company and financial year (BR-20).
+  Delete: Deletes the loaded request after confirmation (BR-22).
+  Navigation: First, Previous, Next, Last through the standard toolbar (BR-20).
+validations:
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Map Valid Supplier PrePayment account in Order Account Assignment.
+- Map Valid Supplier Payment account in Order Account Assignment.
+- Map Valid Supplier PrePayment account in ARD Mapping.
+- Map Valid Supplier Payment account in ARD Mapping.
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Source Document No.
+- Document Date is greater than validity date <date> of the selected Source Document No. Do you want to continue?
+- Document Date is greater than max Schedule Date <date> of the selected Source Document No. Do you want to continue?
+- Document Date can not be greater than validity date <date> of the selected Source Document No.
+- Document Date can not be greater than max Schedule Date <date> of the selected Source Document No.
+- Document Date can't be less than Source Document Date.
+- Select valid Payment Type.
+- Actual Progress Percent is less than Progress Percent.
+- Request Amount can't be empty or 0.
+- Request Amount can't be greater then Advance Amount + Tolerance Amount - Prev. Requested Amount.
+- Enter Proforma Invoice No.
+- Proforma Invoice Amount can't be empty or 0.
+- Select valid Payment Mode.
+- Select valid Pay To name.
+- Select valid Pay To Location.
+- Select Valid AgreementSchedule.
+- Document No. <number> saved successfully.
+manages:
+- supplier-advance-request
+uses_concepts:
+- company
+- material-agreement
+- purchase-order-amendment
+method_notes:
+  Delete: Deletes the record through Finance.FMARDelete.
+  FillValues: Fills the lookup lists through Finance.FMARFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FMARFillValuesDependent.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FMARFillValuesSourceDocument.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FMARLoadData.
+  Open: Searches records through Finance.FMARSearchData.
+  Save: Saves the record through Finance.FMARSaveMain.
+  ValidateForm: Validates the entry through Finance.FMARValidate.

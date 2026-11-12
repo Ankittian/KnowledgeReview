@@ -1,0 +1,74 @@
+key: p11-master-entry-masters
+name: Master data set-up (Phase 11)
+module: MD
+status: active
+summary: Phase 11 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Safety Instruction Group, Equipment Category, EAM Resource Master, Document Type, Supplementary Field, Skill Master, Work Center, Utalization Description, Production Formula, Customer Feedback Parameter, Solution Knowledge, Service Contract Coverage Term, Work Log Category, Measurement Parameter Group, Supplementary Field Group, Rename Item Description.
+steps:
+- order: 1
+  name: Maintain Safety Instruction Group
+  form: fSafetyInstructionGroup
+- order: 2
+  name: Maintain Equipment Category
+  form: fEquipmentCategory
+- order: 3
+  name: Maintain EAM Resource Master
+  form: fEAMResourceMaster
+- order: 4
+  name: Maintain Document Type
+  form: fEAMDocumentType
+- order: 5
+  name: Maintain Supplementary Field
+  form: fSupplementaryField
+- order: 6
+  name: Maintain Skill Master
+  form: fSkillMaster
+- order: 7
+  name: Maintain Work Center
+  form: fWorkCenter
+- order: 8
+  name: Maintain Utalization Description
+  form: fAssetUtalizationWork
+- order: 9
+  name: Maintain Production Formula
+  form: fProductionFormula
+- order: 10
+  name: Maintain Customer Feedback Parameter
+  form: fCustomerFeedbackParameter
+- order: 11
+  name: Maintain Solution Knowledge
+  form: fSolutionKnowledge
+- order: 12
+  name: Maintain Service Contract Coverage Term
+  form: fServiceContractCoverageTerm
+- order: 13
+  name: Maintain Work Log Category
+  form: fWorkLogCategory
+- order: 14
+  name: Maintain Measurement Parameter Group
+  form: fMPGroup
+- order: 15
+  name: Maintain Supplementary Field Group
+  form: fSupplementaryFieldGroup
+- order: 16
+  name: Maintain Rename Item Description
+  form: fRenameItemDescription
+concepts:
+- safety-instruction-group
+- equipment-category
+- eam-resource-master
+- document-type
+- supplementary-field
+- skill-master
+- work-center
+- utalization-description
+- production-formula
+- customer-feedback-parameter
+- solution-knowledge
+- service-contract-coverage-term
+- work-log-category
+- measurement-parameter-group
+- supplementary-field-group
+- rename-item-description

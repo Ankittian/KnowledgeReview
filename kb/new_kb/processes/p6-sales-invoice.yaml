@@ -1,0 +1,18 @@
+key: p6-sales-invoice
+name: 'Sales: Invoice (Phase 6)'
+module: SD
+status: active
+summary: Phase 6 screens of the invoice group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 6 forms that the KB validation plan puts in 'Invoice' (Sales). The steps follow the plan order, not a verified business sequence: Commercial Invoice, Dispatch Invoice Reconcilation.
+steps:
+- order: 1
+  name: Record Commercial Invoice
+  form: fCommercialInvoice
+- order: 2
+  name: Record Dispatch Invoice Reconcilation
+  form: fDispatchInvoiceReconcilation
+concepts:
+- commercial-invoice
+- dispatch-invoice-reconcilation

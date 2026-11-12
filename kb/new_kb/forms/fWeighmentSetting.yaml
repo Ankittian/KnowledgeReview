@@ -1,0 +1,29 @@
+form: fWeighmentSetting
+title: Weighment Setting
+module: WB
+kind: transaction
+summary: The Weighment Setting screen holds the company-level options that govern how weighments behave.
+purpose: |
+  What it is: A single settings record per company with the quantity-update option and the capture shortcut key [fWeighmentSetting.vb:60-84; WeighBridge.WBSTSave:50-57]. When it applies: When weigh bridge operation is first configured or its behaviour changes. Business outcome: All weighment users of the company follow one agreed behaviour.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding the Update Qty.
+  - Update Qty. from Weighment Field: A tick box labelled "Update Qty.
+  - Capture Shortcut Key Group: A group box "Capture Shortcut Key" with tick boxes Ctrl, Alt and Shift and a drop-down Keys [fWeighmentSetting.Designer.vb:60-110].
+  - Ctrl, Alt and Shift Fields: Three tick boxes for the modifier keys [fWeighmentSetting.Designer.vb:68-89].
+  - Keys Field: A drop-down of key names, for example "F1", "ENTER KEY" and "NumPad0 " [fWeighmentSetting.vb:71; WeighBridge.WBSTFillValuesWeighmentSettings:19-99].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Handlers that are empty or commented out [fWeighmentSetting.vb:56-58; fWeighmentSetting.vb:133-158; fWeighmentSetting.vb:160-192].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWeighmentSetting.vb:124-131].
+  Save: The toolbar action that validates and stores the settings [fWeighmentSetting.vb:225-274].
+validations:
+- Check atleast one of Modifier.
+- Select valid key.
+- Saved successfully.
+manages:
+- weighment-setting
+uses_concepts:
+- company
+method_notes:
+  FillValues: Fills the lookup lists through WeighBridge.WBSTFillValuesWeighmentSettings.
+  Save: Saves the record through WeighBridge.WBSTSave.

@@ -1,0 +1,85 @@
+form: fLC
+title: Letter Of Credit
+module: FI
+kind: transaction
+summary: The Letter Of Credit screen records a letter of credit (LC) opened with a bank for a supplier (payable) or received
+  from a customer (receivable).
+purpose: |
+  What it is: The master record of one letter of credit with its terms, banks, required documents and financial charges, kept together with a revision history [fLC.vb:639-837; Finance.FILCSaveMain:79-304]. When it applies: When a bank opens an LC for a purchase or when a customer's LC is received for a sale. Business outcome: Trade-finance terms are held in one place, charges are booked to the right ledger accounts and the LC can later be mapped to orders and amended.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "LC" with a document header control (finance book, document number, date, status), a revision area and a tab control with General Detail, Bank Detail, Document Detail, LC Payable Posting, Other Charges Posting and Custom Fields [fLC.designer.vb:1330; fLC.designer.vb:1133-1152; fLC.designer.vb:1157].
+  - Document Header: A shared document control that holds Finance Book, Document No., Document Date and Document Status [fLC.vb:110; fLC.vb:187-209].
+  - Amendment No. and Amendment Date Fields: Read-only displays of the revision number and its date [fLC.vb:185-186; fLC.designer.vb:1183; fLC.designer.vb:1202].
+  - Opening Bank Name and Opening Bank Country Fields: Two mandatory drop-downs [fLC.vb:20; fLC.vb:483-494].
+  - Financial Doc. No. Field: A mandatory text box of up to 50 characters [fLC.vb:79; fLC.vb:497].
+  - Nature, Trade Type, LC Category and LC Type Fields: Four mandatory drop-downs [fLC.vb:20; fLC.vb:504-529].
+  - Usance Period Field: A numeric text box of up to 3 digits [fLC.vb:81-83].
+  - Vendor Name and Location Fields: Two mandatory drop-downs; the label reads "Vendor &Name" on screen while the messages call it "Customer/ Supplier Name" [fLC.designer.vb:440; fLC.vb:541-548].
+  - Last Date of Shipment, Expiry Date and Validity Fields: Two date pickers and a read-only Validity in days [fLC.designer.vb:506; fLC.vb:1093-1095].
+  - Due Date Based On Field: A mandatory drop-down [fLC.vb:20; fLC.vb:569].
+  - Currency Control: A shared currency control with currency, conversion and rate for the document date [fLC.vb:1097-1099; fLC.vb:575-577].
+  - LC Amount Field: A mandatory numeric box of 12 characters with 2 decimals [fLC.vb:85-86; fLC.vb:580].
+  - LC Interest (%), Margin Money (%) and Negotiating and Discounting (%) Fields: Optional numeric boxes of 5 characters with 2 decimals [fLC.vb:88-98].
+  - LC Opening Charge Field: An optional numeric box of 12 characters with 2 decimals [fLC.vb:94-95].
+  - Negotiating and Discounting Bearer Field: A mandatory drop-down: Opener or Beneficiary [fLC.vb:20; fLC.vb:587].
+  - LC Status Field: A read-only drop-down [fLC.designer.vb:722].
+  - Remarks Field: An optional text box of up to 500 characters [fLC.vb:105].
+  - Notes Control: A small embedded notes control with print area, notes text and default flag [fLC.designer.vb:754-762; fLC.vb:886-905].
+  - Bank Detail Tab: Read-only Opening Bank and Opening Bank Country, and drop-downs for Negotiation, Confirmation, Notifying, Advising and Reimbursing bank and country [fLC.designer.vb:862-1033; fLC.vb:144-157].
+  - Document Detail Grid: A grid with Document, Description, Originals, Copies and Remarks [Finance.FILCFillValues:93-98].
+  - LC Payable Posting and Other Charges Posting Tabs: Two embedded finance posting controls that show the voucher to be created [fLC.vb:1205-1366].
+  - Custom Fields Tab: A shared custom fields grid [fLC.vb:907-931].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fLC.vb:315-347].
+actions:
+  New: Asks the main window for a blank record [fLC.vb:277-284].
+  Save: Validates, asks confirmation and stores the LC, optionally with vouchers [fLC.vb:639-836].
+  Search: Opens the shared search dialog with Document No., Document Date, Finance Book, Opening Bank Name, Financial Doc.
+  Delete: Deletes the open LC after confirmation [fLC.vb:30-62].
+validations:
+- Can't be deleted as revision is done against this document.
+- Authorized LC can't be updated.
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Opening Bank Name.
+- Select valid Opening Bank Country.
+- Enter Financial Doc. No..
+- Select valid Nature.
+- Select valid Trade Type.
+- Select valid LC Category.
+- Select valid LC Type.
+- Usance Period can't be empty or 0.
+- Select valid Customer/ Supplier Name.
+- Select valid Location.
+- Expiry Date can't be less than Last Date of Shipment.
+- Validity Day(s) can't be less than 0.
+- Select valid Due Date Based On.
+- Enter LC Amount.
+- Select valid Negotiating and Discounting Bearer.
+- Copies/ Originals can't be empty or 0 in row <n>.
+- Supplier Pre Payment Account is not set against this Supplier.
+- Customer Pre Payment Account is not set against this Customer.
+- Bank Limit is not created against this Opening Bank Name.
+- Document No. <number> saved successfully.
+- Can't be deleted as above amendment exists.
+- Finance Book is closed for this Document Date.
+- Account Detail is missing.
+- Select valid Account Name in row <n>.
+manages:
+- letter-of-credit
+uses_concepts:
+- bank-limit
+- company
+- letter-of-credit-amendment
+- order-mapping
+method_notes:
+  Delete: Deletes the record through Finance.FILCDelete.
+  FillValues: Fills the lookup lists through Finance.FILCFillValues.
+  FillValuesBank: Fills the lookup lists through Finance.FILCFillValuesBank.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FILCLoadData.
+  Open: Searches records through Finance.FILCSearchData.
+  Save: Saves the record through Finance.FILCSaveMain.
+  SaveCustomFieldDetail: Saves the record through Finance.FILCSaveCustomFieldDetail.
+  SaveDocumentDetail: Saves the record through Finance.FILCSaveDocumentDetail.
+  SaveNotesDetail: Saves the record through Finance.FILCSaveNotesDetail.

@@ -1,0 +1,45 @@
+form: fVendorGroup
+title: Vendor Group
+module: MD
+kind: master
+summary: The Vendor Group screen (window caption "VendorGroup") groups party locations, such as the branches of one customer
+  or supplier group, under a common group with its own address and contact details.
+purpose: |
+  What it is: A named group of party locations with a group-level address and contact. When it applies: When several locations of the same business group must be handled together, for example for pricing or reporting (Inferred). Business outcome: Related locations can be addressed as one group (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A general detail group box with header fields and a member grid.
+  - Code Field: Read-only text box.
+  - Vendor Group Name Field: Text box, up to 50 characters; required by validation (BR-01, BR-02).
+  - Address1, Address2, Address3 Fields: Text boxes, up to 50 characters each; at least one is required (BR-03).
+  - City Field: Dropdown with City, Code, State, Country; required (BR-03).
+  - State Field: Dropdown; required (BR-03).
+  - Country Field: Dropdown; required (BR-03).
+  - Contact Person, Contact No., Email Id Fields: Optional text boxes, up to 50 characters each; no format check.
+  - Member Locations Grid: Columns Select, Vendor Type, Name, Address; only Select is editable; location identifier hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the group and rewrites its members.
+  Search: Standard search with Code, Vendor Group Name, address lines, City, state, Country, contact fields and Created By.
+  Delete: Deletes the loaded group after confirmation (MSG-11).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Enter Customer Group Name.
+- Duplicate Vendor group name is not allowed.
+- Enter Address.
+- Select a valid city name.
+- Select a valid state name.
+- Select a valid country name.
+- Select at least one vendor.
+manages:
+- vendor-group
+method_notes:
+  Delete: Deletes the record through masterdata.VVVGDelete.
+  FillValues: Fills the lookup lists through masterdata.VVVGFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.VVVGFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.VVVGLoadData.
+  Open: Searches records through masterdata.VVVGSearchData.
+  Save: Saves the record through masterdata.VVVGSave.
+  SaveVedorGrid: Saves the record through masterdata.VVVGSavemVendorGroupDetail.
+  ValidateForm: Validates the entry through masterdata.VVVGValidate.

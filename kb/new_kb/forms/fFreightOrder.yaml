@@ -1,0 +1,100 @@
+form: fFreightOrder
+title: Freight Order
+module: MM
+kind: transaction
+summary: 'The Freight Order screen records the freight agreement with a transporter: who carries the goods, from which location,
+  at what rate, on what basis the quantity is measured, which tolerance and deduction rules apply for shortages, the validity
+  period, the payment terms and the terms and conditions.'
+purpose: |
+  What it is: A numbered, dated agreement that fixes freight terms with one transporter for a validity period, covering chosen items, transporters and orders. [fFreightOrder.vb:852-1002] When it applies: When goods are to be moved by a transporter at an agreed rate, for inward orders (purchase and service) or outward orders (sales). [fFreightOrder.vb:1386-1406; Purchase.PUFOFillValuesFO:90-147] Business outcome: Freight cost is agreed once and reused by orders and freight invoices instead of being negotiated per movement. (Inferred from the downstream readers in Section 4.)
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A header with transporter and rate fields, a Validity Period group, Payment Terms group, Tolerance Detail group, and tabs: Transporter Detail, Item Detail, Freight Basis Detail (titled with the chosen basis name), Order Detail, Tolerance Range and Terms & Condition.
+  - Document Number Control: The shared control for number, date, division and status; it validates first on save (MSG-17).
+  - Transporter Name Field: A mandatory selection of transporter ("Select valid Transporter Name." MSG-03).
+  - Location Field: The transporter's location; mandatory (MSG-04).
+  - Reference No. and Reference Date Fields: The transporter's own reference (up to 50 characters) and date.
+  - Rate Type and Unit Fields: Rate Type is mandatory (MSG-07).
+  - Freight Basis and Freight Rate Fields: Basis is optional.
+  - Calculation On Field: Mandatory selection (MSG-10) of the quantity basis.
+  - Order Type Field: Mandatory (MSG-11).
+  - Tolerance Applicable, Tolerance Unit and Deduction On Fields: Ticking Tolerance Applicable enables the Tolerance Detail group and the Tolerance Range tab; unticking clears and disables them.
+  - Validity Period (From Date, To Date): From Date and an optional To Date.
+  - Payment Terms (Payment Mode, Credit Days): Payment Mode (MSG-15) and Credit Days (MSG-16, two digits) are mandatory.
+  - Amendment No. and Amendment Date, Service Tax Rule, Remarks: Read-only amendment number and date (0 for a new order); the Service Tax Rule list, shown when GST is not applicable and filtered to rules effective on the document date; free-text Remarks.
+  - Transporter Detail Grid and Transporter Group: The transporters allowed under this order.
+  - Item Detail Grid: The items covered.
+  - Freight Basis Detail Grid: Rows by From Location and To Location (basis 1) or Distance From / To (basis 2), each with a Freight Rate.
+  - Order Detail Grid: The orders served: Order No., Route Id (Purchase Orders), Order Date, order flag (PO, SC or SO), Party Name and Party Location; for Sales Orders also Consignee Name and Consignee Location.
+  - Tolerance Range Grid: Rows of Range From, Range To and Tolerance (three decimals).
+  - Terms & Condition Tab: The shared terms and conditions control, validated with the form.
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): Print, preview, export and e-mail of the daily print report for the freight order.
+actions:
+  New: Resets the screen to a blank order.
+  Save: Blocks an Authorized order (MSG-01), runs the validation chain (BR-03 to BR-15), asks for confirmation (MSG-23), and
+    saves header, items, freight basis, tolerance, terms, orders and transporters in one transaction.
+  Search: Lists freight orders of the company and year for selection and opens the chosen one.
+  Delete: Delete is refused when the Amendment No.
+validations:
+- Authorized FreightOrder can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Transporter Name.
+- Select valid Location.
+- Select Reference Date.
+- Reference Date can't be greater than Document Date.
+- Select valid Rate Type.
+- Select valid Unit.
+- Freight Rate can't be empty or 0.
+- Select valid Calculation On.
+- Select valid Order Type.
+- Select valid Tolerance Unit.
+- Select valid Deduction On.
+- To Date can't be less than From Date.
+- Select valid Payment Mode.
+- Enter Credit Days.
+- Select valid Transporter Location in row N.
+- Duplicate Transporter Name not allowed.
+- Duplicate Item Name not allowed.
+- Duplicate From Location and To Location not allowed.
+- Duplicate Order No. and Route Id not allowed.
+- Document No. <number> saved successfully.
+- Can't be deleted as amendment is done against this document.
+- Authorized data can't be updated.
+- Select atleast one <basis>
+- Enter atleast one <basis>
+- Select valid To Location in row N.
+- From Location can't be same as To Location in row N.
+- Freight Rate can't be empty or zero in row N.
+- Distance To can't be empty or zero in row N.
+- Distance To can't be less than Distance From in row N.
+- Select atleast one Range From
+- Range From can't be empty or zero in row N.
+- Range To can't be empty or zero in row N.
+- Range To can't be less than Range From in row N.
+- Tolerance can't be empty or zero in row N.
+- Select valid Route Id in row N.
+- Select valid Consignee Name in row N.
+- Select valid Consignee Location in row N.
+- Select valid Item Name in row N.
+- Freight is already defined in PO No. <no> for route <route>
+- Can't be deleted as above revision exists.
+manages:
+- freight-order
+uses_concepts:
+- bill-of-quantity
+- company
+- freight-order-amendment
+- freight-order-mapping
+- service-order
+- service-order-amendment
+method_notes:
+  Delete: Deletes the record through Purchase.PUFODelete.
+  FillValues: Fills the lookup lists through Purchase.PUFOFillValues.
+  FillValuesFO: Fills the lookup lists through Purchase.PUFOFillValuesFO.
+  FillValuesTransporterGroup: Fills the lookup lists through Purchase.PUFOFillValuesTransporterGroup.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Purchase.PUFOLoadData.
+  Open: Searches records through Purchase.PUFOSearchData.
+  Save: Saves the record through Purchase.PUFOSaveMain.
+  SaveFreightBasisDetail: Saves the record through Purchase.PUFOSaveFreightBasis.
+  SaveItemDetail: Saves the record through Purchase.PUFOSaveItemDetail.

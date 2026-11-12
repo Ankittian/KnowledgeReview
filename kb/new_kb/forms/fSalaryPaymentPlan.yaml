@@ -1,0 +1,50 @@
+form: fSalaryPaymentPlan
+title: Salary Payment Plan
+module: FI
+kind: transaction
+summary: The Salary Payment Plan screen groups generated salary lines of employees into one payment document so that Finance
+  can pay them through the normal payment planning process.
+purpose: |
+  What it is: A document that selects generated salaries for payment and fixes the total payable [Finance.FSPPSaveSalaryPaymentPlanDetail:19-41; Finance.FSPPSave:75-118]. When it applies: After salary has been generated and before it is paid through the Payment Plan. Business outcome: Each salary is planned for payment once and Finance sees one payable total per plan (BR-06; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The document control at the top, a General Detail group with selection fields and a Show button, an Employee Detail group with the grid, and a Payable Amount total [fSalaryPaymentPlan.Designer.vb:64; fSalaryPaymentPlan.Designer.vb:272; fSalaryPaymentPlan.Designer.vb:291; fSalaryPaymentPlan.Designer.vb:299].
+  - Document Control (Number, Date, Status, Finance Book): The standard document control [fSalaryPaymentPlan.vb:84; fSalaryPaymentPlan.vb:276].
+  - TransactionType Field: Mandatory dropdown "TransactionType" [fSalaryPaymentPlan.vb:45; fSalaryPaymentPlan.Designer.vb:90].
+  - FromMonth and ToMonth Fields: Month pickers "FromMonth" and "ToMonth" in format MMM-yyyy [fSalaryPaymentPlan.Designer.vb:94-128].
+  - FromDate and ToDate Fields: Date pickers "FromDate" and "ToDate" in format dd/MM/yyyy [fSalaryPaymentPlan.Designer.vb:132-166].
+  - Division and Department Fields: Optional dropdowns "Division" and "Department"; choosing a Division clears the Department and limits the Department list to that Division [fSalaryPaymentPlan.vb:581-590; fSalaryPaymentPlan.Designer.vb:185; fSalaryPaymentPlan.Designer.vb:204].
+  - PaymentMode Field: Mandatory dropdown "PaymentMode" listing active modes plus the saved one [fSalaryPaymentPlan.vb:45; Finance.FSPPFillValues:41-45].
+  - Show Button: Button "Show" [fSalaryPaymentPlan.Designer.vb:231].
+  - Remarks Field: Optional text box, up to 1000 characters, trimmed; empty is stored as no remark [fSalaryPaymentPlan.vb:96; fSalaryPaymentPlan.vb:456-460].
+  - Employee Detail Grid: Columns: tick box (no caption), Employee Name, Division, Department, Category, Designation, Account Number, Net Amount; hidden AccountNo and SalaryNo.
+  - Payable Amount Field: Read-only total "Payable Amount", 2 decimals [fSalaryPaymentPlan.Designer.vb:301; fSalaryPaymentPlan.vb:100].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Handlers are empty [fSalaryPaymentPlan.vb:207-239].
+actions:
+  Search: Opens the common search window for plans of the company and year [fSalaryPaymentPlan.vb:180-199; Finance.FSPPSearchData:12-27].
+  New: Resets through the main window [fSalaryPaymentPlan.vb:171-176; fSalaryPaymentPlan.vb:241-253].
+  Save: Validates and saves in one transaction [fSalaryPaymentPlan.vb:395-495].
+  Delete: Deletes the loaded plan after confirmation [fSalaryPaymentPlan.vb:51-74].
+validations:
+- Select valid Transaction Type.
+- Select valid Payment Mode.
+- Select at least one Employee in Employee Detail.
+- Authorized Salary Payment Plan can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- salary-payment-plan
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FSPPDelete.
+  FillValues: Fills the lookup lists through Finance.FSPPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSPPFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FSPPLoadData.
+  Open: Searches records through Finance.FSPPSearchData.
+  Save: Saves the record through Finance.FSPPAuthorize, Finance.FSPPSave.
+  SaveEmpDetail: Saves the record through Finance.FSPPSaveSalaryPaymentPlanDetail.
+  ValidateForm: Validates the entry through Finance.FSPPValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through Finance.FSPPFillValues.

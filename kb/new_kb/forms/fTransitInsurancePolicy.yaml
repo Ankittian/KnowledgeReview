@@ -1,0 +1,63 @@
+form: fTransitInsurancePolicy
+title: Transit Insurance Policy
+module: MD
+kind: master
+summary: The Transit Insurance Policy screen (window caption "TransitInsurancePolicy") maintains the open marine or transit
+  insurance policies under which goods in transit are declared.
+purpose: |
+  What it is: The register of transit insurance policies with their cover, premium terms and add-ons. When it applies: When a new policy is bought, renewed, or endorsed with additional cover. Business outcome: Dispatches and invoices can be declared against a valid policy and its remaining cover tracked (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields with a "Validity" group, and a tab control with "Add On Detail" and "Finance Book Detail".
+  - Code Field: Read-only text box.
+  - Policy No. Field: Mandatory text box, up to 50 characters.
+  - Policy Date, From Date and To Date Fields: Date pickers.
+  - Insurance Company Name Field: Mandatory text box, up to 100 characters.
+  - Address, City, State and Country Fields: Three optional address lines (100 characters each) and optional dropdowns (BR-02).
+  - Opening (Insurance Amt.) and Opening (Premium Amt.) Fields: Mandatory numeric boxes with 2 decimals, up to 15 characters (BR-05, BR-06).
+  - Rate Field: Mandatory numeric box with 5 decimals, up to 11 characters (BR-07).
+  - Policy Type and Policy Nature Fields: Mandatory dropdowns, defaulted (BR-04).
+  - Add On Detail Grid: Columns Add On Date, Add On Amount (2 decimals, 13 characters), Add On Premium (2 decimals, 12 characters); a new row is added when the last row is edited.
+  - Finance Book Detail Grid: Finance Book dropdown and read-only Code filled from the chosen book; a new row is added when the last row is edited.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the policy, add-ons and finance books.
+  Search: Standard search with Code, Policy No., Policy Date, Ins.
+  Delete: Deletes the loaded policy after confirmation (MSG-26).
+  Navigation: Not coded on this screen; provided by the standard toolbar, if at all (Inferred).
+validations:
+- Enter Policy No..
+- Duplicate Policy No. not allowed.
+- Policy Date can't be greater than Validity From Date.
+- Validity To Date can't be less than Validity From Date.
+- Validity From Date and Validity To Date can't be same.
+- Select a valid Policy Type.
+- Select a valid Policy Nature.
+- Enter Insurance Company Name.
+- Opening (Insurance Amt.) can't be empty or zero.
+- Enter Opening (Insurance Amt.).
+- Opening(Premium Amt.) can't be empty or zero.
+- Enter Opening(Premium Amt.).
+- Opening (Premium Amt.) can't be greater then or equal to Opening Balance(Insurance Amt.).
+- Rate can't be empty or zero.
+- Rate can't be greater than 100.00.
+- Enter Rate.
+- Add on Amount can't be empty or zero in row {n}.
+- Add On Premium can't be empty or zero in row {n}.
+- Add On Premium can't be greater than Add On Amount in row {n}.
+- Select atleast one Finance Book.
+- Duplicate Finance Book not allowed.
+manages:
+- transit-insurance-policy
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MFIPDelete.
+  FillValues: Fills the lookup lists through masterdata.MFIPFillValues.
+  LoadData: Loads the selected record through masterdata.MFIPLoadData.
+  Open: Searches records through masterdata.MFIPSearchData.
+  Save: Saves the record through masterdata.MFIPSave.
+  SaveFBDetail: Saves the record through masterdata.MFIPSaveFBDetail.
+  SavePolicyDetail: Saves the record through masterdata.MFIPSavePolicyDetail.
+  ValidateForm: Validates the entry through masterdata.MFIPValidate.

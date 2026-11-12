@@ -1,0 +1,39 @@
+form: fRenameItemDescription
+title: Rename Item Description
+module: MD
+kind: master
+summary: The Rename Item Description screen changes the name, size and grade of an existing item, and with them its Item Description,
+  without creating a new item.
+purpose: |
+  What it is: A controlled way to correct or update the name, size, grade and description of an item that already exists and may already be used in documents [fRenameItemDescription.vb:228-300; masterdata.RNIMSaveRenameDetail:32-66]. When it applies: When an item was named wrongly, or its naming standard changes. Business outcome: The item keeps its code and history while its description is corrected; the usage counts show the impact before the change and the rename history records what changed (BR-04; BR-07; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Old Item Group Area: A group box titled "Old Item" holding Code, Item Description, Item Name, Size and Grade [fRenameItemDescription.designer.vb:173-176].
+  - Code Field: A mandatory drop-down labelled "&Code", listing item codes with description, type, category, group, subgroup, name, size, grade and unit [fRenameItemDescription.vb:42; fRenameItemDescription.vb:72; fRenameItemDescription.designer.vb:78].
+  - Item Description Field (Old): A mandatory drop-down labelled "Item &Description" over the same item list, with a search button that opens a search list of the items [fRenameItemDescription.vb:42; fRenameItemDescription.vb:73; fRenameItemDescription.vb:432-453; fRenameItemDescription.designer.vb:98].
+  - Old Item Name, Size and Grade Fields: Read-only text boxes labelled "Item Name", "Size" and "Grade" under Old Item, 200, 100 and 100 characters [fRenameItemDescription.designer.vb:104-106; fRenameItemDescription.designer.vb:124-126; fRenameItemDescription.designer.vb:144-146; fRenameItemDescription.designer.vb:118; fRenameItemDescription.designer.vb:138; fRenameItemDescription.designer.vb:158].
+  - Rename As Group Area: A group box titled "Rename As" holding the new Item Name, Size, Grade and Item Description [fRenameItemDescription.designer.vb:263-266].
+  - Item Name Field (New): A text box labelled "Item &Name", 200 characters; it is required on Save although it is not marked as a compulsory field [fRenameItemDescription.designer.vb:182-194; fRenameItemDescription.vb:42; fRenameItemDescription.vb:215-220].
+  - Size Field (New): An optional text box labelled "&Size", 100 characters [fRenameItemDescription.designer.vb:200; fRenameItemDescription.designer.vb:212].
+  - Grade Field (New): An optional text box labelled "&Grade", 100 characters [fRenameItemDescription.designer.vb:218; fRenameItemDescription.designer.vb:230].
+  - Item Description Field (New): A read-only text box labelled "Item Description" under Rename As [fRenameItemDescription.designer.vb:236-250].
+  - Transaction Detail Grid: A read-only grid with columns Transaction Name and Count [fRenameItemDescription.vb:156-157; fRenameItemDescription.vb:317-323].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fRenameItemDescription.vb:102-134].
+actions:
+  New: The toolbar action that asks the main window for a blank record [fRenameItemDescription.vb:88-95].
+  Save: The toolbar action that validates and stores the rename [fRenameItemDescription.vb:228-300].
+  Open and Delete: The Search (Open) and Delete toolbar actions.
+validations:
+- Select valid Code.
+- Select valid Item Description.
+- Enter Item Name.
+- Duplicate Item Description not allowed.
+manages:
+- rename-item-description
+uses_concepts:
+- material-category
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.RNIMFillValues.
+  Save: Saves the record through masterdata.RNIMSaveRenameDetail.
+  ValidateForm: Validates the entry through masterdata.RNIMValidation.
+  ucmbCode_ValueChanged: Runs through masterdata.RNIMTransactionDetail.

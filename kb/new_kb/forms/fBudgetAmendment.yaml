@@ -1,0 +1,62 @@
+form: fBudgetAmendment
+title: Budget Amendment
+module: MM
+kind: transaction
+summary: The Budget Amendment screen changes a budget that already exists on the [Budget](Functional_Doc_fBudget.md) screen
+  without overwriting its history.
+purpose: |
+  What it is: A controlled way to revise an approved budget while keeping every earlier version. When it applies: When a budget limit, its validity period or its selected lines must change after the budget was created or authorized. Business outcome: Budget changes are traceable by version, and an unauthorized amendment does not disturb the budget in force (BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Layout: The same layout as [Budget](Functional_Doc_fBudget.md), Section 5 'Header Area' and 'Budget Grid'.
+  - Budget Code Field: A dropdown labelled "Budget &Code" listing the budgets that may be amended [fBudgetAmendment.Designer.vb:426; fBudgetAmendment.vb:68-69].
+  - Amendment No. Field: Read-only text box [fBudgetAmendment.Designer.vb:139].
+  - Budget Entry Date Field: Read-only text box labelled "Budget Entry Date" showing the original entry date as dd/MM/yyyy; the date itself is kept in the control's tag and saved back unchanged [fBudgetAmendment.Designer.vb:415; fBudgetAmendment.Designer.vb:458; fBudgetAmendment.vb:237].
+  - Amendment Date Field: Date picker, mandatory [fBudgetAmendment.vb:22].
+  - Budget Description, Validity From and Validity To Fields: As on Budget: description up to 100 characters, two validity dates, all mandatory; the end date must be later than the start date [fBudgetAmendment.Designer.vb:445; fBudgetAmendment.vb:466-476].
+  - Budget Type Field: Dropdown labelled "Budget Type", read-only; the value comes from the chosen budget [fBudgetAmendment.Designer.vb:342; fBudgetAmendment.Designer.vb:405].
+  - Totals and Authorize Fields: Budget Amount, Utilized Amount and Balance Amount read-only totals and the "&Authorize" box, as on Budget [fBudgetAmendment.Designer.vb:231; fBudgetAmendment.Designer.vb:272-288; fBudgetAmendment.Designer.vb:436].
+  - Grid Behaviour: The same two-level grid as [Budget](Functional_Doc_fBudget.md), Section 5 'Budget Grid' and 'Grid Row Selection Behaviour', showing the lines of the chosen version.
+actions:
+  New: Toolbar New [fBudgetAmendment.vb:15].
+  Save: Toolbar Save [fBudgetAmendment.vb:16].
+  Search: Toolbar Open [fBudgetAmendment.vb:17; fBudgetAmendment.vb:159-185].
+  Delete: Toolbar Delete [fBudgetAmendment.vb:18].
+  Navigation and Other Toolbar: Navigation is enabled; Print, Preview, Email and Export are empty [fBudgetAmendment.vb:19;
+    fBudgetAmendment.vb:187-195; fBudgetAmendment.vb:820-826].
+validations:
+- Document No. <Budget Code> saved successfully.
+- Transaction on back date are disabled.
+- Transaction on future date are disabled.
+- Authorized Entry can't be updated.
+- Enter Budget Code.
+- Amendment Date must be in Financial Year.
+- Enter Budget Description.
+- Budget Validity To can't be equal to or less than Budget Validity From.
+- Select atleast one Divison Name.
+- Select atleast one Department Name.
+- Select atleast one Item SubGroup.
+- Select atleast one Item.
+- Select atleast one Cost Center.
+- Enter Budget Amount in row
+- 'Utilized Amount can''t be greater than Budget Amount in row '
+- 'Utilized Qty can''t be greater than Quantity in row '
+- Department's total Budget Amount can't be greater than Division Budget Amount.
+- Department's total Utilized Amount can't be greater than Division Utilized Amount.
+- Child Cost Center total Budget Amount can't be greater then Parent Cost Center Budget Amount.
+- Child Cost Center total Utilized Amount can't be greater then Parent Cost Center utilized Amount.
+manages:
+- budget-amendment
+uses_concepts:
+- budget
+method_notes:
+  Delete: Deletes the record through Inventory.ADBCDelete.
+  FillValues: Fills the lookup lists through Inventory.ADBAFillValues.
+  LoadData: Loads the selected record through Inventory.ADBCLoadData.
+  Open: Searches records through Inventory.ADBCSearchData.
+  Save: Saves the record through Inventory.ADBCSave.
+  SaveBudgetDeptDetail: Saves the record through Inventory.ADBCSaveBudgetDeptDetail.
+  SaveBudgetDivisionDetail: Saves the record through Inventory.ADBCSaveBudgetDivisionDetail.
+  SaveBudgetItemDetail: Saves the record through Inventory.ADBCSaveBudgetItemDetail.
+  SaveCostCenterDetail: Saves the record through Inventory.ADBCSaveCostCenterDetail.
+  ucmbBudgetCode_ValueChanged: Fills the lookup lists through Inventory.ADBAFillValuesDependent.

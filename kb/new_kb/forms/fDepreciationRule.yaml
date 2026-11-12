@@ -1,0 +1,55 @@
+form: fDepreciationRule
+title: Depreciation Rule
+module: MD
+kind: master
+summary: The Depreciation Rule screen defines the named rules that say how a fixed asset loses value.
+purpose: |
+  What it is: A master record that defines how depreciation is computed: method, rate pattern, basis, useful life, salvage and the per-year or per-period rates [fDepreciationRule.vb:344-454; FixedAsset.AMDRSaveMain:28-90]. When it applies: When a depreciation policy, for example a statutory rate, is introduced or changed. Business outcome: Depreciation is calculated from controlled, reusable rules instead of per-asset entries.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding the rule fields and the Rate Variance grid [fDepreciationRule.Designer.vb:245-253].
+  - Code Field: A read-only text box that cannot be tabbed into [fDepreciationRule.Designer.vb:61-65].
+  - Rule Name Field: A mandatory text box, up to 50 characters [fDepreciationRule.vb:11; fDepreciationRule.vb:53].
+  - Depreciation Method Field: A mandatory drop-down [fDepreciationRule.vb:11; fDepreciationRule.vb:70].
+  - Rate Type Field: A mandatory drop-down with Yearly Fixed, Year Variance and Period Variance [fDepreciationRule.vb:11; fDepreciationRule.vb:71].
+  - Depreciation Basis Field: A mandatory drop-down [fDepreciationRule.vb:11; fDepreciationRule.vb:72].
+  - Depreciation Rate Field: A numeric text box with 3 decimals, up to 7 characters, read-only unless the rate type is Yearly Fixed [fDepreciationRule.vb:55-57; fDepreciationRule.vb:509-512].
+  - Useful Life Field: A numeric text box, whole number, up to 2 digits [fDepreciationRule.vb:59-60].
+  - Period Type Field: A drop-down of Month, Quarter, Half Year and Year [fDepreciationRule.vb:73].
+  - Salvage Value Field: An optional numeric text box with 2 decimals, up to 8 characters [fDepreciationRule.vb:62-63].
+  - Salvage Type Field: An optional drop-down with Percentage and Value [fDepreciationRule.vb:74].
+  - Inactive Field: An optional tick box [fDepreciationRule.Designer.vb:206-209].
+  - Rate Variance Grid: A grid with Year and Period (read-only), Rate(%) (7 characters, 3 decimals), Min Depreciation and Max Depreciation (12 characters, 2 decimals); the row keys are hidden; rows cannot be deleted [fDepreciationRule.vb:65-68; fDepreciationRule.vb:317-343].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fDepreciationRule.vb:135-189].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fDepreciationRule.vb:118-125].
+  Save: The toolbar action that validates and stores the rule and its rate rows [fDepreciationRule.vb:344-421].
+  Search: The toolbar action that opens a search dialog listing Code, Rule Name, Depreciation Method, Rate Type, Depreciation
+    Basis, Depreciation Rate, Useful Life, Inactive, Created By and Created Date [FixedAsset.AMDRSearchData:17-36].
+  Delete: The toolbar action that removes the open rule [fDepreciationRule.vb:17-42].
+validations:
+- Enter Rule Name.
+- Select valid Depreciation Method.
+- Select valid Depreciation Basis.
+- Select valid Salvage Type.
+- Select valid Rate Type.
+- Enter Depreciation Rate.
+- Useful Life can't be empty or 0.
+- Select valid Period Type.
+- Enter Rate(%) in each row.
+- Duplicate Depreciation Rule Name not allowed.
+- Rate(%) can't be empty or zero in row N.
+- Can't update Depreciation Rule, it is mapped with asset class.
+- Depreciation Rate is gonna change with respect to Useful Life.Do you want to continue?
+manages:
+- depreciation-rule
+uses_concepts:
+- depreciation-rule-class-mapping
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMDRDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMDRFillValues.
+  LoadData: Loads the selected record through FixedAsset.AMDRLoadData.
+  Open: Searches records through FixedAsset.AMDRSearchData.
+  Save: Saves the record through FixedAsset.AMDRSaveMain.
+  SaveRateVarianceDetail: Saves the record through FixedAsset.AMDRSaveRateVarianceDetail.
+  ValidateForm: Validates the entry through FixedAsset.AMDRValidate.

@@ -1,0 +1,98 @@
+key: p11-eam-equipment-and-asset-register
+name: 'EAM: Equipment and asset register (Phase 11)'
+module: PM
+status: active
+summary: Phase 11 screens of the equipment and asset register group in EAM.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Equipment and asset register' (EAM). The steps follow the plan order, not a verified business sequence: Autogenerate Service Call Equipment, Change Equipment Driver, Change Equipment Location, Change Equipment Owner, Change Tyre Status, Equipment Document Entry, Equipment Down Period, Equipment Replacement, Equipment Replacement Request, Equipment Running Hour, Functional Location, Service Call Resource Allocation, Service Call Resource Reporting, Service Order Resource Reporting Detail, Tyre Category Master, Tyre Expense Entry, Tyre Inspection Entry, Tyre Master, Tyre Movement, Tyre Repair Category, Tyre Repair Entry, Tyre Repair Request.
+steps:
+- order: 1
+  name: Record Autogenerate Service Call Equipment
+  form: fAutogenerateServiceCallEquipment
+- order: 2
+  name: Record Change Equipment Driver
+  form: fChangeEquipmentDriver
+- order: 3
+  name: Record Change Equipment Location
+  form: fChangeEquipmentLocation
+- order: 4
+  name: Record Change Equipment Owner
+  form: fChangeEquipmentOwner
+- order: 5
+  name: Record Change Tyre Status
+  form: fChangeTyreStatus
+- order: 6
+  name: Record Equipment Document Entry
+  form: fEquipmentDocumentEntry
+- order: 7
+  name: Record Equipment Down Period
+  form: fEquipmentDownPeriod
+- order: 8
+  name: Record Equipment Replacement
+  form: fEQUReplacement
+- order: 9
+  name: Record Equipment Replacement Request
+  form: fEquipmentReplacementRequest
+- order: 10
+  name: Record Equipment Running Hour
+  form: fEquipmentRunningHours
+- order: 11
+  name: Record Functional Location
+  form: fFunctionalLocation
+- order: 12
+  name: Record Service Call Resource Allocation
+  form: fServiceCallResourceAllocation
+- order: 13
+  name: Record Service Call Resource Reporting
+  form: fServiceCallResourceReporting
+- order: 14
+  name: Record Service Order Resource Reporting Detail
+  form: fResourceReporting
+- order: 15
+  name: Record Tyre Category Master
+  form: fTyreCategoryMaster
+- order: 16
+  name: Record Tyre Expense Entry
+  form: fTyreExpenseEntry
+- order: 17
+  name: Record Tyre Inspection Entry
+  form: fTyreNSDReading
+- order: 18
+  name: Record Tyre Master
+  form: fTyreMaster
+- order: 19
+  name: Record Tyre Movement
+  form: fTyreMovement
+- order: 20
+  name: Record Tyre Repair Category
+  form: fTyreRepairCategory
+- order: 21
+  name: Record Tyre Repair Entry
+  form: fTyreRepairEntry
+- order: 22
+  name: Record Tyre Repair Request
+  form: fTyreRepairRequest
+concepts:
+- autogenerate-service-call-equipment
+- change-equipment-driver
+- change-equipment-location
+- change-equipment-owner
+- change-tyre-status
+- equipment-document-entry
+- equipment-down-period
+- equipment-replacement
+- equipment-replacement-request
+- equipment-running-hour
+- functional-location
+- service-call-resource-allocation
+- service-call-resource-reporting
+- service-order-resource-reporting-detail
+- tyre-category-master
+- tyre-expense-entry
+- tyre-inspection-entry
+- tyre-master
+- tyre-movement
+- tyre-repair-category
+- tyre-repair-entry
+- tyre-repair-request

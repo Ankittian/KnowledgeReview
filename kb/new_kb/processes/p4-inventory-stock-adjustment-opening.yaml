@@ -1,0 +1,18 @@
+key: p4-inventory-stock-adjustment-opening
+name: 'Inventory: Stock adjustment & opening (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the stock adjustment & opening group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Stock adjustment & opening' (Inventory). The steps follow the plan order, not a verified business sequence: Single Item Opening, Multi Item Opening.
+steps:
+- order: 1
+  name: Record Single Item Opening
+  form: fItemOpening
+- order: 2
+  name: Record Multi Item Opening
+  form: fInvOpeningBalance
+concepts:
+- single-item-opening
+- multi-item-opening

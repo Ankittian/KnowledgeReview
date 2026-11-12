@@ -1,0 +1,41 @@
+form: fReferenceReconciliationReversal
+title: Reference Reconciliation Reverse
+module: FI
+kind: transaction
+summary: The Reference Reconciliation Reverse screen undoes matches that were made earlier between vouchers and open references,
+  for example a payment that was set against a vendor bill.
+purpose: |
+  What it is: A correction tool that cancels a previously saved match between a voucher line and a reference [Finance.FRRRSaveReference:65-92]. When it applies: When a payment, receipt or journal was set against the wrong reference, or a match must be redone. Business outcome: The reference becomes open again for the amount that had been matched, and the voucher line can be matched afresh (BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Selection Panel and Grids Layout: A top panel with five fields on the left and an account summary grid on the right, and below it a group box holding the matches grid [fReferenceReconciliationReversal.Designer.vb:51-146; fReferenceReconciliationReversal.Designer.vb:169-193].
+  - Finance Book Field: A mandatory dropdown "Finance Book" (labelled "Profit Center" when that setting is on) (BR-01; MSG-01) [fReferenceReconciliationReversal.vb:15; fReferenceReconciliationReversal.vb:119-123].
+  - Account Nature Field: A mandatory dropdown "Account Nature" (BR-01; MSG-02) [fReferenceReconciliationReversal.vb:15; fReferenceReconciliationReversal.vb:125-129].
+  - Account Name Field: A mandatory dropdown "Account Name" with Group Name shown (BR-01; MSG-03) [fReferenceReconciliationReversal.vb:216; fReferenceReconciliationReversal.vb:131-135].
+  - From Date and To Date Fields: Two date pickers; changing either reloads both grids [fReferenceReconciliationReversal.vb:231-243].
+  - Account Summary Grid: A read-only grid with Account Name, Account Type, Balance Amount (shown with Dr or Cr), Adjusted Debit Amount and Adjusted Credit Amount [fReferenceReconciliationReversal.vb:157-187; Finance.FRRRFillValuesDependent:67-80].
+  - Matches Grid: A grid with a select-all checkbox in the first column header and columns Account Name, Reference No., Reference Date, Reference Amount, Source Document, Source Document No., Source Document Date, Voucher Type, Voucher No., Voucher Date, Voucher Amount, Adjusted Dr Amount, Adjusted Cr Amount.
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Not implemented.
+actions:
+  New: Standard toolbar New [fReferenceReconciliationReversal.vb:64-71].
+  Save: Reverses all ticked matches.
+validations:
+- Select valid Finance Book.
+- Select valid Profit Center.
+- Select valid Account Nature.
+- Select valid Account Name .
+- Select atleast one reference for reversal.
+- Transaction on back date are disabled.
+- Transaction on future date are disabled.
+- Contact your vendor,Reference getting -ve
+manages:
+- reference-reconciliation-reverse
+uses_concepts:
+- account-opening
+- accounting-voucher
+- bank-journal
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FBRRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FRRRFillValuesDependent.
+  FillValuesNature: Fills the lookup lists through Finance.FBRRFillValuesNature.
+  Save: Saves the record through Finance.FRRRSaveReference.

@@ -1,0 +1,48 @@
+form: fAssetTagLotMapping
+title: Asset Tag Lot Mapping
+module: ADM
+kind: transaction
+summary: The Asset Tag Lot Mapping screen links fixed asset tags to the inventory lots they were created from.
+purpose: |
+  What it is: A record of how many units of each inventory lot (and serial number) are assigned to each asset tag [fAssetTagLotMapping.vb:483-510; Inventory.ATLMSaveMain:35-46]. When it applies: After stock is received and asset tags exist, when the asset accountant needs the tag tied to its stock source. Business outcome: Each asset tag can be traced to the lots that supplied it, and the lot balance available to other tags is reduced accordingly (BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header group with Depreciation Book, Division and Finance Book, above an asset tag grid and a lot grid; two hidden popups hold the allocation grids [fAssetTagLotMapping.Designer.vb:121-124; fAssetTagLotMapping.Designer.vb:158-161].
+  - Depreciation Book Field: A mandatory dropdown labelled "Depreciation &Book" [fAssetTagLotMapping.vb:15; fAssetTagLotMapping.Designer.vb:78] (BR-01).
+  - Division Field: A read-only text box labelled "Division" [fAssetTagLotMapping.Designer.vb:194-207].
+  - Finance Book Field: A read-only text box labelled "Finance Book" [fAssetTagLotMapping.Designer.vb:84-97].
+  - Asset Tag Grid: A grid with Select, Asset No., Asset Description, Tag No., Tag Description, Item Name, Serial No., Quantity, Acquisition Value, Tag Value and Adjusted Lot Qty.
+  - Lot Grid: A grid with Select, Document No., Document Date, Document Type, Lot No., Item Name, Serial No., Quantity, Prev.
+  - Lot Allocation Popup (from Adjusted Lot Qty.): A popup grid of lots of the same item and serial number as the tag, with Select and an editable quantity captioned "Adjusted Lot Qty." plus "&Ok" and "&Cancel" buttons [fAssetTagLotMapping.vb:635-680; fAssetTagLotMapping.vb:897-955; fAssetTagLotMapping.Designer.vb:142-150].
+  - Tag Allocation Popup (from Adjusted Tag Qty.): A popup grid of tags of the same item and serial number as the lot, with Select and an editable quantity captioned "Adjusted Tag Qty." plus "&Ok" and "&Cancel" buttons [fAssetTagLotMapping.vb:682-726; fAssetTagLotMapping.vb:974-1024; fAssetTagLotMapping.Designer.vb:105-113].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Implemented as empty routines [fAssetTagLotMapping.vb:134-166].
+actions:
+  New: Asks the main window to start a new record [fAssetTagLotMapping.vb:98-105].
+  Save: Validates and saves all ticked tags [fAssetTagLotMapping.vb:450-481].
+  Search: Opens the common search popup ([Functional_Doc_fSearch.md](Functional_Doc_fSearch.md)) listing tags that already
+    have a mapping [fAssetTagLotMapping.vb:107-132; Inventory.ATLMSearchData:17-32].
+  Delete: Deletes the mapping of the opened tag [fAssetTagLotMapping.vb:28-53].
+validations:
+- Select valid Depreciation Book.
+- Select atleast one Asset Tag.
+- Adjusted Lot Qty. should be equal to Quantity in row N.
+- Select atleast one Lot.
+- Adjusted Lot Qty. can't be empty or zero in row N.
+- Total Adjusted Lot Qty. should be equal to Asset Tag Quantity.
+- Adjusted Tag Qty. can't be empty or zero in row N.
+- Total Adjusted Tag Qty. should be less than equal to Balance Qty.
+- Adjusted Lot Qty. can't be greater than Balance Qty.
+- Adjusted Tag Qty. can't be greater than Quantity.
+manages:
+- asset-tag-lot-mapping
+uses_concepts:
+- company
+- depreciation-book
+method_notes:
+  Delete: Deletes the record through Inventory.ATLMDelete.
+  FillValues: Fills the lookup lists through Inventory.ATLMFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.ATLMFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.ATLMLoadData.
+  Open: Searches records through Inventory.ATLMSearchData.
+  SaveAssetTagDetail: Saves the record through Inventory.ATLMSaveMain.
+  ValidateForm: Validates the entry through Inventory.ATLMValidate.

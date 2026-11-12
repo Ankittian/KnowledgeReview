@@ -1,0 +1,18 @@
+key: p5-purchase-sourcing-rfq-quotation-cs-agreements
+name: 'Purchase: Sourcing (RFQ, quotation, CS, agreements) (Phase 5)'
+module: MM
+status: active
+summary: Phase 5 screens of the sourcing (rfq, quotation, cs, agreements) group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Sourcing (RFQ, quotation, CS, agreements)' (Purchase). The steps follow the plan order, not a verified business sequence: MaterialComparativeStudy, fMaterialAgreementValidity.
+steps:
+- order: 1
+  name: Record MaterialComparativeStudy
+  form: fMaterialComparativeStatement
+- order: 2
+  name: Record fMaterialAgreementValidity
+  form: fMaterialAgreementValidityChange
+concepts:
+- materialcomparativestudy
+- fmaterialagreementvalidity

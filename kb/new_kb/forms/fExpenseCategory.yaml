@@ -1,0 +1,38 @@
+form: fExpenseCategory
+title: Expense Category
+module: MD
+kind: master
+summary: The Expense Category screen maintains the list of categories under which employee expenses are claimed, such as travel
+  or lodging (Inferred from the screen's use in expense claims).
+purpose: |
+  What it is: A master record that names a type of employee expense and lists the extra information to capture for it [fExpenseCategory.vb:287-307; masterdata.MDECSave:18-48]. When it applies: When finance sets up or changes the types of expense employees may claim. Business outcome: Claims are classified consistently, and category-specific details (for example a reference number) can be demanded for each claim (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Area: The upper panel holding Code, Category Name and Inactive [fExpenseCategory.Designer.vb:109-110].
+  - Code Field: A read-only text box [fExpenseCategory.Designer.vb:42].
+  - Category Name Field: A text box of up to 50 characters, mandatory and highlighted as compulsory; the label is "Category Name" [fExpenseCategory.vb:41; fExpenseCategory.Designer.vb:60,72].
+  - Inactive Field: A disabled check box labelled "Inactive" [fExpenseCategory.Designer.vb:76-81].
+  - Supplementary Field Grid: An editable grid with columns "Supplementary Field" (drop-down showing field name and code) and "Is Mandatory" [fExpenseCategory.vb:84-89; fExpenseCategory.vb:267-270].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fExpenseCategory.vb:165-197].
+actions:
+  New: Toolbar action that clears the form [fExpenseCategory.vb:130-138].
+  Save: Toolbar action that stores the category and its supplementary fields [fExpenseCategory.vb:277-327].
+  Search: Toolbar action that opens a search dialog [fExpenseCategory.vb:140-163].
+  Delete: Toolbar action that removes the opened category [fExpenseCategory.vb:47-72].
+validations:
+- Enter Category Name.
+- Duplicate Category Name not allowed.
+- Duplicate Supplementary Field not allowed.
+manages:
+- expense-category
+uses_concepts:
+- company
+- expense-category-supplementary-field
+method_notes:
+  Delete: Deletes the record through masterdata.MDECDelete.
+  FillValues: Fills the lookup lists through masterdata.MDECFillValues.
+  LoadData: Loads the selected record through masterdata.MDECLoadData.
+  Open: Searches records through masterdata.MDECSearchData.
+  Save: Saves the record through masterdata.MDECSave.
+  SaveSupplementaryField: Saves the record through masterdata.MDECSavemExpenseCategorySupplementaryField.
+  ValidateForm: Validates the entry through masterdata.MDECValidate.

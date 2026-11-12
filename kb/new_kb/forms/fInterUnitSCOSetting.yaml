@@ -1,0 +1,25 @@
+form: fInterUnitSCOSetting
+title: Inter Unit SCO Setting
+module: ADM
+kind: transaction
+summary: The Inter Unit SCO Setting screen holds a single list of production unit pairs that may subcontract to each other.
+purpose: |
+  What it is: A list of production unit pairs for which inter-unit subcontracting is allowed [fInterUnitSCOSetting.vb:26-39; Production.IUSSFillValues:17-26]. When it applies: When production units of the group start subcontracting work to one another, or when that arrangement changes. Business outcome: Subcontract documents can tell inter-unit work from external subcontracting, and only units listed here take part (BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Panel: A group box titled "InterUnitSCOSetting" holding a single grid [fInterUnitSCOSetting.Designer.vb:31-41; fInterUnitSCOSetting.Designer.vb:55].
+  - Production Unit Grid: A two-column grid.
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not implemented; Delete returns without acting and the other handlers are empty or commented out [fInterUnitSCOSetting.vb:18-21; fInterUnitSCOSetting.vb:79-105; fInterUnitSCOSetting.vb:107-122; fInterUnitSCOSetting.vb:256-262].
+actions:
+  Save: Replaces the full list with the grid contents.
+  New: Passes the request to the main window's standard New handling [fInterUnitSCOSetting.vb:70-77].
+validations:
+- Duplicate Units are not allowed.
+- Both Unit can't be same.
+- Select valid Unit in row N.
+- Both Unit can't be same in  in row N.
+manages:
+- inter-unit-sco-setting
+method_notes:
+  FillValues: Fills the lookup lists through Production.IUSSFillValues.
+  Save: Saves the record through Production.IUSSDelete, Production.IUSSSave.

@@ -1,0 +1,58 @@
+form: fMaterialAgreementValidityChange
+title: fMaterialAgreementValidity
+module: MM
+kind: transaction
+summary: This screen is a variant of the base [Material Agreement](Functional_Doc_fVendorAgreement.md) screen.
+purpose: |
+  What it is: A controlled, authorized document that changes the From / To dates (and recurring schedule) of an agreement, keeping the old period on record. [Purchase.PCPASave:70-111; Purchase.PCPASave:93-104] When it applies: When an agreement is about to expire or must be shortened or extended, or recurring delivery periods must be re-planned. Business outcome: Validity changes are approved and traceable instead of editing an authorized agreement directly.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Strip: The shared document number control with division, date, status and number, plus the "repeated entry" button.
+  - Agreement No. Field: Dropdown of agreement number and date; marked mandatory (BR-01, MSG-10).
+  - Agreement Date, Vendor Name and Location Fields: Read-only displays of the agreement date, vendor and vendor address.
+  - Agreement Period (From Date, To Date): Two disabled date fields holding the agreement's current period.
+  - New Agreement Period (From Date, To Date): Two editable dates, pre-filled with the current period.
+  - Recurring Checkbox: Disabled checkbox showing whether the agreement is recurring.
+  - Item Details Grid: Grid with Item Code, Item Description, Make, Unit, Quantity, Schedule (button), Rate; all except the button are read-only and rows cannot be deleted; a hidden Id column joins items to schedules.
+  - Item Schedule Popup: A pop-up grid with Item Description, Make (read-only), From Date, To Date, Qty.
+actions:
+  New: Standard New toolbar action.
+  Save: Validates and stores the change, and, if the status is Authorized, applies it to the agreement.
+  Search: Opens a list of the change documents of the company and year (division, document no., date, agreement no., vendor,
+    location, created by, authorized by).
+  Delete: Deletes the change and its schedule rows after confirmation.
+  Repeated Entry: The button of the document number control that lets the user pick an earlier change and reuse it as a new
+    one.
+  Print, Preview, Export and E-mail: Print, preview, Excel export and e-mail of the daily-print report.
+validations:
+- Authorized Document can't be deleted.
+- Authorized Agreement can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Validity Date can not be less then PO Date
+- Qty. can not be less than PO Qty.
+- Select valid Vendor Name.
+- Document No. <number> saved successfully.
+- Sum of Qty. should be equal to Quantity(Item Detail).
+- Select To Date in row <n>.
+- To Date should be greater than or equal to From Date<n>.
+- From Date should come in between Agreement Period From Date and To Date in row<n>.
+- To Date should come in between Agreement Period From Date and To Date in row<n>.
+- Schedule date should not overlap for row<n>.
+- Enter Qty. in row<n>.
+- Qty. can't be less than PO Qty. in row<n>.
+manages:
+- fmaterialagreementvalidity
+uses_concepts:
+- company
+method_notes:
+  Authorize: Runs through Purchase.PCPAAuthorize.
+  Delete: Deletes the record through Purchase.PCPADelete.
+  FillValueDependent: Fills the lookup lists through Purchase.PCPAFillValuesDependent.
+  FillValues: Fills the lookup lists through Purchase.PCPAFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Purchase.PCPALoadData.
+  Open: Searches records through Purchase.PCPASearchData.
+  Save: Saves the record through Purchase.PCPASave.
+  SaveItemScheduleDetail: Saves the record through Purchase.PCPASaveItemScheduleDetail.
+  ValidateForm: Validates the entry through Purchase.PCPAValidate.

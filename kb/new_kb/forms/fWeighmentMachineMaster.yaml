@@ -1,0 +1,52 @@
+form: fWeighmentMachineMaster
+title: Weighment Machine Master
+module: WB
+kind: transaction
+summary: The Weighment Machine Master screen registers each weigh bridge machine (scale indicator) that the plant connects
+  to the application.
+purpose: |
+  What it is: A master record per weigh bridge machine holding its identity (code, name, location, unit) and the communication settings used to read weights from it [fWeighmentMachineMaster.vb:128-157; WeighBridge.MDWMSave:44-85]. When it applies: When a new weigh bridge or indicator is installed, or when its port or reading settings change. Business outcome: Weights are captured from the right device with the right serial settings, so weighment slips are not keyed in by hand.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single window with the machine identity and port fields, and a group box "ugbWeighmentDetails" holding the delay and reading pattern controls [fWeighmentMachineMaster.Designer.vb:290-350].
+  - Code Field: A read-only text box that cannot be tabbed into [fWeighmentMachineMaster.Designer.vb:67-71].
+  - Machine Name Field: A mandatory text box, up to 50 characters, trimmed of leading and trailing spaces [fWeighmentMachineMaster.vb:45; fWeighmentMachineMaster.vb:89; fWeighmentMachineMaster.vb:265].
+  - Location Field: An optional text box, up to 100 characters [fWeighmentMachineMaster.vb:90; fWeighmentMachineMaster.vb:372].
+  - Unit Field: A mandatory drop-down showing the unit alias with the unit code [fWeighmentMachineMaster.vb:103; fWeighmentMachineMaster.vb:45].
+  - COM Port Field: A mandatory text box, up to 10 characters [fWeighmentMachineMaster.vb:92; fWeighmentMachineMaster.vb:45].
+  - Baud Rate Field: A mandatory numeric text box with no decimals, up to 7 digits [fWeighmentMachineMaster.vb:93; fWeighmentMachineMaster.vb:97].
+  - Data Bits, Stop Bits and Parity Bits Fields: Three mandatory drop-downs.
+  - Reading Type Field: A mandatory drop-down of reading types [fWeighmentMachineMaster.vb:109].
+  - Reading Pattern Field: A mandatory drop-down with Description and Example columns [fWeighmentMachineMaster.vb:110].
+  - Delay In Input Checkbox and Delay Field: A tick box "Delay In Input" and a numeric text box "Delay" with the unit label "(ms)", up to 7 digits [fWeighmentMachineMaster.Designer.vb:298-330; fWeighmentMachineMaster.vb:95].
+  - Inactive Checkbox: A tick box "Inactive" that cannot be tabbed into [fWeighmentMachineMaster.Designer.vb:253-257].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fWeighmentMachineMaster.vb:212-244].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWeighmentMachineMaster.vb:177-184].
+  Save: The toolbar action that validates and stores the machine [fWeighmentMachineMaster.vb:354-424].
+  Search: The toolbar action that opens a search dialog listing machines of the logged-in company with Code, Machine Name,
+    Location, UOM, Created By and Created Date [WeighBridge.MDWMSearchData:18-30; fWeighmentMachineMaster.vb:186-210].
+  Delete: The toolbar action that removes the open machine [fWeighmentMachineMaster.vb:51-78].
+validations:
+- Enter Machine Name.
+- Select valid Unit.
+- Enter COM Port.
+- Enter Baud Rate.
+- Select valid Data Bit.
+- Select valid Stop Bit.
+- Select valid Parity Bit.
+- Select valid Reading Type.
+- Select valid Reading Pattern.
+- Duplicate Machine Name not allowed.
+- Saved successfully.
+manages:
+- weighment-machine-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through WeighBridge.MDWMDelete.
+  FillValues: Fills the lookup lists through WeighBridge.MDWMFillValues.
+  LoadData: Loads the selected record through WeighBridge.MDWMLoadData.
+  Open: Searches records through WeighBridge.MDWMSearchData.
+  Save: Saves the record through WeighBridge.MDWMSave.
+  ValidateForm: Validates the entry through WeighBridge.MDWMValidate.

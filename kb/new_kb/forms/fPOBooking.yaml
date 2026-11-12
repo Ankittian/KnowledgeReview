@@ -1,0 +1,27 @@
+form: fPOBooking
+title: PO Booking
+module: ADM
+kind: transaction
+summary: The PO Booking screen is a small dialog opened from the Comparative Statement screen ([Functional_Doc_fCS.md](Functional_Doc_fCS.md)).
+purpose: |
+  What it is: A booking of a quantity and rate against one supplier offer (quotation or agreement) for one item and make of a request for quotation [fPOBooking.vb:77-82; Purchase.PMCSSave:22-62]. When it applies: When a buyer, comparing supplier offers on the Comparative Statement, decides to take an item from a supplier. Business outcome: The decision is recorded once per offer and the booked quantity is spread over the requisition lines of the request.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A centred dialog over the Comparative Statement with Booking Qty., Booking Rate, Remarks and an OK button; its title is "Book For PO" or "Edit Booking" depending on how it was opened [fPOBooking.vb:57-59; fPOBooking.Designer.vb:141].
+  - Booking Qty. Field: A numeric text box labelled "Booking &Qty." with three decimals [fPOBooking.vb:53; fPOBooking.Designer.vb:129] (BR-02; BR-03; BR-04).
+  - Booking Rate Field: A numeric text box labelled "&Booking Rate" with two decimals, with the label "Rs" beside it [fPOBooking.vb:52; fPOBooking.vb:116; fPOBooking.Designer.vb:93; fPOBooking.Designer.vb:111] (BR-05).
+  - Remarks Field: An optional text box labelled "Remar&ks" [fPOBooking.Designer.vb:72].
+actions:
+  Ok: The "O&k" button [fPOBooking.Designer.vb:81].
+  Close (Window Cross): Closing the dialog without OK.
+validations:
+- Quantity cannot be zero or empty.
+- 'Booking Quantity greater than Balance Enquiry Quantity '
+- 'Booking Quantity can not be less than PO Quantity '
+- Booking Rate can not be less than or equal to zero.
+manages:
+- po-booking
+method_notes:
+  fPOBooking_FormClosing: Deletes the record through Purchase.PMCSBookingDelete.
+  fPOBooking_Load: Saves the record through Purchase.PMCSGetBookingNo, Purchase.PMCSSave.
+  ubtnOk_Click: Saves the record through Purchase.PMCSSave.

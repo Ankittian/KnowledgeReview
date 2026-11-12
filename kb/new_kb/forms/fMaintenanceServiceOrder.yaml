@@ -1,0 +1,121 @@
+form: fMaintenanceServiceOrder
+title: Maintenance Service Order
+module: PM
+kind: transaction
+summary: The Maintenance Service Order screen records a work order that a company raises to repair or maintain a customer's
+  equipment.
+purpose: |
+  What it is: A document that plans and prices maintenance work for one customer location, with its services, parts, resources, expected meter readings, faults and payment terms [fMaintenanceServiceOrder.vb:2016-2074]. When it applies: When a customer reports a problem (service call), when a scheduled occurrence of a service contract falls due, when follow-up work arises from an earlier service order, or when work is raised directly [fMaintenanceServiceOrder.vb:3185-3243]. Business outcome: Work, materials and billing terms are agreed on one document that links back to its source, so that execution, parts issue, reporting and invoicing refer to the same order (BR-04; BR-12; BR-23).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single window with two tab groups.
+  - Document Number, Date, Division and Status: The shared document control.
+  - Customer Name Field: Mandatory drop-down showing customer name and code (BR-03) [fMaintenanceServiceOrder.vb:325; fMaintenanceServiceOrder.vb:978-985].
+  - Location Field: Mandatory drop-down of the customer's locations, captioned "Customer Location" in the list [fMaintenanceServiceOrder.vb:2920-2928; fMaintenanceServiceOrder.vb:988-995].
+  - Order Type Field: Mandatory drop-down; the default entry is preselected on a new document [fMaintenanceServiceOrder.vb:505-507; fMaintenanceServiceOrder.vb:998-1005].
+  - Service Order Category Field: Mandatory drop-down showing category and code [fMaintenanceServiceOrder.vb:475; fMaintenanceServiceOrder.vb:1008-1015].
+  - Source Document Field: Mandatory drop-down; value 1 is preset on a new document [fMaintenanceServiceOrder.vb:758; fMaintenanceServiceOrder.vb:1018-1025].
+  - Ref. Doc. No. Field and Ref. Doc. Date Field: Ref.
+  - Subject Field: Mandatory text box, up to 300 characters, trimmed on save [fMaintenanceServiceOrder.designer.vb:371; fMaintenanceServiceOrder.vb:968-975; fMaintenanceServiceOrder.vb:2003].
+  - Maintenance For Field: Mandatory drop-down; the entry flagged as default is preselected on a new document [fMaintenanceServiceOrder.vb:509-515; fMaintenanceServiceOrder.vb:1052-1059].
+  - Equipment Code, Equipment Description, Item Description and Serial Number Fields: Four linked drop-downs.
+  - Service Occurrence No. and Trigger No. Fields: Service Occurrence No.
+  - Resposible Person Field: Mandatory drop-down of responsible persons; the caption keeps the source spelling "Resposible Person" [fMaintenanceServiceOrder.designer.vb:598; fMaintenanceServiceOrder.vb:1062-1069].
+  - Service Location Field: Mandatory drop-down of service locations [fMaintenanceServiceOrder.vb:1072-1079].
+  - Estimated Start Date and Estimated End Date Fields: Two date fields, both preset to today on a new document (BR-05) [fMaintenanceServiceOrder.vb:502-503].
+  - Remarks Field: Optional text, up to 1000 characters, trimmed on save [fMaintenanceServiceOrder.designer.vb:661; fMaintenanceServiceOrder.vb:2002].
+  - Currency Control: Shared control for currency, conversion and rate; it follows the document date [fMaintenanceServiceOrder.vb:3303-3308; fMaintenanceServiceOrder.vb:1084-1089].
+  - Notes Control: Shared notes grid with Print Area, Notes and Default columns.
+  - Bill To, Location (Bill To Location) and Due Days Fields: On Billing Detail: Bill To is a drop-down captioned "Bill To" showing customers; Location lists the bill-to customer's locations; Due Days is a numeric field of up to 3 digits [fMaintenanceServiceOrder.vb:3520-3560; fMaintenanceServiceOrder.designer.vb:708; fMaintenanceServiceOrder.vb:397].
+  - Hidden Billing Fields: Service Area (K.M.), Actual Service Area (K.M.) and Travelling Charges are hidden "for future use" [fMaintenanceServiceOrder.vb:329-337].
+  - Terms And Condition Control: Shared grid of terms and conditions heads and text; the text is editable [fMaintenanceServiceOrder.vb:488-490].
+  - Payment Detail Grid and Pay Term Code Field: Grid with Pay Code, Payment Type, Payment Description, Pay Value % (2 decimals), Payment Mode, Credit Days (whole number) and Remarks (up to 500).
+  - Service Detail Grid: Grid with Service Description, Unit (read-only), Subcontract, Subcontract Location, Pricing S No., Rate Type, Contract Qty., Prev.
+  - Item Detail Grid: Spare parts grid with Item Code, Item Description, Make, Unit (read-only), Rate Type, Contract Qty., Prev.
+  - Resource Detail Grid: Grid with Resource Name, Quantity, Rate, Rate Unit, Rate Type, Amount, Estimated Time Required and Remarks (up to 500) [fMaintenanceServiceOrder.vb:1816-1853].
+  - Meter Reading Detail Grid: Grid with Measurement Parameter, Unit (read-only), Value (up to 100 characters), Reading Date (format dd/mm/yyyy hh:mm) and Remarks (up to 500) [fMaintenanceServiceOrder.vb:1887-1911].
+  - Fault Detail Grid: Grid with S No.
+  - Account Assignment Grid: Grid with Account Type and Particular (read-only) and an editable Account Name [fMaintenanceServiceOrder.vb:3789-3808].
+  - Other Toolbar Actions (Print, Preview, Export, Email): The handlers exist but contain no logic [fMaintenanceServiceOrder.vb:708-740].
+actions:
+  New: Starts a blank document through the main window [fMaintenanceServiceOrder.vb:670-680].
+  Save: Validates and stores the document and all its lines.
+  Search: Opens a search dialog listing the company's orders of the current year with number, date, division, customer, location,
+    order type, source document, reference number, status, creator and authorizer [fMaintenanceServiceOrder.vb:682-705; CustomerService.CMSOSearchData:19-50].
+  Delete: Deletes the loaded order after a confirmation.
+validations:
+- Authorized MaintenanceServiceOrder can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select atleast one Payment Term.
+- Duplicate Pay Code is not allowed.
+- Duplicate Payment Type and Payment Description is not allowed.
+- Select/Enter valid Payment Description in row <n>.
+- Select valid Payment Mode in row <n>.
+- Credit Days can't be empty or zero in row <n>.
+- Document Date can't be less than Ref. Doc Date.
+- Enter subject.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select valid Order Type.
+- Select valid Service Order Category.
+- Select valid Source Document.
+- Select valid Ref Doc No.
+- Select valid Service Occurrence No.
+- Select Maintenance For.
+- Select valid Resposible Person.
+- Select valid Service Location.
+- Estimated Start Date can not less than Document Date.
+- Estimated End Date can not less than Document Date.
+- Estimated Start Date can not greater than Estimated End Date.
+- Select valid Bill To.
+- Enter Due Days.
+- Select valid Subcontract Location in row <n>.
+- Select valid Pricing S No in row <n>.
+- Select valid rate type in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Quantity can't be greater than Bal Qty. in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Amount can't be empty or zero in row <n>.
+- Amount can't be greater than Bal Amount in row <n>.
+- Select atleast one Service Detail.
+- Select valid rate unit in row <n>.
+- Estimated Time Required can't be empty or zero in row <n>.
+- 'Invalid Time : only numeric value is allowed for estimated time.'
+- Enter Value in row <n>.
+- Enter Reading Date in row <n>.
+- Reading Date can not less than Service Order Date in row <n>.
+- Select valid Equipment Code.
+- Equipment not selected. Do you want to save?
+- 'Invalid Time : minute should be less than 60.'
+- 'Invalid Time : only numeric value is allowed.'
+- Document No. <number> saved successfully.
+- 'Quantity can not be less than Issued Quantity for '
+- Duplicate Service Description is not allowed for same pricing s no.
+- Duplicate Item Description,Make is not allowed.
+- Duplicate Resource Name is not allowed.
+- Duplicate Measurement Parameter is not allowed.
+- Duplicate Fault Description is not allowed.
+manages:
+- maintenance-service-order
+uses_concepts:
+- company
+- customer-service-invoice
+- eam-resource-master
+- equipment-master
+- maintenance-service-order-amendment
+- service-call
+- service-contract
+- service-order-reporting
+- service-order-resource-reporting-detail
+method_notes:
+  Delete: Deletes the record through CustomerService.CMSODelete.
+  FillGrid: Runs through CustomerService.CMSOFillGrid.
+  FillValues: Fills the lookup lists through CustomerService.CMSOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through CustomerService.CMSOFillValuesAccountAssignment.
+  FillValuesDependent: Fills the lookup lists through CustomerService.CMSOFillValuesDependent.
+  LoadCustomerLocation: Runs through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through CustomerService.CMSOLoadData.
+  Open: Searches records through CustomerService.CMSOSearchData.
+  Save: Saves the record through CustomerService.CMSOAuthorize, CustomerService.CMSOSave.
+  SaveFaultDetail: Saves the record through CustomerService.CMSOSaveFaultDetail.

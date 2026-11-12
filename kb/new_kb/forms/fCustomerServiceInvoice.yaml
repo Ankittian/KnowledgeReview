@@ -1,0 +1,96 @@
+form: fCustomerServiceInvoice
+title: Customer Service Invoice
+module: PM
+kind: transaction
+summary: The Customer Service Invoice screen raises a bill to a customer for service work.
+purpose: |
+  What it is: A billing document for service work with lines, taxes, advance adjustments and the finance entries that record the receivable [fCustomerServiceInvoice.vb:1326-1487; CustomerService.CSSISave:85-152]. When it applies: When service work has been performed, a contract billing date falls due, or a direct service sale is made. Business outcome: Customers are billed from agreed orders, contracts or measured effort, never beyond what is left to invoice on an order line, and the receivable is posted in finance (BR-07; BR-10; BR-21).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A top area with the document control, customer, source document, reference, bill-to, payment mode, due date, currency and remarks; and two tab groups.
+  - Document Status, Division, Document No. and Document Date: The shared document control [fCustomerServiceInvoice.vb:213; fCustomerServiceInvoice.vb:510-512].
+  - Customer Name and Customer Location Fields: Dropdowns "Customer Name" (with Code) and "Customer Location".
+  - Source Document Field: A dropdown "Source Document" (codes 1 to 3, default marked in the list).
+  - Ref. Doc. No., Ref. Doc. Date, Billing Type, Billing Schedule Id and Invoice Value Fields: Dropdown "Ref.
+  - Equipment Description and Item Description Fields: Dropdowns "Equipment Description" and "Item Description", read-only except for contract invoices [fCustomerServiceInvoice.designer.vb:207; fCustomerServiceInvoice.designer.vb:228; fCustomerServiceInvoice.vb:2076-2086].
+  - Bill To Party and Bill To Party Location Fields: Dropdowns "Bill To Party" and "Bill To Party Location".
+  - Payment Mode Field: A dropdown "Payment Mode".
+  - Due Days and Due Date Fields: A numeric "Due Days" (up to 3 digits) and a date "Due Date" [fCustomerServiceInvoice.designer.vb:333; fCustomerServiceInvoice.designer.vb:709; fCustomerServiceInvoice.vb:171-172].
+  - Subject and Remarks Fields: Text boxes "Subject" (500 characters) and "Remarks" (1000 characters), optional [fCustomerServiceInvoice.designer.vb:254; fCustomerServiceInvoice.designer.vb:715; fCustomerServiceInvoice.vb:1392-1394].
+  - Currency Control: The shared currency control that picks currency and conversion rate as on the document date [fCustomerServiceInvoice.vb:73; fCustomerServiceInvoice.vb:664-666].
+  - Reporting Detail Grid: A grid with "Select", Reporting No.
+  - Service Detail Grid: A grid with Service Description, Unit, Pricing S No., Rate Type, Order Qty., Pre.
+  - Parts List Grid: A grid with Item Code, Item Description, Unit, Rate Type, order columns, Quantity, Rate, Amount and Remarks [fCustomerServiceInvoice.vb:1229-1261].
+  - Resource Detail Grid and Resource Time Dialog: A grid with Resource Name, a button column, Order Amount, Pre.
+  - Tax Detail Tab: The shared tax control, driven by the basic amount (a hidden box) [fCustomerServiceInvoice.designer.vb:248; fCustomerServiceInvoice.vb:2358-2363].
+  - Adjust Advance Checkbox and Advance Adjustment Tab: A checkbox "Adjust Advance"; when ticked, the tab shows an option "Manual" / "Automatic" and a grid with Document No., Document Date, Reference No., Reference Date, Due Date, Ref Type, Advance Amount, Adjusted Amount, Balance Amount and Adjusting Amount, with column totals [fCustomerServiceInvoice.designer.vb:793-795; fCustomerServiceInvoice.designer.vb:969; fCustomerServiceInvoice.vb:3091-3098; f
+  - Custom Field and Notes Controls: Shared custom field grid and notes grid (print area, notes, default) [fCustomerServiceInvoice.vb:212; fCustomerServiceInvoice.vb:242-243; fCustomerServiceInvoice.vb:1749-1754].
+  - Finance Posting Tab: The shared posting control showing the journal voucher [fCustomerServiceInvoice.vb:2932-3013].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fCustomerServiceInvoice.vb:405-438].
+actions:
+  New: Standard toolbar New [fCustomerServiceInvoice.vb:366-377].
+  Save: Validates and saves the invoice, vouchers and all rows [fCustomerServiceInvoice.vb:1326-1487].
+  Search: Opens the search list of the company's invoices for the current year [fCustomerServiceInvoice.vb:379-404].
+  Delete: Deletes the loaded invoice after a delete confirmation [fCustomerServiceInvoice.vb:121-156].
+validations:
+- Authorized Customer Service Invoice can't be updated.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select valid Source Document.
+- Select valid Ref. Docoment.
+- Docoment date can not be less than ref. document date.
+- Select valid Bill To Party.
+- Select valid Bill To Party Location .
+- Select valid Payment Mode.
+- Select valid Billing Schedule Id.
+- Select atleast One Reporting No.
+- Select atleast One Service Description.
+- Rate Type can't be empty in row <n>.
+- Rate Type can't be empty or zero in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Rate can't be empty or zero in row <n>.
+- Amount can't be empty or zero in row <n>.
+- Quantity can't be greater than Balance qty. in row<n>.
+- Select atleast One Resource Detail in row<n>.
+- Total Amount can't be empty or zero in row <n>.
+- Total Amount can't be greater than Balance Amount in row <n>.
+- Start Time <date time> can't be OverLap.
+- End Time <date time> can't be OverLap.
+- End Time can't less than Start Time
+- Total Time can't be empty or zero in row <n>.
+- Total Time can't be greater or less than Start or End Time
+- 'Invalid Time : minute should be less than 60 in row <n>.'
+- Adjusting Amount can't be greater than Balance Amount in row <n>.
+- Adjusting Amount can't be greater than Balance Amount.
+- Advance Amount can't be 0.
+- Total Advance Amount can't be greater than Invoice Amount.
+- Duplicate Service Description not allowed.
+- Duplicate Item Code not allowed.
+- Duplicate Resource Name not allowed.
+- Duplicate Document No. not allowed.
+- Authorized entry can't be updated.
+- Not handled shortcut.
+- VoucherValidation
+- Document No. <number> saved successfully.
+manages:
+- customer-service-invoice
+uses_concepts:
+- company
+- eam-resource-master
+- equipment-master
+- maintenance-service-order
+- maintenance-service-order-amendment
+- service-contract
+- service-order-reporting
+- service-order-resource-reporting-detail
+method_notes:
+  Delete: Deletes the record through CustomerService.CSSIDelete.
+  FillValueDependent: Fills the lookup lists through CustomerService.CSSIFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.CSSIFillValues.
+  FillValuesSOWise: Fills the lookup lists through CustomerService.CSSIFillValuesSOWise.
+  LoadData: Loads the selected record through CustomerService.CSSILoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through CustomerService.CSSISearchData.
+  Save: Saves the record through CustomerService.CSSISave.
+  SaveAdvanceDetail: Saves the record through CustomerService.CSSISaveAdvanceDetail.
+  SaveCustomFields: Saves the record through CustomerService.CSSISaveCustomFieldDetail.

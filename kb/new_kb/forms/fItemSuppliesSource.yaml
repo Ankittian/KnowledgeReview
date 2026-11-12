@@ -1,0 +1,47 @@
+form: fItemSuppliesSource
+title: Material Supplies Source
+module: MM
+kind: transaction
+summary: The Material Supplies Source screen completes an authorized Material Consumption Pattern entry by deciding where
+  each planned item is sourced from and how much stock to hold.
+purpose: |
+  What it is: A planning step that assigns each item of a consumption-pattern entry a supply source, lead and safety days and stock levels [Optimization.OISSSave:21-38; fItemSuppliesSource.vb:219-248]. When it applies: After a Material Consumption Pattern entry is authorized, before procurement is planned from it. Business outcome: Reorder figures reflect how and where the item is really bought.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Upper area with "Document No." dropdown (showing Document No and Document Date), a read-only period selector "Date Wise" / "Financal Year Wise" (disabled; spelling as in source), From Date and To Date or a Financial Year grid, and read-only Category Name, Group Name and Subgroup Name [fItemSuppliesSource.Designer.vb:324; fItemSuppliesSource.Designer.vb:422-478; fItemSuppliesSource.vb:591-604].
+  - Document No. Field: Mandatory dropdown of authorized entries of the user's units [fItemSuppliesSource.vb:56-60; Optimization.OISSFillValues:56-71].
+  - Item Detail Grid: The "&Item Detail" tab: a tick box column (header tick selects all), Item Code, Item Description, UOM, information icon, Prev Source Type, Source Type, Consumption Pattern, Consumption Rate, Planning Method, Prev Lead Days, Prev Safety Days, Safety Days, Lead Days, Reorder Point, Reorder Qty, Max Stock, Safety Stock, Stock Qty.
+  - Default Consumption Pattern Grid and Update Button: A grid "Default Consumption Pattern" with three tick options "Copy Prev Source Type", "Copy Prev Lead Days" and "Copy Prev Safety Days", and an "&Update" button [Optimization.OISSFillValues:44-50; fItemSuppliesSource.Designer.vb:304; fItemSuppliesSource.Designer.vb:362].
+  - Make Detail Pop-up: A row-edit pop-up opened from Fixed Stock with a grid of Item Description, Make and Qty and buttons "Ok" and "Cancel" [fItemSuppliesSource.Designer.vb:152; fItemSuppliesSource.Designer.vb:160; fItemSuppliesSource.vb:447-477].
+  - Other Toolbar Actions (Delete, Print, Preview, Export, Email): Empty implementations [fItemSuppliesSource.vb:158-161; fItemSuppliesSource.vb:280-286; fItemSuppliesSource.vb:341-347].
+actions:
+  New: Standard toolbar New.
+  Open (Search): Opens the standard search dialog of authorized consumption-pattern entries (Consumption Pattern No., Date,
+    Optimization Unit, Analys From, Period) [fItemSuppliesSource.vb:163-190; Optimization.OISSSearchData:15-23].
+  Save: The only other enabled toolbar action [fItemSuppliesSource.vb:28].
+validations:
+- Select valid Document No.
+- Select at least one item.
+- Select valid Source Type in row N.
+- Enter Fixed Stock in row N.
+- Enter Safety Days in row N.
+- Enter Lead Days in row N.
+- Enter Reorder Point in row N.
+- Enter Reorder Qty in row N.
+- Enter Max Stock in row N.
+- Enter Safety Stock in row N.
+- Select valid Default Consumption Pattern.
+manages:
+- material-supplies-source
+uses_concepts:
+- material-category
+- material-lead-safty-days-setting
+- release-ro
+- vendor-category
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.OISSFillValues.
+  GetInformation: Runs through Optimization.OISSInformation.
+  Open: Searches records through Optimization.OISSSearchData.
+  Save: Saves the record through Optimization.OISSSave, Optimization.OISSSaveItemMakeDetail.
+  ShowData: Runs through Optimization.OISSItemDetail.
+  ucmbDocumentNo_ValueChanged: Runs through Optimization.OISSItemDetail.

@@ -1,0 +1,56 @@
+form: fAccountLedgerReport
+title: Account Ledger
+module: RPT
+kind: transaction
+summary: The Account Ledger screen is a read-only Finance report that shows the postings of one ledger account for a period,
+  with opening balance, running debit and credit totals and closing balance.
+purpose: |
+  What it is: An on-screen report of the transactions and balances of a ledger account (Account Ledger mode) or of an account group (Group Summary mode), for a chosen Finance Book, Chart Of Account and date range [fAccountLedgerReport.vb:14; fAccountLedgerReport.vb:1414-1421; MDIProject.vb:2687-2697]. When it applies: When a user needs to review an account or group, reconcile a balance, trace a voucher or hand a statement to a party. Business outcome: Balances and movements can be verified without leaving the application, and the user can reach the originating voucher in a few clicks.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Report Workspace: The window titled "Account Ledger Report" in its designer and shown in the application as "Account Ledger(FMAL)" or "Group Summary(FAGS)".
+  - Finance Book Field: A drop-down list labelled "Finance &Book" (or "&Profit Center" when Finance Books act as profit centres).
+  - COA Field: A drop-down list labelled "&COA", filled from the Finance Book chosen [fAccountLedgerReport.Designer.vb:211; fAccountLedgerReport.vb:1395-1404].
+  - Ledger Name Label: A read-only label showing "Account Name : ..." in Account Ledger mode or "Group Name : ..." in Group Summary mode, with "Cost Center : ..." when applicable [clsMISFinanceReports.vb:1299-1348; fAccountLedgerReport.Designer.vb:345].
+  - From and To Display: Two read-only date displays in dd/MM/yyyy format.
+  - Export With Borders Check Box: A check box "&Export With Borders", ticked at start [fAccountLedgerReport.vb:190-191; fAccountLedgerReport.vb:1515-1521].
+  - Fast Export Check Box: A check box "&Fast Export (Without Formatting)", ticked at start [fAccountLedgerReport.vb:187-188; fAccountLedgerReport.vb:1507-1513].
+  - Results Grid: A read-only grid that cannot be edited or deleted, with a filter row, sortable columns and a bottom summary line [fAccountLedgerReport.vb:326-327; fAccountLedgerReport.vb:371].
+  - Chart Panel: A chart under the grid, plotting the "nett" column of a break-up [clsMISFinanceReports.vb:1073-1089].
+  - Detail / Condensed Action (Alt F1): An Explorer bar item that toggles between "Alt F1 : Details" and "Alt F1 : Condensed" [clsMISFinanceReports.vb:2172-2213].
+  - Period Action (Ctrl F2): Opens a dialog with "From Da&te" and "To Da&te" [clsMISFinanceReports.vb:2085-2115; fConfigDate.vb:30-58].
+  - Ledger Action (F4): Opens a searchable list titled "Account Ledger" with the label "Ledger &Name": accounts in Account Ledger mode, account groups in Group Summary mode [clsMISFinanceReports.vb:2031-2083; Finance.AccountSearchData:19-27].
+  - Daily, Monthly and Quarterly Break-Up Actions (Alt F6, Alt F7, Alt F5): Switch the grid to a period-wise view by day, month or quarter [clsMISFinanceReports.vb:2117-2170; fAccountLedgerReport.vb:34-48].
+  - Columnar and No Columnar Actions (Alt F8, Ctrl Shift F8): Opens the columnar options dialog (voucher type, number, reference, party tax number, quantity, rate, narration) and shows the columnar ledger; "No Columnar" returns to the normal ledger [clsMISFinanceReports.vb:2015-2029; clsMISFinanceReports.vb:1934-1942; fConfigColumnar.Designer.vb:71-125].
+  - Outstanding Report Action (Alt B): Shows receivable or payable outstanding bills with ageing for the account, or for the group in Group Summary mode [clsMISFinanceReports.vb:1223-1297; clsMISFinanceReports.vb:1929-1932].
+  - Configuration Action (F12): Opens a configuration dialog whose content depends on the current view [clsMISFinanceReports.vb:1944-2013].
+  - Range Action (Alt F12): Opens the "Filtering" dialog [fFiltering.vb:21-52; clsMISFinanceReports.vb:1907-1927].
+  - Close Action (Ctrl L) and Refresh (F5): Ctrl L closes the screen; F5 reloads the grid with the current options [fAccountLedgerReport.vb:69-72; fAccountLedgerReport.vb:26-32].
+  - Drill-Down Action (Double-Click or Enter): Double-click or Enter on a grid row opens what the row stands for: a sub-group, an account break-up, a period's ledger or the source voucher [fAccountLedgerReport.vb:287-293; fAccountLedgerReport.vb:1299-1306; clsMISFinanceReports.vb:578-711].
+  - Back Action (Esc): Steps back through the views visited; the first Esc after opening a blank ledger opens the ledger picker [clsMISFinanceReports.vb:1731-1893].
+  - Row Hide Keys (Alt R, Alt U, Alt S): Alt R hides the current ledger row, Alt U brings back the last hidden row, Alt S shows all [clsMISFinanceReports.vb:1512-1550].
+actions:
+  Print, Print Preview, Export and Email: Ctrl P prints, Ctrl R previews, Ctrl T exports, Ctrl E emails [fAccountLedgerReport.vb:61-68;
+    fAccountLedgerReport.vb:1346-1353].
+validations:
+- Range can't be empty
+- Value can't be empty
+- Select valid From Date.
+- Select valid To Date.
+- To date can't be less than From Date.
+- Select valid Ledger Name.
+- Select valid Age Wise.
+- Select valid Type.
+- 'Select valid '
+- '&Select Voucher To Show'
+- Error occured while exporting.
+- Error Occured while exporting file
+- Do you want to e-Mail?
+manages:
+- account-ledger
+uses_concepts:
+- company
+method_notes:
+  AccountSearchData: Searches records through Finance.AccountSearchData.
+  ReportHeader: Runs through masterdata.ReportHeader.
+  fAccountLedgerReport_Load: Runs through Finance.TrialBalanceConfiguration.

@@ -1,0 +1,54 @@
+form: fInsuranceClaim
+title: Insurance Claim
+module: PM
+kind: transaction
+summary: The Insurance Claim screen records an insurance claim raised against a vehicle or equipment item for a reported incident.
+purpose: |
+  What it is: A document that ties one incident, one insured vehicle or equipment item and one insurance policy document to a claim amount and a company liability amount [fInsuranceClaim.vb:328-364]. When it applies: After an incident has been entered and marked as requiring an insurance claim, and an insurance document exists for the equipment (BR-04; BR-05). Business outcome: Each incident that needs an insurance claim is claimed once, against a known policy, with the split between insurer and company recorded (BR-04; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A document control strip at the top, a general detail area with the vehicle, incident, insurance document and amount fields, two unnamed group areas (incident details; policy details and amounts) and an "Additional Fields" grid at the lower right [fInsuranceClaim.designer.vb:116-121; fInsuranceClaim.designer.vb:392; fInsuranceClaim.designer.vb:396; fInsuranceClaim.designer.vb:614-617].
+  - Document Status, Division, Document No. and Document Date: The shared document control.
+  - Vehicle No. Field: A dropdown "Vehicle No." showing Equipment, Code and Model No.
+  - Incident No. Field: A dropdown "Incident No." showing Incident Reporting No, Reporting Date, Incident Date and Incident.
+  - Incident Detail Fields: Read-only fields: Incident Date, Incident Reporting Date, Incident Description, Management Decision Date, Total Damage Amount, Deduction Amount, Deduction Narration, Project Manager Name and Employee Id [fInsuranceClaim.vb:406-432; fInsuranceClaim.designer.vb:168-318].
+  - Insurance Document No. Field: A dropdown "Insurance Document No." showing Document No, Document Date and Issued By.
+  - Insurance Document Detail Fields: Read-only fields: Insurance Document Date, Issued By Name, Issued By Address, Validity Date, Amount and Insurance Status [fInsuranceClaim.vb:446-456; fInsuranceClaim.designer.vb:495-532; fInsuranceClaim.designer.vb:587].
+  - Last Claim Fields: Read-only fields Last Claim Incident No, Last Claim Amount and Last Claim Date [fInsuranceClaim.vb:459-466; fInsuranceClaim.designer.vb:438-486].
+  - Claim Amount Paid By Insurance Field: A numeric text box, up to 12 characters, three decimals allowed on screen [fInsuranceClaim.designer.vb:335; fInsuranceClaim.vb:87].
+  - Company Liability Field: A numeric text box with the same format as the claim amount [fInsuranceClaim.designer.vb:353; fInsuranceClaim.vb:88].
+  - Additional Fields Grid: A read-only two-column grid, "Field Name" and "Field Value", with the extra fields recorded on the chosen insurance document [fInsuranceClaim.vb:474-486; EAM.INCLFillValuesDependent:62-64].
+  - Remarks Label: A label "Remarks" with no text box beside it [fInsuranceClaim.designer.vb:605-608].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fInsuranceClaim.vb:191-223].
+actions:
+  New: Standard toolbar New, which asks the main window to open a blank record [fInsuranceClaim.vb:155-162].
+  Save: Validates and saves the claim [fInsuranceClaim.vb:313-392].
+  Search: Opens the search list of the company's claims for the current year [fInsuranceClaim.vb:164-189].
+  Delete: Deletes the loaded claim after a delete confirmation [fInsuranceClaim.vb:51-75].
+validations:
+- Authorized Insurance Claim can't be updated.
+- Select valid Vehicle No.
+- Select valid Incident No.
+- Select valid Document Entry No.
+- Document Date can't be less than Incident Date
+- Enter Insurance Claim Amount.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+- Authorized entry can't be updated.
+manages:
+- insurance-claim
+uses_concepts:
+- document-type
+- equipment-category
+- equipment-document-entry
+- equipment-master
+- incident-entry
+- incident-review
+method_notes:
+  Delete: Deletes the record through EAM.INCLDelete.
+  FillValues: Fills the lookup lists through EAM.INCLFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.INCLFillValuesDependent.
+  LoadData: Loads the selected record through EAM.INCLLoadData.
+  Open: Searches records through EAM.INCLSearchData.
+  Save: Saves the record through EAM.INCLSave.
+  ValidateForm: Validates the entry through EAM.INCLValidate.

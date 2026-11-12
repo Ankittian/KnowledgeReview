@@ -1,0 +1,54 @@
+form: fTDSTCSSetup
+title: TDS TCS Setup
+module: MD
+kind: master
+summary: The TDS TCS Setup screen defines the rules under which Tax Deducted at Source (TDS) or Tax Collected at Source (TCS)
+  is checked on business documents.
+purpose: |
+  What it is: The definition of one TDS or TCS rule: section, threshold, charges, strictness and timing of the check, and exempt items. When it applies: When a new section applies, when the law changes a threshold or rate from a given date, or when items must be exempted. Business outcome: Documents are checked consistently against statutory TDS/TCS requirements (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel in two columns and, below it, the panel "Exclude Item From Setting (Validation Will Not Be Applicable For Following Items)".
+  - Code Field: Read-only text box.
+  - Description Field: Mandatory text box (marked compulsory), up to 300 characters (BR-01).
+  - Tax Category Field: Mandatory dropdown (marked compulsory) with TDS and TCS (BR-02).
+  - Section Field: Mandatory dropdown (marked compulsory) of sections of the chosen category (BR-03).
+  - Effective From Field: Date picker with a tick box, unticked by default; it must be ticked (BR-04).
+  - Threshold Amount Field: Mandatory numeric text box (marked compulsory), two decimals, up to 12 characters (BR-05).
+  - Tax With PAN Field: Mandatory dropdown (marked compulsory) showing Charge Name and Code, filtered by category (BR-06).
+  - Tax Without PAN Field: Mandatory dropdown (marked compulsory) showing Charge Name and Code, filtered by category (BR-06).
+  - Validation Type Field: Mandatory dropdown (marked compulsory) with "Warning" and "Validation" (BR-07).
+  - Validate On Field: Mandatory dropdown (marked compulsory) of document statuses (BR-08).
+  - Validate For Documents Field: Mandatory dropdown (marked compulsory) with "Initial and above", "Release and above" and the remaining statuses by name (BR-09).
+  - Excluded Item Grid: Grid with a select checkbox (with a select-all checkbox in its header) and read-only Category, Group, Sub Group, Item Description, Code and Item Type; item identifier hidden.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in code but empty.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the setup and its excluded items.
+  Search: Standard search with Description, Tax Category, Section, Effective From, Threshold, Created By, Modified By.
+  Delete: Deletes the loaded setup after confirmation (MSG-15).
+  Navigation: First, Previous, Next and Last come from the standard application toolbar, not this screen's code (Inferred).
+validations:
+- Enter Description.
+- Select valid Tax Category.
+- Select valid Section.
+- Select valid Effective From.
+- Enter Threshold.
+- Select valid Tax With PAN.
+- Select valid Tax Without PAN.
+- Select valid Validation Type.
+- Select valid Validate On.
+- Select valid Validate For.
+- Unable to save,one setup already exists with same effective date.
+manages:
+- tds-tcs-setup
+uses_concepts:
+- material-category
+method_notes:
+  Delete: Deletes the record through masterdata.TTSPDelete.
+  FillValues: Fills the lookup lists through masterdata.TTSPFillValues.
+  LoadData: Loads the selected record through masterdata.TTSPLoadData.
+  Open: Searches records through masterdata.TTSPSearchData.
+  Save: Saves the record through masterdata.TTSPSave.
+  SaveItemDetail: Saves the record through masterdata.TTSPSaveExcludedItemDetail.
+  ValidateForm: Validates the entry through masterdata.TTSPValidate.

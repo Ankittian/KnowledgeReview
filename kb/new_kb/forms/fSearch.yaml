@@ -1,0 +1,22 @@
+form: fSearch
+title: Search
+module: ADM
+kind: transaction
+summary: The Search screen is a shared popup that almost every transaction and master screen opens when the user clicks Search
+  or Open on the toolbar.
+purpose: |
+  What it is: A common popup that shows a caller-supplied result table, lets the user filter it and returns the identifier of the chosen row [Automation/CompanySetup/fSearch.vb:44-47; Automation/CompanySetup/fSearch.vb:258]. When it applies: Whenever a screen needs the user to pick an existing record, for example to open a saved document or master. Business outcome: One look and one behaviour for finding records, so each screen only has to supply a query.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A fixed-size, centred dialog titled "Search" with a full-size results grid and two buttons at the bottom right [Automation/CompanySetup/fSearch.designer.vb:40-52; Automation/CompanySetup/fSearch.designer.vb:114-129].
+  - Results Grid: A read-only grid with row numbers, a filter row and single-row selection; updates and deletes are disabled [Automation/CompanySetup/fSearch.vb:49-50; Automation/CompanySetup/fSearch.vb:125-128].
+  - Row Double-Click: Double-clicking a selected data row [Automation/CompanySetup/fSearch.vb:143-152].
+  - Keyboard Shortcuts: Keys handled in the grid [Automation/CompanySetup/fSearch.vb:166-200; Automation/CompanySetup/fSearch.vb:282-288].
+  - Other Toolbar Actions (New, Save, Delete, Print, Preview, Export, Email): The popup has no toolbar actions of its own and does not implement the standard document interface [Automation/CompanySetup/fSearch.vb:6-17].
+actions:
+  Ok: The "&Ok" button [Automation/CompanySetup/fSearch.designer.vb:43].
+  Close: The "C&lose" button, which closes the dialog with an OK result and sets no identifier [Automation/CompanySetup/fSearch.designer.vb:47-52].
+validations:
+- Select valid row.
+manages:
+- search

@@ -1,0 +1,186 @@
+form: fPurchaseBill
+title: Purchase Bill
+module: FI
+kind: transaction
+users:
+- Accounts officer (inferred)
+summary: The Purchase Bill screen (also called Purchase Invoice) records a supplier's invoice and passes it for payment.
+purpose: |
+  What it is: A purchase bill is the company's record of a supplier invoice, matched where applicable to the goods receipts it pays for, and the source of the supplier liability in the books. When it applies: When a supplier invoice arrives (often first logged as a document receipt) and the accounts team must pass it against receipts or enter it directly. Business outcome: Each receipt line is billed once, the payable is posted with correct GST and price differences, and payment due dates are scheduled from agreed terms.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Header: Shared document number band at the top with Document No., Document Date, division, finance book and Status.
+  - Tab Layout: Tabs: General Detail, Tax Detail, Shipping Detail, Advance Detail, Payment Schedule, Custom Field, RG Posting, Posting Detail, GST Posting.
+  - Source Document Field: Dropdown, mandatory: Direct or Material Receipt Note (default from setup) (BR-04).
+  - Vendor Name Field: Dropdown, mandatory, listing active vendors (BR-05).
+  - Location Field: Dropdown, mandatory, vendor locations (BR-05, BR-06).
+  - Pay To Field: Dropdown, mandatory, defaulted to the vendor (BR-07).
+  - Vendor Bill No. Field: Dropdown of open document receipts (Bill No, Bill Date), mandatory (BR-08).
+  - Vendor Bill Date Field: Date (dd/MM/yyy), read-only unless document receipt is not compulsory (BR-09).
+  - Amount Field: Numeric, 2 decimals, max 12 characters, the vendor bill amount; read-only unless document receipt is not compulsory (BR-08, BR-10).
+  - Advance Field: Read-only total of adjusting amounts plus imprest amount.
+  - Payment Mode Field: Dropdown, mandatory, active payment modes; defaults from the PO on receipt-based new bills (BR-11).
+  - Service Tax Rule Field: Dropdown of non-GST tax rules effective on the document date.
+  - GST Tax Rule Field: Dropdown of active GST rules (BR-44).
+  - GST Exempted Checkbox: Checkbox, optional (BR-46).
+  - Adjust Advance Checkbox: Checkbox; default from company setting (ticked unless advance adjustment is optional) (BR-51).
+  - Update Stock and Dropshipment Checkboxes: Checkboxes (BR-36).
+  - Qty Based On Option: Option "Accepted Qty." / "Challan Qty."; default Accepted Qty.
+  - Unit Type Option: Option "Store Unit" / "Purchase Unit"; default Purchase Unit (BR-32).
+  - Narration Field: Multi-line text, optional, no length limit on screen.
+  - Net Amount Field: Read-only, total from the tax control.
+  - Notes Control: Small notes button with print area and default notes.
+  - Receipt Grid (GRN Detail): Grid on General Detail with a select checkbox, Document No., Document Date, Challan No., Excise Invoice No.
+  - Item Grid: Grid below the tabs.
+  - Serial No. Pop-up: Row editor with Serial No.
+  - Tax Detail Tab: Shared tax-on-amount control (item-level tax rows via the Tax button and bill-level charges) and tax concession form grid.
+  - Shipping Detail Tab: Shipped From Party, Shipped From Location, Shipped To Party, Shipped To Location (dropdowns, mandatory), Invoice No.
+  - Advance Detail Tab: Option Manual/Automatic, Imprest Account dropdown, Imprest Amount (2 decimals, 15 characters), Balance Amount with Cr/Dr, and advance grid: Document No., Document Date, Reference No., Reference Date, Due Date, Ref Type, Advance Amount, Adjusted Amount, Balance Amount, Adjusting Amount (editable), Account Name, with sums.
+  - Payment Schedule Tab: Read-only grid: Reference No., Reference Date, Payment Type, Due Date, Due Amount, Actual Amount, Discount, plus the shared currency control (BR-48 to BR-50).
+  - Custom Field Tab: Shared custom field grid for this screen.
+  - Posting Detail, GST Posting and RG Posting Tabs: Shared finance posting control (proposed journal), GST voucher detail, and excise RG register.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print and Preview of the purchase invoice report; Export and Email of the same report are implemented.
+  - Hidden Maintenance Shortcuts: Keyboard combinations Ctrl+Alt+G (on GST Posting tab: rebuild GST posting; on Posting Detail: loop through records and copy narration update script to clipboard) and Ctrl+Alt+V (rebuild the voucher of an authorized bill).
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Open (Search): Standard toolbar Open with the shared search list.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last.
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Another Reference No. <references> cannot be adjusted with selected PO.
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Location.
+- Please Update State/City in Location Master.
+- Please Update GST Registration Type in Vendor.
+- Select valid Pay to.
+- Select valid Vendor Bill No..
+- Enter Vendor Bill No.
+- Enter Bill Amount.
+- Vendor Bill Date can't be greater than Document Date.
+- Select valid Service Tax Rule.
+- Select valid Payment Mode.
+- Select valid Shipped from Party.
+- Select valid Shipped from Location.
+- Select valid Shipped To Party.
+- Select valid Shipped To Location.
+- Select eWay-Bill Date.
+- eWay-Bill Date can't be greater than Document Date.
+- Select Invoice Date
+- Invoice Date can't be greater than document date
+- Invoice Date can't be greater than Document Date.
+- Advance Adjustment is compulsory
+- Enter Net Amount.
+- Passing Amount is greater than Vendor Bill Amount.
+- GST Taxes and GST Rule can't be selected simultaneously
+- Duplicate Vendor Bill No. is not allowed
+- Invoice No. can't be empty
+- Invoice No. can't same as vendor bill no.
+- SGST or CGST is not applicable for inter state purchase.
+- IGST is not applicable for intra state purchase.
+- GST Taxes is applied so can't select GST Exempted
+- Supplier Payable Account is not created against this location.
+- Select atleast one Document No.
+- Document Date can't be Less than Reference Date.
+- Select atleast one item for <Document No.>
+- GRN with different currencies are not allowed.
+- GRN is not processed against this Bill
+- Select valid Item Description in row <n>.
+- Select valid Item Code in row <n>.
+- Capital Item is not allowed if Source Document is Direct in row <n>.
+- Select valid HSN & SAC Code in row <n>.
+- GST Rule And GST Taxes can't be selected simultaneously.
+- Same TP Number already exists for another Purchase Bill
+- Do you want to continue?
+- Challan Qty. can't be empty  in row <n>.
+- Qty. can't be empty  in row <n>.
+- Bill Can be pass on Accepted Qty. only  in row <n>.
+- Enter Rate in row <n>.
+- Select valid Warehouse  in row <n>.
+- Item is Inactive in row <n>.
+- Serial No. detail should be same as Quantity in row <n>.
+- Vendor is not GST Registered ,so GST Tax can't be added
+- For Nil Rated/ GST Exempted/ Non GST item, GST cannot be applied.
+- Vendor should be UnRegistered/Foreign Or Item should  Non-GST/GST Exempted/Nil Rated For Nill Tax Invoice. Do you want to
+  continue?
+- Vendor should be UnRegistered/Foreign Or Item should  Non-GST/GST Exempted/Nil Rated For Nill Tax Invoice
+- Select Expiry Date in row <n>.
+- Enter Taxable Value in atleast one Item.
+- Capital And Non-Capital can't be select atonce.
+- Select atleast one Item Code.
+- Duplicate Item Description is not allowed.
+- Select valid Imprest Account.
+- Enter Imprest Amount.
+- Imprest Amount can not greater than Balance Amount.
+- Adjusting Amount can't be greater than Balance Amount in row <n>.
+- Adjusting Amount can't be greater than Balance Amount.
+- Advance Amount can't be 0.
+- Total Advance Amount can't be greater than Purchase Bill Amount.
+- Enter Due Date.
+- Due Date can't be less than Document Date.
+- Actual Amount is less than Purchase Bill Amount,Do you want to continue?
+- Select valid Shipped From Party.
+- Select valid Mfd. / Dealer Location.
+- Enter Invoice No.
+- Select valid Input Type.
+- Authorized Purchase Bill can't be updated.
+- Document Receipt Already used in Purchase Bill.
+- Document No. <number> saved successfully.
+- 'Purchase Bill : <bills> exists against GRN/SIN : <receipts>'
+- 'Can''t authorize, Limit exceeds from configuration '
+- Rate(Purchase + Freight)  can't be greater than Rate defined in PO(PBPB) - Current Rate after PBPB -> <rate>
+- Duplicate Serial No. is not allowed.
+- Serial No. Detail should be equal to  Quantity <qty> .
+- Voucher No. can't be empty in Purchase Bill. Restart your application and try again. If issue still persist contact your
+  ERP Vendor.
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- Not found in Voucher
+- GST Voucher Posting is not found
+- VoucherValidation
+manages:
+- purchase-bill
+uses_concepts:
+- account-determination-rule
+- account-group
+- accounting-voucher
+- bin
+- chapter-heading
+- chart-of-accounts
+- company
+- currency
+- currency-exchange-rate
+- document-receipt
+- finance-book
+- gate-entry
+- goods-receipt-note
+- gst-category
+- hsn-sac-code
+- item-technical-grade
+- ledger-account
+- make
+- material-issue
+- material-item
+- payment-plan
+- purchase-order
+- tdc-account-rule
+- tdc-charge
+- tdc-group
+- unit-of-measure
+- vendor
+- vendor-location
+- warehouse
+method_notes:
+  CustomValidation: Validates the entry through ODTDispatchChallan.ProcedureName.
+  Delete: Deletes the record through Finance.PBPBDelete.
+  FillValueDependent: Fills the lookup lists through Finance.PBPBFillValuesDependent.
+  FillValues: Fills the lookup lists through Finance.PBPBFillValues.
+  FillValuesPOWise: Fills the lookup lists through Finance.PBPBFillValuesPOWise.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetAccountBalance: Runs through Finance.AccountOpening.
+  ItemAccountDetail: Runs through masterdata.ItemAccountDetail.
+  LoadData: Loads the selected record through Finance.PBPBLoadData.
+  Open: Searches records through Finance.PBPBSearchData.

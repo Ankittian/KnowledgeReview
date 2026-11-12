@@ -1,0 +1,90 @@
+form: fPackSlip
+title: Pack Slip
+module: SD
+kind: transaction
+summary: The Pack Slip screen records what is packed for a customer consignment before it is dispatched.
+purpose: |
+  What it is: A transaction document that lists the items, quantities, lots and serial numbers packed for one customer and consignee, and evidences the packing before dispatch. When it applies: After a sales order is authorized or a picking is authorized, or directly for stock items that are packed without a prior order reference. Business outcome: Packed quantities are tracked against the order or the picking so that the same quantity is not packed twice (BR-09); stock is held and then issued from named lots (BR-16, BR-17); and the inventory value is moved through the posting accounts when finance is applicable (BR-22).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "PackSlip" with a document header control at the top, then a tab strip with General Detail, Item Detail, Component Detail, Custom Field and Finance Posting tabs [fPackSlip.Designer.vb:839-851; fPackSlip.Designer.vb:869].
+  - Document No., Date, Division and Status: The shared document control: yearly document number (generated from a prefix or typed manually), date, division and status (Initial, Release, Authorized).
+  - Customer and Consignee Fields: Mandatory dropdowns "Customer Name", "Customer Location", "Consignee Name" and "Consignee Location" [fPackSlip.Designer.vb:217; fPackSlip.Designer.vb:236; fPackSlip.Designer.vb:274; fPackSlip.Designer.vb:293; fPackSlip.vb:273-277].
+  - Sales Order Lookup Button: A small "..." button beside the customer fields that opens a list of sales orders in status Authorized or In Progress of the division's sales organization [fPackSlip.Designer.vb:196-198; Sales.SDPKFillSalesOrderSearch:30-36].
+  - Source Document Field: A mandatory dropdown "Source Document" with Direct, Picking and Sales Order; Sales Order is preselected [fPackSlip.Designer.vb:255; fPackSlip.vb:391-393].
+  - Reference Number and Reference Date: A text box "Reference No." of up to 50 characters and a date "Reference Date" with a check box [fPackSlip.Designer.vb:299-331].
+  - Warehouse Field: A dropdown "Warehouse" listing the warehouses of the company, filtered by the chosen division [fPackSlip.Designer.vb:351; fPackSlip.vb:173-182].
+  - Remarks Field: A free-text box "Remarks" of up to 1000 characters; trimmed when saved [fPackSlip.Designer.vb:357-370; fPackSlip.vb:1428].
+  - Notes Control: A notes button beside the remarks with print-area selection [fPackSlip.Designer.vb:374-378].
+  - Reference Document Grid: A grid listing the reference documents with Select, Ref.
+  - Item Detail Grid: A grid with Select, Ref.
+  - Lot Detail Dialog: A pop-up listing available lots of the item with Select, Item Description, LOT No., Received Doc No., Received Doc Date, PO No., Bill No., Bill Date, Size, Wt.
+  - Serial Dialog: A pop-up with Select, Item Description and Serial Number, with Ok and Cancel [fPackSlip.vb:2758-2773; fPackSlip.vb:2681-2705].
+  - Component Detail Grid and Dialogs: A grid with Select, Ref.
+  - Custom Field Tab: The shared custom-fields grid of the company for this form [fPackSlip.vb:362; fPackSlip.Designer.vb:750-757].
+  - Finance Posting Tab: The shared finance posting control showing the journal to be posted, with a basic amount equal to the value of the packed lots (or of quantity times rate when there are no lots).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Toolbar entries that exist on the form but have empty bodies [fPackSlip.vb:528-560].
+actions:
+  New: Clears the screen for a new pack slip.
+  Save: Validates and stores the pack slip.
+  Search: Opens the company search list of pack slips for the current financial year.
+  Delete: Deletes the loaded pack slip after confirmation.
+validations:
+- Authorized Pack Slip can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select valid Source Document.
+- Select valid Consignee Name.
+- Select valid Consignee Location.
+- Select valid Warehouse.
+- Select atleast one Ref. Doc. Detail.
+- Document date can't be less than Ref. Doc. date.
+- Select valid Unit in row n.
+- Qty. can't be empty or zero in row n.
+- Qty. can't be greater than Current Stock x in row n.
+- Qty. can't be greater than On Date Stock x in row n.
+- Stock Qty. should be equal to q in row n.
+- Issue Pcs can't be zero in row n.
+- No. Of Serial Number should be equal to q in row n.
+- Qty. can't be greater than Balance Qty. in row n.
+- 'Select atleast one component detail for Ref. Doc. '
+- ',  Item - '
+- Select atleast one Item Detail.
+- Quantity can't be greater than Stock Qty.
+- Issue Pcs can't be empty  in row n.
+- Qty can't be greater than stock Qty. x in row n.
+- 'Document No. '
+- ' saved successfully.'
+- 'insufficient Stock '
+- ' for selected lot '
+- ' warehouse house mismatch '
+- ' Balance Qty '
+- ' Lot Balance Qty '
+- 'Lot is reserved for item '
+- 'Lot is reserved by some other user for item '
+- 'Bill '
+- ' is prepared against this Lot.,So you Can''t Delete this Entry'
+- 'Difference in Voucher and Lot -- '
+manages:
+- pack-slip
+uses_concepts:
+- accounting-voucher
+- company
+- dispatch-planning
+- inter-unit-stock-transfer
+- picking
+- single-item-opening
+- stock-transfer
+method_notes:
+  ComponentLotDetail: Runs through Sales.SDPKComponentLotDetail.
+  Delete: Deletes the record through Sales.SDPKDelete.
+  FillComponentDetail: Runs through Sales.SDPKFillComponentDetail.
+  FillItemDetail: Runs through Sales.SDPKFillItemDetail.
+  FillValues: Fills the lookup lists through Sales.SDPKFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDPKFillValuesDependent.
+  ItemLotDetail: Runs through Sales.SDPKItemLotDetail.
+  LoadCustomerLocation: Runs through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Sales.SDPKLoadData.
+  Open: Searches records through Sales.SDPKSearchData.

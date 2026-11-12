@@ -1,0 +1,38 @@
+key: p11-eam-service-calls-and-contracts
+name: 'EAM: Service calls and contracts (Phase 11)'
+module: PM
+status: active
+summary: Phase 11 screens of the service calls and contracts group in EAM.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 11 forms that the KB validation plan puts in 'Service calls and contracts' (EAM). The steps follow the plan order, not a verified business sequence: Change Service Contract Period, Customer Service Invoice, Service Call, Service Call Change Status, Service Call Monitoring, Service Contract, Service Contract Setup.
+steps:
+- order: 1
+  name: Record Change Service Contract Period
+  form: fChangeServiceContractPeriod
+- order: 2
+  name: Record Customer Service Invoice
+  form: fCustomerServiceInvoice
+- order: 3
+  name: Record Service Call
+  form: fServiceCall
+- order: 4
+  name: Record Service Call Change Status
+  form: fServiceCallChangeStatus
+- order: 5
+  name: Record Service Call Monitoring
+  form: fServiceCallMonitoring
+- order: 6
+  name: Record Service Contract
+  form: fServiceContract
+- order: 7
+  name: Record Service Contract Setup
+  form: fServiceContractSetup
+concepts:
+- change-service-contract-period
+- customer-service-invoice
+- service-call
+- service-call-change-status
+- service-call-monitoring
+- service-contract
+- service-contract-setup

@@ -1,0 +1,42 @@
+form: fMeasurementParameter
+title: Measurement Parameter
+module: MD
+kind: master
+summary: The Measurement Parameter screen maintains the list of parameters that can be measured or recorded against equipment,
+  service contracts and similar records, for example a reading, a dimension or a yes/no check.
+purpose: |
+  What it is: A group-wide list of named measurement parameters, each with a data type, a nature and a unit. When it applies: When a new kind of reading or attribute needs to be captured on equipment or service documents (Inferred). Business outcome: Readings are captured against a common, consistently defined parameter list instead of free text (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single group box with five fields and a checkbox.
+  - Code Field: Read-only text box, 6 characters.
+  - Parameter Name Field: Mandatory text box, up to 50 characters (BR-01, BR-02).
+  - Data Type Field: Mandatory dropdown showing Data Type (BR-03).
+  - Nature Field: Mandatory dropdown showing Nature (BR-03).
+  - Unit Field: Mandatory dropdown with Unit and Code columns (BR-03).
+  - Inactive Field: Checkbox, disabled in the designer.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Implemented as empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the parameter.
+  Search: Standard search window listing Code, Measurement Parameter, Data Type, Nature, Unit, Inactive, Created By and Created
+    Date, sorted by parameter name.
+  Delete: Deletes the loaded parameter after confirmation (MSG-09).
+  Navigation: First, Previous, Next, Last as provided by the standard toolbar and search results (Inferred).
+validations:
+- Enter Measurement Parameter.
+- Duplicate Measurement Parameter not allowed.
+- Select valid Datatype.
+- Select valid Nature.
+- Select valid Unit.
+manages:
+- measurement-parameter
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.AMMPDelete.
+  FillValues: Fills the lookup lists through masterdata.AMMPFillValues.
+  LoadData: Loads the selected record through masterdata.AMMPLoadData.
+  Open: Searches records through masterdata.AMMPSearchData.
+  Save: Saves the record through masterdata.AMMPSave.
+  ValidateForm: Validates the entry through masterdata.AMMPValidate.

@@ -1,0 +1,47 @@
+form: fServiceTaxAbatementRule
+title: Service Tax Abatement Rule
+module: ADM
+kind: transaction
+summary: The Service Tax Abatement Rule screen defines a rule that reduces the taxable value of a service.
+purpose: |
+  What it is: A master record defining how much of the basic value of a service is abated for service tax, from which date, for which service category and above which minimum value, together with the accounts and basic charges it governs [fServiceTaxAbatementRule.vb:338-373; Finance.STARSaveMain:31-79]. When it applies: When the tax law or company policy sets or changes an abatement for a service category. Business outcome: Documents apply a defined abatement instead of a user-typed percentage.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Abatement Rule Layout: A window captioned "ServiceTaxAbatementRule" with a main group holding the header fields and the Account Detail grid, and below it a group "Basic Charges for Service Tax" [fServiceTaxAbatementRule.Designer.vb:193; fServiceTaxAbatementRule.Designer.vb:159-180].
+  - Description Field: A text box, mandatory (marked as compulsory), up to 50 characters, trimmed on save [fServiceTaxAbatementRule.Designer.vb:62; fServiceTaxAbatementRule.vb:11; fServiceTaxAbatementRule.vb:53; fServiceTaxAbatementRule.vb:353].
+  - Effective From Field: A date picker, not marked compulsory [fServiceTaxAbatementRule.Designer.vb:81; fServiceTaxAbatementRule.vb:11].
+  - Service Category Field: A drop-down, mandatory [fServiceTaxAbatementRule.Designer.vb:100; fServiceTaxAbatementRule.vb:11; fServiceTaxAbatementRule.vb:71].
+  - Min. Basic Value Field: A text box, mandatory, numeric with two decimals, up to 12 characters [fServiceTaxAbatementRule.Designer.vb:117; fServiceTaxAbatementRule.vb:55-56].
+  - Abatement % Field: A text box, mandatory, numeric with two decimals, up to 6 characters [fServiceTaxAbatementRule.Designer.vb:134; fServiceTaxAbatementRule.vb:58-59].
+  - Account Detail Grid: A grid with columns Account Type (100 pixels), Account Name (120), Charge Name (120), TDC Rule Description (120, read-only), Rate (60, read-only, right aligned, three decimals allowed) and a hidden detail key [fServiceTaxAbatementRule.vb:317-330; fServiceTaxAbatementRule.vb:62].
+  - Basic Charges for Service Tax Grid: A grid with Charge Name (250 pixels) and Code (100, read-only) [fServiceTaxAbatementRule.vb:496-499].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard actions whose code is empty [fServiceTaxAbatementRule.vb:152-184].
+actions:
+  New: The toolbar action that asks the main window for a new record [fServiceTaxAbatementRule.vb:116-123].
+  Save: The toolbar action that saves the rule [fServiceTaxAbatementRule.vb:338-391].
+  Search: The toolbar action that opens a search dialog listing existing rules [fServiceTaxAbatementRule.vb:125-150].
+  Delete: The toolbar action that removes the opened rule [fServiceTaxAbatementRule.vb:17-42].
+validations:
+- Enter Description.
+- Select valid Service Category.
+- Min. Basic Value can't be empty or zero.
+- Enter Abatement %.
+- Abatement % can't be greater than 100.
+- Select atleast one Account Detail.
+- Select valid Account Name in row N.
+- Select valid Charge Name in row N.
+- Duplicate Account Name not allowed.
+- Duplicate Charge Name not allowed.
+manages:
+- service-tax-abatement-rule
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.STARDelete.
+  FillValues: Fills the lookup lists through Finance.STARFillValues.
+  LoadData: Loads the selected record through Finance.STARLoadData.
+  Open: Searches records through Finance.STARSearchData.
+  Save: Saves the record through Finance.STARSaveMain.
+  SaveAccountDetail: Saves the record through Finance.STARSaveAccountDetail.
+  SaveMiscChargeDetail: Saves the record through Finance.STARSaveMiscChargeDetail.
+  ValidateForm: Validates the entry through Finance.STARValidate.

@@ -1,0 +1,67 @@
+form: fExpenseApproval
+title: Expense Approval
+module: FI
+kind: transaction
+summary: The Expense Approval screen is where an approver settles an employee's [Expense Entry](Functional_Doc_fExpenseEntry.md).
+purpose: |
+  What it is: A document that approves an expense entry for payment, adjusts advances against it and posts it to the books [fExpenseApproval.vb:648-769; ExpenseMgmt.EXAPSave:35-225]. When it applies: After an employee's expense entry is authorised and before the employee is paid or the claim is closed against advances. Business outcome: The claim becomes a payable to the employee, reduced by advances already given, with a traceable voucher (BR-02; BR-10; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The shared document control with number, date, finance book and document status [fExpenseApproval.vb:160; fExpenseApproval.vb:208-221].
+  - Employee Name Field: A mandatory drop-down labelled "Employee Name" [fExpenseApproval.vb:84; fExpenseApproval.Designer.vb:198].
+  - Expense Entry No. Field: A mandatory drop-down labelled "Expense Entry No." beside read-only boxes Expense Entry Date, Reporting Type and Expense Description [fExpenseApproval.vb:84; fExpenseApproval.Designer.vb:219-277].
+  - Status, Payment Mode and Due Date Fields: Mandatory drop-downs labelled "Status" and "Payment Mode", and a date labelled "Due Date" [fExpenseApproval.vb:84; fExpenseApproval.Designer.vb:170,642,661].
+  - Remarks Field: An optional text box labelled "Remarks" [fExpenseApproval.Designer.vb:326; fExpenseApproval.vb:709].
+  - Adjust Advance Option: A tick box labelled "Adjust Advance" with a Manual / Automatic choice, and a hidden read-only total of the adjusting amounts [fExpenseApproval.Designer.vb:178,373-382; fExpenseApproval.vb:1132-1139].
+  - Category Detail Grid: A grid of the entry lines: Expense Category, Location, Date, Policy, Per Diem Category, Payment Mode, Rate, Unit, Quantity, Basic Amount, Tax, Net Amount, Supplementary Field and Remark.
+  - Supplementary Fields Panel: A read-only list of the supplementary field values of the selected line, opened from the line's Supplementary Field button [fExpenseApproval.vb:624-647; ExpenseMgmt.EXAPFillValuesDependent:7-140].
+  - Tabs: Tabs labelled "General Detail", "Advance Adjustment", "Tax Detail", "Custom Field", "Finance Posting" and "Advance Adj.
+  - Advance Adjustment Grid: A grid of open advances with Document No., Document Date, Reference No., Reference Date, Advance Amount, Adjusted Amount, Balance Amount and Adjusting Amount, with column sums [fExpenseApproval.vb:1171-1235].
+  - Tax Detail and Custom Field Tabs: The shared tax control, filled from the entry's taxes, and the shared custom field control [fExpenseApproval.vb:139-149,166-169,1034-1036].
+  - Finance Posting and Advance Adj. Posting Tabs: Hidden tabs holding the shared posting control (main voucher) and the voucher control (advance voucher) [fExpenseApproval.vb:85-86,1451-1481].
+  - Voucher Check Shortcut: A hidden key combination, Alt+Ctrl+V, available when the Finance Posting tab shows [fExpenseApproval.vb:45-68].
+actions:
+  Save: Toolbar action that saves the approval [fExpenseApproval.vb:648-769].
+  Search: Toolbar action that opens the search dialog [fExpenseApproval.vb:272-297].
+  Delete: Toolbar action that deletes the opened approval [fExpenseApproval.vb:92-121].
+  New: Toolbar action that clears the form [fExpenseApproval.vb:263-270].
+validations:
+- Authorized ExpenseApproval can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Employee Name.
+- Select valid Expense Entry No..
+- Select valid Status.
+- Select valid Payment Mode.
+- Adjusting Amount can't be greater than Balance Amount.
+- Save Feature is not available.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- expense-approval
+uses_concepts:
+- asset-disposal
+- commission-invoice
+- expense-advance
+- expense-category
+- expense-category-supplementary-field
+- expense-entry
+- expense-policy
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through ExpenseMgmt.EXAPDelete.
+  FillRefDoc: Runs through ExpenseMgmt.EXAPFillRefDoc.
+  FillValues: Fills the lookup lists through ExpenseMgmt.EXAPFillValues.
+  FillValuesDependent: Fills the lookup lists through ExpenseMgmt.EXAPFillValuesDependent.
+  LoadData: Loads the selected record through ExpenseMgmt.EXAPLoadData.
+  Open: Searches records through ExpenseMgmt.EXAPSearchData.
+  Save: Saves the record through ExpenseMgmt.EXAPSave.
+  SaveAdvanceDetail: Saves the record through ExpenseMgmt.EXAPSaveAdvanceDetail.
+  SaveCategoryDetail: Saves the record through ExpenseMgmt.EXAPSaveCategoryDetail.
+  SaveNotesDetail: Saves the record through ExpenseMgmt.EXAPSaveNotesDetail.

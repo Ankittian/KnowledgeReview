@@ -1,0 +1,54 @@
+form: fVTPLSalesReturn
+title: VTPL Sales Return
+module: SD
+kind: transaction
+summary: This screen is a variant of the [VTPL Invoices](Functional_Doc_fVTPLInvoices.md) screen.
+purpose: |
+  What it is: A numbered copy of one authorized Sales Return with its own IRN, acknowledgement, finance voucher and GST posting. [fVTPLSalesReturn.vb:507-644; Sales.VSEISave:87-162] When it applies: When a customer return must be reported for e-invoice, GST and accounts through this copy. Business outcome: The credit document, voucher and GST output come from one controlled copy whose amounts equal the Sales Return.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A window captioned "VTPLInvoices" (same caption as the base screen) with tabs "General Detail", "Tax Detail", "Finance Posting" and "GST Posting".
+  - Header Fields: Document number control, "From Date", "To Date", "Show", "Ref.
+  - Item Detail Grid: As on the base screen, but "Document No." (the returned invoice number) is shown read-only and "Service Type" is hidden.
+  - Finance Posting Tab: The shared voucher control (type, amount and account read-only) and the finance posting control.
+  - GST Posting Tab: The shared GST posting control, built from the lines, using the screen's customer location.
+  - GST Posting Re-creation Shortcut: Ctrl+Alt+G on the GST Posting tab deletes and re-saves the GST posting under this copy (BR-21).
+  - Voucher Re-posting Shortcut: Ctrl+Alt+V while Finance Posting is visible rebuilds the voucher, validates and saves it and links it to the copy (BR-19).
+actions:
+  Save: Validates, confirms and saves; differs from the [base Save](Functional_Doc_fVTPLInvoices.md#5-form-screen) as follows.
+  Search, New and Delete: Search lists VTPL Sales Returns of the year with Document No., Document Date, Source Document, Ref.
+validations:
+- Authorized VTPL Invoices can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Ref. Doucment No.
+- Document No. should be same as Ref. Document No.
+- Document Date should be same as Ref. Document Date.
+- Select valid Unit in row <n>.
+- Quantity can not be empty or 0 in row <n>.
+- Rate can not be empty or 0 in row <n>.
+- Basic Amount should be equal to Ref. Doucment Basic Amt. in row <n>.
+- Net Amount should be equal to Ref. Document Net Amt. in row <n>.
+- Not found in Lot
+- GST Voucher Posting is not found
+- Document No. <number> saved successfully.
+- No Detail Found
+manages:
+- vtpl-sales-return
+uses_concepts:
+- accounting-voucher
+- company
+- invoice-cancellation
+- sales-supplementary-invoice
+- vtpl-invoices
+method_notes:
+  CreateVoucher: Runs through Sales.SDSRFillValueDocumentDetails.
+  Delete: Deletes the record through Sales.VSEIDelete.
+  FillValues: Fills the lookup lists through Sales.VSEIFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.VSEIFillValuesDependent.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  LoadData: Loads the selected record through Sales.VSEILoadData.
+  Open: Searches records through Sales.VSEISearchData.
+  Save: Saves the record through Inventory.VoucherVsLotValidation, Sales.VSEISave.
+  SaveItemDetail: Saves the record through Sales.VSEISaveItemDetail.
+  SaveItemTaxDetail: Saves the record through Sales.VSEISaveItemTaxDetail.

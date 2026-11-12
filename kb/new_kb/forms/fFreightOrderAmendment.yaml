@@ -1,0 +1,79 @@
+form: fFreightOrderAmendment
+title: Freight Order Amendment
+module: MM
+kind: transaction
+summary: The Freight Order Amendment screen revises an authorized freight order without overwriting its history.
+purpose: |
+  What it is: A dated revision of an authorized freight order that keeps the earlier version and replaces the live terms once authorized. [fFreightOrderAmendment.vb:650-790; Purchase.PUFOSaveMain:154-266] When it applies: When agreed freight terms change after the original order was authorized. Business outcome: Rate and tolerance changes are traceable per version instead of overwriting the original.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Same layout and tabs as [Freight Order](Functional_Doc_fFreightOrder.md), Section 5, plus a top block with Freight Order No., Freight Order date, Division, Amendment No., Document Date and Document Status.
+  - Freight Order No. Field: Mandatory picker (MSG-02).
+  - Freight Order Date Field: Read-only date of the freight order.
+  - Division and Amendment No. Fields: Read-only division name and amendment number (picker's next number).
+  - Document Date and Document Status Fields: Date of the amendment (not before the freight order date, MSG-03) and status list (mandatory, MSG-04).
+  - Locked Header Fields: Transporter Name, Location, Reference No., Reference Date, Freight Basis, Rate Type, Unit, Payment Mode, Credit Days and Order Type are read-only.
+  - Editable Terms: Freight Rate (only when no basis; with a basis it is read-only), Calculation On (mandatory), the Tolerance Applicable block with Tolerance Unit and Deduction On (mandatory when ticked), Validity From/To, Service Tax Rule and Remarks.
+  - Freight Basis, Tolerance Range and Terms Grids: Editable as in [Freight Order](Functional_Doc_fFreightOrder.md), Section 5 'Freight Basis Detail Grid', 'Tolerance Range Grid' and 'Terms & Condition Tab'.
+  - Item, Transporter and Order Grids: Shown from the current freight order, read-only for this screen (no delete or update); they are not validated and not saved.
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): Empty handlers; nothing happens.
+actions:
+  New: Opens a blank amendment.
+  Save: 'In order: back-log check on the document date (BR-07), authorized lock (MSG-01), validation chain (BR-04 to BR-06;
+    BR-09), confirmation (MSG-13), and one transaction that saves header, freight basis rows, tolerance rows and terms.'
+  Search: Lists amendments of the company and year; the search procedure shows amendments only for form code PUFA, while this
+    screen's Designer tag is FIFO (Section 13).
+  Delete: Deletes the loaded revision after confirmation.
+validations:
+- Authorized FreightOrder can't be updated.
+- Select valid Freight Order.
+- Document Date can't be less than Freight Order Date.
+- Select valid Document Status.
+- Authorized data can't be updated.
+- Select valid Transporter Name.
+- Select valid Location.
+- Select valid Rate Type.
+- Select valid Unit.
+- Freight Rate can't be empty or 0.
+- Select valid Calculation On.
+- Select valid Order Type.
+- Select valid Tolerance Unit.
+- Select valid Deduction On.
+- To Date can't be less than From Date.
+- Select valid Payment Mode.
+- Enter Credit Days.
+- Select valid Item Name in row N.
+- Select atleast one <basis>
+- Enter atleast one <basis>
+- Select valid To Location in row N.
+- From Location can't be same as To Location in row N.
+- Freight Rate can't be empty or zero in row N.
+- Distance To can't be empty or zero in row N.
+- Distance To can't be less than Distance From in row N.
+- Select atleast one Range From
+- Range From can't be empty or zero in row N.
+- Range To can't be empty or zero in row N.
+- Range To can't be less than Range From in row N.
+- Tolerance can't be empty or zero in row N.
+- Document No. <number> saved successfully.
+- Can't be deleted as above revision exists.
+manages:
+- freight-order-amendment
+uses_concepts:
+- bill-of-quantity
+- company
+- freight-order
+- freight-order-mapping
+- service-order
+- service-order-amendment
+method_notes:
+  Delete: Deletes the record through Purchase.PUFODelete.
+  FillValues: Fills the lookup lists through Purchase.PUFOFillValues.
+  FillValuesDependent: Fills the lookup lists through Purchase.PUFOLoadData.
+  FillValuesFO: Fills the lookup lists through Purchase.PUFOFillValuesFO.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Purchase.PUFOLoadData.
+  Open: Searches records through Purchase.PUFOSearchData.
+  Save: Saves the record through Purchase.PUFOSaveMain.
+  SaveFreightBasisDetail: Saves the record through Purchase.PUFOSaveFreightBasis.
+  SaveTNCGroupDetail: Saves the record through Purchase.PUFOSaveTermsNConditionDetail.

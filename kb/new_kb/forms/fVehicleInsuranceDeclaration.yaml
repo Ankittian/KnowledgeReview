@@ -1,0 +1,48 @@
+form: fVehicleInsuranceDeclaration
+title: Vehicle Insurance Declaration
+module: FI
+kind: transaction
+summary: The Vehicle Insurance Declaration screen (window caption "VehicleInsuranceDeclaration") declares to the insurer the
+  sales invoices dispatched by vehicle on one route (From Location to To Location) in one date range, under one Transit Insurance
+  Policy [fVehicleInsuranceDeclaration.Designer.vb:470-473; VTPL.VIDMFillValuesDependent:25-99].
+purpose: |
+  What it is: A declaration of invoiced dispatches on a route, tied to a transit insurance policy and recorded against each invoice [VTPL.VIDMSave:32-60; VTPL.VIDMSaveDeclarationDetail:20-36]. When it applies: For each declaration period and route covered by a policy. Business outcome: The insurer's cover is applied to named invoices, and the policy balance falls by their value (BR-06; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Declaration No. and Declaration Date Fields: Text box "Declaration No." (mandatory, free text) and date picker "Declaration Date" [fVehicleInsuranceDeclaration.Designer.vb:105; fVehicleInsuranceDeclaration.Designer.vb:124; fVehicleInsuranceDeclaration.vb:63].
+  - Policy No. and Insurance Company Fields: Mandatory dropdown "Policy No." and a read-only "Insurance Company" filled from the chosen policy [fVehicleInsuranceDeclaration.Designer.vb:154; fVehicleInsuranceDeclaration.Designer.vb:161; fVehicleInsuranceDeclaration.vb:644-650].
+  - From Date, To Date, From Location and To Location Fields: Date pickers "From Date" and "To Date" and dropdowns "From Location" and "To Location" [fVehicleInsuranceDeclaration.Designer.vb:191; fVehicleInsuranceDeclaration.Designer.vb:210; fVehicleInsuranceDeclaration.Designer.vb:229; fVehicleInsuranceDeclaration.Designer.vb:248].
+  - Goods Description Field: Text box "Goods Description", mandatory, saved up to 300 characters [fVehicleInsuranceDeclaration.Designer.vb:296; fVehicleInsuranceDeclaration.vb:334-338; VTPL.VIDMSave:18].
+  - Show Button: Button labelled "Show" [fVehicleInsuranceDeclaration.Designer.vb:256; fVehicleInsuranceDeclaration.vb:680-689].
+  - Invoice Grid: Grid of Select, Invoice No., Invoice Date, Customer Name, Customer Location, Consignee, Vehicle No., City, State, Item, Qty and Amount.
+  - Summary Groups: Read-only Total Qty.
+actions:
+  Toolbar: New, Save, Open, Delete, Navigation, Print, Print Preview, Export and Email [fVehicleInsuranceDeclaration.vb:48-61].
+validations:
+- Enter a valid Declaration No..
+- Select valid Policy No.
+- Select a valid From Location.
+- Select a valid To Location.
+- Enter a goods description.
+- Select at least one Invoice.
+- Customer Name should be simillar.
+- Closing Insurance Amt can't be negative.
+- Duplicate Document No. not allowed.
+- Can't be deleted as some record exist in Insurance Declaration against this entry.
+- To date can't be less then From Date.
+- Document No. <number> saved successfully.
+manages:
+- vehicle-insurance-declaration
+uses_concepts:
+- accounting-voucher
+- company
+- insurance-declaration
+method_notes:
+  Delete: Deletes the record through VTPL.VIDMDelete.
+  FillValues: Fills the lookup lists through VTPL.VIDMFillValues.
+  FillValuesDependent: Fills the lookup lists through VTPL.VIDMFillValuesDependent.
+  LoadData: Loads the selected record through VTPL.VIDMLoadData.
+  Open: Searches records through VTPL.VIDMSearchData.
+  Save: Saves the record through VTPL.VIDMSave.
+  SaveInvoiceDetail: Saves the record through VTPL.VIDMSaveDeclarationDetail.
+  ValidateForm: Validates the entry through VTPL.VIDMValidate.

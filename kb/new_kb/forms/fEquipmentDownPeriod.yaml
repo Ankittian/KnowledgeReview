@@ -1,0 +1,61 @@
+form: fEquipmentDownPeriod
+title: Equipment Down Period
+module: PM
+kind: transaction
+summary: The Equipment Down Period screen records the time during which equipment or a functional location is out of service.
+purpose: |
+  What it is: A document that states when and why equipment or locations are out of service and for how long. When it applies: When equipment is shut down for planned work or stops for another reason. Business outcome: Downtime is documented and linked to the maintenance orders that repair it.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: The document header control, the header fields (Reference Object, Down Type, Reason, the four dates), and a grid of equipment or locations with a Select column.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Reference Object Field: Dropdown (Reference Object), mandatory.
+  - Down Type Field: Dropdown (Down Type), mandatory.
+  - Reason Field: Text box, mandatory, maximum 500 characters.
+  - Estimated Start Date Field: Date and time picker (dd/MM/yyyy hh:mm:tt), defaulting to now.
+  - Estimated End Date Field: Date and time picker with a tick box, unticked by default.
+  - Actual Start Date Field: Date and time picker, defaulting to now.
+  - Actual End Date Field: Date and time picker with a tick box, unticked by default.
+  - Equipment/Location Grid: Grid with Select, Equipment/Location, Functional Location and Customer Asset No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the document.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened document.
+validations:
+- Select valid Reference Object.
+- Select valid Down Type.
+- Document date can't be less than start date for breakdown.
+- Start date can't be less than document date for shutdown.
+- Estimated End Date can't be less than Document Date.
+- Estimated End Date can't be less than Estimated Start Date.
+- Actual Start Date can't be less than Estimated Start Date.
+- Actual End Date can't be less than Estimated End Date.
+- Select Estimated End Date.
+- Enter Reason.
+- Unable to authorized, actual end date is required.
+- Select atleast one Equipment/Location.
+- Authorized Equipment Down Period can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- equipment-down-period
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+- maintenance-order
+- maintenance-order-amendment
+- maintenance-order-closing
+method_notes:
+  Delete: Deletes the record through EAM.EBSPDelete.
+  FillValues: Fills the lookup lists through EAM.EBSPFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EBSPFillValueDependent.
+  LoadData: Loads the selected record through EAM.EBSPLoadData.
+  Open: Searches records through EAM.EBSPSearchData.
+  Save: Saves the record through EAM.EBSPSave.
+  SaveEquipmentDetail: Saves the record through EAM.EBSPSaveEquipmentDetail.
+  ValidateForm: Validates the entry through EAM.EBSPValidate.

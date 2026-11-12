@@ -1,0 +1,30 @@
+key: p12-finance-statements-ratios-and-closing
+name: 'Finance: Statements, ratios and closing (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the statements, ratios and closing group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Statements, ratios and closing' (Finance). The steps follow the plan order, not a verified business sequence: Ratio Analysis, Cash Flow, Balance Sheet, Insurance Declaration, Vehicle Insurance Declaration.
+steps:
+- order: 1
+  name: Record Ratio Analysis
+  form: fRatioAnalysis
+- order: 2
+  name: Record Cash Flow
+  form: fCashFlow
+- order: 3
+  name: Record Balance Sheet
+  form: fBalanceSheet
+- order: 4
+  name: Record Insurance Declaration
+  form: fInsuranceDeclaration
+- order: 5
+  name: Record Vehicle Insurance Declaration
+  form: fVehicleInsuranceDeclaration
+concepts:
+- ratio-analysis
+- cash-flow
+- balance-sheet
+- insurance-declaration
+- vehicle-insurance-declaration

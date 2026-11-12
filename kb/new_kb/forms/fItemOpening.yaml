@@ -1,0 +1,70 @@
+form: fItemOpening
+title: Single Item Opening
+module: MM
+kind: transaction
+summary: The Single Item Opening screen records the opening stock of one item at a time, for one combination of division,
+  warehouse, ownership (own or party stock), stock nature and stock type (capital or non-capital) [fItemOpening.vb:20; fItemOpening.vb:157-165].
+purpose: |
+  What it is: A way to bring the stock on hand at the inventory start date into the system, item by item, with the detail needed to track it later (make, batch, bill, location, expiry, serial numbers). When it applies: When a company starts using inventory, or when an item's opening position has to be corrected before the books are closed. Business outcome: Stock ledgers and lot-wise stock start from a known quantity and value, and the finance opening balance can agree with it.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The upper area where the stock combination and the item are chosen.
+  - Division Field: Dropdown labelled "&Division" [fItemOpening.Designer.vb:494].
+  - Warehouse Field: Dropdown labelled "&Warehouse", mandatory [fItemOpening.Designer.vb:503].
+  - Ownership Field: Dropdown labelled "&Ownership" with Own and Party, mandatory [fItemOpening.Designer.vb:512].
+  - Stock Nature Field: Dropdown labelled "Stock &Nature", mandatory [fItemOpening.Designer.vb:485].
+  - Stock Type Field: Dropdown labelled "Stock &Type" with Capital and Non-Capital [fItemOpening.Designer.vb:281].
+  - Opening Date Field: Read-only text labelled "Opening Date" [fItemOpening.Designer.vb:473; fItemOpening.Designer.vb:521].
+  - Category Name, Group Name and Subgroup Name Fields: Three dropdowns labelled "&Category Name", "Group &Name" and "&Subgroup Name" [fItemOpening.Designer.vb:408; fItemOpening.Designer.vb:417; fItemOpening.Designer.vb:426].
+  - Item Code and Item Description Fields: Two linked dropdowns labelled "Ite&m Code" and "Item &Description", mandatory; choosing one selects the other [fItemOpening.Designer.vb:347; fItemOpening.Designer.vb:399; fItemOpening.vb:919-964].
+  - Unit Field: Read-only text showing the item's unit [fItemOpening.Designer.vb:288; fItemOpening.vb:952].
+  - Opening Qty. and Opening Amount Fields: Text boxes labelled "Opening &Qty." (three decimals, up to 10 characters) and "Opening Amoun&t" (two decimals, up to 12 characters) [fItemOpening.Designer.vb:297; fItemOpening.Designer.vb:309; fItemOpening.Designer.vb:315; fItemOpening.Designer.vb:327; fItemOpening.vb:60-61].
+  - Item Detail Grid: A grid of opening lots with Make, Tech.
+  - Locked Lines: Lines whose lot already has issues.
+  - Tax Pop-up: A row-edit panel titled by the "Tax &Group" label with a Charge Name and Total Value grid, and "O&k" and "Cance&l" buttons [fItemOpening.Designer.vb:211; fItemOpening.Designer.vb:185; fItemOpening.Designer.vb:194; fItemOpening.vb:1051-1062].
+  - Serial Number Pop-up: A row-edit panel with Serial Number (up to 60 characters), Make (read-only) and, for expiry-managed items, Expiry Date, and "O&k" and "Cance&l" buttons [fItemOpening.Designer.vb:142; fItemOpening.Designer.vb:151; fItemOpening.vb:1157-1174].
+actions:
+  New: Toolbar New [fItemOpening.vb:17].
+  Save: Toolbar Save [fItemOpening.vb:18].
+  Search, Delete and Other Toolbar: Search (Open) returns nothing, Delete returns false, Print, Preview, Email and Export
+    are empty [fItemOpening.vb:28-30; fItemOpening.vb:117-125; fItemOpening.vb:862-868].
+validations:
+- Start Date of Inventory is not define. Please contact your vendor.
+- Select valid Division.
+- Select valid Warehouse.
+- Select valid Ownership.
+- Select valid Stock Nature.
+- Select valid Stock nature.
+- Select valid Item Code.
+- Select valid Stock Type.
+- 'Bill No. can''t be empty in row '
+- 'Bill Date can''t be empty in row '
+- 'Quantity can''t be empty or zero in row '
+- 'Expiry Date can not less than opening date in row '
+- 'Quantity should be equal to '
+- 'Sum of Total Amount should be equal to '
+- ' with Cost Center.'
+- 'Serial Number Detail should be equal to Quantity '
+- 'Select Expiry Date in row '
+- Stock Account is not created against item.
+- Stock Clearing Account is not created against item.
+- Total Value can't be empty or zero.
+- 'Quantity can''t be less than issued Qty '
+- Balance sheet is prepared ,so you can't make change in Opening
+manages:
+- single-item-opening
+uses_concepts:
+- company
+- inter-unit-stock-transfer
+- material-category
+- multi-item-opening
+- stock-transfer
+method_notes:
+  FillValueDependent: Fills the lookup lists through Inventory.IOBSFillValuesDependent.
+  FillValues: Fills the lookup lists through Inventory.IOBSFillValues.
+  ItemLotDetail: Runs through Inventory.IOBSItemLotDetail.
+  Save: Saves the record through Inventory.IOBSDelete.
+  SaveFinanceOpening: Saves the record through Inventory.IMIOSaveFinanceOpening.
+  SaveItemDetails: Saves the record through Inventory.IOBSSave.
+  SaveSerialNoDetail: Saves the record through Inventory.IOBSSaveSerialNoDetail.
+  SaveTaxDetail: Saves the record through Inventory.IOBSSaveTaxDetail.

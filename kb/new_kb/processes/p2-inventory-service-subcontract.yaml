@@ -1,0 +1,14 @@
+key: p2-inventory-service-subcontract
+name: 'Inventory: Service / subcontract (Phase 2)'
+module: MM
+status: active
+summary: Phase 2 screens of the service / subcontract group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 2 forms that the KB validation plan puts in 'Service / subcontract' (Inventory). The steps follow the plan order, not a verified business sequence: Service Request.
+steps:
+- order: 1
+  name: Record Service Request
+  form: fSCRequisition
+concepts:
+- service-request

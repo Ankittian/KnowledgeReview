@@ -1,0 +1,97 @@
+form: fAssetCapitalization
+title: Asset Capitalization
+module: FI
+kind: transaction
+summary: The Asset Capitalization screen turns purchases and other costs into fixed assets.
+purpose: |
+  What it is: A document that moves cost from a clearing (capital work in progress) account into the fixed asset account and creates the matching asset and tag records [fAssetCapitalization.vb:2677-2749; fAssetCapitalization.vb:1554-1821]. When it applies: When goods or services bought for capital use are put into service. Business outcome: The asset register and the books agree on cost, and depreciation can start from the in-service date (BR-14; BR-15).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned in code "AssetCapitalization" with a header area and three tabs: "Transaction Detail", "Other Detail" and "Posting Detail" [fAssetCapitalization.Designer.vb:597; fAssetCapitalization.Designer.vb:548-556].
+  - Document Block (Document No., Date, Status, Finance Book): A shared control for number, date, status and finance book [fAssetCapitalization.vb:123; fAssetCapitalization.vb:171-180].
+  - Header Fields: Capitalization Nature, Capitalization Document, Ref.
+  - Transaction Detail Tab: A grid with Select, Supplier Name, Location, Bill No., Bill Date, GRN No., GRN Date, Voucher No., Voucher Date, Account Name, Item Description, Make, Unit, Lot Qty., Pre.
+  - Other Detail Tab: An Asset Number grid (Asset No, Asset Description, Item Description, Quantity, Acquisition Value, Salvage Value, Cost Center, Department, Business Use %, Custodian, Remarks; for Tag Addition also the existing asset and previous values), a Tag Number grid (Asset No., Tag No., Tag Description, Item Description, Ref.
+  - Posting Detail Tab: The shared posting control showing the capitalization journal voucher [fAssetCapitalization.vb:2677-2749].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty routines [fAssetCapitalization.vb:261-293].
+actions:
+  New: Asks the main window for a blank record [fAssetCapitalization.vb:224-231].
+  Save: Validates and stores the document, the assets and tags and, on authorization, the voucher [fAssetCapitalization.vb:1322-1433].
+  Search: Opens a list of documents of the company and working year with Document No., Document Date, Finance Book, Capitalization
+    Document, Ref.
+  Delete: Deletes the open document after confirmation [fAssetCapitalization.vb:37-66].
+validations:
+- Select valid Capitalization Nature.
+- Select valid Capitalization Document.
+- Select valid Ref. Doc. No./ Account Name.
+- Select valid Asset Group.
+- Select valid Asset Account.
+- Service Date should be between Financial Start and End Date.
+- Service Date can't be greater than Document Date.
+- Select atleast one Transaction Detail.
+- Select Material Receipt Note against Bill.
+- 'Quantity can not be greater than Balance Qty. in row '
+- Select valid Asset No. Generation.
+- Enter atleast one Asset No.
+- Quantity can't be empty or zero
+- ' in row '
+- Acquisition Value can't be empty or zero
+- Salvage Value can't be greater than Acquisition Value
+- Business Use % can't be greater than 100
+- Tag No. Detail is not availabe for Asset No.
+- ' of row '
+- Total Acquisition Value(
+- ' and Total Asset Acquisition Value('
+- ) is not equal.
+- Total Quantity(
+- ') for capital item '
+- ' in Asset('
+- ) of transaction detail and asset detail(
+- Select valid Tag No. Generation.
+- Select atleast one Asset No.
+- Enter Tag No.
+- Enter/ Select valid Tag Description
+- Enter Ref. No.
+- Select Ref. Date
+- 'Ref. Date can''t be greater than document date in row '
+- Quantity should be equal to 1 in case Serial No. is available
+- 'Salvage Value must be within the Range from '
+- Select valid Asset Location
+- ') for Asset No '
+- ' in Asset Tag('
+- Total Salvage Value(
+- 'Total Acquisition Value for selected row is not equal to '
+- Do you want to continue?
+- Authorized Asset Capitalization can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Material Issue is not done of suffient Qty. for Voucher''s '
+- Duplicate Asset No. are not allowed.
+- Duplicate Asset No. and Tag No. are not allowed.
+- Duplicate Finance Book and Asset No. are not allowed.
+- Duplicate Asset No. and Asset Tag No. are not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- asset-capitalization
+uses_concepts:
+- accounting-voucher
+- asset-class
+- asset-disposal
+- asset-group
+- asset-location
+- asset-number-structure
+- class-account-item-mapping
+- depreciation-rule
+- depreciation-rule-class-mapping
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMCADelete.
+  DeleteAsset: Deletes the record through FixedAsset.AssetDelete.
+  DeleteAssetTag: Deletes the record through FixedAsset.AssetTagDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMCAFillValues.
+  FillValuesAssetGroup: Fills the lookup lists through FixedAsset.AMCAFillValuesAssetGroup.
+  FillValuesCD: Fills the lookup lists through FixedAsset.AMCAFillValuesCD.
+  FillValuesFB: Fills the lookup lists through FixedAsset.AMCAFillValuesFB.
+  FillValuesRefDoc: Fills the lookup lists through FixedAsset.AMCAFillValuesRefDoc.
+  LoadData: Loads the selected record through FixedAsset.AMCALoadData.
+  Open: Searches records through FixedAsset.AMCASearchData.

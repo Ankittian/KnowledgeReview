@@ -1,0 +1,65 @@
+form: fVTPLInvoices
+title: VTPL Invoices
+module: SD
+kind: transaction
+summary: The VTPL Invoices screen creates a company-specific copy of an authorized Tax Invoice that carries its own e-invoice
+  (IRN) and e-way bill details.
+purpose: |
+  What it is: A numbered, dated document that mirrors one authorized Tax Invoice line by line, with its own IRN, acknowledgement, e-way bill and print description. [fVTPLInvoices.vb:500-678; Sales.VSEISave:87-162] When it applies: When an authorized Tax Invoice must be reported for e-invoice and GST through this copy instead of the original. While this screen is switched on in the form list, the Tax Invoice itself skips its own IRN-before-authorization check. [Sales.SDEIAuthorize:18-42; Sales.SDEIValidate:34-36] Business outcome: The e-invoice, e-way bill and GST output come from one controlled copy whose amounts cannot drift from the billed invoice (BR-11, BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A window captioned "VTPLInvoices" with the document number control on top and three tabs: "General Detail", "Tax Detail" and "GST Posting", plus the item grid.
+  - Document Number Control: Shared control for number, date, division, status and series; validates itself first (MSG-20).
+  - From Date, To Date and Show: Two date pickers labelled "From Date" and "To Date" and a "Show" button.
+  - Print Description Field: Text box labelled "Print Description", up to 1000 characters, optional (BR-24).
+  - Ref. Document No. and Ref. Document Date: Dropdown labelled "Ref.
+  - Customer Name and Customer Location: Dropdowns labelled "Customer Name" and "Customer Location", filled from the source invoice.
+  - IRN, Ack. No. and Ack. Date: Text boxes "IRN" and "Ack.
+  - eWay-Bill No. & Date and eWay-Bill Validity Date: A text box (30 characters) with a tickable date, and a tickable validity date.
+  - Item Detail Grid: Columns "Document No." (hidden), "Order No.", "Item Code", "Item Description", "Tech.
+  - Tax Detail Tab: The shared tax-on-amount control with header taxes and per-line taxes copied from the source invoice.
+  - GST Posting Tab: The shared GST posting control, built from the line basic amounts, HSN codes, taxes and exchange rate.
+  - GST Posting Re-creation Shortcut: Ctrl+Alt+G on the GST Posting tab (BR-22).
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): Empty handlers.
+actions:
+  New: Clears the screen through the main window.
+  Save: Validates, confirms and saves the copy.
+  Search: Lists the company's VTPL Invoices of the current year.
+  Delete: Deletes the loaded copy after confirmation (BR-21, MSG-18).
+validations:
+- Authorized VTPL Invoices can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Enter Way Bill No.
+- Do you want to continue?
+- Select valid Ref. Doucment No.
+- Document No. should be same as Ref. Document No.
+- Document Date should be same as Ref. Document Date.
+- Select valid Unit in row <n>.
+- Quantity can not be empty or 0 in row <n>.
+- Rate can not be empty or 0 in row <n>.
+- Basic Amount should be equal to Ref. Doucment Basic Amt. in row <n>.
+- Net Amount should be equal to Ref. Document Net Amt. in row <n>.
+- Unable to save,IRN not generated
+- Not found in Lot
+- GST Voucher Posting is not found
+- Document No. <number> saved successfully.
+- HSN Code is missing in GST Posting
+manages:
+- vtpl-invoices
+uses_concepts:
+- accounting-voucher
+- company
+- invoice-cancellation
+- vtpl-sales-return
+method_notes:
+  Authorize: Runs through Sales.VSEIAuthorize.
+  Delete: Deletes the record through Sales.VSEIDelete.
+  FillValues: Fills the lookup lists through Sales.VSEIFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.VSEIFillValuesDependent.
+  LoadData: Loads the selected record through Sales.VSEILoadData.
+  Open: Searches records through Sales.VSEISearchData.
+  Save: Saves the record through Inventory.VoucherVsLotValidation, Sales.VSEISave.
+  SaveItemDetail: Saves the record through Sales.VSEISaveItemDetail.
+  SaveItemTaxDetail: Saves the record through Sales.VSEISaveItemTaxDetail.
+  SaveTaxDetail: Saves the record through Sales.VSEISaveTaxDetail.

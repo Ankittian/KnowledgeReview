@@ -1,0 +1,64 @@
+form: fBankJournal
+title: Bank Journal
+module: FI
+kind: transaction
+summary: The Bank Journal screen turns approved payables and receivables into bank payment or bank receipt vouchers in bulk.
+purpose: |
+  What it is: A batch posting screen that creates bank payment or receipt vouchers for many payees in one step from documents that are already approved elsewhere. When it applies: On the day payments are released to the bank (cheque, DD, NEFT, RTGS and similar), or when planned receipts are banked. Business outcome: Payment plans, recurring vouchers, sundry receipts, voucher references and payroll cheques are settled consistently, with the right voucher type, accounts, bank charges and references, instead of keying each voucher by hand (BR-07; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area and Account Detail Grid: A selection header on top and one grid below.
+  - Paying Unit Field: Mandatory drop-down labelled "Paying Unit" [fBankJournal.vb:28; fBankJournal.vb:92].
+  - Finance Book Field: Mandatory drop-down labelled "Finance Book", or "Profit Center" when the installation setting says so [fBankJournal.vb:34-40; fBankJournal.vb:28].
+  - Bank Account Name Field: Mandatory drop-down "Bank Account Name" [fBankJournal.vb:28].
+  - Transaction Type Field: Drop-down "Transaction Type" with Payment and Receipt [Finance.FIBPFillValues:143-144].
+  - Transaction Date Field: Date field "Transaction Date" [fBankJournal.vb:241].
+  - Source Document and Ref. No. Fields: Two optional drop-downs.
+  - Ref. Date Range (Ref. Date check box, From, To): A check box "Ref.
+  - Show Button: Button "Show" [fBankJournal.vb:2257-2292].
+  - Account Detail Grid (payee rows): Columns: Select, Source Document, Payee Name, Payment Mode, Payment Ref.
+  - Document Rows (child rows): Columns: Select, Source Document No., Unit Name, Payee Type, Payee Name, Payee Location, Ref.
+  - Currency Column: A button column opening the shared currency row editor for rate type and conversion rate [fBankJournal.vb:394-396; fBankJournal.vb:2094-2106].
+  - Other Toolbar Actions (Open, Delete, Print, Preview, Export, Email): Not offered.
+actions:
+  Save: Toolbar Save [fBankJournal.vb:562-613].
+  New: Toolbar New [fBankJournal.vb:142-149; fBankJournal.vb:194-204].
+validations:
+- Select valid Paying Unit.
+- Select valid Finance Book.
+- Select valid Bank Account Name.
+- Payment Date should be between financial year.
+- Select atleast one Account.
+- Enter Payment Ref. No. in row N.
+- Select Payment Ref. Date in row N.
+- Payment Ref. Date can't be less than Transaction Date in row N.
+- Payment Ref. Date can't be greater than Transaction Date in row N.
+- Amount can't be empty or zero in row N.
+- Enter In Favour of in row N.
+- Amount can't be greater than Ref. Amount.
+- Do you want to print?
+- Contact your vendor,Reference getting -ve
+- Cost Center for Account <name> Exists. Disable the cost center.
+- Account is not created against this Payee.
+- Cheque printing is applicable against this Document.
+- Account is not mapped with the selected Paying Unit Finance Book.
+manages:
+- bank-journal
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- company
+- recurring-voucher
+- reverse-voucher
+- sundry-payment
+- sundry-receipt
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FIBPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FIBPFillValuesDependent.
+  FillValuesFinanceBook: Fills the lookup lists through Finance.FIBPFillValuesFinanceBook.
+  FillValuesPayingUnit: Fills the lookup lists through Finance.FIBPFillValuesPayingUnit.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FIBPFillValuesSourceDocument.
+  SaveAccountDetail: Saves the record through Finance.FIBPSaveMain, Finance.FIRVSaveOnDate, Finance.VoucherGSTPosting, Finance.VoucherSaveChildDetail.
+  SaveDetail: Saves the record through Finance.FIBPSaveDetail.
+  SavePaymentDetail: Saves the record through Finance.VoucherSavePaymentDetail.

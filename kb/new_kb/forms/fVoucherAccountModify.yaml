@@ -1,0 +1,30 @@
+form: fVoucherAccountModify
+title: Voucher Account Modify
+module: ADM
+kind: transaction
+summary: The Voucher Account Modify screen lets a finance user correct the account posted on individual voucher lines after
+  the voucher exists.
+purpose: |
+  What it is: A correction utility that replaces the ledger account on selected voucher lines and optionally rewrites the voucher narration [fVoucherAccountModify.vb:223-236; Utility.UVAUSaveMain:23-48]. When it applies: When a voucher line was posted to the wrong account and the voucher has not yet been referenced, settled or paid. Business outcome: Ledger balances move to the correct account without re-keying the source document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel with the Finance Book field above a grid of voucher lines [fVoucherAccountModify.Designer.vb:40-61].
+  - Finance Book Field: A mandatory dropdown labelled "Finance &Book" listing Finance Book names [fVoucherAccountModify.vb:12; fVoucherAccountModify.vb:32; fVoucherAccountModify.Designer.vb:47] (BR-01).
+  - Voucher Detail Grid: A grid with columns Select (tick box with no caption), Voucher Type, Voucher No., Voucher Date, Account Name, Debit Amount, Credit Amount, Change Account Name, Source Document, Source Document No., Source Document Date and Narration; the voucher line number and account type are hidden [fVoucherAccountModify.vb:170-203; Utility.UVAUFillValuesDependent:32-42].
+  - Other Toolbar Actions (Search, Print, Preview, Export, Email): Implemented as empty routines; Open returns 0 and LoadData does nothing [fVoucherAccountModify.vb:54-56; fVoucherAccountModify.vb:67-104].
+actions:
+  New: Asks the main window to start a new record [fVoucherAccountModify.vb:58-65].
+  Save: Validates and saves all ticked lines [fVoucherAccountModify.vb:210-261].
+validations:
+- Select valid Finance Book.
+- Select atleast one Voucher Detail.
+- Select valid Change Account Name in row N.
+- Change Account Name cannot be of type Stock Account.
+manages:
+- voucher-account-modify
+uses_concepts:
+- accounting-voucher
+method_notes:
+  FillValues: Fills the lookup lists through Utility.UVAUFillValues.
+  FillValuesDependent: Fills the lookup lists through Utility.UVAUFillValuesDependent.
+  Save: Saves the record through Utility.UVAUSaveMain.

@@ -1,0 +1,68 @@
+form: fSalesCommissionTerms
+title: Commission Terms
+module: MD
+kind: master
+summary: The Commission Terms screen (window caption "Sales Commision Terms") defines the terms on which agents earn commission
+  on sales.
+purpose: |
+  What it is: The rule book for agent commission: how much, on what basis, for which agents, items, customers and regions, and for which period. When it applies: When a commission scheme is introduced, revised or extended. Business outcome: Consistent, auditable commission calculation (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields with a "Validity Period" group, and tabs "Agent Detail", "Item Detail", "Flat Value Detail", "Customer Detail" and "Sales Region".
+  - Commission Id Field: Read-only text box.
+  - Description Field: Mandatory text box, up to 50 characters (BR-02).
+  - From Date and To Date Fields: Date pickers; To Date is optional (checkbox date).
+  - Sales Region Field: Dropdown of active sales regions; required by validation though not marked mandatory (BR-03).
+  - Calculation Based On Field: Mandatory dropdown (BR-04).
+  - Rate (Percentage) Field: Numeric box with 2 decimals.
+  - Setting Type and Distributor Rate Fields: Mandatory Setting Type dropdown; Distributor Rate numeric box, 2 decimals, hidden unless type 2 (BR-05).
+  - Inactive Field: Checkbox, disabled in design.
+  - Agent Category Field and Agent Detail Grid: Mandatory dropdown on the "Agent Detail" tab, and a grid with Select, Agent (caption "Agent Group" or "Agent Name"), Location; other columns read-only (BR-06).
+  - Item Detail Grid: Select and read-only Item Code, Item Description, Unit, Category, Group, Subgroup; ticked items listed first.
+  - Breakup On Field and Flat Value Detail Grid: Breakup On dropdown and a grid From, To (3 decimals), Value, Distributor Value (2 decimals; visible for setting type 2); a new row is added after editing the last row.
+  - Customer Category Field and Customer Detail Grid: Optional dropdown and grid with Select, Customer (caption "Customer Group" or "Customer Name"), Location (BR-09).
+  - Region Category Field and Sales Region Grid: Dropdown marked mandatory and a grid with Select, Name (caption "State" or "City"), State Name (cities only) (BR-09).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty implementations.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the term and all detail selections.
+  Search: Standard search with Code, Description, Sales Region, Calculation Based On, Rate, From Date, To Date, Setting Type,
+    Created By, ordered by code.
+  Delete: Deletes the loaded term after confirmation (MSG-21).
+  Navigation: Not coded on this screen; provided by the standard toolbar, if at all (Inferred).
+validations:
+- Enter Description.
+- To Date can't be less or equal to From Date
+- Select valid Sales Region.
+- Select valid Calculation Based On.
+- Select valid Setting Type.
+- Enter Percentage.
+- Enter Rate.
+- Enter Distributor Percentage.
+- Enter Distributor Rate.
+- Select valid Agent Category
+- Select atleast one Item Detail.
+- Item Of Different Unit can;t be select.
+- Select valid Breakup On.
+- Quantity can't be select,if Item is not selected.
+- Enter valid Range.
+- To range can't be empty in row {n}.
+- Value can't be empty in row {n}.
+- From Range can't be empty in row {n}.
+- SubBroker Value can't be empty in row {n}.
+- To can't be less than From range in row {n}.
+manages:
+- commission-terms
+uses_concepts:
+- material-category
+method_notes:
+  Delete: Deletes the record through masterdata.SDSCDelete.
+  FillValues: Fills the lookup lists through masterdata.SDSCFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.SDSCFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.SDSCLoadData.
+  Open: Searches records through masterdata.SDSCSearchData.
+  Save: Saves the record through masterdata.SDSCSave.
+  SaveAgentDetail: Saves the record through masterdata.SDSCSaveAgentDetail.
+  SaveCustomerDetail: Saves the record through masterdata.SDSCSaveCustomerDetail.
+  SaveFlatDetail: Saves the record through masterdata.SDSCSaveFlatDetail.
+  SaveItemDetail: Saves the record through masterdata.SDSCSaveItemDetail.

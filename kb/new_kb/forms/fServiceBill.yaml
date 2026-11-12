@@ -1,0 +1,118 @@
+form: fServiceBill
+title: Service Invoice
+module: FI
+kind: transaction
+summary: The Service Invoice screen (window caption "Service Bill") records a vendor's bill for services or subcontract work
+  and turns it into a payable.
+purpose: |
+  What it is: A service invoice is the company's record of a vendor bill for services, subcontract processing or job work, matched to the receipts or production entries it charges for, and the source of the vendor liability in the books. When it applies: When a service vendor or subcontractor submits a bill. Business outcome: Services are billed once per receipt, charged to the right stock, work-in-progress or expense account, and scheduled for payment.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Document number control at top; tabs General Detail, Tax Detail, Advance Detail, Payment Schedule, Custom Field, Posting Detail and GST Posting; below, Service Detail and Supplementary Invoice tabs.
+  - Document No., Date, Finance Book, Division and Status: Shared document number control; authorized bills get read-only status.
+  - Source Document, Vendor Name, Location, Pay To Fields: Mandatory pick lists.
+  - Vendor Bill No., Vendor Bill Date, Amount Fields: Bill number picked from document receipts (or typed when not compulsory), bill date and bill amount (max 12 characters).
+  - Payment Mode, Narration, Net Amount, Advance Fields: Payment mode (mandatory), narration, net amount and total advance (read-only totals).
+  - Service Tax Rule, GST Tax Rule, Place of State Fields: Mutually exclusive tax rules and the state of supply, defaulting to the company state.
+  - Document Detail Grid: Receipts or production entries with Select, Document No., Date, Challan No.
+  - Service Detail Grid: Service lines with caption "Service Description"; remarks up to 500 characters; for Direct bills a new row is added automatically.
+  - Advance Detail Tab: Adjust Advance check box (default checked), Manual/Automatic option, advance grid, Imprest Account, Imprest Amount (max 15 characters) and Balance Amount with Dr/Cr.
+  - Payment Schedule Tab: Read-only schedule of reference, due date, due amount and actual amount.
+  - Tax Detail, Posting Detail, GST Posting, Custom Field Tabs and Notes: Shared tax control, posting proposal, GST posting detail, custom fields and notes.
+  - Maintenance Key Combinations: Ctrl+Alt+G on GST Posting rebuilds GST posting; Ctrl+Alt+V on Posting Detail re-saves the voucher; Ctrl+Alt+G on Posting Detail builds a narration update script for all bills.
+actions:
+  New, Save, Search, Delete, Navigation and Other: Toolbar New, Save, Open, Delete, Navigation, Print, Preview, Export and
+    Email; the print uses the service invoice report.
+validations:
+- Authorized Service Bill can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Service Bill No. not allowed.
+- 'Manage Acc. Item wise option must be true for expense head '
+- 'ARD not mapped for Expense head '
+- ' against Item '
+- Supplier Payable Account is not created against this location.
+- SGST or IGST is not applicable for service related to Union Territory.
+- IGST or UTGST is not applicable for intra state service.
+- IGST is not applied for international consignee,Do you want to continue?
+- IGST is not applied for inter state service.
+- CGST, SGST or UTGST is not applicable for inter state service.
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Location.
+- Please Update State/City in Location Master.
+- Please Update GST Registration Type in Vendor.
+- Select valid Pay to.
+- Select valid Vendor Bill No..
+- Enter Vendor Bill No.
+- Enter Bill Amount.
+- Vendor Bill Date can't be greater than Document Date.
+- Select valid Payment Mode.
+- Select valid Service Tax Rule.
+- Select Valid Place of State.
+- Enter Net Amount.
+- Passing Amount is greater than Vendor Bill Amount.
+- Vendor is not GST Registered ,so GST Tax can't be added
+- GST Rule And GST Taxes can't be selected simultaneously.
+- Enter Due Date.
+- Due Date can't be less than Document Date.Do you want to continue?
+- Actual Amount can't be less than Service Bill Amount.
+- Select atleast one Document No.
+- Document Date can't be Less than Reference Date.
+- GRN is not processed against this Bill
+- 'Select valid HSN & SAC Code in row '
+- 'Contractor Invoice Qty. can''t be empty or zero in row '
+- 'Qty. can''t be empty or zero in row '
+- 'Enter Rate in row '
+- For Nil Rated/ GST Exempted/ Non GST item, GST cannot be applied.
+- Vendor should be UnRegistered/Foreign Or Item should  Non-GST/GST Exempted/Nil Rated For Nill Tax Invoice.
+- Do you want to continue?
+- Vendor should be UnRegistered/Foreign Or Item should  Non-GST/GST Exempted/Nil Rated For Nill Tax Invoice
+- Nil Rated/GST Exempted /Non-GST and GST Relevant Item can't be seleted at same time.
+- Select atleast one Item Code.
+- Select valid Imprest Account.
+- Enter Imprest Amount.
+- Imprest Amount can not greater than Balance Amount.
+- 'Adjusting Amount can''t be greater than Balance Amount in row '
+- Advance Amount can't be 0.
+- Total Advance Amount can't be greater than Service Bill Amount.
+- Adjusting Amount can't be greater than Balance Amount.
+- 'Document No. '
+- ' saved successfully.'
+- VoucherValidation
+- 'Check ARD for expense head '
+- 'Difference in Voucher and Lot -- '
+- IsValidateStock is false for selected Item
+manages:
+- service-invoice
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- gst-category
+- input-excise-invoice-posting
+- reverse-voucher
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplementary-invoice
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FASBDelete.
+  FillValueDependent: Fills the lookup lists through Finance.FASBFillValuesDependent.
+  FillValues: Fills the lookup lists through Finance.FASBFillValues.
+  FillValuesPOWise: Fills the lookup lists through Finance.FASBFillValuesPOWise.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetAccountBalance: Runs through Finance.AccountOpening.
+  ItemAccountDetail: Runs through masterdata.ItemAccountDetail.
+  LoadData: Loads the selected record through Finance.FASBLoadData.
+  Open: Searches records through Finance.FASBSearchData.
+  Save: Saves the record through Finance.FASBAuthorize, Finance.FASBSave, Finance.VoucherSaveStatuory, Inventory.VoucherVsLotValidation.

@@ -1,0 +1,75 @@
+form: fStockAdjustment
+title: Stock Adjustment
+module: MM
+kind: transaction
+summary: The Stock Adjustment screen corrects book stock to match what was physically counted.
+purpose: |
+  What it is: A transaction document that converts the differences found by a physical stock verification into stock receipts (excess) and stock issues (shortage), with their value. When it applies: After a stock verification for a warehouse has been entered and authorized and differences remain to be booked. Business outcome: Book stock, lot balances and stock value agree with the physical count, and the difference is valued and, when authorized, posted to finance.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: The top band holding document number, document date, status and division (shared document control), with financial-year and division validation switched on [fStockAdjustment.Designer.vb:461-462].
+  - General Details Tab: The "General Details" tab with the header fields and notes [fStockAdjustment.Designer.vb:492].
+  - Source Document Field: Mandatory dropdown of active source document types [fStockAdjustment.vb:94] (BR-01).
+  - Warehouse Field: Mandatory dropdown showing Warehouse and Code (BR-01, BR-08).
+  - Ref Doc No. Field: Dropdown of stock verifications showing Ref Doc No and Ref Doc Date (BR-06); mandatory when the source is stock verification (BR-05).
+  - Ref Doc Date Field: Read-only date display [fStockAdjustment.Designer.vb:189].
+  - Remarks Field: Optional multi-line text, up to 1000 characters, trimmed on save [fStockAdjustment.Designer.vb:206] [fStockAdjustment.vb:983].
+  - Notes Control: Shared notes grid with Print Area, Notes and Default; on a new document it is pre-filled with the company's default notes used on earlier adjustments [Inventory.MMSAFillValues:88-94].
+  - Custom Field Tab: The "Custom Field" tab with the shared custom-field grid for this screen.
+  - Item Detail Grid: The "Item Detail" tab grid with columns Select, Item Code, Item Description, Make, Item Attribute, Unit, On Date Stock, Current Stock, As Per System Qty., As Per System Amount, Actual Qty., Actual Amount, Adjusted Qty.
+  - Lot Details Pop-up: A pop-up opened from the "Lot Details" cell with a lot grid and "Ok" / "Cancel" buttons.
+  - Serial No. Pop-up: A pop-up opened from the "Serial No." cell with Select, Item Description and Serial No.
+  - BIN Detail Pop-up: A pop-up opened from the "Adjusted Qty." cell listing BIN No.
+  - Finance Posting Tab: The "&Finance Posting" tab with the shared voucher posting control [fStockAdjustment.Designer.vb:514].
+  - Voucher Regeneration Shortcut: The key combination Ctrl+Alt+V [fStockAdjustment.vb:20-90].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty implementations [fStockAdjustment.vb:373-388] [fStockAdjustment.vb:1884-1890].
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open showing the search list.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last over the search result, handled by the main window (Inferred).
+validations:
+- Select valid Source Document.
+- Select valid Warehouse.
+- Authorized Stock Adjustment can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized entry can't be updated.
+- Select valid Stock Verification No.
+- Document Date can't be less than Ref. Doc. Date.
+- Select atleast one Item Description.
+- Adjusted Qty. can't be empty or zero in row <n>.
+- Qty can't be greater than stock Qty. <qty> in row <n>.
+- Quantity. can't be zero in row <n>.
+- Quantity should equal to <qty>
+- Stock qty. can't be zero in row <n>.
+- Stock Qty. should be equal to <qty> in row <n>.
+- Qty. should be equal to <qty> for BIN <bin> in row <n>.
+- Quantity can't be greater than <stock> in row <n>.
+- Serial No. detail should be same as issued Quantity in row <n>.
+- No. Of Serial should be equal to  <qty> in row <n>.
+- Capital And Non-Capital can't be select atonce.
+- Document No. <number> saved successfully.
+- 'Difference in Voucher and Lot -- '
+- Not found in Lot
+- Month is locked via Stock Monthly Closing(ISML)
+manages:
+- stock-adjustment
+uses_concepts:
+- accounting-voucher
+- company
+- gate-pass-out
+- material-return
+- raw-material-issue
+- value-stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.MMSADelete.
+  FillValues: Fills the lookup lists through Inventory.MMSAFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.MMSAFillValuesDependent.
+  ItemLotDetail: Runs through Inventory.MMSAItemLotDetail.
+  LoadData: Loads the selected record through Inventory.MMSALoadData.
+  Open: Searches records through Inventory.MMSASearchData.
+  Save: Saves the record through Inventory.MMSAAuthorize, Inventory.MMSASave, Inventory.VoucherVsLotValidation.
+  SaveItemBINDetail: Saves the record through Inventory.MMSASaveItemBINDetail.
+  SaveItemDetail: Saves the record through Inventory.MMSASaveItemDetail.
+  SaveItemLengthDetail: Saves the record through Inventory.MMSASaveItemLengthDetail.

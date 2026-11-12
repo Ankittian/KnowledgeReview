@@ -1,0 +1,22 @@
+key: p5-sales-invoice
+name: 'Sales: Invoice (Phase 5)'
+module: SD
+status: active
+summary: Phase 5 screens of the invoice group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 5 forms that the KB validation plan puts in 'Invoice' (Sales). The steps follow the plan order, not a verified business sequence: Sales Supplementary Invoice, Invoice Cancellation, VTPL Invoices.
+steps:
+- order: 1
+  name: Record Sales Supplementary Invoice
+  form: fSalesSupplementaryInvoice
+- order: 2
+  name: Record Invoice Cancellation
+  form: fInvoiceCancellation
+- order: 3
+  name: Record VTPL Invoices
+  form: fVTPLInvoices
+concepts:
+- sales-supplementary-invoice
+- invoice-cancellation
+- vtpl-invoices

@@ -1,0 +1,45 @@
+form: fSalesOtherInformation
+title: Sales Other Information
+module: SD
+kind: transaction
+summary: The Sales Other Information screen attaches extra, configurable information to a sales source document, such as a
+  quotation.
+purpose: |
+  What it is: A record that links one sales document to one Other Information Header and holds the free-text rows entered under that Header [Sales.SOIFSave:36-55; Sales.SOIFSaveDetail:21-36]. When it applies: When a quotation needs terms, notes or tables that differ by customer and are defined centrally as Headers. Business outcome: Variable commercial information is captured in a standard, reusable layout instead of free text on each document (BR-02; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: An upper group with the reference fields, Header Name and Sequence No., and a lower grid area [fSalesOtherInformation.Designer.vb:189; fSalesOtherInformation.Designer.vb:211].
+  - Source Document Field: A mandatory dropdown "Source Document" (BR-01; MSG-01) [fSalesOtherInformation.Designer.vb:81; fSalesOtherInformation.vb:43; fSalesOtherInformation.vb:245-251].
+  - Ref. Document No. Field: A mandatory dropdown "Ref.
+  - Ref. Document Date, Customer Name and Customer Location Fields: Read-only boxes "Ref.
+  - Header Name Field: A mandatory dropdown "Header Name" showing Header, code and description (BR-01; BR-04; MSG-03) [fSalesOtherInformation.Designer.vb:173; fSalesOtherInformation.vb:261-267; fSalesOtherInformation.vb:94].
+  - Sequence No. Field: A text box "Sequence No." of up to 3 characters, mandatory and non-zero, default 1 (BR-10; MSG-04) [fSalesOtherInformation.Designer.vb:219; fSalesOtherInformation.Designer.vb:231; fSalesOtherInformation.vb:269-275].
+  - Copy From Reference Button: A small image-only button without a caption, placed at the right of the reference group [fSalesOtherInformation.Designer.vb:233-242].
+  - Other Information Grid: An editable grid with four columns, up to 1000 characters each; headings come from the Header [fSalesOtherInformation.vb:304-330; fSalesOtherInformation.vb:547-552].
+  - Cell Edit Panel: A panel with a 1000-character text box and the buttons "Ok" and "Cancel" opened when a cell is activated; Escape also closes it [fSalesOtherInformation.Designer.vb:253; fSalesOtherInformation.Designer.vb:269; fSalesOtherInformation.Designer.vb:281; fSalesOtherInformation.Designer.vb:289; fSalesOtherInformation.vb:285-296; fSalesOtherInformation.vb:612-618].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Empty handlers; no navigation [fSalesOtherInformation.vb:169-201].
+actions:
+  New: Standard New, which asks the main window for a blank record [fSalesOtherInformation.vb:134-141].
+  Save: Validates and saves header and rows [fSalesOtherInformation.vb:331-395].
+  Search: Opens the list of the company's records [fSalesOtherInformation.vb:143-167].
+  Delete: Deletes the loaded record after a confirmation [fSalesOtherInformation.vb:49-73].
+validations:
+- Select valid Source Document No.
+- Select valid Ref. Document No.
+- Select valid Header Name.
+- Sequence no can't be empty or zero.
+manages:
+- sales-other-information
+uses_concepts:
+- other-information
+method_notes:
+  Delete: Deletes the record through Sales.SOIFDelete.
+  FillGrid: Runs through Sales.SOIFFillRefDetail.
+  FillValues: Fills the lookup lists through Sales.SOIFFillValues.
+  LoadData: Loads the selected record through Sales.SOIFLoadData.
+  Open: Searches records through Sales.SOIFSearchData.
+  Save: Saves the record through Sales.SOIFSave.
+  SaveOtherInfoDetail: Saves the record through Sales.SOIFSaveDetail.
+  ubtnReferenceItem_Click: Searches records through Sales.SOIFSearchForCopy.
+  ucmbRefDocumentNo_ValueChanged: Runs through Sales.SOIFFillOtherInfo.
+  ucmbSourceDocument_ValueChanged: Fills the lookup lists through Sales.SOIFFillValuesDependent.

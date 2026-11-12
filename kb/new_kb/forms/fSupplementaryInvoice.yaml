@@ -1,0 +1,76 @@
+form: fSupplementaryInvoice
+title: Supplementary Invoice
+module: FI
+kind: transaction
+summary: The Supplementary Invoice screen records an additional charge billed by a vendor (typically a subcontractor or service
+  vendor) over and above the original subcontract receipt.
+purpose: |
+  What it is: A document that captures extra amounts a vendor charges against a subcontract receipt after the original order, itemised and taxed [Finance.FISIFillValuesDependent:35-45; Finance.FISISave:79-131]. When it applies: When a subcontractor or service vendor sends a supplementary bill that must be recorded before the Service Bill is passed. Business outcome: The extra charge is recorded once per receipt, with its taxes, so that the Service Bill can include it (BR-04; BR-18).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout and Tabs: A document control at the top and tabs General Detail, Tax Detail, Custom Field and GST Posting [fSupplementaryInvoice.Designer.vb:428-439].
+  - Document Number, Date, Status and Division Control: The shared document control with document number, date, status, division (finance book) and prefix [fSupplementaryInvoice.vb:180; fSupplementaryInvoice.vb:359-361].
+  - Source Document Field: A mandatory drop-down of source document types, with the default preselected on a new document [fSupplementaryInvoice.vb:97; fSupplementaryInvoice.vb:182; fSupplementaryInvoice.vb:199-201].
+  - Vendor Name Field: A mandatory drop-down of vendors showing name, code and vendor type [fSupplementaryInvoice.vb:184; fSupplementaryInvoice.vb:413-418].
+  - Location Field: A mandatory drop-down of the vendor's locations [fSupplementaryInvoice.vb:421-425; fSupplementaryInvoice.vb:993-994].
+  - Ref. Doc No. and Ref. Doc Date Fields: A drop-down of eligible receipts with their dates, and a read-only display of the selected receipt's date [fSupplementaryInvoice.vb:1011; fSupplementaryInvoice.vb:1070-1080; fSupplementaryInvoice.Designer.vb:156].
+  - Vendor Bill No. Field: A mandatory text box up to 30 characters [fSupplementaryInvoice.Designer.vb:193; fSupplementaryInvoice.vb:443-448].
+  - Vendor Bill Date Field: A date picker [fSupplementaryInvoice.vb:455-459].
+  - Amount Field: A mandatory numeric box with two decimals, up to 12 characters, for the vendor bill amount [fSupplementaryInvoice.Designer.vb:287; fSupplementaryInvoice.vb:145; fSupplementaryInvoice.vb:449-453].
+  - Net Amount Field: A read-only box showing the total from the tax control [fSupplementaryInvoice.Designer.vb:326; fSupplementaryInvoice.vb:1066-1068].
+  - GST Tax Rule Field: An optional drop-down of GST tax rules [fSupplementaryInvoice.vb:193; Finance.FISIFillValues:118-122].
+  - Exclude From Valuation Field: A tick box [fSupplementaryInvoice.Designer.vb:147].
+  - Narration Field: An optional text box saved as Remarks, up to 1000 characters in the database [fSupplementaryInvoice.vb:770; Finance.FISISave:23].
+  - Item Detail Grid: A grid with Item Code, Item Description, a search button, HSN & SAC Code, Make, Tech.
+  - Tax Detail Tab: The shared tax control with item-level taxes and document-level taxes and charges [fSupplementaryInvoice.vb:152-158; fSupplementaryInvoice.vb:396-398].
+  - GST Posting Tab: The shared GST voucher detail control [fSupplementaryInvoice.vb:1113-1142].
+  - Custom Field Tab: The shared custom field control [fSupplementaryInvoice.vb:175; fSupplementaryInvoice.vb:798].
+  - Notes Control: The shared notes control (Print Area, Notes, Default) placed at a very small size on the General Detail tab [fSupplementaryInvoice.Designer.vb:343-346].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty on this screen [fSupplementaryInvoice.vb:314-328].
+actions:
+  New: Opens a blank document [fSupplementaryInvoice.vb:278-285].
+  Save: Validates and saves the document [fSupplementaryInvoice.vb:729-827].
+  Search: Lists documents of the current company and year [fSupplementaryInvoice.vb:287-312].
+  Delete: Deletes the loaded document [fSupplementaryInvoice.vb:105-130].
+validations:
+- Authorized Supplementary Invoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Ref. Doc No.
+- Document Date can't less than Ref Doc Date.
+- Enter Vendor Bill No.
+- Enter Bill Amount.
+- Vendor Bill Date can't be greater than Document Date.
+- Enter Net Amount.
+- Passing Amount is greater than Vendor Bill Amount
+- Vendor is not GST Registered ,so GST Tax can't be added
+- Select valid Item Description in row N.
+- Select valid HSN & SAC Code in row N.
+- Select valid Unit in row N.
+- Qty. can't be empty or zero in row N.
+- Enter Rate in row N.
+- Select atleast one Item Code.
+- Duplicate Item Description not allowed.
+- Amount is greater than Estimated Amount <amount>
+- Amount is greater than Estimated Amount <amount>,Do you Want to Continue?
+- Service Bill is passed against this GRN
+- Document No. <number> saved successfully.
+manages:
+- supplementary-invoice
+uses_concepts:
+- company
+- service-invoice
+method_notes:
+  Delete: Deletes the record through Finance.FISIDelete.
+  FillValueDependent: Fills the lookup lists through Finance.FISIFillValuesDependent.
+  FillValues: Fills the lookup lists through Finance.FISIFillValues.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FISILoadData.
+  Open: Searches records through Finance.FISISearchData.
+  Save: Saves the record through Finance.FISISave.
+  SaveItemDetail: Saves the record through Finance.FISISaveItemDetail.
+  SaveItemTaxDetail: Saves the record through Finance.FISISaveItemTaxDetail.
+  SaveNotesDetail: Saves the record through Finance.FISISaveNotesDetail.

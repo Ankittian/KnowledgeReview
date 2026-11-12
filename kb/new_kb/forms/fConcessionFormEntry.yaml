@@ -1,0 +1,48 @@
+form: fConcessionFormEntry
+title: Received/Issue Concession Form
+module: FI
+kind: transaction
+summary: The Received/Issue Concession Form screen records statutory concession forms that the company issues to its suppliers
+  or receives from its customers, and ties each form to the invoices it covers.
+purpose: |
+  What it is: A document that lists the invoices covered by one received or issued concession form [fConcessionFormEntry.vb:510-545; Finance.FICFFillValuesDependent:42-224]. When it applies: When a concession form is received from a customer or issued to a supplier for invoices booked with that form type. Business outcome: Each invoice is covered by at most one form entry of the same direction, form type and party, so pending forms can be followed (BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Document number, date, status and finance book; Tax Book, Form Name, Invoice From and To dates, Issue or Receive, Party Name, Location, Form No., Issue Date, Received Date and Remark; the designer caption is "ConcessionFormEntry" [fConcessionFormEntry.Designer.vb:75-259; fConcessionFormEntry.Designer.vb:327].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status and finance book [fConcessionFormEntry.vb:106; fConcessionFormEntry.vb:649-662].
+  - Tax Book, Form Name, Party Name and Form No. Fields: Mandatory fields [fConcessionFormEntry.vb:48; fConcessionFormEntry.vb:295-321].
+  - Location Field: An optional list of the locations of the chosen party; changing the party reloads it [fConcessionFormEntry.vb:582-599].
+  - Invoice From and To Dates: The period of invoice dates to list; purchase bills are filtered on the vendor bill date and sales documents on the document date [Finance.FICFFillValuesDependent:83; Finance.FICFFillValuesDependent:145; Finance.FICFFillValuesDependent:206].
+  - Issue Date and Received Date: Two dates; Received Date is disabled for Issue and enabled for Receive, and it is cleared on save when disabled [fConcessionFormEntry.vb:557-564; fConcessionFormEntry.vb:469-473; fConcessionFormEntry.vb:49].
+  - Remark Field: An optional text box with 500 characters [fConcessionFormEntry.vb:91].
+  - Invoice Detail Grid: A grid with Select, Unit Name, Invoice No., Invoice Date, Ref.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fConcessionFormEntry.vb:202-234].
+actions:
+  New: Opens a blank entry [fConcessionFormEntry.vb:165-172].
+  Save: Validates and saves header and ticked invoices in one transaction [fConcessionFormEntry.vb:415-508].
+  Search: Lists the entries of this company and year [fConcessionFormEntry.vb:174-200].
+  Delete: Deletes the loaded entry after a confirmation [fConcessionFormEntry.vb:55-80].
+validations:
+- Authorized Concession Form Entry can't be updated.
+- Select valid Tax Book.
+- Select valid Form Name.
+- Select valid Party Name.
+- Enter Form No.
+- Select atleast one Document.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- received-issue-concession-form
+uses_concepts:
+- company
+- tax-concession-form
+method_notes:
+  Delete: Deletes the record through Finance.FICFDelete.
+  FillValues: Fills the lookup lists through Finance.FICFFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FICFFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FICFLoadData.
+  Open: Searches records through Finance.FICFSearchData.
+  Save: Saves the record through Finance.FICFSaveMain.
+  SaveInvoiceDetail: Saves the record through Finance.FICFSaveInvoiceDetail.
+  ValidateForm: Validates the entry through Finance.FICFValidate.

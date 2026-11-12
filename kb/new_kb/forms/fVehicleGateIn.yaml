@@ -1,0 +1,68 @@
+form: fVehicleGateIn
+title: Gate In - Outward
+module: MM
+kind: transaction
+summary: The Gate In - Outward screen records the arrival of a vehicle at the factory gate for an outward (customer) movement.
+purpose: |
+  What it is: A dated, numbered record that an outward-bound vehicle has entered the premises, with its transporter, vehicle, driver, loading condition, in time and customer details. [fVehicleGateIn.vb:481-483; fVehicleGateIn.vb:486-580] When it applies: When a vehicle arrives to load goods for a customer, either as a direct entry or against a Dispatch Advice. [fVehicleGateIn.vb:125-128; fVehicleGateIn.vb:417-423] Business outcome: Gives security an auditable arrival record, blocks unwanted vehicles at the gate (BR-04, BR-05) and supplies the document that weighment and gate-out build on. [GateEntry.SGPIValidate:39-44; GateEntry.SGPIFillValues:72-81]
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document number control at the top, a gate entry details area on the left and an item details box on the right.
+  - Document Number Control (Status, Division, Number, Date): The shared control carrying Division, document number, date and Document Status.
+  - Source Document Field: A list of "Direct" and "Dispatch Advice"; no default is set in the delivered data.
+  - Ref Document No. Field: A list showing "Dispatch Advice No", "Vehicle No" and "Dispatch Advice Date".
+  - Customer Name Field: A list of active customers.
+  - Customer Location Field: A list of the chosen customer's locations.
+  - Agent Field: A list of active agents; optional.
+  - In time Field: A time picker with a tick box, shown as hh:mm tt.
+  - Transporter Name Field: A mandatory list of transporters.
+  - Vehicle Type Field: A list of vehicle types, required on save.
+  - Vehicle No. Field: A mandatory text box of up to 50 characters.
+  - Driver Name Field: A list of drivers previously seen on gate documents, shown with contact number; the typed text is saved.
+  - Driver Contact No. Field: A text box of up to 50 characters, optional.
+  - License No. Field: A text box of up to 50 characters, optional.
+  - Driver Detail Field: A text box of up to 50 characters, optional.
+  - Loading Condition Field: A mandatory list: "Loaded" or "Empty".
+  - Vehicle Capacity Field: A text box of up to 50 characters, optional.
+  - Description Field: A text box of up to 1000 characters, optional.
+  - Remarks Field: A text box of up to 1000 characters, optional.
+  - Item Details Grid: A grid with "Item Code" and "Item Description" columns; either column can be used to pick an item and the other fills in.
+  - Other Toolbar Actions (Print, Preview, Export, Email): The handlers exist but contain no logic.
+actions:
+  New: Asks the main window to open a blank record.
+  Save: Validates and saves the gate-in.
+  Search: Opens the standard search dialog listing all gate-ins of the company and year.
+  Delete: Deletes the loaded gate-in after the standard confirmation.
+validations:
+- Authorized VehicleGateIn can't be updated.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Ref Document Number can not be empty for Dispatch Advise.
+- Select a valid intime.
+- Select valid Transporter Name.
+- Select valid Vehicle Type.
+- Enter Vehicle No..
+- Select valid Loading Condition.
+- Description is Empty. Do you want to continue?
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Black listed Vehicle can not be used.
+- Same Vehicle No. Exists for the given date.
+- Unable to save, VehicleNo / Transporter/ LoadingCondition can not be changed because weighment exists against this entry.
+- Document No. <number> saved successfully.
+- Unable to delete, Weighment exists against SGPI entries.
+- Unable to delete, Vehicle gate out exists against SGPI entries
+manages:
+- gate-in-outward
+uses_concepts:
+- company
+- gate-in-outward-amendment
+method_notes:
+  Delete: Deletes the record through GateEntry.SGPIDelete.
+  FillValues: Fills the lookup lists through GateEntry.SGPIFillValues.
+  FillValuesDependent: Fills the lookup lists through GateEntry.SGPIFillValuesDependent.
+  LoadData: Loads the selected record through GateEntry.SGPILoadData.
+  Open: Searches records through GateEntry.SGPISearchData.
+  Save: Saves the record through GateEntry.SGPISave.
+  SaveItemDetail: Saves the record through GateEntry.SGPISaveItemDetail.
+  ValidateForm: Validates the entry through GateEntry.SGPIValidate.

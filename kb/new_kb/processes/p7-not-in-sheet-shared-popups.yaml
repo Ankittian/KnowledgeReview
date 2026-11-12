@@ -1,0 +1,18 @@
+key: p7-not-in-sheet-shared-popups
+name: '(not in sheet): Shared popups (Phase 7)'
+module: ADM
+status: active
+summary: Phase 7 screens of the shared popups group in (not in sheet).
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 7 forms that the KB validation plan puts in 'Shared popups' ((not in sheet)). The steps follow the plan order, not a verified business sequence: Search, PO Booking.
+steps:
+- order: 1
+  name: Record Search
+  form: fSearch
+- order: 2
+  name: Record PO Booking
+  form: fPOBooking
+concepts:
+- search
+- po-booking

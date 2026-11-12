@@ -1,0 +1,36 @@
+form: fIndentDefaultSetting
+title: Indent Default Setting
+module: MM
+kind: transaction
+summary: The Indent Default Setting screen holds, for each executing procurement unit, the default values used when indents
+  and release orders are raised for that unit without a person typing them.
+purpose: |
+  What it is: One record of default indent values per procurement unit. [Optimization.OIDSSave:29-51] When it applies: When a procurement unit is introduced to automatic indenting, or when its defaults (warehouse, cost center, number series, status) change. Business outcome: Auto-generated indents and release orders carry complete, consistent header values without user entry. [Optimization.JobForAutoIndent:41-45; Inventory.IRROSave:64-66]
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Default Setting Panel: A single group box holding all fields, window caption "Indent Default Setting".
+  - Procurement Unit Field: Dropdown showing procurement unit name and code; mandatory (BR-01, MSG-01).
+  - Max No. of Item in Indent Field: Numeric text box, mandatory, must not be zero or empty (BR-02, MSG-02).
+  - Warehouse Field: Optional dropdown of warehouses (name, code) of the company's divisions.
+  - Cost Center Field: Dropdown of active cost centers (name, code); mandatory (BR-03, MSG-03).
+  - Department Field: Optional dropdown of active departments with division name.
+  - Requested By Field: Optional text box; the value is trimmed on save.
+  - Indent prepared By Field: Dropdown of active logins; mandatory (BR-04, MSG-04).
+  - Indent Number Setting Field: Optional dropdown of numbering settings (setting number, code) for the indent form.
+  - RO Document Setting Field: Optional dropdown of numbering settings for the release-order form.
+  - Indent Document Status Field: Optional dropdown of document statuses.
+  - Subgroup Override Grid and Set Button: A grid of every material sub-group with its group, with editable Warehouse and Cost Center columns, a filter row, and a "Set" button that copies the header warehouse and cost center into all visible rows.
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, E-mail): Not implemented on this screen.
+actions:
+  New: The standard New toolbar action; it asks the main window to start a new record.
+  Save: Validates the form, asks for the standard save confirmation, and stores the defaults.
+validations:
+- Select valid Procurement Unit.
+- No Of Item can't be zero or empty.
+- Select valid Cost Center.
+- Select valid Login.
+manages:
+- indent-default-setting
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.OIDSFillValues.
+  Save: Saves the record through Optimization.OIDSSave.

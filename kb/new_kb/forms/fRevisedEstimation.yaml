@@ -1,0 +1,72 @@
+form: fRevisedEstimation
+title: Revised Estimation
+module: SD
+kind: transaction
+summary: The Revised Estimation screen (window caption "RevisedEstimation" [fRevisedEstimation.designer.vb:1261]) lets the
+  costing team create a new numbered revision of an estimate that has already been authorized.
+purpose: |
+  What it is: A versioned change to an authorized estimate. Each revision has its own revision number, revision date, status, costing lines and approval trail (BR-01, BR-02, BR-06). When it applies: When costs change after the estimate was authorized (new rates, materials or shipment terms) and the quotation basis must be updated. Business outcome: The original authorized estimate stays intact as history; the authorized revision becomes the current basis (BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A window titled "RevisedEstimation" [fRevisedEstimation.designer.vb:1261] with the same "General Details" and "Multi-level Auth" tabs and the same costing tabs ("Shipment Details", "Material Costing", "Operational Cost", "Cost Details", "Overheads", "Expense Detail", "Tax Detail", "Summary") as [Estimation](Functional_Doc_fEstimation.md), Section 5 'Screen Layout' [fRevisedEstimation.designer.vb:1
+  - Revision Header Fields: Instead of the shared document control, the top of the screen has: Estimation No.
+  - Locked Header Fields: Customer Name, Location, Source Document, Ref.
+  - Same Fields as the Estimate Screen: Margin %, Margin Value, Product Cost, Remarks, Total Amount (Base Currency) and (Export Currency), the Shipment Details tab, and all grids.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fRevisedEstimation.vb:529-561].
+actions:
+  Save: Validates, confirms and saves the revision.
+  New: Same as [Estimation](Functional_Doc_fEstimation.md), Section 5 'New Action'.
+  Search: Opens a search dialog for revisions.
+  Delete: Deletes the open revision after confirmation, identified by the revision id and its estimate number.
+validations:
+- Can not authorize as last level is not approved.
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Ref Doc No.
+- Select valid Item Description.
+- Select a valid Method of Shipment.
+- Select a valid Type of Dispatch.
+- Select a valid Place of Receipt.
+- Select a valid Port of loading.
+- Select a valid Pre Carriage.
+- Margin % can't be 0 or greater than 100.00.
+- Document Status can't be Authorized for multi level Authorization
+- Select atleast one material Costing Detail.
+- Select valid Item Description in row n.
+- Select valid Unit in row n.
+- Quantity can't be empty or zero in row n.
+- Rate can't be empty or zero in row n.
+- Select valid Cost Element in row n.
+- Amount can't be empty or zero in row n.
+- Total Value can't be zero or empty  in row n.
+- Select a valid Inco Terms.
+- Select atleast one cost head in Costing Detail.
+- Select valid Currency in row n.
+- For same currency, Export Exchange Rate (Shipment Details) should be equal to Exchange Rate of Cost Head in row n.
+- Duplicate Item not allowed.
+- Duplicate Acivity And Cost Element not allowed.
+- Duplicate Cost Element not allowed.
+- Duplicate Expense Head not allowed.
+- Duplicate Charge Name not allowed.
+- Document No. <number> saved successfully.
+- Authorized entry can't be updated.
+- Same estimation revision already exists,
+- Unable to delete,Next revision exists.Delete it first.
+manages:
+- revised-estimation
+uses_concepts:
+- company
+- estimation
+- service-order-amendment
+method_notes:
+  Delete: Deletes the record through Sales.SDPEDelete.
+  FillValues: Fills the lookup lists through Sales.SDPEFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDPEFillValuesDependent.
+  GetMaterialDetail: Runs through Sales.SDPEGetMaterialDetail.
+  LoadEstimationData: Loads the selected record through Sales.SDPELoadData.
+  Open: Searches records through Sales.SDPESearchData.
+  Save: Saves the record through Sales.SDPEAuthorize, Sales.SDPESave.
+  SaveExpenseDetail: Saves the record through Sales.SDPESaveExpenseDetail.
+  SaveExportCostDetail: Saves the record through Sales.SDPESaveExportCostDetail.
+  SaveMaterialCosting: Saves the record through Sales.SDPESaveMaterialCost.

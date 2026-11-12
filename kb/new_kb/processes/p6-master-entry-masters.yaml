@@ -1,0 +1,18 @@
+key: p6-master-entry-masters
+name: Master data set-up (Phase 6)
+module: MD
+status: active
+summary: Phase 6 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 6 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Material Planning Unit, Other Information.
+steps:
+- order: 1
+  name: Maintain Material Planning Unit
+  form: fMaterialPlanningUnit
+- order: 2
+  name: Maintain Other Information
+  form: fOtherInformation
+concepts:
+- material-planning-unit
+- other-information

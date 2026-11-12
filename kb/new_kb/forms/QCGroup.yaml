@@ -1,0 +1,18 @@
+usercontrol: QCGroup
+title: QC Group control
+module: MM
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded grid that picks a QC group and shows or edits its QC parameters.
+purpose: |
+  Lets a master or document pick a QC group and lists the group's parameters (QCFillValues / QCFillValuesDependent) so they are saved with the host record.
+functional_description: |
+  Embedded in: fTestCertificate.
+  On-screen fields: QC Group Name.
+uses_concepts:
+- qc-group
+- qc-parameter
+method_notes:
+  FillGrid: Fills the lookup lists through masterdata.QCFillValues.
+  ucmbQCGroup_ValueChanged: Fills the lookup lists through masterdata.QCFillValuesDependent.

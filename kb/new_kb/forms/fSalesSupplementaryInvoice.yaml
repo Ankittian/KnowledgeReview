@@ -1,0 +1,75 @@
+form: fSalesSupplementaryInvoice
+title: Sales Supplementary Invoice
+module: SD
+kind: transaction
+summary: The Sales Supplementary Invoice screen (window caption "SalesSupplementaryInvoice", form code SLTI) bills a customer
+  for a price increase on goods that were already invoiced.
+purpose: |
+  What it is: A numbered sales document that charges a customer the extra value created when the agreed rate of already invoiced items goes up, with its own taxes and accounting entry. [fSalesSupplementaryInvoice.vb:973-1124; Sales.SLTISave:94-165] When it applies: After an authorized Tax Invoice or Commercial Invoice has been issued and a higher rate is agreed retrospectively, or for a rate difference on an invoice outside the system (Direct). [Sales.SLTIFillValuesDependent:34-69; Sales.SLTIFillValues:20-23] Business outcome: The rate difference is billed and taxed separately, without reopening or amending the original invoice.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Document number control on top, an item grid below, and tabs "General Detail", "Tax Detail", "Posting Detail", "GST Posting" and "Custom Field".
+  - Document Number Control: Shared control for document number, date, division, prefix, finance book and status; validated first (MSG-04).
+  - Customer Name and Customer Location Fields: Mandatory dropdowns; Customer Name also has a search button.
+  - Source Document Field: Mandatory dropdown "Source Document", defaulted to the list's default entry.
+  - From Date and To Date Fields: Date pickers "From Date" and "To Date" bounding the invoice dates listed.
+  - Payment Mode and Payment Days Fields: Mandatory dropdown and a numeric box of up to 10 digits.
+  - Invoice Nature Field: Mandatory dropdown "Invoice Nature" offering only "Addition" (BR-07).
+  - Print Description and Remarks Fields: Optional text boxes of up to 1000 characters each (BR-23).
+  - Notes and Currency Controls: Shared notes control (default notes loaded for a new record) and currency control validated on save.
+  - IRN Detail Group: "IRN" (up to 1000 characters on screen), "Ack.
+  - Reference Detail Grid: Grid with a "Select" tick box and read-only "Invoice No.", "Invoice Date", "Sales Order No.", "Consignee Name" and "Consignee Location".
+  - Item Description Grid: Item rows with "Select", "Invoice No.", item, "HSN & SAC Code", "Unit", "Make", "Tech.
+  - Tax Detail Tab: Shared tax control, item-wise, calculated on Invoice Qty.
+  - Posting Detail and GST Posting Tabs: The proposed sales voucher and GST posting summary.
+  - Custom Field Tab: Shared custom field grid.
+  - GST Posting Repair Key: Ctrl+Alt+G on the GST Posting tab rebuilds and resaves the GST posting of the loaded document (BR-25).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Enabled on the toolbar but empty.
+actions:
+  New: Resets the screen through the main window.
+  Save: Validates and saves header, references, items, taxes, custom fields, notes, posting and GST posting in one transaction.
+  Search: Opens the search list of supplementary invoices of the company and year (BR-24).
+  Delete: Deletes the loaded document after confirmation (BR-22).
+  Navigation: First / Previous / Next / Last enabled by the toolbar setup.
+validations:
+- Authorized SalesSupplementaryInvoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Select valid Source Document.
+- Select valid Payment Mode.
+- Enter Payment Days.
+- Select valid Invoice Nature.
+- Select atleast one Reference Document.
+- Document Date can't be less then Invoice Date.
+- Select Invoice of same consignee.
+- Select atleast one Item Description.
+- New Rate can't be less then to Rate in row <n>.
+- Rate can't be less then New Rate in row <n>.
+- Enter Invoice No. in row <n>.
+- Rate can't be empty or zero in row <n>.
+- New Rate can't be empty or zero in row <n>.
+- New Rate can't be less then Rate in row <n>.
+- IRN Doesn't exists for this Entry. Can't Authorize.
+- IRN already exists for this Entry. Can't Save.
+- SGST or CGST is not applicable for inter state sales.
+- IGST is not applicable for intra state sales.
+- Document No. <number> saved successfully.
+- Unable to delete,IRN exists against this sales supplementary invoice.
+manages:
+- sales-supplementary-invoice
+uses_concepts:
+- accounting-voucher
+- company
+method_notes:
+  Delete: Deletes the record through Sales.SLTIDelete.
+  FillValueDependentForDependent: Fills the lookup lists through Sales.SLTIFillValuesDependent.
+  FillValueDependentForItem: Fills the lookup lists through Sales.SLTIFillValuesDependent.
+  FillValues: Fills the lookup lists through Sales.SLTIFillValues.
+  LoadData: Loads the selected record through Sales.SLTILoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through Sales.SLTISearchData.
+  Save: Saves the record through Sales.SLTIAuthorize, Sales.SLTISave.
+  SaveCustomFields: Saves the record through Sales.SLTISaveCustomFieldDetail.
+  SaveItemDescriptionDetail: Saves the record through Sales.SLTISaveItemDetails.

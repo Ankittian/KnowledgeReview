@@ -1,0 +1,32 @@
+form: fDispatchInvoiceReconcilation
+title: Dispatch Invoice Reconcilation
+module: SD
+kind: transaction
+summary: The Dispatch Invoice Reconcilation screen links a Tax Invoice to the Dispatch Challans that physically carried its
+  goods (window caption "DispatchInvoiceReconcilation"; the word "Reconcilation" is spelled so on the screen) [fDispatchInvoiceReconcilation.Designer.vb:280].
+purpose: |
+  What it is: A record that says which Dispatch Challans an invoice covers (BR-03, BR-04, BR-05). When it applies: When an invoice was raised without the challan link and the business needs the invoice, the dispatched weight and the challans to agree. Business outcome: Each challan is tied to one invoice, and the invoice quantity is proved against the weight actually dispatched (BR-03, BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: The top group holding Project Code, Invoice No.
+  - Project Code Field: A dropdown labelled "&Project Code" showing Project Code, Dated and Customer Name, with "(All)" first.
+  - Invoice No. Field: A dropdown labelled "&Invoice No." showing Invoice No, Invoice Date and Customer Name; mandatory [fDispatchInvoiceReconcilation.Designer.vb:131; fDispatchInvoiceReconcilation.vb:11; fDispatchInvoiceReconcilation.vb:328].
+  - Invoice Read-Only Fields: Read-only boxes: Invoice Date, Customer Name, Location, Vehicle No., Qty.
+  - Dispatch Challan Grid: A grid with a Select tick box and the columns Dispatch Challan No., Challan Date, Project Code, Weight Type and Total Weight; only the tick box is editable, and rows cannot be deleted [fDispatchInvoiceReconcilation.vb:251-273].
+  - Item Detail Grid: A read-only grid with Item Code, Item Description, Tech.
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, E-mail): Not offered.
+actions:
+  New: Toolbar New [fDispatchInvoiceReconcilation.vb:64-71].
+  Save: Toolbar Save [fDispatchInvoiceReconcilation.vb:185-232].
+validations:
+- Select valid Invoice No.
+- No Dispatch Challan Detail found
+- Qty should be equal to Total Dispatch Weight
+- Data saved successfully.
+- Select valid Project Code
+manages:
+- dispatch-invoice-reconcilation
+method_notes:
+  FillValues: Fills the lookup lists through VTPL.DCERFillValues.
+  FillValuesDependent: Fills the lookup lists through VTPL.DCERFillValuesDependent.
+  Save: Saves the record through VTPL.DCERSave.

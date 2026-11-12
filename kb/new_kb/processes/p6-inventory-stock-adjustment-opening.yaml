@@ -1,0 +1,18 @@
+key: p6-inventory-stock-adjustment-opening
+name: 'Inventory: Stock adjustment & opening (Phase 6)'
+module: MM
+status: active
+summary: Phase 6 screens of the stock adjustment & opening group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 6 forms that the KB validation plan puts in 'Stock adjustment & opening' (Inventory). The steps follow the plan order, not a verified business sequence: Change Material Stock Nature, Change Stock Allocation.
+steps:
+- order: 1
+  name: Record Change Material Stock Nature
+  form: fChangeMaterialStockNature
+- order: 2
+  name: Record Change Stock Allocation
+  form: fChangeStockAllocation
+concepts:
+- change-material-stock-nature
+- change-stock-allocation

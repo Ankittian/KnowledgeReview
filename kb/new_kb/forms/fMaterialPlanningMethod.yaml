@@ -1,0 +1,32 @@
+form: fMaterialPlanningMethod
+title: Material Planning Method
+module: MM
+kind: transaction
+summary: The Material Planning Method screen decides, for each Material Planning Unit, which planning type applies to each
+  of its critical items.
+purpose: |
+  What it is: A per-unit assignment of a planning type (and optional lead time) to each critical item [Inventory.MPMSSaveItemDetail:19-32]. When it applies: When a planning unit is set up, or when an item moves to a different planning approach. Business outcome: Each critical item is planned in one declared way, and the quantity entry screen only asks for the numbers relevant to that way ([Functional_Doc_fMaterialPlanningSetting.md](Functional_Doc_fMaterialPlanningSetting.md)).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: One group box with two drop-downs above an item grid [fMaterialPlanningMethod.Designer.vb:88-92].
+  - Planning Unit Field: A mandatory drop-down of the company's active planning units, showing name and code [fMaterialPlanningMethod.vb:14; fMaterialPlanningMethod.vb:46].
+  - Planning Type Field: An optional drop-down of planning types [fMaterialPlanningMethod.vb:47].
+  - Item Grid: A grid with Item Code, Item Description, Planning Type (drop-down) and a hidden Lead Time; Item Code and Item Description are read-only; rows cannot be deleted [fMaterialPlanningMethod.vb:216-241].
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not available.
+actions:
+  New: The toolbar action that starts a blank record [fMaterialPlanningMethod.vb:67-74].
+  Save: The toolbar action that validates and stores the method [fMaterialPlanningMethod.vb:242-292].
+validations:
+- Select valid Planning Unit.
+- Select at least one planning type.
+manages:
+- material-planning-method
+uses_concepts:
+- company
+- material-planning-setting
+- material-planning-unit
+method_notes:
+  FillValues: Fills the lookup lists through Inventory.MPMSFillValues.
+  Save: Saves the record through Inventory.MPMSSave.
+  SaveItemDetail: Saves the record through Inventory.MPMSSaveItemDetail.
+  ucmbPlanningUnit_ValueChanged: Fills the lookup lists through Inventory.MPMSFillValuesDependent.

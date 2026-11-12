@@ -1,0 +1,45 @@
+form: fLionsConsumptionEntry
+title: LionsConsumptionEntry
+module: PM
+kind: transaction
+summary: The LionsConsumptionEntry screen records which materials issued from stores were actually consumed on a piece of
+  equipment.
+purpose: |
+  What it is: A document that states, per equipment, how much of each issued item was consumed and in which components of the equipment [fLionsConsumptionEntry.vb:408-478; fLionsConsumptionEntry.vb:480-513]. When it applies: When items issued to an equipment or a maintenance order have been used and the usage must be recorded. Business outcome: Issued stock is matched with consumed quantity per equipment and per component (BR-03; BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "LionsConsumptionEntry" with the document control, Equipment Name, Remark and one issue grid; the component pop-up opens over the grid [fLionsConsumptionEntry.Designer.vb:245].
+  - Document Control: The shared control holding document number, document date, status and division; it is filled when the form opens [fLionsConsumptionEntry.vb:103; fLionsConsumptionEntry.vb:43-45].
+  - Equipment Name Field: Mandatory dropdown "Equipment Name" showing equipment, code and related details [fLionsConsumptionEntry.Designer.vb:88; fLionsConsumptionEntry.vb:49; fLionsConsumptionEntry.vb:105].
+  - Remark Field: Free text "Remark" up to 1000 characters [fLionsConsumptionEntry.Designer.vb:106; fLionsConsumptionEntry.vb:90].
+  - Issue Grid: Columns Select, Issue No., Issue Date, Item Code, Item Description, Make, Cost Center, Issued Qty, Pre Consumed Qty., Return Qty., Balance Qty., Qty.
+  - Component Breakdown Pop-up: A small window with a grid of components (Select, Alias, Qty.) and buttons "O&k" and "Cance&l" [fLionsConsumptionEntry.Designer.vb:162; fLionsConsumptionEntry.Designer.vb:171; fLionsConsumptionEntry.vb:594-607].
+actions:
+  New: Starts a fresh document [fLionsConsumptionEntry.vb:154-161; fLionsConsumptionEntry.vb:224-238].
+  Save: Validates, then saves header, lines and components in one transaction [fLionsConsumptionEntry.vb:408-478].
+  Search: Opens the standard search window of this company and year [fLionsConsumptionEntry.vb:163-188].
+  Delete: Deletes the open document after the standard confirmation [fLionsConsumptionEntry.vb:55-79].
+validations:
+- Select valid Equipment Name.
+- Qty. can't be empty or zero in row <n>.
+- sum of quantity should be equal to  <qty> in row <n>.
+- No Detail found.
+- Quantity should be equal to <qty>
+- Authorized Consumption Entry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- lionsconsumptionentry
+uses_concepts:
+- equipment-category
+- equipment-master
+method_notes:
+  Delete: Deletes the record through Customize.ELCEDelete.
+  FillValues: Fills the lookup lists through Customize.ELCEFillValues.
+  FillValuesDependent: Fills the lookup lists through Customize.ELCEFillValuesDependent.
+  LoadData: Loads the selected record through Customize.ELCELoadData.
+  Open: Searches records through Customize.ELCESearchData.
+  Save: Saves the record through Customize.ELCESave.
+  SaveIssueDetail: Saves the record through Customize.ELCESaveBOMDetail, Customize.ELCESaveIssueDetail.
+  ValidateForm: Validates the entry through Customize.ELCEValidate.

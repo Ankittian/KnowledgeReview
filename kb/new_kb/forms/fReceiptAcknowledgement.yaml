@@ -1,0 +1,62 @@
+form: fReceiptAcknowledgement
+title: Receipt Acknowledgement
+module: SD
+kind: transaction
+summary: The Receipt Acknowledgement screen records that a customer has received goods that were dispatched.
+purpose: |
+  What it is: A document that confirms, per dispatched line, what the customer actually received and when, with the shortage or excess. When it applies: After goods have been dispatched or invoiced and the customer's receipt is known. Business outcome: Delivered quantities and dates are on record, payment due dates can follow the actual delivery, and in-transit differences are identified.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The document-number control, a General Detail box (Customer Name, Location, Source Document, From Date, To Date, Due Date Calculation, Remarks, Notes) and a tab control with Item Detail and Custom Field tabs [fReceiptAcknowledgement.Designer.vb:403-409].
+  - Document No., Date, Division and Status Control: The shared control for yearly document number (or automatic number from a prefix), Document Date, Division and Status.
+  - Customer Name Field: A mandatory dropdown of customers (Name, Code, Type) with a search button that opens the common search window [fReceiptAcknowledgement.vb:57-62] [fReceiptAcknowledgement.vb:1245-1277].
+  - Location Field: A mandatory dropdown of the customer's locations.
+  - Source Document Field: A mandatory dropdown of the active source document types.
+  - From Date and To Date Fields: Two date pickers for the period of source documents to list.
+  - Due Date Calculation Field: A mandatory dropdown with Delivery Date and Dispatch Date; a company setting presets it [Sales.SDRAFillValues:98-103].
+  - Remarks Field: Optional text, up to 1000 characters [fReceiptAcknowledgement.Designer.vb:280].
+  - Notes Control: The shared Notes control.
+  - Item Detail Grid: The grid of source-document lines.
+  - Serial Number Popup: A popup listing Item Description and Serial Number of the line's serials, view only, with an Ok button [fReceiptAcknowledgement.vb:604-637] [fReceiptAcknowledgement.vb:1068-1078].
+  - Rejection Detail Popup: A popup listing the same serials with a Select tick, Ok and Cancel [fReceiptAcknowledgement.vb:639-662] [fReceiptAcknowledgement.vb:1080-1100].
+  - Custom Field Tab: The shared Custom Field grid; the control validates itself on Save [fReceiptAcknowledgement.vb:355-359].
+  - Navigation and Other Toolbar Actions (First, Previous, Next, Last, Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: Starts a blank acknowledgement.
+  Save: Validates and stores the acknowledgement.
+  Search: Opens the common search window with the company's acknowledgements of the year.
+  Delete: Deletes the loaded acknowledgement after confirmation.
+validations:
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select Due Date Calculation
+- To Date can not be less than From Date.
+- Authorized Receipt Acknowledgement can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document date can't be less than invoice date  in row <n>.
+- Delivered Qty. can't be empty  in row <n>.
+- Delivered Date can't be empty  in row <n>.
+- Delivered Date can't be empty less than Invoice Date  in row <n>.
+- No detail found. Please select atleast one document
+- Document No. <no> saved successfully.
+- Indent is prepared against this entry, So you can't delete this entry
+- Work Order (Site Shortage) prepared against this entry, So you can't delete this entry
+manages:
+- receipt-acknowledgement
+uses_concepts:
+- accounting-voucher
+- company
+- pack-slip
+method_notes:
+  Delete: Deletes the record through Sales.SDRADelete.
+  FillValues: Fills the lookup lists through Sales.SDRAFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDRAFillValuesDependent.
+  GetItemSerialNoDetail: Runs through Sales.SDRAGetItemSerialNoDetail.
+  LoadData: Loads the selected record through Sales.SDRALoadData.
+  Open: Searches records through Sales.SDRASearchData.
+  Save: Saves the record through Sales.SDRASave.
+  SaveAcknowledgedSerialNumber: Saves the record through Sales.SDRASaveSerialNumberDetail.
+  SaveCustomFieldDetail: Saves the record through Sales.SDRASaveCustomFieldDetail.
+  SaveItemDetail: Saves the record through Sales.SDRASaveItemDetail.

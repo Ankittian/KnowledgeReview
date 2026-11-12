@@ -1,0 +1,43 @@
+form: fSaleAccPostingRule
+title: Sale Account Posting Rule
+module: MD
+kind: master
+summary: The Sale Account Posting Rule screen (window caption "Sale A/c Posting Rule") defines dated sets of sales combinations
+  that finance later maps to ledger accounts.
+purpose: |
+  What it is: A dated list of sales combinations (order type, category, processing) that need their own sales account posting. When it applies: When finance introduces or revises how sales are split for posting, from a given date. Business outcome: Sales invoices can be posted to the right sales account per combination through Account Rule Definition (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header group box with four fields and a details group box with the combination grid.
+  - Code Field: Read-only text box, 6 characters; marked as mandatory although the user cannot type in it.
+  - Description Field: Mandatory text box, up to 200 characters (BR-02).
+  - Effective From Field: Mandatory date picker, format dd/MM/yyyy (BR-03).
+  - Remarks Field: Optional text box, up to 1000 characters.
+  - Details Grid: Columns Sales Order Type, Sales Category, Sales Processing, each a dropdown when the parameter setup includes it.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New, routed to the main window's new-record handling.
+  Save: Creates or updates the rule and rewrites its rows.
+  Search: Standard search window with Code, Description, Effective From Date, Created By.
+  Delete: Deletes the loaded rule after confirmation (MSG-10).
+  Navigation: First, Previous, Next, Last through the standard toolbar and search results (Inferred).
+validations:
+- Atleast one row should be entered.
+- Enter Description.
+- Select valid Sales Order Type in row n.
+- Select valid Sales Category in row n.
+- Select valid Sales Processing in row n.
+- This Sale A/c Posting Rule is used in A/c Rule Definition,so current entry can't be updated.
+- Current entry can't be updated.
+manages:
+- sale-account-posting-rule
+method_notes:
+  Delete: Deletes the record through Finance.FCSRDelete.
+  FillValues: Fills the lookup lists through Finance.FCSRFillValues.
+  LoadData: Loads the selected record through Finance.FCSRLoadData.
+  Open: Searches records through Finance.FCSRSearchData.
+  Save: Saves the record through Finance.FCSRSave.
+  SaveugdDetails: Saves the record through Finance.FCSRSaveSaleAccPostingRuleDetails.
+  ValidateDetails: Validates the entry through Finance.FCSRValidate.
+  ValidateGeneralDetail: Validates the entry through Finance.FCSRValidate.
+  dtpEffectiveFromDate_ValueChanged: Validates the entry through Finance.FCSRFillValues, Finance.FCSRValidate.

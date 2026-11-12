@@ -1,0 +1,77 @@
+form: fGSTTaxCreditUtilization
+title: GST Credit Utilization
+module: FI
+kind: transaction
+summary: The GST Credit Utilization screen settles the monthly GST liability against the input tax credit.
+purpose: |
+  What it is: A monthly document that records how much input tax credit of which purchase documents is set off against the output tax of the month [fGSTTaxCreditUtilization.vb:806-886; Finance.GTCUSaveVoucherDetail:22-41]. When it applies: At month end, after all sales and purchase invoices of the month are posted. Business outcome: The net GST payable is determined and each credit is consumed once (BR-05; BR-06; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Document number, date and status control, Tax Book, Month, Type, From Date, To Date and Remark [fGSTTaxCreditUtilization.Designer.vb:153-172].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status and finance book [fGSTTaxCreditUtilization.vb:111; fGSTTaxCreditUtilization.vb:176-189].
+  - Tax Book Field: A mandatory dropdown of tax books of type 2 [fGSTTaxCreditUtilization.vb:51; fGSTTaxCreditUtilization.vb:113].
+  - Type Field: A mandatory dropdown of utilization types [fGSTTaxCreditUtilization.vb:114].
+  - Month Field: A month picker in the format MMM/yyyy [fGSTTaxCreditUtilization.Designer.vb:282-284].
+  - From Date and To Date Fields: Date pickers in the format dd/MM/yyyy giving the range of purchase documents shown in R2 [fGSTTaxCreditUtilization.Designer.vb:157; fGSTTaxCreditUtilization.Designer.vb:176].
+  - Remark Field: An optional text box [fGSTTaxCreditUtilization.vb:770].
+  - R1-Summary Tab: A two-level read-only grid: Finance Book, GST Section, CGST Amount, SGST Amount, IGST Amount, Cess Amount, and an invoice band beneath [fGSTTaxCreditUtilization.vb:518-551].
+  - R2-Detail Tab: A grid with Select, Finance Book, GST Section, Supplier Name, GSTIN, HSN Code, Document No., Document Date, Vendor Bill No., Vendor Bill Date, Due Date, Taxable Amount, tax amounts, tax balances and the editable Amount Utilized columns for CGST, SGST, IGST and Cess; a check box in the Select header [fGSTTaxCreditUtilization.vb:613-688; fGSTTaxCreditUtilization.vb:106].
+  - R2 Summary Grid and Totals: A read-only summary of credit used per finance book and GST section with the Input totals [fGSTTaxCreditUtilization.vb:694-718; fGSTTaxCreditUtilization.vb:961-989].
+  - Finance Posting Tab: The journal preview [fGSTTaxCreditUtilization.vb:1035-1074].
+  - Journal Repair Shortcut (Ctrl+Alt+V): A keyboard shortcut on an opened document that rebuilds the journal and saves it again [fGSTTaxCreditUtilization.vb:1112-1178].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fGSTTaxCreditUtilization.vb:257-290].
+actions:
+  New: Opens a blank document [fGSTTaxCreditUtilization.vb:221-227].
+  Save: Validates and saves the document, voucher and credit rows in one transaction [fGSTTaxCreditUtilization.vb:724-803].
+  Search: Lists utilizations of this company and year [fGSTTaxCreditUtilization.vb:230-251].
+  Delete: Deletes the loaded document [fGSTTaxCreditUtilization.vb:58-82].
+validations:
+- Authorized Credit Utilization can't be updated.
+- Authorized entry can't be updated.
+- Select valid Tax Book.
+- Select valid Type.
+- Document Date can't be less than last date of Month
+- From Date can't be greater than Document Date
+- Sum Of CGST Input Amount can't be greater than CGST Output Amount
+- Sum Of SGST Input Amount can't be greater than SGST Output Amount
+- Sum Of IGST Input Amount can't be greater than IGST Output Amount
+- Sum Of Cess Input Amount can't be greater than Cess Output Amount
+- CGST Amount Utilized can't be greater than CGST Amount Balance in row no. n.
+- SGST Amount Utilized can't be greater than SGST Amount Balanced in row no. n.
+- IGST Amount Utilized can't be greater than IGST Amount Balance in row no. n.
+- Cess Amount Utilized can't be greater than CGST Amount Balance in row no. n.
+- Select at least one Row of R2-Detail Tab.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- gst-credit-utilization
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- input-excise-invoice-posting
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.GTCUDelete.
+  FillValues: Fills the lookup lists through Finance.GTCUFillValues.
+  LoadData: Loads the selected record through Finance.GTCULoadData.
+  Open: Searches records through Finance.GTCUSearchData.
+  Save: Saves the record through Finance.GTCUSave.
+  SaveR1Detail: Saves the record through Finance.GTCUSaveVoucherDetail.
+  SaveR2Detail: Saves the record through Finance.GTCUSaveVoucherDetail.
+  ValidateForm: Validates the entry through Finance.GTCUValidate.
+  fGSTTaxCreditUtilization_KeyUp: Saves the record through Finance.VoucherSaveForTransaction, Inventory.VoucherVsLotValidation.
+  getR1Detail: Runs through Finance.GTCUgetR1Detail.

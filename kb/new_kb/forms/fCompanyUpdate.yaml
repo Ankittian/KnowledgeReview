@@ -1,0 +1,29 @@
+form: fCompanyUpdate
+title: Company Update
+module: ADM
+kind: transaction
+summary: The Company Update screen lets a user correct the contact and tax-registration details of the company they are logged
+  into.
+purpose: |
+  What it is: A one-record maintenance screen for the logged-in company's GSTIN number and contact details [fCompanyUpdate.vb:22-53; fCompanyUpdate.vb:133-177]. When it applies: When the company's GSTIN, phone, fax, email or web address is first recorded or later changes. Business outcome: The company master carries current registration and contact details without needing a full company set-up screen.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Company Details Layout: A single panel titled "CompanyUpdate" in the window caption holding five labelled text boxes [fCompanyUpdate.Designer.vb:157].
+  - GSTIN No. Field: A text box, optional, up to 15 characters [fCompanyUpdate.Designer.vb:43; fCompanyUpdate.Designer.vb:55].
+  - Phone No. Field: A text box, optional, up to 50 characters [fCompanyUpdate.Designer.vb:78; fCompanyUpdate.Designer.vb:90].
+  - Fax No. Field: A text box, optional, up to 50 characters [fCompanyUpdate.Designer.vb:96; fCompanyUpdate.Designer.vb:108].
+  - Email Field: A text box, optional, up to 50 characters [fCompanyUpdate.Designer.vb:114; fCompanyUpdate.Designer.vb:126].
+  - Web Site Field: A text box, optional, up to 50 characters [fCompanyUpdate.Designer.vb:132; fCompanyUpdate.Designer.vb:144].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Standard toolbar actions that are empty on this screen [fCompanyUpdate.vb:18-20; fCompanyUpdate.vb:73-75; fCompanyUpdate.vb:77-109].
+actions:
+  New: The toolbar action that asks the main window to start a new record [fCompanyUpdate.vb:64-71].
+  Save: The toolbar action that stores the five fields [fCompanyUpdate.vb:133-177].
+validations:
+- Company Update saved successfully.
+manages:
+- company-update
+uses_concepts:
+- company
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.MUCDFillValues.
+  Save: Saves the record through masterdata.MUCDSave.

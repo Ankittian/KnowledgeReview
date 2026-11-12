@@ -1,0 +1,33 @@
+form: fPolicyEmployeeMapping
+title: Policy Employee Mapping
+module: FI
+kind: transaction
+summary: The Policy Employee Mapping screen decides which employees fall under which Expense Policy.
+purpose: |
+  What it is: A list of employees attached to one Expense Policy [fPolicyEmployeeMapping.vb:354-376; ExpenseMgmt.EXPMSave:48-57]. When it applies: After a policy exists and finance wants to say who it governs. Business outcome: Each claim can be checked against the policy that belongs to the claiming employee (Inferred from [ExpenseMgmt.EXENFillValues:29]).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Area: A panel at the top with the Policy Name drop-down, above the employee grid [fPolicyEmployeeMapping.Designer.vb:57-74].
+  - Policy Name Field: A mandatory drop-down labelled "Policy Name" [fPolicyEmployeeMapping.vb:42; fPolicyEmployeeMapping.Designer.vb:50].
+  - Employee Detail Grid: A grid with Select, Emp Code, Emp Name, Department, Designation; all columns except Select are read-only; employee number, used flag and unchecked flag are hidden [fPolicyEmployeeMapping.vb:301-335].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fPolicyEmployeeMapping.vb:174-206].
+actions:
+  New: Toolbar action that clears the form [fPolicyEmployeeMapping.vb:138-145].
+  Save: Toolbar action that saves the mapping [fPolicyEmployeeMapping.vb:344-395].
+  Search: Toolbar action that opens the search dialog [fPolicyEmployeeMapping.vb:147-172].
+  Delete: Toolbar action that deletes the mapping of the opened policy [fPolicyEmployeeMapping.vb:48-82].
+validations:
+- Select valid Policy Name.
+- Select atleast one Employee Detail.
+- Can't be deleted as some record exist against this entry..
+manages:
+- policy-employee-mapping
+uses_concepts:
+- expense-entry
+- expense-policy
+method_notes:
+  Delete: Deletes the record through ExpenseMgmt.EXPMDelete.
+  FillValues: Fills the lookup lists through ExpenseMgmt.EXPMFillValues.
+  Open: Searches records through ExpenseMgmt.EXPMSearchData.
+  Save: Saves the record through ExpenseMgmt.EXPMDelete, ExpenseMgmt.EXPMSave.
+  ValidateForm: Validates the entry through ExpenseMgmt.EXPMValidate.

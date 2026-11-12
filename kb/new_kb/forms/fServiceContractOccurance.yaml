@@ -1,0 +1,45 @@
+form: fServiceContractOccurance
+title: Service Contract Occurrence
+module: PM
+kind: transaction
+summary: The Service Contract Occurrence screen lets a user add, change or delete one scheduled service visit (an occurrence)
+  of an authorised service contract.
+purpose: |
+  What it is: A record of one expected service visit under a contract trigger, with its date, optional equipment or item, status and remarks [CustomerService.ESCOSaveOccuranceDetail:34-61; fServiceContractOccurance.vb:346-415]. When it applies: When a planned visit must be added manually, re-dated, closed, cancelled or removed outside the generated schedule. Business outcome: The visit schedule of a contract can be corrected without editing the contract itself. Saved occurrences are flagged as manually maintained (BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: An upper area with the contract information and the occurrence entry fields, and a lower area holding the trigger grid [fServiceContractOccurance.Designer.vb:391-394; fServiceContractOccurance.Designer.vb:454-458].
+  - Service Contract No. Field: A dropdown, mandatory [fServiceContractOccurance.vb:43].
+  - Contract Information Fields: Read-only text boxes labelled Service Contract Date, Service Nature, Party Name, Party Location, Source Document, Ref.
+  - Trigger No. Field: A dropdown, mandatory [fServiceContractOccurance.vb:43].
+  - Equipment Description Field: An optional dropdown of the covered equipment of the contract [fServiceContractOccurance.vb:153].
+  - Item Description Field: An optional dropdown of the covered items of the contract [fServiceContractOccurance.vb:154].
+  - Occurrence No. Field: A read-only numeric box [fServiceContractOccurance.Designer.vb:295; fServiceContractOccurance.vb:93].
+  - Occurrence Date Field: A date and time picker, format dd/MM/yyyy hh:mm tt, defaulting to the current date and time [fServiceContractOccurance.Designer.vb:436-438; fServiceContractOccurance.vb:459].
+  - Status Field: A dropdown, mandatory, with Authorized, Completed and Cancel [fServiceContractOccurance.vb:43; fServiceContractOccurance.vb:101].
+  - Remarks Field: A multi-line optional text box [fServiceContractOccurance.Designer.vb:339-340].
+  - Trigger Detail Grid: A read-only grid with Trigger Type, Trigger Description, Previous Occurrence Date, Previous Occurrence Value and Currenct Occurrence Value (original spelling).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions that are empty on this form [fServiceContractOccurance.vb:233-265].
+actions:
+  New: The standard toolbar New, which asks the main window for a new record [fServiceContractOccurance.vb:197-203].
+  Save: The toolbar Save [fServiceContractOccurance.vb:346-416].
+  Search: The toolbar Open, which shows a search list [fServiceContractOccurance.vb:206-231].
+  Delete: The toolbar Delete [fServiceContractOccurance.vb:49-83].
+validations:
+- Select valid Service Contract No.
+- Select valid Trigger No.
+- Select valid Status.
+- Document saved successfully.
+manages:
+- service-contract-occurrence
+uses_concepts:
+- equipment-master
+- maintenance-service-order
+- service-contract
+method_notes:
+  Delete: Deletes the record through CustomerService.SCOCDelete.
+  FillValueDependent: Fills the lookup lists through CustomerService.SCOCFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.SCOCFillValues.
+  LoadData: Loads the selected record through CustomerService.SCOCLoadData.
+  Open: Searches records through CustomerService.SCOCSearchData.
+  Save: Saves the record through CustomerService.ESCOSaveOccuranceDetail.

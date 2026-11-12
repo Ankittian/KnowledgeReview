@@ -1,0 +1,87 @@
+form: fProformaInvoice
+title: Proforma Invoice
+module: SD
+kind: transaction
+summary: The Proforma Invoice screen raises an advance or pre-shipment demand on a customer, either directly with free-typed
+  items or against an authorized order (sales order, AMC and, where activated, service orders, service contracts or MDN).
+purpose: |
+  What it is: A customer-facing demand document for advance payment, linked to an order and its payment terms or raised directly. When it applies: When an order (or a direct deal) requires advance payment before dispatch or billing. Business outcome: Advance requests are tracked against each payment term so the same advance is not requested twice beyond its balance (BR-11, BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: Shared control for document number (with prefix), date, division and status.
+  - General Detail Tab: Header group with customer, order, amounts, payment grid, receipt and bank fields, notes and remarks.
+  - Customer Name Field: Mandatory list (name, code) of active customers (BR-05).
+  - Location Field: Mandatory list of the customer's locations (BR-05).
+  - Source Document Field: Mandatory list of active source types (BR-04).
+  - Order No. and Order Date Fields: Order list (number, date) and read-only order date (BR-08, BR-09).
+  - Basic Amount and Net Amount Fields: Read-only order basic and net amounts.
+  - Advance Amount Field: Numeric field (15 characters, 2 decimals) (BR-16).
+  - Payment Detail Grid: Grid with tick, "Pay Code", "Payment Term", "Pay Value(%)", "Advance Amount", "Prev.
+  - Receipt Mode Field: Mandatory list of payment modes (BR-20).
+  - Bank Account Name, Bank Name, Branch Code, Account Number and IFSC Code Fields: Bank account list and read-only bank details (BR-21).
+  - Due Date Field: Date, defaulted from the longest credit days of ticked pay codes (BR-22).
+  - Notes Control and Remarks Field: Shared notes control (default notes from sales orders preloaded) and Remarks (1000 characters on screen).
+  - Item Detail Grid: Grid below the tabs with "Item Code", "Item Description", "Item Attribute", "Make", "Tech.
+  - Tax Detail Tab: Shared tax control; document-level when there are no items, item-level when items exist (BR-18).
+  - Custom Fields Tab: Shared custom field control.
+  - Finance Posting Tab: Proposed journal voucher.
+  - Other Toolbar Actions (Print, Print Preview, Export, Email): Enabled [fProformaInvoice.vb:85-89] but empty [fProformaInvoice.vb:315-347].
+actions:
+  New: Standard toolbar action handled by the main window.
+  Save: Validates and saves in one transaction.
+  Open (Search): Common search window.
+  Delete: Deletes after MSG-24.
+  Navigation: First / Previous / Next / Last, enabled for this form [fProformaInvoice.vb:83].
+validations:
+- Do you want to save ?
+- Document No. <number> saved successfully.
+- Authorized Proforma Invoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Source Document.
+- 'Invoice Quantity can not be greater than order quantity for Item : <item>, Make : <make>, Attribute : <attribute>'
+- Select valid Order No.
+- Document date can not be less than Order Date.
+- Select atleast one Pay Code.
+- Amount can't be empty or zero in row <n>.
+- Only one Payment Code can be selected for one Lift
+- Advance Amount can't be empty or 0.
+- Total Payment Amount should be equal to Invoice Net Amount.
+- Select valid Unit in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Basic Amount can't be empty or zero in row <n>.
+- Either select atleast one Item Code or Advance Amount can't be empty or 0.
+- Select atleast one Item Code.
+- Duplicate Item Code and Make not allowed.
+- Amount can't be greater than Balance Amount after Prev. Requested Amount is made.
+- Amount is greater than Balance Amount in row <n>.
+- Select valid Receipt Mode.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+- Select valid Location.
+- Select valid Bank Account Name.
+- Due Date can not be less than Document Date.
+- Saving facility is unavailable.
+manages:
+- proforma-invoice
+uses_concepts:
+- accounting-voucher
+- company
+- sales-agreement
+- sales-order
+- sales-order-amendment
+- sales-organization
+- tax-invoice
+method_notes:
+  Delete: Deletes the record through Sales.SDPIDelete.
+  FillValues: Fills the lookup lists through Sales.SDPIFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDPIFillValuesDependent.
+  FillValuesSO: Fills the lookup lists through Sales.SDPIFillValuesSO.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Sales.SDPILoadData.
+  Open: Searches records through Sales.SDPISearchData.
+  Save: Saves the record through Sales.SDPISaveMain.
+  SaveItemDetail: Saves the record through Sales.SDPISaveItemDetail.
+  SaveItemTaxDetails: Saves the record through Sales.SDPISaveItemTaxDetail.

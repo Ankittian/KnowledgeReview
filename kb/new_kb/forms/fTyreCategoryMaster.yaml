@@ -1,0 +1,40 @@
+form: fTyreCategoryMaster
+title: Tyre Category Master
+module: PM
+kind: transaction
+summary: The Tyre Category Master screen defines the categories into which tyres are classified, for example by construction
+  or application.
+purpose: |
+  What it is: A master list of tyre categories, each carrying default tread-depth values (Original NSD and Threshold NSD) and, per tyre make, the tread-depth values that apply to that make [fTyreCategoryMaster.vb:299-312; masterdata.MTCMSave:28-51; masterdata.MTCMSaveDetail:17-24]. When it applies: When the maintenance team introduces a new class of tyre, or revises the tread-depth standards of an existing class. Business outcome: Tread-depth standards are held once per category and make instead of being retyped on every tyre or inspection.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header area with the general fields and, below it, a Make Details grid [fTyreCategoryMaster.Designer.vb:235].
+  - Code Field: A read-only text box labelled "Code" [fTyreCategoryMaster.Designer.vb:59; fTyreCategoryMaster.Designer.vb:71].
+  - Category Name Field: A mandatory text box labelled "Category Name", up to 50 characters [fTyreCategoryMaster.vb:48; masterdata.MTCMSave:9].
+  - Inactive Field: A check box labelled "Inactive" [fTyreCategoryMaster.Designer.vb:96].
+  - Default Orignial NSD Field: An optional numeric text box, 4 characters, one decimal place, labelled "Default Orignial NSD" (spelling as on screen) [fTyreCategoryMaster.Designer.vb:137; fTyreCategoryMaster.Designer.vb:149; fTyreCategoryMaster.vb:50].
+  - Default Threshold NSD Field: An optional numeric text box, 4 characters, one decimal place, labelled "Default Threshold NSD" [fTyreCategoryMaster.Designer.vb:119; fTyreCategoryMaster.Designer.vb:131; fTyreCategoryMaster.vb:51].
+  - Make Details Grid: An editable grid with columns Make Name (drop-down), Original NSD and Threshold NSD (numeric, one decimal, 5 characters) [fTyreCategoryMaster.vb:102-106; masterdata.MTCMFillValues:17-21].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a fresh record [fTyreCategoryMaster.vb:156-163].
+  Save: The toolbar action that validates and stores the category [fTyreCategoryMaster.vb:280-350].
+  Search: The toolbar action that opens a search dialog of categories [fTyreCategoryMaster.vb:165-188].
+  Delete: The toolbar action that removes the open category [fTyreCategoryMaster.vb:57-89].
+validations:
+- Enter Category.
+- Original NSD can not be empty
+- Threshold NSD can not be empty
+- Duplicate category name not allowed.
+manages:
+- tyre-category-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MTCMDelete.
+  FillValues: Fills the lookup lists through masterdata.MTCMFillValues.
+  LoadData: Loads the selected record through masterdata.MTCMLoadData.
+  Open: Searches records through masterdata.MTCMSearchData.
+  Save: Saves the record through masterdata.MTCMSave.
+  SaveDetails: Saves the record through masterdata.MTCMSaveDetail.
+  ValidateForm: Validates the entry through masterdata.MTCMValidate.

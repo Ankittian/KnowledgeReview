@@ -1,0 +1,26 @@
+form: fReleaseRO
+title: Release RO
+module: MM
+kind: transaction
+summary: The Release RO screen turns automatically generated purchase requests (indents) into Release Orders (ROs) against
+  existing rate contracts.
+purpose: |
+  What it is: A bulk conversion of auto-generated indent lines into orders at pre-agreed rate contract prices [Inventory.IRROFillValues:19-44; Inventory.IRROSave:82-96]. When it applies: After the automatic indent process has raised indents for the Optimization Unit and a rate contract exists for the items. Business outcome: Routine replenishment is ordered quickly at agreed rates without keying orders by hand.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Indent Detail Grid: The single grid with columns Release, Indent No., Indent Date, Group, SubGroup, Item Code, Item Description, UOM, Indent Qty., Rate, Rate Contract No.
+  - Other Toolbar Actions (Open, Delete, Print, Preview, Export, Email): Empty implementations [fReleaseRO.vb:75-83; fReleaseRO.vb:154-160; fReleaseRO.vb:190-196].
+actions:
+  New: Standard toolbar New, enabled with Save [fReleaseRO.vb:24-27].
+  Save: Toolbar Save, which on this screen releases the ticked lines.
+validations:
+- Rate Contract No. is not found in row N.
+- Select atleast one Indent Detail
+- PO No. <numbers> generated successfully.
+manages:
+- release-ro
+uses_concepts:
+- indent-default-setting
+method_notes:
+  FillValues: Fills the lookup lists through Inventory.IRROFillValues.
+  Save: Saves the record through Inventory.IRROSave.

@@ -1,0 +1,42 @@
+key: p3-sales-sales-order-agreement
+name: 'Sales: Sales order & agreement (Phase 3)'
+module: SD
+status: active
+summary: Phase 3 screens of the sales order & agreement group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 3 forms that the KB validation plan puts in 'Sales order & agreement' (Sales). The steps follow the plan order, not a verified business sequence: Sales Order, Sales Order Amendment, Sales Order Change Custom Status, Sales Order Change Status, Sales Order Shipment Detail, Sales Agreement, Sales Agreement Change Status, Proforma Invoice.
+steps:
+- order: 1
+  name: Record Sales Order
+  form: fSalesOrder
+- order: 2
+  name: Record Sales Order Amendment
+  form: fSalesOrderAmendment
+- order: 3
+  name: Record Sales Order Change Custom Status
+  form: fSOChangeCustomStatus
+- order: 4
+  name: Record Sales Order Change Status
+  form: fSalesOrderChangeStatus
+- order: 5
+  name: Record Sales Order Shipment Detail
+  form: fSalesOrderShipmentDetail
+- order: 6
+  name: Record Sales Agreement
+  form: fSalesAgreement
+- order: 7
+  name: Record Sales Agreement Change Status
+  form: fSalesAgreementChangeStatus
+- order: 8
+  name: Record Proforma Invoice
+  form: fProformaInvoice
+concepts:
+- sales-order
+- sales-order-amendment
+- sales-order-change-custom-status
+- sales-order-change-status
+- sales-order-shipment-detail
+- sales-agreement
+- sales-agreement-change-status
+- proforma-invoice

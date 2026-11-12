@@ -1,0 +1,69 @@
+form: fDepreciation
+title: Depreciation
+module: FI
+kind: transaction
+summary: The Depreciation screen runs a depreciation calculation for the assets of one depreciation book over a period and
+  stores the result as a document.
+purpose: |
+  What it is: A document that records depreciation charged on selected asset tags for a depreciation book up to a "To Date", with a voucher when the document is authorized [fDepreciation.vb:349-470; FixedAsset.AMADSaveMain:109-156]. When it applies: At the end of a period when the books must show the depreciation expense, or earlier when a provisional or projected figure is wanted. Business outcome: Depreciation is calculated by one routine for every asset, stored per asset tag, and posted to the ledgers once.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "Depreciation" with the document block (document number, date, status, finance book), a header group, a period group, an optional filter group and a tabbed asset area [fDepreciation.Designer.vb:447; fDepreciation.Designer.vb:212-221; uDepreciation.Designer.cs:197-206].
+  - Document Block (Document No., Date, Status, Finance Book): A shared control that shows the document number, date, status and finance book [fDepreciation.vb:76; fDepreciation.vb:251-253].
+  - Description Field: A mandatory text box of up to 200 characters, labelled "D&escription" [fDepreciation.vb:18; fDepreciation.vb:63; fDepreciation.Designer.vb:130].
+  - Depreciation Book Field: A mandatory drop-down labelled "Depreciation Book" [fDepreciation.vb:18; fDepreciation.Designer.vb:149].
+  - Depreciation Purpose Field: A mandatory drop-down labelled "Depreciation Purpose" listing Posting, Provisional and Projection [fDepreciation.vb:78; fDepreciation.Designer.vb:171].
+  - From Date and To Date Fields: Two date pickers in a "Depreciation Period" group [fDepreciation.Designer.vb:212-221].
+  - Reversal Date Field: A date picker labelled "Reversal Da&te" [fDepreciation.Designer.vb:241].
+  - Depreciation Days Field: A read-only display "Depreciation Days" [fDepreciation.Designer.vb:262; fDepreciation.vb:520-524].
+  - Filter Group (Asset Class, Asset Group, Asset Location, Asset No., Tag No.): Five drop-downs filled from the book [fDepreciation.vb:79; fDepreciation.vb:542-545; fDepreciation.Designer.vb:281-357].
+  - Remarks Field: An optional text box of up to 500 characters [fDepreciation.vb:64; fDepreciation.Designer.vb:393].
+  - Asset Detail Tab: A two-level grid: assets (Select, Asset Class, Asset Group, Asset No., Asset Description, Account Name, Depreciation Method, Depreciation Rate, Acquisition Value, Salvage Value, Accumulated Depreciation, Depreciation During the Period, Total Depreciation, Asset Value) and, under each asset, its tags (Tag No., Tag Description, In Service Date, Acquisition Value, Deduction Value, Salvage Value, No.
+  - Summary Tab: A read-only grid per asset class: Asset Class, Account Name, Depreciation Method, Depreciation Rate, Acquisition Value, Salvage Value, Accumulated Depreciation, Depreciation During the Period, Total Depreciation, Book Value [uDepreciation.cs:245-290].
+  - Depreciation Posting Tab: The voucher lines built by the finance posting control [uDepreciation.Designer.cs:203-206].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Implemented as empty routines [fDepreciation.vb:192-224].
+actions:
+  New: Asks the main window for a blank record [fDepreciation.vb:155-162].
+  Save: Validates, asks for confirmation and stores the document, its asset tag detail and, if due, the voucher [fDepreciation.vb:349-470].
+  Search: Opens a search list of documents of the logged-in company and working year with Document No., Document Date, Finance
+    Book, Description, Depreciation Book, Depreciation Purpose, From Date, To Date, Reversal Date, Status, Created By and
+    Authorized By [fDepreciation.vb:164-190; FixedAsset.AMADSearchData:18-42].
+  Delete: Deletes the open document after confirmation [fDepreciation.vb:24-53].
+validations:
+- Enter Description.
+- Select valid Depreciation Book.
+- Select valid Depreciation Purpose.
+- To Date can't be less than From Date.
+- Reversal Date can't be less than To Date.
+- Select at least one Asset in Asset Detail.
+- Authorized Depreciation can't be updated.
+- Authorized entry can't be updated.
+- 'Document No. '
+- ' saved successfully.'
+- Depreciation greater than from date is available on same depreciation book.
+- 'To date is overlapping with other depreciation for following Assets : '
+- 'Depreciation for following assets '
+- ' are not found for year '
+- Duplicate Document No. not allowed.
+- Finance Book is closed for this Document Date.
+manages:
+- depreciation
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-capitalization
+- asset-class
+- asset-disposal
+- asset-group
+- asset-location
+- financial-period
+- reverse-voucher
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMADDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMADFillValues.
+  FillValuesDB: Fills the lookup lists through FixedAsset.AMADFillValuesDB.
+  FillValuesFB: Fills the lookup lists through FixedAsset.AMADFillValuesFB.
+  LoadData: Loads the selected record through FixedAsset.AMADLoadData.
+  Open: Searches records through FixedAsset.AMADSearchData.
+  Save: Saves the record through Finance.VoucherSaveChildDetail, FixedAsset.AMADSaveMain.
+  ValidateForm: Validates the entry through FixedAsset.AMADValidate.

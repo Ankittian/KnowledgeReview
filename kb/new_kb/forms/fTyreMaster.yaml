@@ -1,0 +1,83 @@
+form: fTyreMaster
+title: Tyre Master
+module: PM
+kind: transaction
+summary: The Tyre Master screen registers every individual tyre the company owns, whether it is in stock, fitted to a vehicle,
+  or in any other stage of its life.
+purpose: |
+  What it is: A register of individual tyres, each with identity, purchase, tread, life, warranty and current location data, plus a starting status history entry [fTyreMaster.vb:918-1153; EAM.TTRMSave:64-176]. When it applies: When a tyre is purchased, received from a material issue, or brought into opening balances. Business outcome: Each tyre can be followed through installation, removal, repair and retreading, and its cost and life measured.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The window "TyreMaster" with two tabs, "General Detail" and "Custom Field" [fTyreMaster.Designer.vb:1243; fTyreMaster.Designer.vb:1246; fTyreMaster.Designer.vb:1266].
+  - Code Field: A read-only text box; the label is a link "Code" that switches to fast entry mode [fTyreMaster.Designer.vb:587; fTyreMaster.vb:58].
+  - Copy Button: A small unlabelled button beside the Code field [fTyreMaster.Designer.vb:474-483].
+  - Source Document Field: A drop-down labelled "Source Document"; the default entry is pre-selected [fTyreMaster.Designer.vb:553; fTyreMaster.vb:177-179].
+  - Material Issue Field and Material Issue Date: A drop-down labelled "Material Issue" with a search button, and a read-only "Material Issue Date" [fTyreMaster.Designer.vb:534; fTyreMaster.Designer.vb:502; fTyreMaster.Designer.vb:514; fTyreMaster.vb:1668-1694].
+  - Item Description Field: An optional drop-down labelled "Item Description" showing item description and code [fTyreMaster.Designer.vb:599; fTyreMaster.vb:202].
+  - Serial No. Field: A mandatory text box labelled "Serial No." (up to 30 characters in the grid, 30 in the database) [fTyreMaster.Designer.vb:580; fTyreMaster.vb:55; EAM.TTRMSave:11].
+  - Tyre Alias Field: An optional text box labelled "Tyre Alias" (15 characters) [fTyreMaster.Designer.vb:618; EAM.TTRMSave:12].
+  - Model, Size, Make, Ply Rating and Pattern Fields: "Model" (mandatory, 50 characters), "Size" (mandatory, 20), "Make" (optional drop-down of tyre makes), "Ply Rating" (optional, 20) and "Pattern" (optional, 30) [fTyreMaster.Designer.vb:636; fTyreMaster.Designer.vb:654; fTyreMaster.Designer.vb:673; fTyreMaster.Designer.vb:691; fTyreMaster.Designer.vb:709; fTyreMaster.vb:111-115].
+  - Tyre Category Field: A mandatory drop-down labelled "Tyre Category" [fTyreMaster.Designer.vb:728; fTyreMaster.vb:55].
+  - Purchase Detail Fields: "Supplier Name" and "Supplier Location" (drop-downs), "Purchase Order No." (30) and "Purchase Order Date", "Invoice No." (30) and "Invoice Date", and "Purchase Amount" (up to 12 characters, 2 decimals) [fTyreMaster.Designer.vb:838; fTyreMaster.Designer.vb:887; fTyreMaster.Designer.vb:856; fTyreMaster.Designer.vb:896; fTyreMaster.Designer.vb:914; fTyreMaster.Designer.vb:935; fTyreMaster.Designer.vb
+  - Current Tyre Stage, Current Tyre Status and Current Warehouse Fields: Mandatory drop-downs "Current Tyre Stage" and "Current Tyre Status", and "Current Warehouse" [fTyreMaster.Designer.vb:995; fTyreMaster.Designer.vb:1023; fTyreMaster.Designer.vb:1004; fTyreMaster.vb:55].
+  - Readings Fields: "Original NSD", "Threshold NSD", "Opening NSD" (mandatory), "Opening NSD Date", "Opening Running KM" (mandatory), "Opening Hrs.", "Expected Life (In Km)", "Expected Life (In Months)" and "Expected Life (In Hrs.)", all numeric with the decimals shown in code [fTyreMaster.Designer.vb:1103; fTyreMaster.Designer.vb:1121; fTyreMaster.Designer.vb:1139; fTyreMaster.Designer.vb:1160; fTyreMaster.Designer.
+  - Warranty Detail Fields: "Warranty Period (In Months)", "Warranty Description" (300 characters) and "Remarks" (1000 characters), all optional [fTyreMaster.Designer.vb:759; fTyreMaster.Designer.vb:778; fTyreMaster.Designer.vb:797; fTyreMaster.vb:148-152].
+  - Equipment Detail Fields: "Current Vehicle", "Current Position", "Install Date", "Install KM", "Install Hrs." and "Install NSD" [fTyreMaster.Designer.vb:418; fTyreMaster.Designer.vb:437; fTyreMaster.Designer.vb:381; fTyreMaster.Designer.vb:399; fTyreMaster.Designer.vb:360; fTyreMaster.Designer.vb:342].
+  - Custom Field Tab: An embedded custom-field control on the "Custom Field" tab [fTyreMaster.Designer.vb:1246; fTyreMaster.vb:184].
+  - Fast Entry Grid Container: A grid with one column per tyre field (including Source Document, Material Issue, Current Vehicle, Current Position, Current Warehouse and a Status column) and an "Import" button; a link "Switch back to detail mode." returns to detail mode [fTyreMaster.Designer.vb:226; fTyreMaster.Designer.vb:238; EAM.TTRMFillValues:204-243].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  Switch back to detail mode.: A link at the top of the fast entry grid [fTyreMaster.vb:1393-1395].
+  Import: The "Import" button inside the fast entry grid [fTyreMaster.vb:1397-1444].
+  New: The toolbar action that asks the main window for a new record [fTyreMaster.vb:330-337].
+  Save: The toolbar action that validates and saves [fTyreMaster.vb:715-916].
+  Search: The toolbar action that opens a tyre search dialog [fTyreMaster.vb:339-363].
+  Delete: The toolbar action that removes the open tyre [fTyreMaster.vb:67-96].
+validations:
+- Enter Model.
+- Enter Serial No.
+- Enter Size.
+- Select valid Tyre Category.
+- Select Purchase Order Date.
+- Select Invoice Date.
+- Select valid Tyre Stage.
+- Select valid Tyre Status.
+- Threshold NSD must be less than Original NSD.
+- Enter Opening NSD.
+- Select Opening NSD Date.
+- Enter Opening Running KM.
+- Select valid Current Warehouse.
+- Select valid Current Vehicle.
+- Select valid Current Position.
+- Select Install Date.
+- Install NSD must be greater than 0.
+- Duplicate Serial No. not allowed.
+- Duplicate Serial No. not allowed
+- unable to update,this tyre has existing transactions in other documents.
+- Cannot delete Tyre. It has transactions in other documents. Please reverse those first.
+- Refer Status for saved status.
+- Successfully Created.
+- Please wait, data is loading
+- Your excel should consists of sheet with name <screen tag>. Do you want to continue?
+- Current data of Opening NSD , Original NSD and Threshold NSD will be removed. Do you want to continue
+manages:
+- tyre-master
+uses_concepts:
+- axle-wheel-configuration
+- change-tyre-status
+- company
+- equipment-master
+- supplementary-field
+- tyre-category-master
+- tyre-movement
+- tyre-repair-entry
+- tyre-repair-request
+method_notes:
+  Delete: Deletes the record through EAM.TTRMDelete.
+  FillValueDependent: Fills the lookup lists through EAM.TTRMFillValuesDependent.
+  FillValues: Fills the lookup lists through EAM.TTRMFillValues.
+  LoadCopyTyre: Searches records through EAM.TTRMSearchData.
+  LoadData: Loads the selected record through EAM.TTRMLoadData.
+  Open: Searches records through EAM.TTRMSearchData.
+  SaveMain: Saves the record through EAM.TTRMSave.
+  ValidateForm: Validates the entry through EAM.TTRMValidate.

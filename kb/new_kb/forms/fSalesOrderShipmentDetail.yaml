@@ -1,0 +1,40 @@
+form: fSalesOrderShipmentDetail
+title: Sales Order Shipment Detail
+module: SD
+kind: transaction
+summary: The Sales Order Shipment Detail screen maintains the list of consignees (ship-to parties and their delivery addresses)
+  for an open, authorized sales order after the order has been made.
+purpose: |
+  What it is: The delivery split of a sales order: which consignee locations receive goods, from which dispatch location to which destination, and at what freight rate. When it applies: When consignees or freight terms of an authorized order must be added or corrected without a full order amendment. Business outcome: Dispatch and invoicing documents use correct ship-to parties and freight.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Panel with "Customer Name", "Location", "Customer Order No.", "Sales Order No.
+  - Customer Name Field: Optional dropdown (Customer Name, Code).
+  - Location Field: Optional dropdown (Vendor Location, Code) of the chosen customer.
+  - Customer Order No. Field: Mandatory dropdown showing Customer Order No, Customer Order Date, Sales Order No, Sales Order Date.
+  - Sales Order No. & Date Field: Read-only text, sales order number and date (dd/MM/yyyy).
+  - Freight Type Field: Read-only text of the order's freight type.
+  - Consignee Detail Grid: Editable grid with columns "Consignee Name", "Consignee Location", "From Location", "To Location", "Freight Rate Type", "Freight Rate", "Remarks".
+  - Other Toolbar Actions (Search, Delete, Navigation, Print, Preview, Export, Email): Not offered; only New and Save are enabled and the other routines are empty.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+validations:
+- Select valid Customer Order No.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row <n>.
+- Select valid Freight Rate Type in row <n>.
+- Freight Rate can't be empty or zero in row <n>.
+manages:
+- sales-order-shipment-detail
+uses_concepts:
+- company
+- sales-agreement
+- sales-order
+- sales-order-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Sales.SOSDFillValues.
+  SaveConsigneeDetail: Saves the record through Sales.SOSDSaveConsigneeDetail.
+  ucmbCustomerName_ValueChanged: Runs through GlobalData.VendorLocationSelect.
+  ucmbCustomerOrderNo_ValueChanged: Fills the lookup lists through Sales.SOSDFillValues.
+  ucmbLocation_ValueChanged: Fills the lookup lists through Sales.SOSDFillValues.

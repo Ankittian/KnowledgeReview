@@ -1,0 +1,40 @@
+form: fPinToPinDistance
+title: Pin To Pin Distance
+module: MD
+kind: master
+summary: The Pin To Pin Distance screen maintains the approximate road distance between two postal pin codes within a country.
+purpose: |
+  What it is: An enterprise list of approximate distances between pairs of pin codes in a country. When it applies: When the business starts shipping between a new pair of locations, or when a recorded distance has to be corrected. Business outcome: A single agreed distance per route is available to transport and statutory documents instead of being typed on every document (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: A single group box holding all fields.
+  - Country Field: Mandatory dropdown showing Country Name and Code (BR-01).
+  - From Pin Field: Mandatory numeric text box, up to 8 digits, no decimals (BR-02).
+  - To Pin Field: Mandatory numeric text box, up to 8 digits, no decimals (BR-03).
+  - Approx Distance Field: Mandatory numeric text box, up to 6 digits, no decimals (BR-04).
+  - InActive Field: Checkbox showing the inactive flag of the record for the current company.
+  - Code Field: Read-only text box.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present in the screen's interface but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates a new distance or updates the loaded one.
+  Search: Standard search window listing Code, Country Name, From Pin, To Pin, Approx Distance, Inactive and Created By.
+  Delete: Deletes the loaded distance after confirmation (MSG-09).
+validations:
+- Select valid Country.
+- Enter From Pin.
+- Enter To Pin.
+- Enter Approx Distance.
+- Approx distance exists for the pair of From and To Pin.
+- Approx distance for this pin pair is saved.
+manages:
+- pin-to-pin-distance
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MPTPDelete.
+  FillValues: Fills the lookup lists through masterdata.MPTPFillValues.
+  LoadData: Loads the selected record through masterdata.MPTPLoadData.
+  Open: Searches records through masterdata.MPTPSearchData.
+  Save: Saves the record through masterdata.MPTPSave.
+  ValidateForm: Validates the entry through masterdata.MPTPValidate.

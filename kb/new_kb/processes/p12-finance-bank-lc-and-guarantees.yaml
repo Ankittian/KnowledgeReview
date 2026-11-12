@@ -1,0 +1,46 @@
+key: p12-finance-bank-lc-and-guarantees
+name: 'Finance: Bank, LC and guarantees (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the bank, lc and guarantees group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Bank, LC and guarantees' (Finance). The steps follow the plan order, not a verified business sequence: Bank Reconciliation, Bank Reconciliation Opening, Cash Reconcilation, Reference Reconciliation, Reference Reconciliation Reverse, Bank Guarantee, Letter Of Credit, Letter of Credit Amendment, TDS Return: Bank Challan Detail.
+steps:
+- order: 1
+  name: Record Bank Reconciliation
+  form: fBankReconciliation
+- order: 2
+  name: Record Bank Reconciliation Opening
+  form: fOpeningBankReconciliation
+- order: 3
+  name: Record Cash Reconcilation
+  form: fCashReconcilation
+- order: 4
+  name: Record Reference Reconciliation
+  form: fReferenceReconciliation
+- order: 5
+  name: Record Reference Reconciliation Reverse
+  form: fReferenceReconciliationReversal
+- order: 6
+  name: Record Bank Guarantee
+  form: fBG
+- order: 7
+  name: Record Letter Of Credit
+  form: fLC
+- order: 8
+  name: Record Letter of Credit Amendment
+  form: fLCAmendment
+- order: 9
+  name: 'Record TDS Return: Bank Challan Detail'
+  form: fTDSReturnBankChallanDetail
+concepts:
+- bank-reconciliation
+- bank-reconciliation-opening
+- cash-reconcilation
+- reference-reconciliation
+- reference-reconciliation-reverse
+- bank-guarantee
+- letter-of-credit
+- letter-of-credit-amendment
+- tds-return-bank-challan-detail

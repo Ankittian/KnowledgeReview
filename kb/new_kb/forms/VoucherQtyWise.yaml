@@ -1,0 +1,14 @@
+usercontrol: VoucherQtyWise
+title: Voucher quantity control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded quantity split of a voucher line.
+purpose: |
+  Captures quantity-wise detail of a voucher line (VoucherQtyWiseFillValues).
+functional_description: |
+  Embedded in: Voucher.
+  On-screen fields: Account Name, Amount.
+method_notes:
+  FillValues: Fills the lookup lists through Finance.VoucherQtyWiseFillValues.

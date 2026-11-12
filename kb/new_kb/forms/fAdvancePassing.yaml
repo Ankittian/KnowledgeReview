@@ -1,0 +1,83 @@
+form: fAdvancePassing
+title: Supplier Advance
+module: FI
+kind: transaction
+summary: The Supplier Advance screen, captioned "Advance Passing", approves the amount of an authorized advance request that
+  will actually be paid to a supplier.
+purpose: |
+  What it is: A document that passes all or part of an authorized advance request for payment and posts the accounting for it [fAdvancePassing.vb:436-570; Finance.FMAPSaveMain:86-171]. When it applies: After an advance request for an order has been authorized and the advance is due to be paid. Business outcome: Advances are paid only up to the requested amount (and up to the order balance for purchase orders), with the accounting and any bank guarantee position kept in step (BR-04; BR-05; BR-06; BR-14).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header and Tabs Layout: The document-number control, vendor and location fields, the advance request and its read-only detail groups, passing fields, and a tab control with "General Detail", "Tax Detail" and "Posting Detail" (hidden until needed) [fAdvancePassing.designer.vb:1478-1487; fAdvancePassing.vb:121].
+  - Document Number Control (Document No., Date, Status, Finance Book): The shared document control; its own checks run first on Save [fAdvancePassing.vb:135-137].
+  - Vendor Name Field: A mandatory dropdown "Vendor &Name" (BR-01; MSG-01) [fAdvancePassing.vb:118; fAdvancePassing.vb:139-143; fAdvancePassing.designer.vb:1250].
+  - Location Field: A mandatory dropdown "&Location"; the first location is selected automatically (BR-01; MSG-02) [fAdvancePassing.vb:145-149; fAdvancePassing.vb:862-864; fAdvancePassing.designer.vb:1323].
+  - Advance Request No. Field: A dropdown "Advance Request &No." showing number and date; mandatory (BR-02; MSG-03) [fAdvancePassing.vb:151-155; fAdvancePassing.designer.vb:1056].
+  - Source Document, Source Document No. and Date Fields: Read-only boxes "Source &Document", "Source Document &No." and "Source Document Date" showing the order the request is for [fAdvancePassing.designer.vb:774; fAdvancePassing.designer.vb:816; fAdvancePassing.designer.vb:857; fAdvancePassing.vb:728-734].
+  - Proforma Invoice Fields: Read-only boxes "Proforma Invoice &No.", "Proforma Invoice Da&te" and "Proforma Invoice A&mount" [fAdvancePassing.designer.vb:911; fAdvancePassing.designer.vb:848; fAdvancePassing.designer.vb:807].
+  - Payment Type, Advance On, Percent and Amount Fields: Read-only boxes "&Payment Type", "Advance On", "Basic Amount", "Net Amount", "Advance Percent", "Advance Amount", "Tolerance Percent", "Tolerance Amount", "Request Pe&rcent", "Request Amo&unt", "Prev.
+  - Bank Guarantee Groups: Two read-only groups.
+  - Pay To and Pay To Location Fields: Two read-only boxes shown only for source document type 3 with a pay-to location [fAdvancePassing.vb:790-807; fAdvancePassing.designer.vb:281; fAdvancePassing.designer.vb:291].
+  - Passing Percent Field: A numeric box "Passing Pe&rcent", 2 decimals, in the mandatory list (BR-01) [fAdvancePassing.vb:118; fAdvancePassing.vb:630; fAdvancePassing.designer.vb:587].
+  - Passing Amount Field: A numeric box "Passing Amo&unt", 2 decimals, mandatory and non-zero (BR-01; BR-04; MSG-05; MSG-06) [fAdvancePassing.vb:118; fAdvancePassing.vb:631; fAdvancePassing.vb:179-189; fAdvancePassing.designer.vb:526].
+  - Payment Mode Field: A mandatory dropdown "Pa&yment Mode", defaulted from the request (BR-01; MSG-08) [fAdvancePassing.vb:167-171; fAdvancePassing.vb:759; fAdvancePassing.designer.vb:412].
+  - Due Date Field: A date picker "Due Da&te", defaulted from the payment term: the base date plus additional months and days [Finance.FMAPFillValuesDependent:73-75; fAdvancePassing.vb:782; fAdvancePassing.designer.vb:403].
+  - Remarks Field: A text box "&Remarks" [fAdvancePassing.vb:488; fAdvancePassing.designer.vb:1241].
+  - Currency Control: The shared currency control, read-only, filled from the request [fAdvancePassing.vb:628; fAdvancePassing.vb:736-739; fAdvancePassing.vb:885-887].
+  - Tax Detail Tab: The shared tax-on-amount control calculated on Passing Amount [fAdvancePassing.vb:839-840; fAdvancePassing.vb:229].
+  - Posting Detail Tab: The shared posting grid showing the Journal Voucher lines [fAdvancePassing.vb:991-1033].
+  - Hidden Keyboard Shortcuts: Two undocumented shortcuts on the form.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fAdvancePassing.vb:605-611; fAdvancePassing.vb:889-895].
+actions:
+  New: Standard toolbar New [fAdvancePassing.vb:50-58].
+  Save: Saves a new or existing document.
+  Search: Opens the search window listing documents of the company and year with Document No., Document Date, Finance Book,
+    Vendor Name, Advance Request No., Source Document, Source Document No., Source Document Date, Payment Type, Payment Mode,
+    Passing Amount, Net Passing Amount, Status, Document Status, Created By, Authorized By and a "Generate Narration" flag
+    column [fAdvancePassing.vb:387-415; Finance.F
+  Delete: Deletes the loaded document after the standard delete confirmation [fAdvancePassing.vb:351-385].
+validations:
+- Select valid Vendor Name.
+- Select valid Location.
+- Select valid Advance Request No.
+- Document Date can't be less than Source Document Date.
+- Request Amount can't be empty or 0.
+- Passing Amount can't be greater than Request Amount - Prev. Passed Amount.
+- BG Against Payment Type Amt. Inprocess can't be greater than BG Against Document Amt. Balance.
+- Select valid Payment Mode.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Passing Amount can't be greater than Balance PO Amount + Tolerance Amount <balance> (<percent>%).
+- Document No. is passed through cash counter.
+- Supplier Prepayment account is not created against this Location.
+- Supplier Payable account is not created against this Location.
+- Account Details not fetched,restart your form and save this entry again
+- Document No. <number> saved successfully.
+- Voucher save facility is unavailable.
+manages:
+- supplier-advance
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-guarantee
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.FMAPDelete.
+  FillValues: Fills the lookup lists through Finance.FMAPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FMAPFillValuesDependent.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FMAPLoadData.
+  Open: Searches records through Finance.FMAPSearchData.
+  Save: Saves the record through Finance.FMAPSaveMain.
+  SaveTaxDetail: Saves the record through Finance.FMAPSaveTaxDetail.
+  ValidateForm: Validates the entry through Finance.FMAPValidate.

@@ -1,0 +1,55 @@
+form: fTaskMaster
+title: Task Master
+module: MD
+kind: master
+summary: The Task Master screen maintains standard tasks used in project planning, together with their standard material and
+  resource requirements.
+purpose: |
+  What it is: A library of standard tasks with the materials and resources each one needs. When it applies: When a new kind of work is standardised or its standard requirement changes. Business outcome: Projects can be planned and estimated from standard tasks instead of from scratch (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields above a tab control with Material Requirement and Resource Requirement tabs.
+  - Code Field: Read-only text box, up to 10 characters.
+  - Task Name Field: Mandatory text box, up to 300 characters (BR-01).
+  - Task Category Field: Mandatory dropdown with category name and code (BR-02).
+  - Task Type Field: Read-only text box.
+  - Unit Field: Mandatory dropdown with unit and code (BR-03).
+  - Inactive Field: Checkbox, permanently disabled.
+  - Material Requirement Grid: Columns Item Code, Item Description (kept in step), Btn (item details button, head office only), Unit (read-only), Make (makes of the item), Qty.
+  - Resource Requirement Grid: Columns Resource Code, Resource Name (kept in step), Btn (head office only), Usage Unit (read-only), Usage (2 decimals, up to 6 characters), Rate, Amount (read-only, Usage × Rate).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Not enabled; handlers empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the task and both requirement lists.
+  Search: Standard search with Code, Task Name, Category Name, Task Type, Unit, Inactive, Created By, Created Date, sorted
+    by name.
+  Delete: Deletes the loaded task after confirmation (MSG-19).
+  Navigation: First, Previous, Next, Last enabled through the standard toolbar (BR-13).
+validations:
+- Enter Code.
+- Duplicate Code is not allowed.
+- Duplicate Task Name is not allowed.
+- Enter Task Description.
+- Select valid Task Category.
+- Select valid Unit.
+- 'Select valid Item Description in row '
+- 'Qty. can''t be empty or zero in row '
+- 'Rate can''t be empty or zero in row '
+- 'Select Supply Source in row '
+- 'Select valid Resource Name in row '
+- 'Usage can''t be empty or zero in row '
+- Duplicate Item Code and Make is not allowed.
+- Duplicate Resource Code is not allowed.
+manages:
+- task-master
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.PSTMDelete.
+  FillValues: Fills the lookup lists through masterdata.PSTMFillValues.
+  LoadData: Loads the selected record through masterdata.PSTMLoadData.
+  Open: Searches records through masterdata.PSTMSearchData.
+  Save: Saves the record through masterdata.PSTMSave.
+  SaveMaterialDetails: Saves the record through masterdata.PSTMSavemTaskMaterialDetails.
+  SaveResourceDetail: Saves the record through masterdata.PSTMSavemTaskResourceDetails.
+  ValidateForm: Validates the entry through masterdata.PSTMValidate.

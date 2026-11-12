@@ -1,0 +1,57 @@
+form: fExpenseHead
+title: Expense Head
+module: FI
+kind: master
+users:
+- Accounts officer (inferred)
+- Purchase officer (inferred)
+summary: The Expense Head screen maintains the list of expense heads used to classify service, conversion, charges and production
+  expenses.
+purpose: |
+  What it is: A coded list of expense heads with nature, GST classification and applicable tax charges. When it applies: When a new kind of expense must be booked or its tax treatment changes. Business outcome: Consistent expense classification and tax application across companies.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Expense Head Details Area: Panel with Code, Expense Head, Nature, HSN /SAC Code, the four GST rate displays, GST Category, Manage Acc.
+  - Code Field: Read-only, 6 characters; its label "Code" is a link with tool tip "Switch to fast entry mode.".
+  - Expense Head Field: Text box, mandatory, maximum 100 characters, trimmed.
+  - Nature Field: Dropdown, required.
+  - HSN /SAC Code Field: Dropdown (Code, Description), optional.
+  - CGST Rate, SGST Rate, IGST Rate, UTGST Rate Fields: Read-only displays, 4 characters.
+  - GST Category Field: Dropdown, optional.
+  - Manage Acc. Item wise Field: Check box, effectively mandatory.
+  - Inactive Field: Check box, always disabled.
+  - Tax Detail Grid: Columns Select (with header tick box), Tax Group, Charge Name; only Select is editable.
+  - Fast Entry Grid Container: Columns Expense Head, Nature (list), Manage Acc Item Wise (default unticked), Remarks (read only), with Import.
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Print, preview, export and email handlers are empty; the screen declares no toolbar options.
+actions:
+  Switch back to detail mode.: Link at the top of the Fast Entry container.
+  Import: Reads columns "Expense Head", "Nature" and "Manage Acc Item Wise" from an Excel sheet.
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open.
+  Delete: Standard toolbar Delete.
+validations:
+- Enter Expense Head name.
+- Duplicate Expense Head not allowed.
+- Select valid Nature.
+- Manage Acc. Item Wise must be selected.
+- Successfully Created.
+- Refer remarks for saved status.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+manages:
+- expense-head
+uses_concepts:
+- company
+- gst-category
+- tdc-charge
+- tdc-group
+method_notes:
+  Delete: Deletes the record through masterdata.MMEHDelete.
+  FillValues: Fills the lookup lists through masterdata.MMEHFillValues.
+  LoadData: Loads the selected record through masterdata.MMEHLoadData.
+  Open: Searches records through masterdata.MMEHSearchData.
+  SaveMain: Saves the record through masterdata.MMEHSave.
+  SaveTaxDetails: Saves the record through masterdata.MMEHSaveTaxDetail.
+  ValidateForm: Validates the entry through masterdata.MMEHValidate.
+  ucmbNature_ValueChanged: Fills the lookup lists through masterdata.MMEHFillValues.

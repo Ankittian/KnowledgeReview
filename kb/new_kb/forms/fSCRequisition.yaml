@@ -1,0 +1,105 @@
+form: fSCRequisition
+title: Service Request
+module: MM
+kind: transaction
+summary: The Service Request screen (technical name fSCRequisition; window caption left as "fSCRequisition") raises an internal
+  request for subcontracted services or job work.
+purpose: |
+  What it is: An internal requisition for outside services, with the materials to be sent, returned or received back. When it applies: When a department needs work done by a subcontractor: processing, repair or activity-based job work (Inferred from subcontract types and item flows). Business outcome: A controlled, approved demand that service purchasing can act on, with quantities, schedules and materials defined up front.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: Document number, date, status and division control with a repeated-entry button [fSCRequisition.vb:76].
+  - General Detail Tab: The "&General Detail" tab with the header fields [fSCRequisition.Designer.vb:1714].
+  - Source Document Field: Mandatory dropdown "&Source Document" [fSCRequisition.Designer.vb:1231]; defaults to 1 or to the source flagged as default [fSCRequisition.vb:971-976].
+  - Ref. Document No. and Ref. Document Date Fields: Reference dropdown "Ref.
+  - Product Type Field: Dropdown "Product &Type" (BOM types 1 and 2) [fSCRequisition.Designer.vb:1147] [Inventory.SCRQFillValues:228].
+  - Warehouse Field: Dropdown "&Warehouse" [fSCRequisition.Designer.vb:1083].
+  - Subcontract Type Field: Mandatory dropdown "Subcontract &Type" [fSCRequisition.Designer.vb:1645].
+  - Subcontract Nature Field: Mandatory dropdown "Subcontract &Nature" filtered by type [fSCRequisition.Designer.vb:1305].
+  - Service Description Field: Optional text "Service &Description", 1000 characters [fSCRequisition.Designer.vb:1342-1347].
+  - Department Field: Mandatory dropdown "&Department" with an information icon [fSCRequisition.Designer.vb:1572].
+  - Cost Center Field: Mandatory dropdown "C&ost Center" with an information icon [fSCRequisition.Designer.vb:1498].
+  - Requested By Field: Mandatory editable combo "Requested &By" listing names used on earlier requests of the company, up to 50 characters [fSCRequisition.Designer.vb:1425] [Inventory.SCRQFillValues:47-50] [Inventory.SCRQSaveMain:24].
+  - Remarks Field: Optional text "Remar&ks", 1000 characters [fSCRequisition.Designer.vb:1324-1329].
+  - Notes Control and Custom Field Tab: Shared notes grid (pre-filled with the company's default notes) and the "Custom &Field" tab [Inventory.SCRQFillValues:132-137] [fSCRequisition.Designer.vb:1717].
+  - Service Detail Grid: "&Service Detail" tab with Item Code, Item Description, search button, HSN & SAC Code, Short Text (pop-up, 1000 characters), Unit, Quantity (3 decimals), Rate (2 decimals), Amount, Schedule, Remarks (500) [Inventory.SCRQFillValues:104-118] [fSCRequisition.vb:1450-1489].
+  - Activity Detail Grid: "Activity Detail" tab with Select (only for work-order based), Sequence No., Activity Code, Activity, button, Short Text, Unit, Quantity, Rate, Amount, Schedule, Remarks (500) [Inventory.SCRQFillValues:151-165] [fSCRequisition.vb:2216-2267].
+  - Work Order Detail Grid: "&Work Order Detail" tab with Select, Work Order No., Work Order Date, Customer Order No., Sales Order No., Project Code, Qty.
+  - Mark Detail Grid: "&Mark Detail" tab listing BOM marks of the chosen work orders with Item Id, Mark No, Item Description, Make, BOM Qty., WO Qty., Prev.
+  - Item Detail Grid: "&Item Detail" tab with Sequence No.
+  - Serial No. Pop-up: Pop-up from "SL No" listing Serial No, Document No., Document Date with "&Ok" / "&Cancel" [fSCRequisition.vb:2914-2930].
+  - Repeat Entry (Ctrl+Y): Ctrl+Y or the repeated-entry button [fSCRequisition.vb:53-57] [fSCRequisition.vb:2868-2870].
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last, enabled for this screen [fSCRequisition.vb:68].
+  Print, Preview, Export and Email: Toolbar actions enabled for this screen [fSCRequisition.vb:69-72].
+validations:
+- Select valid Source Document.
+- Select valid Ref Docment No.
+- Document Date can't be less than Ref. Document Date
+- Select valid Product Type.
+- Select valid Warehouse.
+- Select valid Subcontract Type.
+- Select valid Nature.
+- Select valid Department.
+- Select valid Cost Center.
+- Enter Requested By.
+- Select atleast one Item for Service
+- Quantity can't be empty or 0
+- Select atleast one Activity
+- Select atleast one Activity.
+- Select valid Activity Code in row <n>.
+- Select valid Unit in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Enter Qty. in row <n>.
+- Work Order Date can't be greater than Document Date in row <n>.
+- Only one work Order can be selected
+- Qty. can't be greater than balance qty.
+- Select valid Activity in row <n>.
+- Select valid Service Description in row <n>.
+- Select valid Item Description in row <n>.
+- Select valid Item Flow in row <n>.
+- Select valid Item Flow.
+- Select valid Item Code
+- Quantity can't be 0 or empty
+- Select valid Service Description.
+- Select Issuable Input Item against Service Item <name>
+- Select Primary Output Item against Service Item <name>
+- One Primary Output Item is defined against Service Item <name>
+- 'Select Issuable Input Item '
+- 'Select Primary Output Item '
+- Only One Primary Output Item can be defined against Activity <name>
+- Select atleast one Issuable Input for first Sequence No. <n>
+- Select atleast one Primary Output for Last Sequence No. <n>
+- No Issueable Input Found against Returnable Input
+- Cannot select Item Flow 'Repairable Item' for <type> in row <n>.
+- ' Selected Serial Numbers should be equal to Quantity.'
+- Select atleast one Repairable Item
+- Capital And Non-Capital can't be select atonce.
+- Duplicate Item Code not allowed.
+- Duplicate Service Description, Item Flow, Item Code and Make not allowed.
+- Duplicate Work Order No. not allowed.
+- Duplicate Activity Code not allowed.
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Qty. in Service Request cannot be more than Qty. in Material Planning
+- Document No. <number> saved successfully.
+- Authorized Requisition can't be updated.
+manages:
+- service-request
+uses_concepts:
+- company
+method_notes:
+  ActivityDetail: Runs through Inventory.SCRQActivityDetail.
+  Delete: Deletes the record through Inventory.SCRQDelete.
+  FillValues: Fills the lookup lists through Inventory.SCRQFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.SCRQFillValuesDependent.
+  GetCostCenterInfo: Runs through Inventory.SCRQGetCostCenterInfo.
+  GetDeptInfo: Runs through Inventory.SCRQGetDeptInfo.
+  GetItemInformation: Runs through Inventory.SCRQGetItemInformation.
+  LoadData: Loads the selected record through Inventory.SCRQLoadData.
+  LoadRepeatedEntry: Searches records through Inventory.SCRQSearchData.
+  Open: Searches records through Inventory.SCRQSearchData.

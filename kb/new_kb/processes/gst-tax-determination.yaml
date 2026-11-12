@@ -1,0 +1,41 @@
+key: gst-tax-determination
+name: GST Tax Determination
+module: FI
+status: active
+summary: GST and other taxes and charges on purchases come from HSN / SAC codes, TDC groups and TDC account rules.
+description: |
+  Evidence: code + ERP domain (inferred)
+  HSN / SAC codes carry GST rates; TDC charges are grouped into tax groups and account rules; orders and bills pick them up to compute and post taxes.
+steps:
+- order: 1
+  name: Sub group HSN / SAC
+  form: fMaterialSubGroupMaster
+- order: 2
+  name: Units with GST UQC
+  form: fUnitMaster
+- order: 3
+  name: Define HSN / SAC codes
+  form: fHSNCode
+- order: 4
+  name: Define taxes, duties and charges
+  form: fTDCMaster
+- order: 5
+  name: Define TDC groups
+  form: fTDCGroup
+- order: 6
+  name: Define TDC account rules
+  form: fTDCAccountRule
+- order: 7
+  name: Tax on the purchase order
+  form: fPurchaseOrder
+- order: 8
+  name: Tax on the purchase bill
+  form: fPurchaseBill
+concepts:
+- tdc-charge
+- tdc-group
+- tdc-account-rule
+- gst-category
+- hsn-sac-code
+leads_to:
+- payment-flow

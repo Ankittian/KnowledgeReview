@@ -1,0 +1,38 @@
+form: fFSMultiLayoutMapping
+title: Multiple Layout Mapping
+module: MD
+kind: master
+summary: The Multiple Layout Mapping screen maps one ledger account, or one account group, to several sections or groups of
+  a financial statement layout at the same time.
+purpose: |
+  What it is: The assignment of one account or group to several headings of a layout, for example one heading for the opening balance and another for movements. When it applies: When a balance must appear in more than one place of a financial statement (Inferred). Business outcome: Statements such as cash flow or notes can show different aspects of the same account (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header selectors and a heading grid.
+  - FSL Name Field: Mandatory dropdown of layouts (BR-01).
+  - COA Name Field: Read-only text.
+  - Type Field: Mandatory dropdown: Account or Group (BR-01).
+  - Account/ Group Name Field: Mandatory dropdown showing name and parent group (BR-01, BR-02).
+  - FS Layout Design Grid: Columns FS Layout Design (dropdown) and Show Account Balance (read-only).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Replaces the headings of the selected account or group in the selected layout.
+validations:
+- Select valid FSL Name.
+- Select valid Type.
+- Select valid Account Group Name.
+- Duplicate Section/ Group is not allowed.
+- Select atleast one FS Layout Design.
+- Do you want to save ?
+- Data saved successfully.
+manages:
+- multiple-layout-mapping
+uses_concepts:
+- account-mapping
+- layout-design
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.FSLMFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.FSLMFillValuesDependent.
+  FillValuesDetail: Fills the lookup lists through masterdata.FSLMFillValuesDetail.
+  Save: Saves the record through masterdata.FSLMSaveMain.

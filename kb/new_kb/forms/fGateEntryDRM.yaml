@@ -1,0 +1,88 @@
+form: fGateEntryDRM
+title: Gate Entry
+module: DRM
+kind: transaction
+summary: The Gate Entry screen for discrete raw material records each inward vehicle carrying raw material for the discrete
+  raw material stores, before the material is received on a Stores Inward Note.
+purpose: |
+  What it is: A dated, numbered record of an inward consignment of discrete raw material, tied to the supplier location, the reference orders and the items and quantities declared on the supplier challan [fGateEntryDRM.vb:712-855; GateEntry.IMGESaveMain:123-230]. When it applies: When a vehicle with raw material reaches the gate, before the Stores Inward Note is prepared. Business outcome: The company has a controlled first record of every inward raw material consignment, with duplicate challan control and a link to the reference order (BR-03; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Header: The shared document control showing Status, Document No., Document Date and Division [fGateEntryDRM.vb:97-102; fGateEntryDRM.vb:376-378].
+  - Tabs: General Details, Item Detail and Custom Fields: Three tabs: General Details, Item Detail and Custom Fields [fGateEntryDRM.Designer.vb:1405-1414].
+  - Source Document Field: A mandatory drop-down of the five sources [fGateEntryDRM.vb:25; fGateEntryDRM.vb:108].
+  - Ref. Document No. and Ref. Document Date Fields: A drop-down of eligible reference orders and a read-only date [fGateEntryDRM.vb:1322; fGateEntryDRM.Designer.vb:598-600].
+  - Vendor Name and Location Fields: Mandatory drop-downs; the location list follows the vendor and selects its first location [fGateEntryDRM.vb:1079-1094; fGateEntryDRM.vb:25].
+  - Challan No. and Challan Date Fields: A mandatory text box (30 characters) and a mandatory date [fGateEntryDRM.Designer.vb:1057; fGateEntryDRM.vb:485-502].
+  - Transporter Field and Information Link: A mandatory drop-down of transporters with an information link beside it [fGateEntryDRM.vb:110; fGateEntryDRM.vb:504-509; fGateEntryDRM.vb:1453-1457].
+  - Driver Name Field: A mandatory editable drop-down of earlier driver names, up to 50 characters [GateEntry.DRGEFillValues:69-75; fGateEntryDRM.Designer.vb:823; fGateEntryDRM.vb:511-516].
+  - Vehicle No. Field: A mandatory text box, up to 15 characters [fGateEntryDRM.Designer.vb:931; fGateEntryDRM.vb:518-523].
+  - LR No. and LR Date Fields: A text box (30 characters) and an optional date with a check box [fGateEntryDRM.Designer.vb:880-910].
+  - Ref. Document No. & Date Field: A free text box of up to 50 characters for the party's own reference [fGateEntryDRM.Designer.vb:859-867; fGateEntryDRM.vb:772].
+  - Freight Type, From Location and To Location Fields: Drop-downs; Freight Type is mandatory [fGateEntryDRM.vb:112; fGateEntryDRM.vb:121-122; fGateEntryDRM.vb:539-543].
+  - Distance and Vehicle Capacity Fields: Optional numbers with two decimals, up to 8 and 13 characters [fGateEntryDRM.vb:86-87; fGateEntryDRM.Designer.vb:436; fGateEntryDRM.Designer.vb:454].
+  - eWay-Bill No. and eWay-Bill Date Fields: A text box (50 characters) and an optional date with a check box [fGateEntryDRM.Designer.vb:386; fGateEntryDRM.Designer.vb:419].
+  - Freight Rate Type, Freight Rate and Advance Amount Fields: A drop-down and two numbers of two decimals (up to 13 characters), hidden unless the inventory setting enables them [fGateEntryDRM.vb:144-168; fGateEntryDRM.Designer.vb:322; fGateEntryDRM.Designer.vb:359].
+  - Remarks Field: A text box of up to 1000 characters [fGateEntryDRM.Designer.vb:845].
+  - Mobile Gate In Group: A Reference Item button and read-only Mobile Gate In No., Net Weight and Approved By boxes [fGateEntryDRM.Designer.vb:1424-1474; fGateEntryDRM.vb:173-194].
+  - Notes Control: The shared Notes control with a print area and default flag [fGateEntryDRM.Designer.vb:753-761; fGateEntryDRM.vb:131-132].
+  - Custom Fields Tab: The shared custom fields control, validated on save [fGateEntryDRM.vb:105; fGateEntryDRM.vb:422-424].
+  - Order Detail Grid: A grid with Select, Order No., Order Date and Order Type, where only Select can be changed [fGateEntryDRM.vb:1275-1305].
+  - Item Detail Grid: A grid with Select, Item Code, Item Description, Btn, an information icon, Make, Unit, Order Qty., SIN Qty., Challan Qty.
+actions:
+  New: Opens a blank gate entry and puts the focus on Source Document [fGateEntryDRM.vb:319-328; fGateEntryDRM.vb:369-387].
+  Save: Validates and saves the entry [fGateEntryDRM.vb:712-855].
+  Search (Open): Opens a search dialog of earlier gate entries and loads the chosen one [fGateEntryDRM.vb:330-359].
+  Delete: Deletes the open gate entry after a confirmation [fGateEntryDRM.vb:35-65].
+  Navigation, Print, Preview, Export and Email: The toolbar option list is commented out; Print, Preview, Export and Email
+    have empty code [fGateEntryDRM.vb:17-23; fGateEntryDRM.vb:361-367; fGateEntryDRM.vb:1445-1451].
+validations:
+- Authorized Gate Entry can't be updated.
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Black listed Vehicle can not be used.
+- Duplicate Challan No. not allowed.
+- Select valid Source Document.
+- Select valid Vendor Name.
+- Select valid Location.
+- Enter Challan No.
+- Challan Date can't be greater than Document Date.
+- Challan Date can't be less than Ref. Document Date.
+- Select valid Transporter.
+- Enter Driver Name.
+- Enter Vehicle No.
+- Select LR Date.
+- Enter LR No.
+- Select valid Freight Type.
+- Select eWay-Bill Date.
+- eWay-Bill Date can't be greater than Document Date.
+- Select atleast one Order No.
+- Document Date can't be less than selected Order Date in row <n>.
+- Select atleast one Item.
+- Select valid Item Description in row <n>.
+- Select valid Unit in row <n>.
+- Challan Qty. can't be zero or empty in row <n>.
+- Challan Qty. can't be greater than Order Qty. in row <n>.
+- Duplicate Item Name and Make is not allowed.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+- Can't be deleted as some record exist against this entry.
+- Unable to delete,weighment entry exists against this entry.
+- Unable to delete, Vehicle gate out exists against SGPI entries
+manages:
+- gate-entry-fgateentrydrm
+uses_concepts:
+- company
+- stock-transfer
+- store-inward-note
+method_notes:
+  Delete: Deletes the record through GateEntry.IMGEDelete.
+  FillValues: Fills the lookup lists through GateEntry.DRGEFillValues.
+  FillValuesDependent: Fills the lookup lists through GateEntry.DRGEFillValuesDependent.
+  FillValuesPODetail: Fills the lookup lists through GateEntry.DRGEFillValuesPODetail.
+  FillValuesVendorLocation: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  GetItemInfo: Runs through GateEntry.IMGEGetItemInfo.
+  GetTransporterInfo: Runs through GateEntry.IMGEGetTransporterInfo.
+  LoadData: Loads the selected record through GateEntry.DRGELoadData.
+  Open: Searches records through GateEntry.IMGESearchData.
+  Save: Saves the record through GateEntry.IMGESaveMain.

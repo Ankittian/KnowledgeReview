@@ -1,0 +1,58 @@
+key: p12-finance-taxes-and-concession-forms
+name: 'Finance: Taxes and concession forms (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the taxes and concession forms group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Taxes and concession forms' (Finance). The steps follow the plan order, not a verified business sequence: Proforma Invoice Receipt Voucher, General Proforma Invoice Receipt, GST Advance Receipt, Cenvat Utilization, Received/Issue Concession Form, Service Tax Challan, Service Tax Data Verification, GST Credit Utilization, GST ITC Reversal, TDS Data Verification, TDS Payment, TDS Quarterly Return.
+steps:
+- order: 1
+  name: Record Proforma Invoice Receipt Voucher
+  form: fPIReceipt
+- order: 2
+  name: Record General Proforma Invoice Receipt
+  form: fGeneralPIReceipt
+- order: 3
+  name: Record GST Advance Receipt
+  form: fGSTAdvanceReceipt
+- order: 4
+  name: Record Cenvat Utilization
+  form: fCenvatUtilization
+- order: 5
+  name: Record Received/Issue Concession Form
+  form: fConcessionFormEntry
+- order: 6
+  name: Record Service Tax Challan
+  form: fServiceTaxChallan
+- order: 7
+  name: Record Service Tax Data Verification
+  form: fServiceTaxDataVerify
+- order: 8
+  name: Record GST Credit Utilization
+  form: fGSTTaxCreditUtilization
+- order: 9
+  name: Record GST ITC Reversal
+  form: fGSTReversal
+- order: 10
+  name: Record TDS Data Verification
+  form: fTDSDataVerify
+- order: 11
+  name: Record TDS Payment
+  form: fTDSPayment
+- order: 12
+  name: Record TDS Quarterly Return
+  form: fTDSQuarterlyReturn
+concepts:
+- proforma-invoice-receipt-voucher
+- general-proforma-invoice-receipt
+- gst-advance-receipt
+- cenvat-utilization
+- received-issue-concession-form
+- service-tax-challan
+- service-tax-data-verification
+- gst-credit-utilization
+- gst-itc-reversal
+- tds-data-verification
+- tds-payment
+- tds-quarterly-return

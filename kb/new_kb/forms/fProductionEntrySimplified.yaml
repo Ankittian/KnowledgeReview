@@ -1,0 +1,60 @@
+form: fProductionEntrySimplified
+title: Production Entry
+module: PM
+kind: transaction
+summary: The Production Entry screen is a simplified process-production entry.
+purpose: |
+  What it is: A document that records the output of one shift at one work center, with item, quantity and value per output line [fProductionEntrySimplified.vb:611-715; fProductionEntrySimplified.vb:718-783]. When it applies: At the end of a shift or run, when finished or semi-finished goods are declared. Business outcome: Output reaches stock only through a controlled, authorized document, and each line carries a value for costing (BR-04; BR-05; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "ProductionEntry" with the document control (number, date, status, division) and two tabs: "General Detail" (header fields, Production Detail grid) and "Custom Field" [fProductionEntrySimplified.Designer.vb:385; fProductionEntrySimplified.Designer.vb:302; fProductionEntrySimplified.Designer.vb:305].
+  - Document Number, Date, Status and Division Control: The shared document control [fProductionEntrySimplified.vb:130; fProductionEntrySimplified.vb:635-651].
+  - Work Center Field: Mandatory dropdown "Work Center" showing name and code [fProductionEntrySimplified.Designer.vb:160; fProductionEntrySimplified.vb:20; fProductionEntrySimplified.vb:389-394].
+  - Contractor Field: Optional dropdown "Contractor" [fProductionEntrySimplified.Designer.vb:179; fProductionEntrySimplified.vb:655-659].
+  - Shift Field: Mandatory dropdown "Shift" [fProductionEntrySimplified.Designer.vb:198; fProductionEntrySimplified.vb:396-401].
+  - Shift Incharge Field: Mandatory editable dropdown "Shift Incharge" up to the length stored by the database (100 characters in the database) [fProductionEntrySimplified.Designer.vb:218; fProductionEntrySimplified.vb:403-408; Production.PIPESave:18].
+  - Warehouse Field: Mandatory dropdown "Warehouse" [fProductionEntrySimplified.Designer.vb:141; fProductionEntrySimplified.vb:410-415].
+  - Process Field: Optional text box "Process" up to 100 characters [fProductionEntrySimplified.Designer.vb:113; fProductionEntrySimplified.Designer.vb:119; fProductionEntrySimplified.vb:672].
+  - Remarks Field: Optional text box "Remarks" up to 1000 characters [fProductionEntrySimplified.Designer.vb:237; fProductionEntrySimplified.Designer.vb:224; fProductionEntrySimplified.vb:666].
+  - Production Detail Grid: Grid with Item Type, Item Description, a lookup button, Unit, Qty.
+  - Custom Field Tab: The shared custom-field control for form code "PIPE" [fProductionEntrySimplified.vb:88; fProductionEntrySimplified.vb:818-843].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fProductionEntrySimplified.vb:245-277].
+actions:
+  New: Starts a fresh document [fProductionEntrySimplified.vb:206-215; fProductionEntrySimplified.vb:279-302].
+  Save: Validates, saves the document and lines, saves custom fields and runs the authorization check, all in one transaction
+    [fProductionEntrySimplified.vb:611-715].
+  Search: Opens the standard search window of this company and year [fProductionEntrySimplified.vb:217-243].
+  Delete: Deletes the open document after the standard confirmation [fProductionEntrySimplified.vb:26-56].
+validations:
+- Authorized ProductionEntry can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Work Center.
+- Select valid Shift.
+- Enter or select valid Shift Incharge.
+- Select valid Warehouse.
+- Select at least one Primary Output/Secondary Output/Semi-Finished Product in Production Detail.
+- Select Item Description in row <n>.
+- Qty. can't be empty or zero in row <n>.
+- Loss Qty. can't be greater than Qty. in row <n>.
+- Duplicate Item not allowed.
+- Duplicate entry not allowed.
+- 'Sufficient Issue Balance Qty. not available '
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+manages:
+- production-entry
+uses_concepts:
+- company
+- production-formula
+- work-center
+method_notes:
+  Delete: Deletes the record through Production.PIPEDelete.
+  FillValues: Fills the lookup lists through ProcessProduction.PIPEFillValues.
+  FillValuesDependent: Fills the lookup lists through ProcessProduction.PIPEFillValuesDependent.
+  LoadData: Loads the selected record through Production.PIPELoadData.
+  Open: Searches records through Production.PIPESearchData.
+  Save: Saves the record through ProcessProduction.PIPEAuthorize, Production.PIPESave.
+  SaveCustomFields: Saves the record through ProcessProduction.PIPESaveCustomFieldDetail.
+  SaveProductionDetail: Saves the record through ProcessProduction.PIPESaveItemAttributeDetail, ProcessProduction.PIPESaveProductionDetail.
+  ValidateForm: Validates the entry through ProcessProduction.PIPEValidate.

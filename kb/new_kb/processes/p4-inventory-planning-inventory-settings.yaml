@@ -1,0 +1,14 @@
+key: p4-inventory-planning-inventory-settings
+name: 'Inventory: Planning & inventory settings (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the planning & inventory settings group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Planning & inventory settings' (Inventory). The steps follow the plan order, not a verified business sequence: Material Consumption Pattern.
+steps:
+- order: 1
+  name: Record Material Consumption Pattern
+  form: fItemConsumptionPattern
+concepts:
+- material-consumption-pattern

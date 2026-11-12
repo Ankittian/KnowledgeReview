@@ -1,0 +1,29 @@
+form: fWeighBridgeItemSetting
+title: Weigh Bridge Item Setting
+module: WB
+kind: transaction
+summary: The Weigh Bridge Item Setting screen lets the user choose which items take part in weigh bridge processing and record,
+  for each chosen item, the weight of its packing material.
+purpose: |
+  What it is: A list of items flagged for weigh bridge use, each with an optional packing material weight [fWeighBridgeItemSetting.vb:333-364; WeighBridge.WBISFillValues:18-27]. When it applies: When the plant decides which items are weighed on the bridge, or when packing weights change. Business outcome: Weighment screens can restrict item choices to the flagged items and allow for packing weight (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding one grid, Item Detail [fWeighBridgeItemSetting.Designer.vb:26-40].
+  - Item Detail Grid: A grid with columns Select, Item Code, Item Description, Unit, Group Name, Sub Group Name, Category Name, Item Type and Packing Material Weight; the item number is hidden [fWeighBridgeItemSetting.vb:261-294; WeighBridge.WBISFillValues:18-27].
+  - Select Column: A tick box per row; the header caption is empty and holds the select-all tick box [fWeighBridgeItemSetting.vb:265].
+  - Packing Material Weight Column: An editable numeric column, up to 13 characters with 3 decimals; optional [fWeighBridgeItemSetting.vb:89; WeighBridge.WBISSave:11].
+  - Other Toolbar Actions (Open, Delete, Search, Print, Preview, Export, Email): Open and Delete are switched off when the screen loads; the other handlers are empty or commented out [fWeighBridgeItemSetting.vb:92-93; fWeighBridgeItemSetting.vb:49-74; fWeighBridgeItemSetting.vb:139-197].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWeighBridgeItemSetting.vb:130-137].
+  Save: The toolbar action that validates and stores the selection [fWeighBridgeItemSetting.vb:295-332].
+validations:
+- Select atleast one Item Details.
+- Saved successfully.
+manages:
+- weigh-bridge-item-setting
+uses_concepts:
+- company
+- material-category
+method_notes:
+  FillValues: Fills the lookup lists through WeighBridge.WBISFillValues.
+  SaveItemDetail: Saves the record through WeighBridge.WBISSave.

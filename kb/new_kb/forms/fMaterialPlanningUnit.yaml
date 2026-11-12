@@ -1,0 +1,42 @@
+form: fMaterialPlanningUnit
+title: Material Planning Unit
+module: MD
+kind: master
+summary: The Material Planning Unit screen defines a named planning unit for one company and decides which division and warehouse
+  combinations belong to it.
+purpose: |
+  What it is: A master record that groups warehouses (with their divisions, where divisions are used) of one company into a single unit for material planning, and names the one warehouse that executes the plan [fMaterialPlanningUnit.vb:285-316; masterdata.IMPUSaveWarehouseDetail:20-35]. When it applies: When a company sets up material planning, or when its warehouse grouping changes. Business outcome: Min/max, reorder and planning data can be held per group of warehouses instead of per warehouse, and no warehouse is planned by two units at once (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single group box holding Code, Planning Unit, Company Name and the warehouse grid [fMaterialPlanningUnit.Designer.vb:105-112].
+  - Code Field: A read-only text box that cannot be tabbed into [fMaterialPlanningUnit.Designer.vb:39-43].
+  - Planning Unit Field: A mandatory text box, up to 50 characters, marked as compulsory on load [fMaterialPlanningUnit.vb:52; fMaterialPlanningUnit.Designer.vb:59].
+  - Company Name Field: A mandatory drop-down showing the company name, with the company code as a secondary column [fMaterialPlanningUnit.vb:105; fMaterialPlanningUnit.vb:52].
+  - Warehouse Detail Grid: A grid with columns Select, Division, Warehouse and Execution Unit.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fMaterialPlanningUnit.vb:181-213].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fMaterialPlanningUnit.vb:147-154].
+  Save: The toolbar action that validates and stores the unit and its warehouse rows [fMaterialPlanningUnit.vb:345-395].
+  Search: The toolbar action that opens a search dialog listing every planning unit with Code, Planning Unit, Company Name,
+    Inactive flag, Created By and Created Date [masterdata.IMPUSearchData:12-17].
+  Delete: The toolbar action that removes the open unit [fMaterialPlanningUnit.vb:58-90].
+validations:
+- Enter Planning Unit .
+- Select valid Company Name.
+- Select one Execution Unit.
+- Can't select more than one Execution Unit.
+- Select atleast on Warehouse detail.
+- Duplicate Planning Unit is not allowed.
+manages:
+- material-planning-unit
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.IMPUDelete.
+  FillValues: Fills the lookup lists through masterdata.IMPUFillValues.
+  LoadData: Loads the selected record through masterdata.IMPULoadData.
+  Open: Searches records through masterdata.IMPUSearchData.
+  Save: Saves the record through masterdata.IMPUSave.
+  SaveWarehouseDetail: Saves the record through masterdata.IMPUSaveWarehouseDetail.
+  ValidateForm: Validates the entry through masterdata.IMPUValidate.
+  ucmbCompanyName_ValueChanged: Fills the lookup lists through masterdata.IMPUFillValuesDependent.

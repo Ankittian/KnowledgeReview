@@ -1,0 +1,55 @@
+form: fVehicleAxleLayout
+title: Axle–Wheel Configuration
+module: PM
+kind: transaction
+summary: 'The Axle–Wheel Configuration screen defines a reusable vehicle axle layout: a named template stating how many axles
+  and tyres a vehicle type has and where each tyre sits.'
+purpose: |
+  What it is: A master list of axle and tyre position templates for vehicles. When it applies: When a new vehicle configuration (for example a two-axle truck or a trailer with spare positions) must be defined before equipment or tyres are assigned to it. Business outcome: Tyres can later be fitted, moved and inspected against named positions on a vehicle (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A header block with the layout details above a grid of tyre positions.
+  - Code Field: Read-only text box.
+  - Axle Layout Name Field: Text, up to 50 characters, compulsory.
+  - Description Field: Text, up to 300 characters, compulsory.
+  - No. Of Axle Field: Whole number, two digits, compulsory.
+  - Alias Field: Text, up to 15 characters, compulsory.
+  - No. Of Tyres Field: Whole number, two digits, compulsory.
+  - Tyre Position Grid: A grid titled for tyre positions with four columns: Tyre Position Type (dropdown), Axle No.
+actions:
+  New: Toolbar action that asks the main window for a new record.
+  Save: Toolbar action that validates and saves the layout.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Toolbar action that deletes the loaded layout.
+validations:
+- Axle Layout Name can not be empty
+- Description can not be empty
+- No of axle can not be empty
+- No of axle can not be 0
+- Layout Alias can not be empty
+- Tyre Count can not be empty
+- Tyre Count can not be 0
+- Enter at least one Tyre Axle details.
+- Duplicate Tyre Layout Name not allowed
+- Duplicate Alias not allowed
+- 'Axle No. can''t be empty for Running position in row : N'
+- 'Axle No. can''t be 0 for Running position in row : N'
+- 'Tyre Position Alias can''t be empty in row : N'
+- 'Sort sequence can''t be empty  in row : N'
+- 'Sort sequence can''t be 0  in row : N'
+- 'Repeating tyre position alias : X,  in row : N'
+- 'Repeating sort sequence no. : N , in row : N'
+- No of tyres not matching the tyres mentioned in the form
+- No of axle not same as above mentioned
+manages:
+- axle-wheel-configuration
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.TVLMDelete.
+  FillValues: Fills the lookup lists through masterdata.TVLMFillValues.
+  LoadData: Loads the selected record through masterdata.TVLMLoadData.
+  Open: Searches records through masterdata.TVLMSearchData.
+  Save: Saves the record through masterdata.TVLMSave.
+  ValidateForm: Validates the entry through masterdata.TVLMValidate.
+  savetyreposition: Saves the record through masterdata.TVLMSavePositionDetail.

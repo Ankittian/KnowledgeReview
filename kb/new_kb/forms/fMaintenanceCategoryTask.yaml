@@ -1,0 +1,42 @@
+form: fMaintenanceCategoryTask
+title: Maintenance Category Task
+module: PM
+kind: transaction
+summary: The Maintenance Category Task screen defines a standard task list for one Maintenance Category.
+purpose: |
+  What it is: A master record that ties one Maintenance Category to a set of equipment and to a list of standard tasks with an estimated time and a priority [fMaintenanceCategoryTask.vb:335-380; EAM.MACTSave:21-55]. When it applies: When a company sets up or revises the standard work content of a type of maintenance for its equipment. Business outcome: Equipment carries one agreed task list per category, preventing conflicting standards (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: A single group box that holds the header field, the Inactive check box and the two grids [fMaintenanceCategoryTask.Designer.vb:73-80].
+  - Maintenance Category Field: A dropdown, mandatory (marked compulsory on load), populated from the Maintenance Category master [fMaintenanceCategoryTask.vb:13; fMaintenanceCategoryTask.vb:65; fMaintenanceCategoryTask.Designer.vb:51].
+  - Inactive Field: A check box labelled "Inactive", disabled [fMaintenanceCategoryTask.Designer.vb:85; fMaintenanceCategoryTask.Designer.vb:90].
+  - Equipment Detail Grid: A grid with columns Select (editable, width 55), Equipment Name (read-only) and Equipment Code (read-only); the equipment number is hidden [fMaintenanceCategoryTask.vb:275-298].
+  - Task Detail Grid: A grid with columns Task Name (dropdown, width 400), Estimated Hrs (right-aligned, width 100, two decimals) and Priority (dropdown, width 100) [fMaintenanceCategoryTask.vb:55-58; fMaintenanceCategoryTask.vb:319-333].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fMaintenanceCategoryTask.vb:136-168].
+actions:
+  New: Asks the main window to start a new record [fMaintenanceCategoryTask.vb:101-108].
+  Save: Validates the list, asks for save confirmation and writes the header, equipment and tasks in one transaction [fMaintenanceCategoryTask.vb:335-380].
+  Search: Opens a search dialog listing every task list with Maintenance Category, Equipment (comma-joined names), Inactive
+    and Created By [fMaintenanceCategoryTask.vb:110-134; EAM.MACTSearchData:17-25].
+  Delete: Deletes the opened task list after confirmation [fMaintenanceCategoryTask.vb:19-43].
+validations:
+- Select valid Maintenance Category.
+- Select atleast one Equipment.
+- 'Enter Estimated Hrs in row '
+- 'Selcet valid Priority in row '
+- 'Invalid Time : minute should be less than 60.'
+- Equipment can't have multiple active entry
+- Saved successfully.
+manages:
+- maintenance-category-task
+uses_concepts:
+- equipment-master
+method_notes:
+  Delete: Deletes the record through EAM.MACTDelete.
+  FillValues: Fills the lookup lists through EAM.MACTFillValues.
+  LoadData: Loads the selected record through EAM.MACTLoadData.
+  Open: Searches records through EAM.MACTSearchData.
+  Save: Saves the record through EAM.MACTSave.
+  SaveEquipmentDetail: Saves the record through EAM.MACTSaveEquipmentDetail.
+  SaveTaskDetail: Saves the record through EAM.MACTSaveTaskDetail.
+  ValidateForm: Validates the entry through EAM.MACTValidate.

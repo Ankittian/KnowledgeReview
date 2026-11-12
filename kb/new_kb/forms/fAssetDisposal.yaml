@@ -1,0 +1,72 @@
+form: fAssetDisposal
+title: Asset Disposal
+module: FI
+kind: transaction
+summary: The Asset Disposal screen records the sale of fixed asset tags to a customer account.
+purpose: |
+  What it is: A document that retires asset tags from the register against a sale amount, and produces the accounting for the sale and for the depreciation up to the sale date [fAssetDisposal.vb:589-716]. When it applies: When an asset or part of a lot is sold, or (in the code) transferred to another Finance Book. Business outcome: The register shows the tag as disposed, the books show the sale, the depreciation cut-off and the profit or loss (BR-09; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned in code "AssetDisposal" with a header group and four tabs: "General Detail", "Tax Detail", "Finance Posting" and "Depreciation Posting" [fAssetDisposal.Designer.vb:352; fAssetDisposal.Designer.vb:309-321].
+  - Document Block (Document No., Date, Status, Finance Book): A shared control for number, date, status and finance book [fAssetDisposal.vb:123; fAssetDisposal.vb:175-184].
+  - Header Fields: Disposal Nature, Account Name, Asset Group (mandatory), Receipt Mode and Remarks up to 1000 characters; a currency control [fAssetDisposal.vb:56; fAssetDisposal.vb:110; fAssetDisposal.Designer.vb:185-261].
+  - General Detail Grid: A grid with Select, Asset No., Asset Description, Tag No., Tag Description, Serial No., Tag Qty., Qty., Rate, Amount and Remark; Disposed Qty.
+  - Tax Detail Tab: The shared tax control driven by the Basic Amount (sum of ticked amounts) [fAssetDisposal.vb:105; fAssetDisposal.vb:1115-1120].
+  - Finance Posting Tab: The shared posting control showing the sales journal [fAssetDisposal.vb:877-931].
+  - Depreciation Posting Tab: The shared depreciation control with the calculation per tag, the summary and the depreciation voucher [fAssetDisposal.vb:140; fAssetDisposal.vb:1017-1030].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty routines [fAssetDisposal.vb:271-303].
+actions:
+  New: Asks the main window for a blank record [fAssetDisposal.vb:234-241].
+  Save: Validates and stores the document and, on authorization, the vouchers [fAssetDisposal.vb:589-722].
+  Search: Opens a list of documents of the company and working year with Finance Book, Document No., Document Date, Disposal
+    Nature, Account Name, Asset Group, Net Amount, Status, Created By and Authorized By [fAssetDisposal.vb:243-269; FixedAsset.AMDASearchData:18-42].
+  Delete: Deletes the open document after confirmation [fAssetDisposal.vb:63-91].
+validations:
+- Select valid Disposal Nature.
+- Select valid Account Name.
+- Select valid Asset Group.
+- Select atleast one Asset Tag.
+- Enter Qty.
+- ' in row '
+- Qty. should be equal to balance qty.
+- Enter Rate
+- Enter Amount
+- Qty. can't be greater than Balance Qty.
+- Asset Clearing A/C is not created against the Inter FB.
+- Authorized Asset Disposal can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- asset-disposal
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-class
+- asset-group
+- asset-tag-bifurcation
+- class-account-item-mapping
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMDADelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMDAFillValues.
+  FillValuesAsset: Fills the lookup lists through FixedAsset.AMDAFillValuesAsset.
+  FillValuesFB: Fills the lookup lists through FixedAsset.AMDAFillValuesFB.
+  LoadData: Loads the selected record through FixedAsset.AMDALoadData.
+  Open: Searches records through FixedAsset.AMDASearchData.
+  Save: Saves the record through Finance.VoucherSaveChildDetail, FixedAsset.AMDASaveMain.
+  SaveAssetDetail: Saves the record through FixedAsset.AMDASaveAssetDetail.
+  SaveAssetTagTransactionDetail: Saves the record through FixedAsset.AssetSaveTransactionMain.
+  SaveTaxDetail: Saves the record through FixedAsset.AMDASaveTaxDetail.

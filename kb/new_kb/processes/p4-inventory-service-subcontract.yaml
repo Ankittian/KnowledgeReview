@@ -1,0 +1,14 @@
+key: p4-inventory-service-subcontract
+name: 'Inventory: Service / subcontract (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the service / subcontract group in Inventory.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Service / subcontract' (Inventory). The steps follow the plan order, not a verified business sequence: Service Receipt Note.
+steps:
+- order: 1
+  name: Record Service Receipt Note
+  form: fSubcontractReceipt
+concepts:
+- service-receipt-note

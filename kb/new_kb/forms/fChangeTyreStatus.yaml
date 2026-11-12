@@ -1,0 +1,44 @@
+form: fChangeTyreStatus
+title: Change Tyre Status
+module: PM
+kind: transaction
+summary: 'The Change Tyre Status screen moves tyres that are waiting after removal to their next decision: awaiting repair,
+  awaiting retread or scrapped, and finishes the case of a rejected retread.'
+purpose: |
+  What it is: A transaction document that changes the life-cycle status of tyres, with a reason for each change [fChangeTyreStatus.vb:485-514; EAM.TCTSSaveChangeTyreStatusTyreDetails:25-44]. When it applies: When a removed tyre is judged for repair, retread or scrap. Business outcome: Status changes are authorised, reasoned and traceable instead of being edited on the tyre record.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document control at the top, a Remarks box and a Tyre Detail grid; the window caption is "ChangeTyreStatus" [fChangeTyreStatus.Designer.vb:93; fChangeTyreStatus.Designer.vb:108].
+  - Document Control Fields: The shared document control with Document Status, Division, Document Date and Document No.
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fChangeTyreStatus.Designer.vb:93; fChangeTyreStatus.Designer.vb:80].
+  - Tyre Detail Grid: A grid with columns Tyre Id, Make, Current Status, Reason For Status Change, New Status and Remarks; the current status number and stage number are hidden [EAM.TCTSFillValues:58-67; fChangeTyreStatus.vb:384-402].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a new record [fChangeTyreStatus.vb:148-155].
+  Save: The toolbar action that validates and saves [fChangeTyreStatus.vb:410-482].
+  Search: The toolbar action that opens a document search [fChangeTyreStatus.vb:157-180].
+  Delete: The toolbar action that removes the open document [fChangeTyreStatus.vb:50-73].
+validations:
+- Authorized ChangeTyreStatus can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Enter Reason For Status Change in row N.
+- Select New Status in row N.
+- Select atleast one Tyre in Tyre Detail.
+- Document No. <number> saved successfully.
+- Cannot set status to Installed via Change Tyre Status form.
+- Document is not authorized. Reversal is only allowed for authorized entries.
+- 'Reversal blocked: Tyre [serial] has a later transaction in Document [number] (Form n). Please reverse that document first.'
+manages:
+- change-tyre-status
+uses_concepts:
+- company
+- tyre-master
+method_notes:
+  Delete: Deletes the record through EAM.TCTSDelete.
+  FillValues: Fills the lookup lists through EAM.TCTSFillValues.
+  LoadData: Loads the selected record through EAM.TCTSLoadData.
+  Open: Searches records through EAM.TCTSSearchData.
+  Save: Saves the record through EAM.TCTSSave.
+  SaveTyreDetail: Saves the record through EAM.TCTSSaveChangeTyreStatusTyreDetails.
+  ValidateForm: Validates the entry through EAM.TCTSValidate.

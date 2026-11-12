@@ -1,0 +1,52 @@
+form: fChangeMaterialStockNature
+title: Change Material Stock Nature
+module: MM
+kind: transaction
+summary: The Change Material Stock Nature screen records a request to change the stock nature of selected stock lots in a
+  warehouse.
+purpose: |
+  What it is: A document that lists, per item and make, the stock lots of a warehouse that are to have their stock nature changed, with the requester and the reason [fChangeMaterialStockNature.vb:348-372; Inventory.CMSNSaveLotDetail:22-37]. When it applies: When the business decides that stock currently treated as capital stock in a warehouse must be reclassified (Inferred from the screen only offering capital-nature lots) [Inventory.CMSNGetItemLotDetail:39; Inventory.CMSNFillValuesDependent:47]. Business outcome: The reclassification request is raised against exact lots, with a stated reason and an approval status, instead of being agreed informally.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header control at the top, a general-details box (Warehouse, Requested By, Reason, Remarks, Notes) and an item-details box with the item grid [fChangeMaterialStockNature.Designer.vb:239-241].
+  - Document Header Control (Division, Date, Document No., Status): The shared control holding division, document date, document number, prefix and status [fChangeMaterialStockNature.Designer.vb:56-70].
+  - Warehouse Field: Mandatory drop-down labelled "Warehouse" [fChangeMaterialStockNature.Designer.vb:87; fChangeMaterialStockNature.vb:71].
+  - Requested By Field: Mandatory drop-down labelled "Requested By", up to 100 characters stored [fChangeMaterialStockNature.Designer.vb:107; Inventory.CMSNSave:18].
+  - Reason Field: Mandatory text box labelled "Reason", maximum 1000 characters [fChangeMaterialStockNature.Designer.vb:124; fChangeMaterialStockNature.vb:113].
+  - Remarks Field: Optional multi-line text box labelled "Remarks", maximum 1000 characters [fChangeMaterialStockNature.Designer.vb:130,142; fChangeMaterialStockNature.vb:114].
+  - Notes Control: Shared notes grid with Print Area, Notes and Default columns [fChangeMaterialStockNature.Designer.vb:146-151].
+  - Item Detail Grid: Grid with Item Code, Item Description, a button column, Make, Lot Detail, Quantity and Remarks (Remarks maximum 500 characters) [Inventory.CMSNFillValues:21-27; fChangeMaterialStockNature.vb:447-466].
+  - Lot Detail Pop-up: A row-edit pop-up, opened with the "Lot Detail" button of an item row, showing the lots of that item and make with columns Select, Lot No., Received Doc No., Received Doc Date, BIN Card No.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but contain no logic [fChangeMaterialStockNature.vb:246-278].
+actions:
+  New: Asks the main window to open a fresh record [fChangeMaterialStockNature.vb:209-216].
+  Save: Validates and saves the document, items, selected lots and notes in one transaction [fChangeMaterialStockNature.vb:519-602].
+  Search: Opens the shared search list of documents for the current company and year, then loads the chosen one [fChangeMaterialStockNature.vb:218-244;
+    Inventory.CMSNSearchData:19-36].
+  Delete: Deletes the loaded document after the standard delete confirmation [fChangeMaterialStockNature.vb:77-103].
+validations:
+- Authorized ChangeMaterialStockNature can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Warehouse .
+- Select valid Requested By.
+- Enter Reason.
+- Select alteast one Item.
+- Select valid Item Description in row N.
+- Select  valid Lot detail  in row N.
+- Select alteast one lot detail.
+- Duplicate Item Code and Make is not allowed.
+- Document No. <number> saved successfully.
+manages:
+- change-material-stock-nature
+method_notes:
+  Delete: Deletes the record through Inventory.CMSNDelete.
+  FillValues: Fills the lookup lists through Inventory.CMSNFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.CMSNFillValuesDependent.
+  GetItemLotDetail: Runs through Inventory.CMSNGetItemLotDetail.
+  LoadData: Loads the selected record through Inventory.CMSNLoadData.
+  Open: Searches records through Inventory.CMSNSearchData.
+  Save: Saves the record through Inventory.CMSNSave.
+  SaveItemDetail: Saves the record through Inventory.CMSNSaveItemDetail.
+  SaveLotDetail: Saves the record through Inventory.CMSNSaveLotDetail.
+  SaveNotesDetail: Saves the record through Inventory.CMSNSaveNotesDetail.

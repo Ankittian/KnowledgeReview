@@ -1,0 +1,40 @@
+form: fPurchaseOrganization
+title: Purchase Organization
+module: MM
+kind: master
+users:
+- Purchase manager (inferred)
+summary: 'The Purchase Organization screen maintains purchase organizations: named buying units that group one or more companies,
+  and divisions where they apply.'
+purpose: |
+  What it is: A buying unit that covers a set of companies or divisions with one executing unit. When it applies: When procurement is organised across units or the membership changes. Business outcome: Clear assignment of each unit to one purchase organization (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields at the top and the company grid below.
+  - Code Field: Read-only text box, skipped by Tab.
+  - Purchase Organization Field: Mandatory text box for the organization name; no length limit on screen, stored up to 100 characters (BR-01, BR-02).
+  - Inactive Field: Checkbox.
+  - Company Grid: Grid with Select (checkbox, default unticked), Company Name and Division (read-only) and Is Execution Unit (checkbox).
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): Not implemented on this screen.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the organization and its members.
+  Search: Standard search list with Purchase Organization, Company Name (comma list of member companies) and Created By.
+  Delete: Deletes the loaded organization after confirmation (MSG-09).
+validations:
+- Enter Purchase Organization Name.
+- Duplicate Purchase Organization Name
+- Select atleast one company
+- Select atleast one company as Execution Unit
+- Execution Unit can't nbe greater than one.
+manages:
+- purchase-organization
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.PUOMDelete.
+  FillValues: Fills the lookup lists through masterdata.PUOMFillValues.
+  LoadData: Loads the selected record through masterdata.PUOMLoadData.
+  Open: Searches records through masterdata.PUOMSearchData.
+  Save: Saves the record through masterdata.PUOMSave.
+  ValidateForm: Validates the entry through masterdata.PUOMValidate.

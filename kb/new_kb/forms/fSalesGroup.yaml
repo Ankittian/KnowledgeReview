@@ -1,0 +1,46 @@
+form: fSalesGroup
+title: Sales Group
+module: MD
+kind: master
+summary: The Sales Group screen (window caption "SalesGroup") maintains the sales teams or territory groups to which sales
+  persons belong.
+purpose: |
+  What it is: The enterprise list of sales groups with their hierarchy, current manager and company availability. When it applies: When a sales team is formed, renamed, re-parented, or gets a new manager. Business outcome: Sales persons can be organised into groups for reporting and responsibility (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields, a "Manager Detail" group and a "Company Detail" grid.
+  - Code Field: Read-only text box.
+  - Sales Group Field: Mandatory text box, 100 characters on screen (BR-01).
+  - Parent Sales Group Field: Optional dropdown of all other groups (BR-05).
+  - Manager Type Field: Option set Employee / Other; empty after New (BR-03).
+  - Manager Name Field: Mandatory combo (BR-04).
+  - Address, City, State, Country, Contact No. and Email Fields: Optional; address lines 100, contact 50, e-mail 300 characters.
+  - Company Detail Grid: Select tick, read-only Code and Company Name; hidden company identifier; rows cannot be added or deleted.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the group, its manager and companies.
+  Search: Standard search window with Code, Sales Group, Parent Sales Group, Manager Type, Manager Name, Created By, Created
+    Date, sorted by group.
+  Delete: Deletes the loaded group after confirmation (MSG-09).
+  Navigation: Not coded on this screen; provided by the standard toolbar, if at all (Inferred).
+validations:
+- Enter Sales Group.
+- Duplicate Sales Group not allowed.
+- Select valid Manager Type.
+- Enter or select valid Manager Name.
+- Select atleast one Company Detail.
+manages:
+- sales-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MDSGDelete.
+  FillValues: Fills the lookup lists through masterdata.MDSGFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.MDSGFillValuesDependent.
+  LoadData: Loads the selected record through masterdata.MDSGLoadData.
+  Open: Searches records through masterdata.MDSGSearchData.
+  Save: Saves the record through masterdata.MDSGSave.
+  SaveCompanyDetail: Saves the record through masterdata.MDSGSaveCompanyDetail.
+  SaveManagerDetail: Saves the record through masterdata.MDSGSaveManagerDetail.
+  ValidateForm: Validates the entry through masterdata.MDSGValidate.

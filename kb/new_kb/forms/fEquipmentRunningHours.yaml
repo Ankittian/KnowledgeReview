@@ -1,0 +1,47 @@
+form: fEquipmentRunningHours
+title: Equipment Running Hour
+module: PM
+kind: transaction
+summary: The Equipment Running Hour screen records how many hours each piece of equipment ran on a given day and shift.
+purpose: |
+  What it is: A daily log of the hours each equipment was in operation. When it applies: At the end of each day or shift, for the equipment that worked. Business outcome: Usage figures that support maintenance planning and equipment analysis.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: The document header control, a header area with Shift and Default Running Hrs, and the equipment grid.
+  - Document Header Control: Shared control with document number, prefix, division, document date and status.
+  - Shift Field: Dropdown (Shift), optional, labelled "Shift".
+  - Default Running Hrs Field: Text box (8 characters, up to 2 decimals).
+  - Equipment Grid: Grid with a Select tick box (also on the header), Equipment Code, Equipment Description, Running Hrs, Functional Location and Customer Asset No.
+  - Running Hrs Column: Number with two decimals, up to 10 characters, mandatory for ticked rows.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Asks the main window for a new record.
+  Save: Validates and saves the document.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Deletes the opened document.
+validations:
+- Select atleast one Equipment.
+- 'Enter Running Hrs in row '
+- 'Invalid Time : minute should be less than 60.'
+- Duplicate equipment entry for same date not allowed.
+- Authorized Equipment Running Hour can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Duplicate Equipment Description not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- equipment-running-hour
+uses_concepts:
+- company
+- equipment-master
+- functional-location
+method_notes:
+  Delete: Deletes the record through EAM.EAERDelete.
+  FillValues: Fills the lookup lists through EAM.EAERFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAERFillValueDependent.
+  LoadData: Loads the selected record through EAM.EAERLoadData.
+  Open: Searches records through EAM.EAERSearchData.
+  Save: Saves the record through EAM.EAERSave.
+  SaveEquipmentDetail: Saves the record through EAM.EAERSaveEquipmentDetail.
+  ValidateForm: Validates the entry through EAM.EAERValidate.

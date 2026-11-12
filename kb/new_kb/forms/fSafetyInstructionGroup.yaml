@@ -1,0 +1,38 @@
+form: fSafetyInstructionGroup
+title: Safety Instruction Group
+module: MD
+kind: master
+summary: The Safety Instruction Group screen maintains named bundles of safety instructions.
+purpose: |
+  What it is: A master record made of a code, a group name and a list of safety instructions [fSafetyInstructionGroup.vb:316-394; masterdata.MSIGSave:20-51; masterdata.MSIGSaveInstructionDetail:19-28]. When it applies: When a plant needs a standard set of safety instructions that is reused on several assets, permits or hazards. Business outcome: Instruction sets are defined once and reused, so the same precautions are applied consistently.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A small window captioned "Safety Instruction Group" with a header box (Code, Group Name, Inactive) above a box holding the instruction grid [fSafetyInstructionGroup.Designer.vb:127; fSafetyInstructionGroup.Designer.vb:88-120].
+  - Code Field: A read-only text box of up to 6 characters that cannot be tabbed into [fSafetyInstructionGroup.Designer.vb:41-46].
+  - Group Name Field: A mandatory text box, up to 50 characters, marked as compulsory on load [fSafetyInstructionGroup.vb:39; fSafetyInstructionGroup.Designer.vb:61].
+  - Inactive Field: A disabled tick box that cannot be tabbed into [fSafetyInstructionGroup.Designer.vb:78-83].
+  - Safety Instruction Details Grid: A grid with the columns Safety Instruction (drop-down) and Code (read-only) [fSafetyInstructionGroup.vb:301-314].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fSafetyInstructionGroup.vb:184-216].
+actions:
+  New: The toolbar action that asks the main window to start a blank record and places the cursor in Group Name [fSafetyInstructionGroup.vb:146-156].
+  Save: The toolbar action that validates and stores the group and its instruction rows [fSafetyInstructionGroup.vb:316-372].
+  Search: The toolbar action that opens a search dialog listing the groups of the logged-in company with Code, Group Name,
+    Inactive, Created By and Created Date [fSafetyInstructionGroup.vb:158-182; masterdata.MSIGSearchData:17-27].
+  Delete: The toolbar action that removes the open group [fSafetyInstructionGroup.vb:46-81].
+validations:
+- Enter Group Name.
+- Duplicate Group Name not allowed.
+- Select atleast one safety instruction.
+- Duplicate Safety Instruction not allowed.
+manages:
+- safety-instruction-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MSIGDelete.
+  FillValues: Fills the lookup lists through masterdata.MSIGFillValues.
+  LoadData: Loads the selected record through masterdata.MSIGLoadData.
+  Open: Searches records through masterdata.MSIGSearchData.
+  Save: Saves the record through masterdata.MSIGSave.
+  SaveSafetyInstructionDetails: Saves the record through masterdata.MSIGSaveInstructionDetail.
+  ValidateForm: Validates the entry through masterdata.MSIGValidate.

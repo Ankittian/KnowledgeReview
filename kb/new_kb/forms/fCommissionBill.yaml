@@ -1,0 +1,81 @@
+form: fCommissionBill
+title: Commission Invoice
+module: FI
+kind: transaction
+summary: The Commission Invoice screen records the commission payable to a sales agent (or sub-agent) for a chosen period.
+purpose: |
+  What it is: A document that turns the sales made through an agent in a period into a payable commission bill, with the commission worked out per commission term and the resulting liability posted to the books [fCommissionBill.vb:595-603; fCommissionBill.vb:620-624]. When it applies: At the end of a commission period, or when an agent submits a commission bill, after the related sales invoices are authorized. Business outcome: Each invoice line is commissioned once, at the rate defined in the commission terms, and the amount owed to the agent is recorded in accounts (BR-05; BR-08; BR-09; BR-17).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout and Tabs: A single window with a document control at the top and tabs: General Details, Tax Detail, Posting Detail, Custom Field and GST Posting [fCommissionBill.Designer.vb:737-751].
+  - Document Number, Date, Status and Division Control: The shared document control holding document number, date, status, division (finance book) and numbering prefix [fCommissionBill.vb:85; fCommissionBill.vb:343-345].
+  - Agent Name Field: A mandatory drop-down of active agents showing name and code [fCommissionBill.vb:19; fCommissionBill.vb:90].
+  - Bill No Field: A mandatory text box, up to 30 characters, for the agent's own bill number [fCommissionBill.vb:63; fCommissionBill.vb:428-432].
+  - Bill Date Field: A date picker for the date of the agent's bill [fCommissionBill.vb:646].
+  - Due Date Field: A date picker for the payment due date [fCommissionBill.vb:649].
+  - Payment Mode Field: A mandatory drop-down of active payment modes [fCommissionBill.vb:94; fCommissionBill.vb:444-448].
+  - From Date and To Date Fields: Two date pickers defining the commission period [fCommissionBill.vb:200-201].
+  - GST Tax Rule Field: An optional drop-down of GST tax rules (abatement rules of the GST category) [fCommissionBill.vb:95; Finance.FICBFillValues:75-79].
+  - Remarks Field: An optional text box of up to 1000 characters [fCommissionBill.vb:64].
+  - Currency Control: The shared currency control giving currency, conversion rate and the multiplicative and divisibility rates [fCommissionBill.vb:104; fCommissionBill.vb:372-374; fCommissionBill.vb:661-663].
+  - Invoice Detail Grid: The grid of eligible invoice lines with columns Select, Invoice No., Invoice Date, Customer, Location, Sales Order No., Sales Order Date, Item Description, Unit, Item Information, Invoice Qty., Invoice Amount, Return Qty., Commission Qty., Commission Id and a button column [Finance.FICBFillValuesDependent:36-47; fCommissionBill.vb:936-951].
+  - Commission Detail Grid: The grid of commission per commission term with Commission Id, Description, Calculation Based On, Invoice Amount, Invoice Qty., Commission Qty., Rate, Basic Amount, Bonus Amount, Deduction Amount and Net Payable [Finance.FICBFillValues:33-41].
+  - Bonus Amount Panel: A pop-up with Calculation On, Rate/ Percentage (the label changes to Percentage when the basis is invoice amount), Bonus Amount and Ok/Cancel [fCommissionBill.Designer.vb:808-861; fCommissionBill.vb:1286-1297].
+  - Deduction Amount Panel: A pop-up with Per Unit Deduction Rate, Deduction Amount, Deduction Reason and Ok/Cancel [fCommissionBill.Designer.vb:277-329].
+  - Tax Detail Tab: The shared tax and charges control that applies taxes and charges on the total net payable [fCommissionBill.vb:75; fCommissionBill.vb:1218-1221].
+  - Posting Detail Tab: The shared finance posting control showing the proposed voucher [fCommissionBill.vb:1334-1426].
+  - GST Posting Tab: The shared GST voucher detail control, section type 1 [fCommissionBill.vb:75-79; fCommissionBill.vb:1338-1371].
+  - Custom Field Tab: The shared custom field control [fCommissionBill.vb:106; fCommissionBill.vb:409-411].
+  - Notes Control: The shared notes control with Print Area, Notes and Default; it is placed at the far right of the General Details tab at a very small size [fCommissionBill.Designer.vb:589-593].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Toolbar actions that are empty on this screen [fCommissionBill.vb:280-312].
+actions:
+  New: The toolbar action that opens a blank bill [fCommissionBill.vb:244-251].
+  Save: The toolbar action that validates and saves the bill [fCommissionBill.vb:605-708].
+  Search: The toolbar action that lists bills of the current company and year in a search window [fCommissionBill.vb:253-278].
+  Delete: The toolbar action that deletes the loaded bill [fCommissionBill.vb:26-53].
+validations:
+- Authorized Commission Bill can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Agent Name .
+- Enter Bill No.
+- Bill date can't be greater than Document Date.
+- Due Date can't be less than Document Date.
+- Select valid Payment Mode.
+- To Date can't be less than From Date.
+- Select atleast one Invoice Detail.
+- Document Date can't less than Invoice Date in row N.
+- Commission Qty can't be empty or zero in row N.
+- Commission Qty can't be Invoice Qty. in row N.
+- Select valid Commission ID in row N.
+- Basic Amount can't be empty or zero in row N.
+- Invoice Amount can't be empty or zero or negative  in row N.
+- Supplier Payable Account is not set against this Agent.
+- Default Account is not set against Commission Bill. Do you want to continue?
+- Select valid Calculation Based On.
+- Enter Bonus Rate.
+- Document No. <number> saved successfully.
+manages:
+- commission-invoice
+uses_concepts:
+- asset-disposal
+- expense-advance
+- expense-approval
+- freight-invoice
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  CommissionTermsIDDetail: Runs through Finance.FICBCommissionTermsIDDetail.
+  Delete: Deletes the record through Finance.FICBDelete.
+  FillValues: Fills the lookup lists through Finance.FICBFillValues.
+  FillValusDependent: Fills the lookup lists through Finance.FICBFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FICBLoadData.
+  Open: Searches records through Finance.FICBSearchData.
+  Save: Saves the record through Finance.FICBSave.
+  SaveCommissiondetail: Saves the record through Finance.FICBSaveCommissionDetail.
+  SaveInvoiceDetail: Saves the record through Finance.FICBSaveInvoiceDetail.
+  SaveNotesDetail: Saves the record through Finance.FICBSaveNotesDetail.

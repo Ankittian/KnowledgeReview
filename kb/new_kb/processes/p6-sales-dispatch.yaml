@@ -1,0 +1,18 @@
+key: p6-sales-dispatch
+name: 'Sales: Dispatch (Phase 6)'
+module: SD
+status: active
+summary: Phase 6 screens of the dispatch group in Sales.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 6 forms that the KB validation plan puts in 'Dispatch' (Sales). The steps follow the plan order, not a verified business sequence: Dispatch Planning Bulk Amendment, Change Dispatch Customer Location.
+steps:
+- order: 1
+  name: Record Dispatch Planning Bulk Amendment
+  form: fDispatchPlanningBulkAmendment
+- order: 2
+  name: Record Change Dispatch Customer Location
+  form: fDispatchCustomerDetailVTPL
+concepts:
+- dispatch-planning-bulk-amendment
+- change-dispatch-customer-location

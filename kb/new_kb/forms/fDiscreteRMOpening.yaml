@@ -1,0 +1,60 @@
+form: fDiscreteRMOpening
+title: Rawmaterial Opening
+module: DRM
+kind: transaction
+summary: The Rawmaterial Opening screen loads the opening stock of discrete raw material when a company starts using the stores
+  module.
+purpose: |
+  What it is: A one-time entry of the raw material stock on hand at the raw material start date, lot by lot, with its value and ownership [fDiscreteRMOpening.vb:770-898; DiscreteRM.RMOBSave:53-66]. When it applies: At go-live of discrete raw material stores, before any receipts or issues are recorded. Business outcome: Stock lots exist with quantity, rate and ownership from day one, and the books carry the matching opening value (BR-02; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header group (Date, Division Name, Warehouse) and an item detail grid [fDiscreteRMOpening.designer.vb:85-180; fDiscreteRMOpening.designer.vb:461].
+  - Date Field: A read-only date showing the raw material start date [fDiscreteRMOpening.designer.vb:158; fDiscreteRMOpening.vb:110].
+  - Division Name Field: A drop-down of active divisions, mandatory and enabled only where the company uses divisions [fDiscreteRMOpening.vb:80; fDiscreteRMOpening.vb:116; fDiscreteRMOpening.vb:166].
+  - Warehouse Field: A mandatory drop-down of warehouses of the chosen division [fDiscreteRMOpening.vb:74; fDiscreteRMOpening.vb:1035; fDiscreteRMOpening.vb:171].
+  - Item Detail Grid: The entry grid.
+  - Length, Width, Pcs and Qty. Behaviour: For a linear item Length is open; for a sheet item Length and Width are open [fDiscreteRMOpening.vb:327-332; fDiscreteRMOpening.vb:404-429].
+  - Min Length, Max Length and Avg. Length Fields: Optional length range columns; Avg.
+  - Ownership Field: A drop-down with Own and Party; mandatory per row [fDiscreteRMOpening.vb:216-222; DiscreteRM.RMOBFillValues:110-114].
+  - Party Name, Cost Center, BIN No., Project Code and Make Fields: Optional drop-downs.
+  - Challan Detail Button and Pop-up: A button per row that opens a pop-up with Tax Group, SIN No., SIN Date, Supplier Name, Location, Invoice No., Invoice Date (optional by check box) and a tax grid (Charge Name, Total Value), closed with Ok or Cancel [fDiscreteRMOpening.vb:475-507; fDiscreteRMOpening.vb:624-711; fDiscreteRMOpening.designer.vb:319].
+  - Dimension Button and Pop-up: A button per row opening a grid of Length and Width pairs, closed with Ok or Cancel [fDiscreteRMOpening.vb:508-527; fDiscreteRMOpening.vb:1108-1171].
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Only New and Save are enabled; the others have empty code [fDiscreteRMOpening.vb:287-290; fDiscreteRMOpening.vb:18-20; fDiscreteRMOpening.vb:143-149; fDiscreteRMOpening.vb:1210-1217].
+actions:
+  Save: Validates all rows and saves them [fDiscreteRMOpening.vb:751-935].
+  New: Opens a blank screen via the MDI parent [fDiscreteRMOpening.vb:132-159].
+validations:
+- RM start date is not set, please contact administrator.
+- Select valid Division Name.
+- Select valid Warehouse.
+- Width can't be zero or empty in row <n>.
+- Qty. can't be empty in row <n>.
+- Rate can't be empty in row <n>.
+- Amount can't be empty in row <n>.
+- Select valid Ownership in row <n>.
+- Select valid Party name in row <n>.
+- Stock Account is not created against item in row <n>.
+- Stock Clearing Account is not created against item in row <n>.
+- No Detail found against this entry.
+- Unit Conversion is not defined for selected Item Unit.
+- Total Value can't be empty or zero.
+- Enter SIN No.
+- Select valid supplier.
+- Select valid location.
+- Invoice date can't be greater than SIN Date.
+- Width can't be empty or zero.
+- Select Enter Dimension.
+- Duplicate charge not allowed.
+manages:
+- rawmaterial-opening
+uses_concepts:
+- company
+- update-dr-opening-balance
+method_notes:
+  FillValues: Fills the lookup lists through DiscreteRM.RMOBFillValues.
+  FillvaluesDependent: Fills the lookup lists through DiscreteRM.RMOBFillValuesDependent.
+  LoadSupplierLocation: Runs through GlobalData.VendorLocationSelect.
+  Save: Saves the record through DiscreteRM.RMOBSave.
+  SaveDimension: Saves the record through DiscreteRM.RMOBSaveDimension.
+  SaveFinanceOpening: Saves the record through Inventory.IMIOSaveFinanceOpening.
+  SaveLotTax: Saves the record through DiscreteRM.RMOBSaveLotTax.

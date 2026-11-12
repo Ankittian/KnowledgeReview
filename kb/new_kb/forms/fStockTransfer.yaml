@@ -1,0 +1,94 @@
+form: fStockTransfer
+title: Stock Transfer
+module: DRM
+kind: transaction
+summary: The Stock Transfer screen moves discrete raw material, lot by lot, out of the issuing warehouses and into receiving
+  warehouses.
+purpose: |
+  What it is: A document that records material leaving one set of lots and, for transfers other than to another company, arriving as new lots, with matching value [fStockTransfer.vb:1409-1534; DiscreteRM.DRSTAuthorize:46-147]. When it applies: When material must move between companies, divisions or warehouses, or must be re-booked under another item. Business outcome: Stock by lot, location and cost stays correct on both sides of the move, and the value issued equals the value received (BR-13).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A "General Details" tab, a "Custom Field" tab, a "Work order Detail" tab and a "Finance Posting" tab (both hidden by default), and below them the "Issue Detail" and "Receipt Detail" tabs.
+  - Document No., Date, Division and Status Controls: The shared document number control: document number (with optional prefix numbering), date, division where applicable and status [fStockTransfer.vb:212-218; fStockTransfer.vb:349-362].
+  - Stock Transfer Type Field: Drop-down "Stock Transfer Type", mandatory [fStockTransfer.vb:1073; fStockTransfer.vb:196].
+  - Transfer To Company or Division Field: Drop-down "Transfer To Company" or "Transfer To Division" with code [fStockTransfer.vb:1608-1626; fStockTransfer.vb:1635-1642].
+  - Source Document Field: Drop-down "Source Document" [fStockTransfer.vb:1615-1617].
+  - Item Description and Unit Name Fields: Drop-down "Item Description", mandatory, and read-only "Unit Name" [fStockTransfer.vb:197; fStockTransfer.Designer.vb:227; fStockTransfer.vb:1701-1716].
+  - Challan No. and Challan Date Fields: Text box "Challan No." (up to 50) and date "Challan Date" [fStockTransfer.vb:144; fStockTransfer.vb:1302-1307].
+  - Transporter Name, Driver Name and Vehicle No. Fields: Drop-down "Transporter Name", editable drop-down "Driver Name" (up to 50) and text "Vehicle No." (up to 15) [fStockTransfer.vb:145; fStockTransfer.vb:199-200; fStockTransfer.vb:1309-1321].
+  - LR No. and LR Date Fields: Text "LR No." (up to 30) and an LR date that is checked automatically when a number is typed [fStockTransfer.vb:146; fStockTransfer.vb:1860-1866].
+  - Reference No. & Date and Remarks Fields: Text "Reference No.
+  - Requested By Field: Editable drop-down "Requested By", mandatory [fStockTransfer.vb:202; fStockTransfer.vb:641-646].
+  - Ex. Challan No. and Ex. Challan Date Fields: Text "Ex.
+  - Issue Detail Grid: Editable grid: Warehouse, Lot No.
+  - Receipt Detail Grid: Editable grid: Warehouse, Item Description, Make, Lot No., Heat No., Cast No., TC No., Serial No., length, width, Receipt Pcs, Receipt Qty., Rate, Amount, Cost Center Name, BIN No.
+  - Work order Detail Tab: A grid of eligible work orders with a Select column [fStockTransfer.vb:1890-1897; DiscreteRM.DRSTFillValuesWarehouse:418-480].
+  - Custom Field Tab and Notes: The shared custom field and notes controls [fStockTransfer.vb:220-228; fStockTransfer.vb:1557-1603].
+  - Finance Posting Tab: The shared finance posting control [fStockTransfer.vb:1905-1998].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard toolbar actions.
+actions:
+  New: Toolbar action starting a blank transfer [fStockTransfer.vb:416-423].
+  Save: Validates then saves [fStockTransfer.vb:1230-1407].
+  Search: Opens a search dialog of transfers for the company and year [fStockTransfer.vb:425-450; DiscreteRM.DRSTSearchData:18-34].
+  Delete: Deletes the loaded transfer [fStockTransfer.vb:98-128].
+validations:
+- Authorized StockTransfer can't be updated.
+- Select valid Stock Transfer Type.
+- Select valid Transfer To Company.
+- Select valid Transfer To Division.
+- Transfer to same company is not allowed.
+- Transfer to same Division is not allowed.
+- Select valid Source Document.
+- Select valid Item Description.
+- Challan Date can't be greater than Document Date.
+- LR Date can't be greater than Document Date.
+- Select Excise Challan Date .
+- Excise Challan Date can't be greater than Document Date.
+- Select valid Requested By.
+- Select atleast one work order.
+- Select atleast one Warehouse.
+- Select valid Lot No. in row <n>.
+- Transfer Pcs can't be empty or zero in row <n>.
+- Transfer Pcs can't be greater than Stock Pcs in row <n>.
+- Transfer Qty. can't be empty or zero in row <n>.
+- Transfer Qty. can't be greater than Stock Wt in row <n>.
+- Warehouse of Issue Detail should be same in each row.
+- Duplicate Warehouse and Lot No. is not allowed.
+- Select valid Warehouse in row <n>.
+- Lot No. can't be empty or zero in row <n>.
+- Select valid Item Description in row <n>.
+- Receipt Pcs can't be empty or zero in row <n>.
+- Receipt Qty. can't be empty or zero in row <n>.
+- Rate can't be empty or empty in row <n>.
+- Select valid Cost Center in row <n>.
+- Transfer to same Warehouse and BIN No. is not allowed.
+- Sum of Transfer And Receipt Amount should be equal.
+- Finance Book is not mapped.
+- Document No. <number> saved successfully.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Make is not linked with receipt Item
+- Duplicate Lot No. <lot> selected item.
+manages:
+- stock-transfer
+uses_concepts:
+- accounting-voucher
+- company
+- discrete-stock-adjustment
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- rawmaterial-opening
+- sin-lot-entry
+- store-inward-note
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.DRSTDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.DRSTFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.DRSTFillValuesDependent.
+  FillValuesWarehouse: Fills the lookup lists through DiscreteRM.DRSTFillValuesWarehouse.
+  LoadData: Loads the selected record through DiscreteRM.DRSTLoadData.
+  Open: Searches records through DiscreteRM.DRSTSearchData.
+  Save: Saves the record through DiscreteRM.DRSTAuthorize, DiscreteRM.DRSTSave, Inventory.VoucherVsLotValidation.
+  SaveCustomFieldDetail: Saves the record through DiscreteRM.DRSTSaveStockTransferCustomFieldDetail.
+  SaveIssueDetail: Saves the record through DiscreteRM.DRSTSaveStockTransferIssueDetail.
+  SaveNotesDetail: Saves the record through DiscreteRM.DRSTSaveStockTransferNotesDetail.

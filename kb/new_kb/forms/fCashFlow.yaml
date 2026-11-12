@@ -1,0 +1,57 @@
+form: fCashFlow
+title: Cash Flow
+module: FI
+kind: transaction
+summary: The Cash Flow screen (window caption "Cash Flow") prepares and stores a cash flow statement for a layout, a Finance
+  Book and a date range (From Date to To Date).
+purpose: |
+  What it is: A stored cash flow statement for a period, built on a defined layout. When it applies: At period end or when management needs a dated cash flow for one or more books. Business outcome: A reviewable statement that is kept as prepared and can be authorized (BR-05; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header with Description, Document Status, Document Date, FSL Name, Finance Book, From Date, To Date and "Show", above a statement grid and a book-selection grid.
+  - Description Field: Read-only text, mandatory [fCashFlow.Designer.vb:236; fCashFlow.vb:79].
+  - Document Status Field: Dropdown, mandatory [fCashFlow.vb:375-378].
+  - Document Date Field: Date picker [fCashFlow.vb:648-659].
+  - FSL Name Field: Dropdown, mandatory [fCashFlow.vb:381-385].
+  - Finance Book Field: Dropdown, mandatory [fCashFlow.vb:387-391].
+  - From Date and To Date Fields: Date pickers labelled "From Date" and "To Date" [fCashFlow.Designer.vb:189; fCashFlow.Designer.vb:208].
+  - Statement Grid: Read-only grid with Particular, Amount and Level, with a filter row [fCashFlow.vb:416-432].
+  - Book Selection Grid: Grid with Select and Finance Book listing the books that make up the chosen book [fCashFlow.vb:790-797; Finance.FSCFFillValuesDependent:26-85].
+  - Book Link Grid: A grid with Finance Book and Cash Flow, hidden by design and never shown by the screen's own logic [fCashFlow.Designer.vb:229; fCashFlow.vb:695-705].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fCashFlow.vb:260-293].
+actions:
+  Show: Button "Show" [fCashFlow.vb:711-735].
+  New: Clears the screen through the MDI shell [fCashFlow.vb:224-231; fCashFlow.vb:294-305].
+  Save: Validates and saves.
+  Search: Search dialog with Description, Document Date, FSL Name, Finance Book, Version, Status, Created By and Authorized
+    By for the company and year [fCashFlow.vb:233-258; Finance.FSCFSearchData:18-35].
+  Delete: Deletes after the standard delete confirmation [fCashFlow.vb:85-112].
+validations:
+- Enter Description.
+- Select valid Document Status.
+- Select valid FSL Name.
+- Select valid Finance Book.
+- Permission denied to delete
+- Select atleast one Finance Book.
+- Date over lapping for from date , check <description>
+- Date over lapping for To date , check <description>
+- Authorized Cash Flow can't be updated.
+- Authorized entry can't be updated.
+- Can't update as above version exists for same Document Date, Finance Book.
+- Permission denied to save
+manages:
+- cash-flow
+uses_concepts:
+- accounting-voucher
+- company
+- layout
+- proforma-invoice-receipt-voucher
+method_notes:
+  Delete: Deletes the record through Finance.FSCFDelete.
+  FillValues: Fills the lookup lists through Finance.FSCFFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSCFFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FSCFLoadData.
+  Open: Searches records through Finance.FSCFSearchData.
+  Save: Saves the record through Finance.FSCFSaveMain.
+  SaveFBDetail: Saves the record through Finance.FSCFSaveFBDetail.
+  ValidateForm: Validates the entry through Finance.FSCFValidate.

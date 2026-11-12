@@ -1,0 +1,54 @@
+form: fUpdateDROpeningBalance
+title: Update DR Opening Balance
+module: DRM
+kind: transaction
+summary: The Update DR Opening Balance screen lets stores staff correct raw material opening stock that was already entered
+  on the [Rawmaterial Opening](Functional_Doc_fDiscreteRMOpening.md) screen.
+purpose: |
+  What it is: A correction screen for existing raw material opening lots, one item at a time [fUpdateDROpeningBalance.vb:1053-1074; DiscreteRM.RMUOFillValuesDependent:27-75]. When it applies: After an opening has been saved and a quantity, rate or other detail is found to be wrong. Business outcome: Opening stock is corrected in place, with protection for quantities already consumed (BR-03; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header with Item Code, Item Description, Unit and Opening Date, and a lot grid below it [fUpdateDROpeningBalance.Designer.vb:100-157].
+  - Item Code and Item Description Fields: Two linked, mandatory drop-downs; choosing one sets the other [fUpdateDROpeningBalance.vb:24; fUpdateDROpeningBalance.vb:1053-1087].
+  - Unit Field: A read-only text box showing the item's unit [fUpdateDROpeningBalance.vb:1062; fUpdateDROpeningBalance.Designer.vb:126].
+  - Opening Date Field: A read-only text box showing the raw material start date [fUpdateDROpeningBalance.vb:1061; fUpdateDROpeningBalance.Designer.vb:145].
+  - Opening Lot Grid: Columns: Lot No., Make, Division, Warehouse, Unit Wt., Min Length, Max Length, Avg.
+  - Challan Detail Button and Pop-up: A pop-up with Tax Group, SIN No.
+  - Dimension Button and Pop-up: A pop-up grid of Length and Width pairs for the lot, with Ok and Cancel [fUpdateDROpeningBalance.vb:851-876; fUpdateDROpeningBalance.vb:976-1051].
+  - Delete Lot Action (Grid Row Delete): Deleting a row in the grid removes that opening lot [fUpdateDROpeningBalance.vb:1097-1126].
+  - Other Toolbar Actions (Search, Toolbar Delete, Print, Preview, Export, Email): Search, Print, Preview, Export and Email have empty code.
+actions:
+  Save: Validates the lots and saves each filled row [fUpdateDROpeningBalance.vb:429-618].
+  New: Opens a blank screen through the MDI parent [fUpdateDROpeningBalance.vb:133-140; fUpdateDROpeningBalance.vb:163-172].
+validations:
+- Select valid Item Code.
+- Select valid Item Description.
+- Width can't be zero or empty in row <n>.
+- Qty. can't be zero or empty in row <n>.
+- Qty. can't less than Issued Qty. in row <n>.
+- Pcs can't less than Issued Pcs in row <n>.
+- Rate can't be empty in row <n>.
+- Amount can't be empty in row <n>.
+- Select valid Party Name in row <n>.
+- Select valid Party Location in row <n>.
+- Width can't be empty or zero.
+- Total Value can't be empty or zero.
+- Enter SIN No.
+- Select valid supplier.
+- Select valid location.
+- Invoice date can't be greater than SIN Date.
+- Duplicate charge not allowed.
+- Month is locked via Stock Monthly Closing(ISML)
+manages:
+- update-dr-opening-balance
+uses_concepts:
+- company
+- rawmaterial-opening
+method_notes:
+  FillValues: Fills the lookup lists through DiscreteRM.RMUOFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.RMUOFillValuesDependent.
+  LoadSupplierLocation: Runs through GlobalData.VendorLocationSelect.
+  Save: Saves the record through DiscreteRM.RMUOSaveDimension, Production.RMUOSave.
+  SaveDimension: Saves the record through DiscreteRM.RMUOSaveDimension.
+  SaveLotTax: Saves the record through DiscreteRM.RMOBSaveLotTax.
+  ugdItemdetails_BeforeRowsDeleted: Deletes the record through Production.RMUODelete.

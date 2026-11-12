@@ -1,0 +1,42 @@
+form: fBankLimit
+title: Bank Limit
+module: MD
+kind: master
+summary: The Bank Limit screen records the credit limit a bank has granted to the company from a given date, and, for each
+  finance book, the ledger accounts that letters of credit with that bank are to be posted to.
+purpose: |
+  What it is: A dated record of the limit granted by a bank, with a per-finance-book set of default accounts for trade-finance charges and liabilities [fBankLimit.vb:194-211; Finance.FIBLSaveMain:22-58; Finance.FIBLSaveFBDetail:23-42]. When it applies: When a bank sanctions or revises a limit, or when the accounts used for its charges change. Business outcome: Trade-finance documents can be pre-filled with the right bank, charge and payable accounts for the bank and date (see Downstream Letter Of Credit Reliance).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: The window titled "BankLimit" with a header group holding Bank Name, Applicable Date and Limit Amount, and a grid of finance books below [fBankLimit.designer.vb:124; fBankLimit.designer.vb:103-111].
+  - Bank Name Field: A mandatory drop-down showing Bank Name and Code [fBankLimit.vb:13; fBankLimit.vb:63].
+  - Applicable Date Field: A date picker in dd/MM/yyyy format [fBankLimit.designer.vb:56-58].
+  - Limit Amount Field: A mandatory numeric text box, maximum 14 characters, two decimals, shown as "0.00" after load [fBankLimit.vb:13; fBankLimit.vb:58-59; fBankLimit.vb:98].
+  - Finance Book Grid: A grid with columns Select, FB Name (read-only), Bank Account, Opening Charges Account, Interest Charges Account, Discounting & Negotiation Account and Payable Account; the book number is hidden and rows cannot be deleted [fBankLimit.vb:366-392].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers that do nothing [fBankLimit.vb:143-175].
+actions:
+  New: Asks the main window to start a blank record [fBankLimit.vb:108-115].
+  Save: Validates, asks for confirmation and stores the limit with its ticked rows [fBankLimit.vb:394-446].
+  Search: Opens the shared search dialog listing Bank Name, Applicable Date, Limit Amount and Created By [fBankLimit.vb:117-141;
+    Finance.FIBLSearchData:17-25].
+  Delete: Deletes the open limit after the standard confirmation (MSG-07) [fBankLimit.vb:19-42].
+validations:
+- Bank Name and Applicable Date can't be duplicate.
+- Select valid Bank Name.
+- Limit Amount can't be empty of 0.
+- Select valid <column name> in row <n>.
+- Select valid Bank Account in row 1.
+- Select valid Payable Account in row <n>.
+- Select atleast one Finance Book.
+manages:
+- bank-limit
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FIBLDelete.
+  FillValues: Fills the lookup lists through Finance.FIBLFillValues.
+  LoadData: Loads the selected record through Finance.FIBLLoadData.
+  Open: Searches records through Finance.FIBLSearchData.
+  Save: Saves the record through Finance.FIBLSaveMain.
+  SaveFBDetail: Saves the record through Finance.FIBLSaveFBDetail.
+  ValidateForm: Validates the entry through Finance.FIBLValidate.

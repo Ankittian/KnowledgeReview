@@ -1,0 +1,149 @@
+form: fCommercialInvoice
+title: Commercial Invoice
+module: SD
+kind: transaction
+summary: 'The Commercial Invoice screen (form code SDCI; window caption "CommercialInvoice") raises a commercial invoice for
+  a customer location, either directly or against a source document: Sales Order, Dispatch Challan, Tax Invoice (shown in
+  code as "EI"), MRA, Purchase Bill, Approval Sheet, Project, Sales Supplementary Invoice, MDN or AMC.'
+purpose: |
+  What it is: The commercial billing document of the company: what was sold to which customer location, at what price and tax, shipped how, and from which stock or asset. When it applies: When goods, assets or services are billed directly, or after a sales order, dispatch challan, tax invoice (typically an export commercial invoice prepared over a tax invoice), MRA, purchase bill, approval sheet, project, supplementary invoice, MDN or AMC. Business outcome: One authorized document drives the customer receivable, advance adjustment, stock reduction, asset disposal and sales order fulfilment, and is the base for the export document and invoice cancellation.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Tabbed Workspace: One tab control with General Detail, Reference Detail, Shipment & Other Documents Detail, Tax Detail, Document Required, Advance Detail, Service Tax Advance Adjustment, Posting Detail, Advance GST Posting, GST Posting, Disposal Posting, Custom Field and Export Detail [fCommercialInvoice.Designer.vb:2855-2901].
+  - Document Number, Date, Division and Status: Shared document-number control with prefix, number, date, division and status [fCommercialInvoice.vb:952-957].
+  - Customer Name Field: Mandatory dropdown with a search button [fCommercialInvoice.Designer.vb:837; fCommercialInvoice.vb:6052-6080] (BR-02, MSG-04).
+  - Location Field: Mandatory dropdown of the customer's locations [fCommercialInvoice.Designer.vb:856] (BR-02, MSG-05).
+  - Source Document Field: Mandatory dropdown (BR-02, MSG-06).
+  - Ref. Document No. and Ref. Document Date Fields: Dropdown of sales orders (Sales Order source) or reference documents, with a read-only date [fCommercialInvoice.Designer.vb:894-913].
+  - Warehouse Field: Dropdown of warehouses [fCommercialInvoice.Designer.vb:808].
+  - Currency Control: Shared currency, rate type and conversion rate control [fCommercialInvoice.vb:1058-1061].
+  - Payment Mode and Payment Days Fields: Mandatory dropdown and numeric text (up to 10 digits) [fCommercialInvoice.vb:352-354] (BR-02, MSG-10, MSG-11).
+  - Consignee, Place of Supply, Project Milestone and Text Fields: Consignee Name and Location, Place Of City (fills Place Of Supply and locks Place Of State), Ref.
+  - Adjust Advance Checkbox and Advance Amount: Checkbox, read-only total and Manual/Automatic option [fCommercialInvoice.Designer.vb:736; fCommercialInvoice.Designer.vb:1656; fCommercialInvoice.Designer.vb:1667-1670].
+  - Shipment & Other Documents Detail Tab: Delivery Mode, Transporter Name, Vehicle No.
+  - Item Details Grid: Grid of Customer Order No., Sales Order No., Item Code, Item Description, Make, Unit, HSN & SAC Code, Tech.
+  - Reference Detail Grid: Grid of selectable reference documents with document number, date, orders, challan type, transporter, vehicle and material type [fCommercialInvoice.vb:1713-1779].
+  - Tax Detail, Document Required, Custom Field and Notes: Shared tax control with item-level taxes, document checklist grid, custom field control and notes control [fCommercialInvoice.vb:372-377; fCommercialInvoice.vb:1945-1968].
+  - Export Detail Tab: Contact Person Name, Bank Name, Consignee and Buyer contacts, Notify Firm Name and contacts, Port Of Loading, Pre Carriage, Description Of Package, Shiping Marks, and read-only Inco Terms, Method Of Shipment, Type Of Dispatch, Place Of Receipt, Port Of Discharge, Place Of Delivery, Country Of Origin and Final Destination, BL No.
+  - Posting Detail, GST, Advance GST and Disposal Posting Tabs: Finance posting control, GST voucher detail, advance GST voucher and depreciation (disposal) control [fCommercialInvoice.vb:4666-4766; fCommercialInvoice.vb:4898-5077].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Daily-print report of the invoice [fCommercialInvoice.vb:742-773; fCommercialInvoice.vb:3177-3200].
+actions:
+  New: Toolbar New [fCommercialInvoice.vb:705-712].
+  Save: Toolbar Save [fCommercialInvoice.vb:4153-4488].
+  Search: Toolbar Open with the search dialog [fCommercialInvoice.vb:714-741].
+  Delete: Toolbar Delete [fCommercialInvoice.vb:265-302].
+  Navigation: First / Previous / Next / Last [fCommercialInvoice.vb:250].
+validations:
+- Authorized Commercial Invoice can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Customer Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Ref. Document No..
+- Document date can't be less than reference document date.
+- Select valid warehouse.
+- Select valid Payment Mode.
+- Enter Payment Days.
+- Enter LR No.
+- Enter LR Date.
+- LR Date can't be greater than Doucument Date.
+- Enter Way Bill No.
+- Enter Way Bill Date.
+- Way Bill Date can't be greater than Doucument Date.
+- Select atleast one Reference Doc.
+- Currency of all selected document should be same.
+- Can't select multiple dispatch challan against different projects.
+- Can't select multiple dispatch challan of different Source Document.
+- Select valid Customer Order No. in row n.
+- Select valid Sales Order No. in row n.
+- Document Date can't be less then Sales Order Date in row n.
+- Select valid Item Code in row n.
+- Select valid Item Description in row n.
+- Select valid Unit in row n.
+- Select valid Unit.
+- Enter First CF.
+- Enter Second CF.
+- Quantity can't be empty or zero in row n.
+- Quantity can't be greater than Balance Qty. + Tolerance Qty. in row n.
+- Quantity can't be greater than Balance Qty. in row n.
+- Serial No. detail should be same as issued Quantity in row n.
+- Stock Qty. should be equal to <quantity> in row n.
+- Quantity can't be greater than Stock Qty.
+- Quantity can't be greater than stock Qty. <stock> in row n.
+- Issue Pcs can't be empty in row n.
+- Quantity should equal to <quantity>
+- Select atleast one Sales Order No.
+- Select atleast one Item Code in row.
+- Sum of Qty(<qty>) for item <item> can't be greater than Agreement Balance Qty. + Tolerance(<qty>) for agreement <no>.
+- Adjusting Amount can't be greater than Balance Amount in row n.
+- Adjusting Amount can't be greater than Balance Amount.
+- Advance Amount can't be 0.
+- Total Advance Amount can't be greater than Invoice Amount.
+- SGST or CGST is not applicable for inter state sales.
+- IGST is not applicable for intra state sales.
+- Only one Tax Invoice can be selected when Supply Type is Export With Payment
+- Commercial Invoice can be created against only one Tax Invoice.
+- Rate is empty or zero in row n do you want to continue.
+- Total Tag Qty. is not equal total LOT Quantity.
+- Qty. can't be empty or zero in row n.
+- Qty. is not equal to Total LOT Quantity in row n.
+- Authorised Inspection Result not found against this Commercial Invoice.
+- Authorised Inspection Result not found against this Dispatch Planning.
+- Authorized Export Document,not exists against this Commercial Invoice.
+- IRN Doesn't exists for this Entry. Can't Authorize.
+- IRN already exists for this Entry. Can't Save.
+- Some of selected Asset Tag(s) are unauthorized.
+- Some of selected Asset Tag(s) have Document Date greater than current Document Date.
+- No. of Copy can't be empty or zero in row n.
+- Document No. can't be empty in row n.
+- Select valid Document Date in row n.
+- Copies can't be empty or zero in row n.
+- Duplicate Document Name is not allowed.
+- Duplicate Sales Order,Item Description and Make is not allowed.
+- Select valid Contact Person Name.
+- Select Valid Bank Name.
+- Select valid Consignee Contact Person.
+- Enter Notify Firm Name.
+- Enter Firm Location.
+- Enter Notify Contact Person.
+- Enter Notify Contact No.
+- Enter Notify E-mail Id.
+- BL No. is required.
+- Vessel/Voyage No. is required.
+- Select valid Port Of Loading.
+- Select valid Pre Carriage.
+- Enter Notify Description Of Package.
+- Enter Shipping Marks.
+- Selected Tax Invoice should belong to same Customer Order No.
+- GST cannot be applied in Commercial Invoice.
+- VoucherValidation
+- Advance GST posting not done.
+- Difference in Voucher and Lot -- ...
+- GST Voucher Posting is not found
+- Do you want to delete ?
+- Commercial Invoice can not be deleted it has been cancelled.
+- Service Invoice is prepared against this entry,so you can't delete this entry
+- Unable to delete,IRN exists against this invoice.
+- Unable to delete,Outward Bill Entry exists against this invoice.
+- Unable to Send Mail please send it manually.
+- Document No. <no> saved successfully.
+manages:
+- commercial-invoice
+uses_concepts:
+- accounting-voucher
+- change-dispatch-customer-location
+- change-stock-allocation
+- company
+- dispatch-invoice-reconcilation
+method_notes:
+  AdjustServiceAdvance: Loads the selected record through masterdata.ATDCLoadData.
+  Authorize: Runs through Sales.SDCIAuthorize.
+  CustomValidation: Validates the entry through ODTCommercialInvoice.ProcedureName.
+  Delete: Deletes the record through Sales.SDCIDelete.
+  FillValues: Fills the lookup lists through Sales.SDCIFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDCIFillValuesDependent.
+  FillValuesLotAsset: Fills the lookup lists through Sales.SDCIFillValuesLotAsset.
+  FillValuesSOWise: Fills the lookup lists through Sales.SDCIFillValuesSOWise.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  GetCustomerInfo: Runs through Sales.SDCIGetCustomerInfo.

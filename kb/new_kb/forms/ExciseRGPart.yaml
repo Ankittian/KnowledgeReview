@@ -1,0 +1,15 @@
+usercontrol: ExciseRGPart
+title: Excise RG register control
+module: FI
+kind: component
+users:
+- Users of the host screens (inferred)
+summary: Embedded excise RG register entry for receipts and bills.
+purpose: |
+  Captures excise register (RG) details of a receipt or bill and saves them with ExciseRGSave / ExciseRGAfterSave.
+functional_description: |
+  Embedded in: fInputExcisePosting.
+method_notes:
+  FillValues: Fills the lookup lists through Finance.ExciseRGFillValues.
+  LoadData: Loads the selected record through Finance.ExciseRGLoadData.
+  Save: Saves the record through Finance.ExciseRGAfterSave, Finance.ExciseRGSave.

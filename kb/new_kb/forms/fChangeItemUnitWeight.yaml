@@ -1,0 +1,47 @@
+form: fChangeItemUnitWeight
+title: Item Change Unit Weight
+module: MM
+kind: master
+users:
+- Material master administrator (inferred)
+summary: The Item Change Unit Weight screen is a utility that corrects weight and dimension settings of an existing item without
+  reopening the full item master.
+purpose: |
+  What it is: A controlled way to change an item's weight, dimension and production unit settings. When it applies: When an item's unit weight, measurement or production unit conversion was set wrongly or has changed. Business outcome: Correct weight and quantity conversions in later transactions.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Item Settings Area: Header with item selection on the left and weight and dimension fields on the right, then the conversion grid and the bill of material grid.
+  - Item Code Field: Dropdown (Item Code, Item Description), mandatory.
+  - Item Description Field: Dropdown (Item Description, Item Code), mandatory.
+  - Unit Field: Read-only display of the item's base unit.
+  - Maintain Item Dimension Field: Check box.
+  - Measurement Field: Dropdown 1-D, 2-D, 3-D, marked mandatory, followed by a measurement unit dropdown.
+  - Unit Weight Field: Text box, marked mandatory, maximum 10 characters, followed by a weight unit dropdown.
+  - Production Stock UOM Conversion Formula Field: Dropdown (Formula, Code).
+  - Unit Conversion Grid: Columns Unit Type, Conversion Type (Fixed / Variant), Unit Value, Base Unit, Conversion Value, Unit.
+  - Bill of Material Grid: Read-only columns BOM No., BOM Date, Revision No., Mark No., Length, Width, First CF, Second CF, Status.
+  - Other Toolbar Actions (Open, Delete, Navigation, Print, Preview, Export, Email): Open, record load and delete are commented out in the source; print, preview, export and email handlers are empty.
+actions:
+  New: Standard toolbar New.
+  Save: Standard toolbar Save.
+validations:
+- Select valid Item Code.
+- Select valid Item Description.
+- Select valid Measurement.
+- Enter Unit Weight.
+- 'Select valid conversion type in row '
+- 'Enter Unit Value in row '
+- 'Enter Conversion Value in row '
+- 'Conversion Type can''t be empty or zero in row '
+manages:
+- item-unit-weight
+uses_concepts:
+- material-item
+- unit-of-measure
+- unit-type
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.CIUWFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.CIUWFillValuesDependent.
+  Save: Saves the record through masterdata.CIUWSave.
+  SaveUnitConversion: Saves the record through masterdata.CIUWSaveDetail.
+  ucmbItemDescription_ValueChanged: Fills the lookup lists through masterdata.CIUWFillValuesDependent.

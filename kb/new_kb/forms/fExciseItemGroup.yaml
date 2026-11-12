@@ -1,0 +1,49 @@
+form: fExciseItemGroup
+title: Stock Item Group
+module: MD
+kind: master
+summary: 'The Stock Item Group screen maintains stock item groups (historically called excise item groups): named sets of
+  items of one item type that are reported and issued together in a common unit.'
+purpose: |
+  What it is: A grouping of items of one item type with a common reporting unit and per-item conversion factors. When it applies: When items must be issued, registered or reported as one stock group, for example for excise or quantity summaries. Business outcome: Quantities of different items can be added up in one unit (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields above an Item Detail group box with the item grid.
+  - Code Field: Read-only text box.
+  - Stock Group Name Field: Mandatory text box, up to 50 characters (BR-01).
+  - Item Type Field: Mandatory dropdown (BR-02).
+  - Unit Field: Mandatory dropdown showing Unit and Code (BR-03).
+  - Inactive Field: Checkbox, permanently disabled.
+  - Item Detail Grid: Columns Item Code, Item Description (both dropdowns of items of the chosen type, kept in step), Unit (item's unit, read-only) and CF (button); hidden First CF, Second CF and unit columns.
+  - Conversion Factor Pop-up: A row edit panel showing group unit, First CF, "=", Second CF and item unit, with OK and Cancel.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers present but empty.
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Creates or updates the group and its items.
+  Search: Standard search with Code, Stock Group Name, Item Type, Unit, Inactive, Created By, Authorized By, sorted by name.
+  Delete: Deletes the loaded group after confirmation (MSG-15).
+validations:
+- Duplicate Excise Group Name not allowed.
+- Enter Stock Group Name.
+- Select valid Item Type.
+- Select valid Unit.
+- Select atleast one Item Code.
+- Duplicate Item Code not allowed.
+- 'Select valid Item Description in row '
+- 'First CF can''t be empty or zero in row '
+- 'Second CF can''t be empty or zero in row '
+- Enter First CF.
+- Enter Second CF.
+manages:
+- stock-item-group
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MEIGDelete.
+  FillValues: Fills the lookup lists through masterdata.MEIGFillValues.
+  LoadData: Loads the selected record through masterdata.MEIGLoadData.
+  Open: Searches records through masterdata.MEIGSearchData.
+  Save: Saves the record through masterdata.MEIGSave.
+  SaveItemDetail: Saves the record through masterdata.MEIGSaveItemDetail.
+  ValidateForm: Validates the entry through masterdata.MEIGValidate.
+  ucmbMaterialType_ValueChanged: Fills the lookup lists through masterdata.MEIGFillValues.

@@ -1,0 +1,55 @@
+form: fReferenceReconciliation
+title: Reference Reconciliation
+module: FI
+kind: transaction
+summary: The Reference Reconciliation screen matches open items of one account against each other so that bills, advances
+  and unallocated postings are cleared bill by bill.
+purpose: |
+  What it is: A matching tool that settles open references of a party against payments, receipts, advances or credit/debit items already posted [fReferenceReconciliation.vb:696-793]. When it applies: When an advance or on-account posting exists for a vendor or customer and must be set against the right bills, or when two reference-type items of related accounts must be offset. Business outcome: Outstanding balances per bill are correct, so payment planning and ageing work from true open items (BR-06 to BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Selection Panel Layout: A top panel with five fields and a "Show" button on the left and an account summary grid on the right, above a lower area with the Method list, an upper "Adjusted" grid and a lower "Adjusting" grid, each with a read-only currency detail box on the right [fReferenceReconciliation.Designer.vb:198-221; fReferenceReconciliation.Designer.vb:281-288].
+  - Finance Book Field: A mandatory dropdown "Finance Book" (labelled "Profit Center" when that setting is on) (BR-01; MSG-01) [fReferenceReconciliation.vb:19-26; fReferenceReconciliation.vb:184-188].
+  - Account Nature Field: A mandatory dropdown "Account Nature" with Creditors, Debtors, Other Debtor, Other Creditor (BR-01; MSG-02) [Finance.FBRRFillValues:25-29; fReferenceReconciliation.vb:190-194].
+  - Account Name Field: A mandatory dropdown "Account Name" with Group Name shown (BR-01; MSG-03) [fReferenceReconciliation.vb:1052; fReferenceReconciliation.vb:196-200].
+  - From Date and To Date Fields: Two date pickers.
+  - Account Summary Grid: A read-only grid with Account Name, Account Type, Balance Amount (with Dr or Cr), Unadjusted Debit Amount and Unadjusted Credit Amount for the chosen account and its related accounts [fReferenceReconciliation.vb:318-348; Finance.FBRRFillValuesDependent:87-101].
+  - Method Field: An option list with "Automatic" (default) and "Manual", label "&Method" [fReferenceReconciliation.Designer.vb:180; fReferenceReconciliation.Designer.vb:314-324].
+  - Adjusted Grid: A grid with a select-all checkbox column and columns Account Name, Voucher Type, Voucher No., Voucher Date, Reference Type, Reference No., Reference Date, Reference Amount, Unadjusted Amount, Adjustment Amount (editable, 12 digits, 2 decimals), Currency (button), Adjustment Detail (button) plus a hidden due date and keys; totals at the bottom [fReferenceReconciliation.vb:49-50; fReferenceReconcili
+  - Adjustment Detail Pop-up: A pop-up listing the adjusting items allocated to the selected adjusted row (Voucher No., Voucher Date, Reference Type, Reference No., Reference Date, Reference Amount, Adjusted Amount) with an "&Ok" button [fReferenceReconciliation.vb:887-927; fReferenceReconciliation.vb:464-498; fReferenceReconciliation.Designer.vb:230].
+  - Adjusting Grid: A grid with a select-all checkbox column and columns Account Name, Voucher Type, Voucher No., Voucher Date, Reference Type, Reference No., Reference Date, Reference Amount, Unadjusted Amount, Currency (button), Current Adjustment (button); keys and due date hidden; totals at the bottom [fReferenceReconciliation.vb:55; fReferenceReconciliation.vb:504-590].
+  - Current Adjustment Pop-up: A pop-up listing the ticked adjusted items that can be matched with the selected adjusting row, with columns Select, Voucher No., Voucher Date, Due Date, Reference Type, Reference No., Reference Date, Reference Amount, Unadjusted Amount and an editable Adjusting Amount, with "&Ok" and "&Cancel" buttons [fReferenceReconciliation.vb:609-658; fReferenceReconciliation.vb:929-953; fReferenceReconciliat
+  - Currency Boxes: Two read-only currency detail boxes that open from the Currency button of a row, showing currency and conversion for the voucher date [fReferenceReconciliation.vb:43-44; fReferenceReconciliation.vb:955-1000; fReferenceReconciliation.vb:1122-1136].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Not implemented [fReferenceReconciliation.vb:32-34; fReferenceReconciliation.vb:97-99].
+actions:
+  Show: The "Show" button [fReferenceReconciliation.Designer.vb:221].
+  New: Standard toolbar New [fReferenceReconciliation.vb:88-95].
+  Save: Saves all allocations in one transaction.
+validations:
+- Select valid Finance Book.
+- Select valid Profit Center.
+- Select valid Account Nature.
+- Select valid Account Name .
+- Select atleast one reference for adjustment.
+- Adjustment Amount can't be empty or zero in row <n>.
+- Adjustment Detail can't be empty or zero in row <n>.
+- Current Adjustment can't be empty or zero in row <n>.
+- Adjustment Amount can't be greater than Unadjusted Amount.
+- Adjusting Amount can't be greater than Unadjusted Amount.
+- Total Adjusting Amount can't be greater than Unadjusted Amount.
+- Transaction on back date are disabled.
+- Transaction on future date are disabled.
+- Contact your vendor,Reference getting -ve
+- VoucherValidation
+- Adjusting Amount can't be empty or zero in row <n>.
+manages:
+- reference-reconciliation
+uses_concepts:
+- account-opening
+- accounting-voucher
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FBRRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FBRRFillValuesDependent.
+  FillValuesNature: Fills the lookup lists through Finance.FBRRFillValuesNature.
+  SaveReferenceAdjusted: Saves the record through Finance.FBRRSaveReference.
+  SaveReferenceAdjusting: Saves the record through Finance.FBRRSaveReference.

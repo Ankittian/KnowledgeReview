@@ -1,0 +1,30 @@
+form: fTradingItemTypeSetting
+title: Trading Item Type Setting
+module: ADM
+kind: transaction
+summary: The Trading Item Type Setting screen decides which item types a company trades in and, for each of them, whether
+  stock is checked on sale.
+purpose: |
+  What it is: A configuration that marks which item types are tradable for the company and whether a stock check applies to each [fTradingItemTypeSetting.vb:207-225; Sales.SDTSFillValues:17-25]. When it applies: When a company starts trading in an item type, or changes whether stock is validated for it. Business outcome: Sales processes work only with the item types the company has chosen.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Item Type Detail Layout: One grid on a screen titled "TradingItemTypeSetting" in the window caption [fTradingItemTypeSetting.Designer.vb:55; fTradingItemTypeSetting.vb:38].
+  - Select Column: An editable tick box [fTradingItemTypeSetting.vb:159-160].
+  - Item Type Column: A read-only text column, 100 pixels wide [fTradingItemTypeSetting.vb:164-165].
+  - Description Column: A read-only text column, 425 pixels wide [fTradingItemTypeSetting.vb:167-168].
+  - Stock Sale Column: An editable tick box, unticked by default [fTradingItemTypeSetting.vb:173].
+  - Item Type No. Column (hidden): A hidden numeric key of the item type [fTradingItemTypeSetting.vb:162].
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Standard actions that are not on the toolbar of this screen or whose code is empty [fTradingItemTypeSetting.vb:12-14; fTradingItemTypeSetting.vb:20-27; fTradingItemTypeSetting.vb:70-95; fTradingItemTypeSetting.vb:253-259].
+actions:
+  New: The toolbar action that asks the main window for a new record [fTradingItemTypeSetting.vb:61-68; fTradingItemTypeSetting.vb:13].
+  Save: The toolbar action that saves the ticked rows [fTradingItemTypeSetting.vb:183-246; fTradingItemTypeSetting.vb:14].
+validations:
+- This Item Type is used in Dispatch Challan, so it can't be unselect .
+manages:
+- trading-item-type-setting
+uses_concepts:
+- company
+method_notes:
+  FillValues: Fills the lookup lists through Sales.SDTSFillValues.
+  Save: Saves the record through Sales.SDTSSaveTradingItemTypeSetting.
+  ValidateItemType: Validates the entry through Sales.SDTSValidate.

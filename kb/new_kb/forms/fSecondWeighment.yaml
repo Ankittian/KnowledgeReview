@@ -1,0 +1,76 @@
+form: fSecondWeighment
+title: Second Weighment
+module: WB
+kind: transaction
+summary: The Second Weighment screen completes a weigh bridge trip that was started on the First Weighment screen.
+purpose: |
+  What it is: The recording of the second weight of a vehicle, the net weight per item and the final weighment status of a slip [fSecondWeighment.vb:577-682]. When it applies: When the vehicle returns to the bridge (loaded for Outward, empty for Inward, depending on what was first weighed). Business outcome: A net quantity per item is fixed on the slip and, when switched on, flows to the source document (BR-08; BR-11; BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single page titled "SecondWeighment" with the slip header at the top, the weight block (Machine Weight, Capture) and the item grid below, and the Image Capture group at the far right [fSecondWeighment.designer.vb:771; fSecondWeighment.designer.vb:676].
+  - Machine Name Field: Read-only display of the default machine [fSecondWeighment.designer.vb:124; fSecondWeighment.vb:135-140].
+  - Entry No Field: Read-only display labelled "Entry No" [fSecondWeighment.designer.vb:583; fSecondWeighment.designer.vb:595].
+  - Weighment Type Field: Dropdown, mandatory [fSecondWeighment.vb:76; fSecondWeighment.vb:446-451].
+  - Vehicle No. Field: Dropdown of open slips showing vehicle number, first weighment date, time and slip number; mandatory [fSecondWeighment.vb:146-147; fSecondWeighment.vb:453-458].
+  - First Weighment Date, Source Document, Ref. Document No., Ref. Document Date, Transporter Name, Driver Name and Driver Contact No. Fields: Read-only displays taken from the chosen slip [fSecondWeighment.designer.vb:182; fSecondWeighment.designer.vb:201; fSecondWeighment.designer.vb:220; fSecondWeighment.designer.vb:621; fSecondWeighment.designer.vb:661; fSecondWeighment.designer.vb:315; fSecondWeighment.designer.vb:611].
+  - Vendor Type and Vendor Name Fields: Dropdowns (Vendor Name becomes a text box for vendor type Others) [fSecondWeighment.vb:946-970].
+  - Out Date Field: Date and time picker labelled "Out Da&te"; defaults to the current date and time on a new screen [fSecondWeighment.vb:167; fSecondWeighment.designer.vb:365].
+  - Item Description, Make and Item Attribute Fields: Dropdowns; Item Description is mandatory; Make and Item Attribute are narrowed to the chosen item [fSecondWeighment.vb:926-944; fSecondWeighment.vb:482-487].
+  - Machine Weight Field and Capture Button: Machine Weight is a read-only number (3 decimals) updated from the serial port; "Capture" adds a row [fSecondWeighment.designer.vb:453-468; fSecondWeighment.vb:1059-1076].
+  - Item Detail Grid: Grid with Item Description, Make, Item Attribute, Gross Wt., Gross Wt.
+  - Last Tare Weight Field: Read-only number (3 decimals) with the weight unit [fSecondWeighment.designer.vb:296; fSecondWeighment.vb:184].
+  - W.B. Clerk Name Field: Read-only display of the logged-in user, or of the slip's creator when a finished slip is opened [fSecondWeighment.vb:154-158; fSecondWeighment.vb:281].
+  - Remarks Field: Text up to 1000 characters; pre-filled from the slip [fSecondWeighment.designer.vb:430; fSecondWeighment.vb:828].
+  - Final Weighment Field: Check box "Final Weighment" [fSecondWeighment.designer.vb:502].
+  - Print, Copy/Copies and Print Button: A "Print" check box (ticked after every fill) with "Copy/Copies" (default 1), and a separate "Print" button [fSecondWeighment.designer.vb:476; fSecondWeighment.designer.vb:494; fSecondWeighment.designer.vb:751; fSecondWeighment.vb:197-198].
+  - Image Capture Group: The "Capture Image" button and a notice line, at the far right [fSecondWeighment.designer.vb:676; fSecondWeighment.designer.vb:687].
+  - Hidden Diagnostic Fields and Manual Weight Shortcut: Ctrl+Shift+Alt+V shows or hides the "FillValues Time Stamp" and "Capture Button Time Stamp" boxes; Ctrl+Shift+I enables Capture and makes Machine Weight editable [fSecondWeighment.vb:1018-1042; fSecondWeighment.designer.vb:704-743].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Toolbar handlers are empty [fSecondWeighment.vb:332-364].
+actions:
+  New: Standard toolbar New [fSecondWeighment.vb:293-300].
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open; lists earlier second weighments for the company, year and machine and loads the chosen one
+    [fSecondWeighment.vb:302-330].
+  Delete: Standard toolbar Delete on the loaded slip [fSecondWeighment.vb:83-115].
+validations:
+- Default Machine is not set for this system.
+- Can't update as Final Weighment is done.
+- Select valid Weighment Type.
+- Select valid Vehicle No..
+- Select valid Vendor Type.
+- Select valid Vendor Name.
+- Enter valid Vendor Name.
+- Select valid Item Description.
+- Out date can not be less than First Weightment Date.
+- Select atleast One Item.
+- Tare wt. can not be 0
+- Net weight can not be negative
+- Zero Weight is not allowed
+- Duplicate Item Description not allowed.
+- Image Capture is necessary for this Weighment.
+- Image is not captured for this weighment. Do you want to continue?
+- <n> image is captured, out of <m> image, Do you want to continue?
+- IPCamera application not found in the required path. The path should be \IPCamera\IPCamera.exe.
+- Unable to show, Camera setup not found.
+- Unable to delete weighment,GRN is prepared.
+- Can't be deleted as Dispatch Challan against which this Weighment is created has already been authorized.
+- received qty is not nullable in gateentry,contact your vendor
+- Captured Image may be found in Document attachment Section.
+manages:
+- second-weighment
+uses_concepts:
+- first-weighment
+- weigh-bridge-item-setting
+- weighment-machine-master
+- weighment-setting
+method_notes:
+  CaptureImage: Runs through Utility.FetchIPCameraSetup.
+  Delete: Deletes the record through WeighBridge.WBSWDelete.
+  FillValueDependent: Fills the lookup lists through WeighBridge.WBSWFillValuesDependent.
+  FillValues: Fills the lookup lists through WeighBridge.WBSWFillValues.
+  GetLastTareWeight: Runs through WeighBridge.WBFWGetLastTareWeight.
+  LoadData: Loads the selected record through WeighBridge.WBSWLoadData.
+  Open: Searches records through WeighBridge.WBSWSearchData.
+  Save: Saves the record through WeighBridge.WBSWSave.
+  SaveItemDetail: Saves the record through WeighBridge.WBSWSaveWeighmentSlipDetail.
+  UpdateReferenceQty: Runs through WeighBridge.WBSWUpdateReferenceQty.

@@ -1,0 +1,126 @@
+form: fSCOrderAmendment
+title: Service Order Amendment
+module: MM
+kind: transaction
+summary: The Service Order Amendment screen changes an authorized [Service Order](Functional_Doc_fSCOrder.md) without re-creating
+  it.
+purpose: |
+  What it is: A controlled, versioned change to an authorized service order. Each version has its own amendment number, date, reason, status and full copy of the order detail [fSCOrderAmendment.vb:1864-2071; Purchase.SCSOSave:298-415]. When it applies: When an authorized order must change after it was sent to the vendor, for example for a revised rate, quantity, schedule, tax or term. Business outcome: The order history is kept version by version. The changes are approved before they take effect, and the live order shows the last authorized version (BR-12).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Differences: The header has SC Order No., SC Order Date (read-only), Division (read-only), Amendment No.
+  - Locked Header Fields: Document Type, Ref.
+  - Tab Layout: General Details, Requisition Details, PO Expense Head Detail (hidden at start), Shipping & Account Detail, Tax Details, Additional Cost (hidden at start), T & C, Payment Terms, Account Assignment, Authorization (hidden at start) and Custom Fields.
+  - SC Order No. Field: Choosing an order resets the screen and loads its latest version, with the next amendment number [fSCOrderAmendment.vb:4090-4102; fSCOrderAmendment.vb:549-732].
+  - Document Date and Status Fields: Changing the document date reloads the tax rules and service-tax abatement for that date.
+  - Freight Order Field: A list of freight orders for the division, date, order and From / To locations.
+  - Division Filter: The department list is filtered to the order's division [fSCOrderAmendment.vb:5257-5263].
+  - Grids and Detail Tabs: Same as [Service Order](Functional_Doc_fSCOrder.md), Section 5 'Requisitions Tab', 'Service Detail and Item Detail Grids', 'Mark Detail and Billing Detail Tabs', 'Shipping Detail Tab' and 'Tax, Additional Cost, T & C, Payment Terms and Custom Fields'.
+  - Account Assignment and Authorization Tabs: Same as [Service Order](Functional_Doc_fSCOrder.md), Section 5 'Account Assignment Tab' and 'Authorization Tab' [fSCOrderAmendment.vb:5377; fSCOrderAmendment.vb:5789-5886].
+actions:
+  Save, Search and Delete: Save asks for confirmation and reports the order number.
+  Print, Preview, Export and Email: These actions have empty bodies [fSCOrderAmendment.vb:775-789; fSCOrderAmendment.vb:4403-4409].
+validations:
+- Select valid SC Order No.
+- Document Date can't be less than SC Order Date
+- Select valid Document Status.
+- Select valid Subcontract Location.
+- Select Inter Unit Vendor Name .
+- Select valid Price Type.
+- Select valid Billing Nature.
+- SC Order Date can't be less than Ref. Doc. Date.
+- Validity Date can't be less than SC Order Date.
+- Authorized SC Order can't be updated.
+- Document Status can't be Authorized for multi level Authorization
+- Enter Amendment Reason
+- Select atleast one Requisition.
+- Requisition Date can't be greater than Document Date in row n.
+- SC Qty. can't be zero or empty in row n.
+- SC Qty. can't be greater than Balance Qty in row n.
+- '   Rate is zero in row n.'
+- '  Do you want to continue?  '
+- Schedule Date can't be empty in row n.
+- Schedule Date can't be less than Document Date in row n.
+- Subcontractor Nature can not be different from Service request for row n.
+- Rate for Same Item can't be different in row n.
+- Select atleast one service.
+- Quantity can't be zero or empty in row n.
+- Sequence is breaked ,create two SC Order.
+- 'Select atleast one Issuable Input for first Sequence No. '
+- 'Select atleast one Primary Output for Last Sequence No. '
+- Select valid Warehouse.
+- Select atleast one Primary Output.
+- Select valid Valuation Method.
+- Select valid Item Code
+- Quantity can't be 0 or empty
+- 'Enter Rate '
+- Enter Bifercation %
+- Sum of Bifurcation % should be equal to 100 %.
+- Select atleast one Issuable or Repairable Item.
+- Repairable Item And Output Item can't be defined in same Order.
+- repairable item can't be define for Activity/Conversion
+- Select atleast one Activity in row n.
+- Select valid Unit in row n.
+- Enter Service Description in Bill Detail.
+- Select atleast one Mark.
+- Subcontract location should be X
+- Order Qty. cant be Different for same Work Order No.
+- Select atleast one Authorization Group.
+- Entry is release so only authorized person can update this.
+- Select valid action in row n.
+- Enter Rejection comment in row n.
+- Can not authorize as last level is not approved.
+- Service item is not mapped for Selected Activity.
+- Select valid Expense head in row n.
+- Select atleast one PO No.
+- Someone updated this Service Order Amendment , please reload.
+- Document No. X saved successfully.
+- Data deleted successfully.
+- Material is issued Against this Order
+- Purchase requisition is prepared Against this Order
+- Do you want to save ?
+- Do you want to delete ?
+- Select valid Consignee Name.
+- Select valid Consignee Location.
+- Select valid Freight Nature.
+- Enter Freight Amount.
+- Select valid From Location.
+- Select valid To Location.
+- Select valid Pay To Party.
+- Select valid Pay To Location.
+- Select valid Billed To Party.
+- Select valid Billed To Location.
+- Select valid Payment Mode.
+- SGST or CGST is not applicable for inter state service order.
+- IGST is not applicable for intra state service order.
+- Quantity can't be empty or 0
+- Rate can't be empty or 0
+- Select valid Tolerance Basis.
+- 'Select a valid Account Name for expense account in row no. '
+- 'No Account Assignment entry exists against service item : '
+- Account Name can't be empty for row no. n .
+- No standard Rate is Define for selected item.
+manages:
+- service-order-amendment
+uses_concepts:
+- bill-of-quantity
+- company
+- estimation
+- freight-order
+- freight-order-amendment
+- freight-order-mapping
+- revised-estimation
+- service-agreement
+- service-order
+- service-rfq
+method_notes:
+  ActivityDetail: Runs through Purchase.SCSOActivityDetail.
+  CustomValidation: Validates the entry through ODTSCOrder.ProcedureName.
+  Delete: Deletes the record through Purchase.SCSODelete.
+  ExpenseDependent: Runs through Purchase.SCSOExpenseDependent.
+  FillItemDetail: Fills the lookup lists through Purchase.SCSOFillValuesItemDetails.
+  FillReqDetail: Fills the lookup lists through Purchase.SCSOFillValuesRefDoc.
+  FillValues: Fills the lookup lists through Purchase.SCSOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through Purchase.SCSOFillValuesAccountAssignment.
+  FillValuesDependent: Fills the lookup lists through Purchase.SCSOFillValuesDependent.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.

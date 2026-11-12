@@ -1,0 +1,44 @@
+form: fSINMakeUpdate
+title: SIN Make Update
+module: DRM
+kind: transaction
+summary: The SIN Make Update screen lets stores staff assign a Make (brand or manufacturer) to received Stores Inward Note
+  (SIN) items that were received without one.
+purpose: |
+  What it is: A dated, numbered document that lists SIN items and the Make assigned to each, and applies that Make across the downstream stock and billing records [fSINMakeUpdate.vb:426-449; VTPL.SMUUSaveSINDetail:21-88]. When it applies: When material was received on a SIN without a Make and the correct Make becomes known later. Business outcome: Stock lots, bills and excise postings carry the right Make without re-entering the SIN, and each correction is traceable to a document (BR-05; BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header band, a filter group (From Date, To Date, Vendor Name, Show, Copy Make) and a SIN detail grid [fSINMakeUpdate.Designer.vb:54-57; fSINMakeUpdate.Designer.vb:128-169].
+  - Document Header (Status, Document No., Document Date, Division): The shared document number control.
+  - From Date Field: A date picker with a check box.
+  - To Date Field: A date picker that is always applied [fSINMakeUpdate.vb:476].
+  - Vendor Name Field: An optional drop-down of vendors [fSINMakeUpdate.vb:64].
+  - Show Button: A button that loads the SIN rows matching the filters [fSINMakeUpdate.vb:470-484].
+  - Copy Make Field: An optional drop-down of active makes [fSINMakeUpdate.vb:66; fSINMakeUpdate.Designer.vb:169].
+  - SIN Detail Grid: A filterable grid with columns Select, SIN No., SIN Date, Vendor Name, Section, Make, Challan Qty., Received Qty., Accepted Qty., SIN Lot No., Lot Detail, PO No., Warehouse, Group and SubGroup.
+  - Lot Detail Button and Dimension Pop-up: A button in each row that opens a read-only pop-up grid of the lot dimension details, closed with Ok [fSINMakeUpdate.vb:262-294; fSINMakeUpdate.vb:486-497].
+actions:
+  Save: Validates and saves the document [fSINMakeUpdate.vb:359-424].
+  New: Asks the MDI parent to open a blank document [fSINMakeUpdate.vb:120-127; fSINMakeUpdate.vb:190-204].
+  Search: Opens a search dialog of earlier update documents [fSINMakeUpdate.vb:129-154].
+  Delete, Print, Preview, Export and Mail: Toolbar actions.
+validations:
+- Select atleast one SIN.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- sin-make-update
+uses_concepts:
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- sin-lot-entry
+- store-inward-note
+method_notes:
+  FillValues: Fills the lookup lists through VTPL.SMUUFillValues.
+  LoadData: Loads the selected record through VTPL.SMUULoadData.
+  Open: Searches records through VTPL.SMUUSearchData.
+  Save: Saves the record through VTPL.SMUUSave.
+  SaveSINDetail: Saves the record through VTPL.SMUUSaveSINDetail.
+  ValidateForm: Validates the entry through VTPL.SMUUValidate.
+  ubtnShow_Click: Fills the lookup lists through VTPL.SMUUFillValuesDependent.
+  ugdSINDetail_BeforeRowEditTemplateDisplayed: Runs through VTPL.SMUUSINLotEntryDetail.

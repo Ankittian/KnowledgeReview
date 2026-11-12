@@ -1,0 +1,23 @@
+form: fUnitRoundingSetting
+title: Unit Rounding Setting
+module: MM
+kind: transaction
+summary: The Unit Rounding Setting screen decides, for each Optimization Unit, how the quantity of each unit of measure is
+  rounded when planning produces a fractional quantity.
+purpose: |
+  What it is: A per-Optimization-Unit table that assigns a rounding rule to every unit of measure [Optimization.OURSFillValues:19-20; Optimization.OURSSave:22-26]. When it applies: When an Optimization Unit is set up for automatic indenting, or when the rounding policy changes. Business outcome: Automatic indent quantities follow a consistent whole-unit policy instead of leaving fractions (for items counted in pieces).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Procurement Unit Field: A dropdown labelled "&Procurement Unit" listing the company's active units [fUnitRoundingSetting.Designer.vb:150; fUnitRoundingSetting.vb:166].
+  - Unit Rounding Grid: Grid with Unit (read-only) and Rounding (dropdown) columns; the unit key is hidden [fUnitRoundingSetting.vb:191-196].
+  - Other Toolbar Actions (Delete, Open, Print, Preview, Export, Email): Empty implementations [fUnitRoundingSetting.vb:66-74; fUnitRoundingSetting.vb:140-146; fUnitRoundingSetting.vb:182-188].
+actions:
+  New: The standard toolbar New.
+  Save: The only enabled toolbar action [fUnitRoundingSetting.vb:25].
+validations:
+- Select valid Rounding in row N.
+manages:
+- unit-rounding-setting
+method_notes:
+  FillValues: Fills the lookup lists through Optimization.OURSFillValues.
+  Save: Saves the record through Optimization.OURSSave.

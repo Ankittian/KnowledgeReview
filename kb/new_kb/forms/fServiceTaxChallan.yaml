@@ -1,0 +1,57 @@
+form: fServiceTaxChallan
+title: Service Tax Challan
+module: FI
+kind: transaction
+summary: The Service Tax Challan screen records the payment of service tax that the company owes for a month.
+purpose: |
+  What it is: A document that groups service tax payable of a month into one challan with the interest due for late payment [fServiceTaxChallan.vb:662-683; Finance.STCPFillValuesDependent:35-104]. When it applies: Each month, per service tax category, before or after the last date of challan payment. Business outcome: The tax booked in vouchers is marked as paid by one challan and the amount and interest to be paid are known (BR-05; BR-06; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Document number, date, status and finance book; Tax Book, Reference No., Reference Date, Month, Service Tax Category, Payment Mode, Interest %, Last date of Challan Payment and the total interest; the designer caption is "ServiceTaxChallan" [fServiceTaxChallan.Designer.vb:94-257; fServiceTaxChallan.Designer.vb:300-301; fServiceTaxChallan.Designer.vb:320].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status and finance book [fServiceTaxChallan.vb:147; fServiceTaxChallan.vb:77-79].
+  - Tax Book, Service Tax Category and Payment Mode Fields: Mandatory drop-downs [fServiceTaxChallan.vb:83; fServiceTaxChallan.vb:131-134].
+  - Reference No. and Reference Date: The bank challan number (50 characters) and an optional date; if the date box is not ticked the date is saved empty [fServiceTaxChallan.vb:125; fServiceTaxChallan.vb:510-516].
+  - Month Field: A month picker that always snaps to the first day of the month and reloads the grids [fServiceTaxChallan.vb:631-645].
+  - Service Tax Payable Grid: Read-only grid with sum footers of the amounts [fServiceTaxChallan.vb:389-445].
+  - Interest Detail Grid: Read-only grid with month columns and three fixed summary rows [fServiceTaxChallan.vb:447-474; fServiceTaxChallan.vb:704-739].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fServiceTaxChallan.vb:242-274].
+actions:
+  New: Opens a blank challan [fServiceTaxChallan.vb:206-213].
+  Save: Validates and saves the challan, links the voucher details and writes the interest rows in one transaction [fServiceTaxChallan.vb:476-565].
+  Search: Lists the challans of this company and year [fServiceTaxChallan.vb:215-240].
+  Delete: Deletes the loaded challan after a confirmation [fServiceTaxChallan.vb:89-113].
+validations:
+- Authorized ServiceTaxChallan can't be updated.
+- Select valid Tax Book.
+- Selected Month can't be greater than Document Date.
+- Select valid Service Tax Category.
+- Reference Date can't be greater than Document Date.
+- Select valid Payment Mode.
+- No detail of Tax found.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Service Tax Penalty account is not created.
+- Document No. <number> saved successfully.
+manages:
+- service-tax-challan
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- service-invoice
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.STCPDelete.
+  FillValues: Fills the lookup lists through Finance.STCPFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.STCPFillValuesDependent.
+  LoadData: Loads the selected record through Finance.STCPLoadData.
+  Open: Searches records through Finance.STCPSearchData.
+  Save: Saves the record through Finance.STCPSaveMain.
+  SaveInterestDetail: Saves the record through Finance.STCPSaveInterestDetail.
+  ValidateForm: Validates the entry through Finance.STCPValidate.

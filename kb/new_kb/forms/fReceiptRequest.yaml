@@ -1,0 +1,63 @@
+form: fReceiptRequest
+title: Receipt Request
+module: FI
+kind: transaction
+summary: The Receipt Request screen records a request to receive money from a customer, vendor, employee or other payer before
+  the receipt itself is booked.
+purpose: |
+  What it is: A numbered, approvable request describing an expected receipt, with payer, amount, mode and taxes [Finance.FIRRSaveMain:59-119; Finance.FIRRSaveTaxDetail:24-44]. When it applies: When someone expects money and Finance must approve the receipt before it is booked. Business outcome: Receipts are booked only against approved requests, with the requester named (BR-01; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The document control at the top, a main group with the fields in two columns, a disabled group "Request Status" and the tax grid at the bottom [fReceiptRequest.Designer.vb:388; fReceiptRequest.Designer.vb:309; fReceiptRequest.Designer.vb:274; fReceiptRequest.Designer.vb:375].
+  - Document Control (Number, Date, Status, Finance Book): The standard document control [fReceiptRequest.vb:75; fReceiptRequest.vb:225].
+  - Request Type Field: Mandatory dropdown "Request Type" [fReceiptRequest.vb:13; fReceiptRequest.Designer.vb:86].
+  - Payer Type Field: Mandatory dropdown "Payer Type" in the order given by the database [fReceiptRequest.vb:78].
+  - Payer Name Field: Mandatory dropdown "Payer Name", up to 100 characters; for type 11 the user may type a new name [fReceiptRequest.vb:61; fReceiptRequest.vb:520-524].
+  - Payer Location Field: Dropdown "Payer Location", read-only for payer types 9, 10 and 11; the first location is chosen automatically [fReceiptRequest.vb:511-515; fReceiptRequest.vb:582-584; fReceiptRequest.Designer.vb:321].
+  - Reference No. Field: Optional text box, up to 50 characters [fReceiptRequest.vb:54].
+  - Reference Date Field: Date picker "Reference Date", format dd/MM/yyyy, with a tick box [fReceiptRequest.Designer.vb:145-147].
+  - Amount Field: Mandatory number "Amount", up to 12 characters with 2 decimals [fReceiptRequest.vb:57-58].
+  - Cost Center Field: Optional dropdown "Cost Center" [fReceiptRequest.vb:80].
+  - Receipt Mode Field: Mandatory dropdown "Receipt Mode" [fReceiptRequest.vb:81].
+  - Cheque/DD/UTR No. and Date Fields: Text box "Cheque/DD/UTR No." (up to 50 characters) and date "Cheque/DD/UTR Date" (dd/MM/yyyy with tick box) [fReceiptRequest.vb:55; fReceiptRequest.Designer.vb:336-338].
+  - Requested By Field: Mandatory text box "Requested By" [fReceiptRequest.vb:13; fReceiptRequest.vb:59].
+  - Remarks Field: Optional text box, up to 1000 characters [fReceiptRequest.vb:60].
+  - Request Status Display: A disabled text box "Request Status" inside a disabled group [fReceiptRequest.Designer.vb:274; fReceiptRequest.vb:134].
+  - Tax Grid: The shared tax control working directly on the Amount [fReceiptRequest.vb:52; fReceiptRequest.vb:254; fReceiptRequest.vb:470-499].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Handlers are empty [fReceiptRequest.vb:191-206; fReceiptRequest.vb:617-623].
+actions:
+  Search: Opens the common search window for requests of the company and year [fReceiptRequest.vb:164-185; Finance.FIRRSearchData:19-45].
+  New: Resets the screen through the main window [fReceiptRequest.vb:155-160; fReceiptRequest.vb:208-217].
+  Save: Validates and saves header and taxes in one transaction [fReceiptRequest.vb:341-466].
+  Delete: Deletes the loaded request after confirmation [fReceiptRequest.vb:19-40].
+validations:
+- Select valid Request Type.
+- Select valid Payer Type.
+- Enter Payer Name.
+- Select valid Payer Name.
+- Select valid Payer Location.
+- Select Reference Date.
+- Amount can't be empty or zero.
+- Select valid Receipt Mode.
+- Enter Cheque/DD/UTR No.
+- Select Cheque/DD/UTR Date.
+- Enter Requested By.
+- Authorized Receipt Request can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- receipt-request
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Finance.FIRRDelete.
+  FillValues: Fills the lookup lists through Finance.FIRRFillValues.
+  FillValuesPayerType: Fills the lookup lists through Finance.FIRRFillValuesPayerType.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FIRRLoadData.
+  Open: Searches records through Finance.FIRRSearchData.
+  Save: Saves the record through Finance.FIRRSaveMain.
+  SaveTaxDetail: Saves the record through Finance.FIRRSaveTaxDetail.
+  ValidateForm: Validates the entry through Finance.FIRRValidate.

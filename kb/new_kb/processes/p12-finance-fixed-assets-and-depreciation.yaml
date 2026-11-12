@@ -1,0 +1,34 @@
+key: p12-finance-fixed-assets-and-depreciation
+name: 'Finance: Fixed assets and depreciation (Phase 12)'
+module: FI
+status: active
+summary: Phase 12 screens of the fixed assets and depreciation group in Finance.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Fixed assets and depreciation' (Finance). The steps follow the plan order, not a verified business sequence: Asset Opening, Asset Capitalization, Asset Disposal, Asset Tag Bifurcation, Change In Depreciation Provision, Depreciation.
+steps:
+- order: 1
+  name: Record Asset Opening
+  form: fAssetOpening
+- order: 2
+  name: Record Asset Capitalization
+  form: fAssetCapitalization
+- order: 3
+  name: Record Asset Disposal
+  form: fAssetDisposal
+- order: 4
+  name: Record Asset Tag Bifurcation
+  form: fAssetTagBifurcation
+- order: 5
+  name: Record Change In Depreciation Provision
+  form: fChgInDepreciationProv
+- order: 6
+  name: Record Depreciation
+  form: fDepreciation
+concepts:
+- asset-opening
+- asset-capitalization
+- asset-disposal
+- asset-tag-bifurcation
+- change-in-depreciation-provision
+- depreciation

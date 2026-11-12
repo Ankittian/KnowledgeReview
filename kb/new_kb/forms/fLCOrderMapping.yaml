@@ -1,0 +1,35 @@
+form: fLCOrderMapping
+title: Order Mapping
+module: FI
+kind: transaction
+summary: The Order Mapping screen links an Authorized letter of credit (LC) to the purchase orders or sales orders it pays
+  for, and records how much of the LC is allocated to each order.
+purpose: |
+  What it is: A mapping of one LC to the orders it covers, each with an allocated LC Amount [fLCOrderMapping.vb:251-301; Finance.FILCSaveOrderDetail:23-46]. When it applies: After an LC is Authorized and the orders it pays for are known. Business outcome: An order cannot be covered by LCs for more than its value, and an LC cannot be allocated beyond its amount (BR-04; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "LCOrderMapping" with a header area for the LC and a grid of orders below [fLCOrderMapping.designer.vb:344; fLCOrderMapping.vb:36-39].
+  - LC No. Field: A mandatory drop-down showing LC No.
+  - LC Detail Fields: Read-only LC Date, Opening Bank Name, Opening Country, Financial Doc.
+  - Order Grid: A grid with a tick column, Order No., Order Date, Order Amount, Prev.
+  - Previous LC Detail Pop-up: A row-edit pop-up opened from the Prev.
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Open, Load, Delete and the output actions do nothing [fLCOrderMapping.vb:21-23; fLCOrderMapping.vb:55-57; fLCOrderMapping.vb:68-104].
+actions:
+  New: Asks the main window for a blank record [fLCOrderMapping.vb:59-66].
+  Save: Validates, asks confirmation and stores the mapping [fLCOrderMapping.vb:251-301].
+validations:
+- Select valid LC No.
+- Select atleast one Purchase Order.
+- Select atleast one Sales Order.
+- LC Amount can't be empty or zero in row <n>.
+- Total Order LC Amount can't be greater than LC Amount.
+- LC Amount can't be greater than Balance Amount.
+manages:
+- order-mapping
+uses_concepts:
+- letter-of-credit
+- letter-of-credit-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FILCFillValuesOrderMapping.
+  FillValuesLC: Fills the lookup lists through Finance.FILCFillValuesLC.
+  Save: Saves the record through Finance.FILCSaveOrderDetail.

@@ -1,0 +1,52 @@
+form: fGoAheadLive
+title: Go A-Head Live
+module: MM
+kind: transaction
+summary: The Go A-Head Live screen (menu name "Go-Ahead") takes one or more authorized Consumption Patterns of a Procurement
+  Unit and puts their items live for planning.
+purpose: |
+  What it is: A dated, numbered release that makes the item-level planning values of authorized Consumption Patterns (reorder point, reorder quantity, safety stock, maximum stock, lead days) effective for a Procurement Unit from a Go Live Date. [Optimization.GAHLItemDetail:36-42; Optimization.GAHLSave:73-90] When it applies: After Consumption Patterns have been authorized and the planner wants them to drive purchasing and stock control. [Optimization.GAHLFillValuesDependent:21-24] Business outcome: Planning values become live only through a deliberate, reviewable release, and the planner can see the inventory impact before releasing.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: The window "Go A-Head Live" with a document number control, "Procurement Unit" and "Go Live Date" at the top, and a tab set below: "Pattern Select", "Weekly Impact", "Bi-Monthly Impact", "Monthly Impact", "Quaterly Impact", "User Defined" and "Overall Impact".
+  - Document Number Control: The shared control with Document No., Document Date, Division and Status; mandatory document number (BR-02).
+  - Procurement Unit Field: Dropdown of Procurement Units; mandatory (BR-04).
+  - Go Live Date Field: Date picker.
+  - Pattern Select Grid: Grid with "Select", "Consumption Parttern No." (misspelled in the caption) and "Consumption Pattern Date"; the number and date are read-only.
+  - Existing, New and Overlap Grids: Three grids on the tabs "Existing", "New" and "Overlap" with columns "Select", "Consumption Parttern No.", "Group", "Sub Group", "Item Code", "Item Description", "UOM", an information icon, "Source Type", "Consumption Pattern", "Consumption Rate", "Reorder Point", "Reorder Qty", "Safety Stock", "Max Stock", "Lead Days", "Safety Days", "Fixed Stock" and "Auto Indent".
+  - All Tab Item Grid: The merged list of ticked items from the three grids, with the same columns; "Select" and "Auto Indent" are editable, and other cells of an unticked row cannot be activated.
+  - Item Information Icon: An information icon in each item grid; double-clicking it opens an "Item Information" window with month-by-month opening, inward, outward and closing quantity and amount of the item for the pattern's period, plus average stock and average consumption.
+  - Impact Tabs: Six read-only hierarchical grids (Group, then Sub Group, then Item) showing "Avg Inventory", "Inv As Per Pattern(Max)", "Inv As Per Pattern(Min)" and "Inv As Per Pattern(Avg)" with totals, for the Weekly, Bi-Monthly, Monthly, Quarterly, User Defined and Overall patterns.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty actions.
+actions:
+  New: Clears the form through the standard main window action.
+  Save: Validates and saves the Go-Ahead.
+  Search: Opens the standard search window with "Consumption Pattern No." (this is the Go-Ahead number), "Consumption Pattern
+    Date", "Division", "Procurement Unit" and "GoLive Date".
+  Delete: Deletes the opened Go-Ahead after confirmation.
+validations:
+- Enter Document No.
+- Authorized Entry. can't be updated.
+- Duplicate Entry No. is not allowed.
+- Select valid Procurement Unit.
+- GoLive Date can't be Less than Document Date.
+- Select atleast one Consumption Pattern
+- Select atleast one Item
+- Duplicate Item <item names, each followed by a comma> which is not allowed.
+- Document No. <number> saved successfully.
+- Authorized Entry can't be updated.
+manages:
+- go-a-head-live
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Optimization.GAHLDelete.
+  FillValues: Fills the lookup lists through Optimization.GAHLFillValues.
+  GetInformation: Runs through Optimization.GAHLInformation.
+  LoadData: Loads the selected record through Optimization.GAHLLoaddata.
+  Open: Searches records through Optimization.GAHLSearchData.
+  SaveDetail: Saves the record through Optimization.GAHLSaveDetail.
+  ShowData: Runs through Optimization.GAHLItemDetail.
+  ValidateGeneralDetails: Validates the entry through Optimization.GAHLValidate.
+  ucmbOptimizationUnit_ValueChanged: Fills the lookup lists through Optimization.GAHLFillValuesDependent.
+  utabMain_SelectedTabChanged: Runs through Optimization.GAHLItemImpact.

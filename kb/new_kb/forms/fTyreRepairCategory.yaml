@@ -1,0 +1,40 @@
+form: fTyreRepairCategory
+title: Tyre Repair Category
+module: PM
+kind: transaction
+summary: The Tyre Repair Category screen defines the categories of repair work that can be carried out on a tyre, such as
+  one particular kind of repair.
+purpose: |
+  What it is: A master list of repair categories, each tied to a repair type, an optional service item and a set of permitted roles [fTyreRepairCategory.vb:381-390; masterdata.MTRCSave:27-50; masterdata.MTRCSaveDetail:18-27]. When it applies: When the maintenance team introduces a new kind of tyre repair, or changes who may handle it. Business outcome: Tyre repairs are classified uniformly and linked to the service that is bought or performed for them.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header with the general fields and a role grid; the window caption is "TyreCategoryMaster" [fTyreRepairCategory.Designer.vb:173].
+  - Code Field: A read-only text box labelled "Code" [fTyreRepairCategory.Designer.vb:49; fTyreRepairCategory.Designer.vb:61].
+  - Category Field: A mandatory text box labelled "Category", up to 50 characters [fTyreRepairCategory.Designer.vb:78; fTyreRepairCategory.vb:49; fTyreRepairCategory.vb:101].
+  - Repair Type Field: A mandatory drop-down labelled "Repair Type" [fTyreRepairCategory.Designer.vb:142; fTyreRepairCategory.vb:49; fTyreRepairCategory.vb:103].
+  - Service Item Field: An optional drop-down labelled "Service Item" showing Service Item and Code, with a search button that opens a search dialog of the same list [fTyreRepairCategory.Designer.vb:112; fTyreRepairCategory.vb:104; fTyreRepairCategory.vb:455-479].
+  - Inactive Field: A check box labelled "Inactive" [fTyreRepairCategory.Designer.vb:86].
+  - Role Grid: A grid with a tick column and a Role column; the role number is hidden [fTyreRepairCategory.vb:342-355].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions.
+actions:
+  New: The toolbar action that asks the main window for a fresh record [fTyreRepairCategory.vb:163-170].
+  Save: The toolbar action that validates and stores the category [fTyreRepairCategory.vb:362-427].
+  Search: The toolbar action that opens a search dialog [fTyreRepairCategory.vb:172-195].
+  Delete: The toolbar action that removes the open category [fTyreRepairCategory.vb:55-88].
+validations:
+- Enter Category.
+- Duplicate repair category name not allowed.
+- RoleNo can't be empty or zero in row N.
+- Select atleast one Role.
+manages:
+- tyre-repair-category
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MTRCDelete.
+  FillValues: Fills the lookup lists through masterdata.MTRCFillValues.
+  LoadData: Loads the selected record through masterdata.MTRCLoadData.
+  Open: Searches records through masterdata.MTRCSearchData.
+  Save: Saves the record through masterdata.MTRCSave.
+  SaveRoleGrid: Saves the record through masterdata.MTRCSaveDetail.
+  ValidateForm: Validates the entry through masterdata.MTRCValidate.

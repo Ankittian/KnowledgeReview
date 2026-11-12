@@ -1,0 +1,62 @@
+form: fExpensePolicy
+title: Expense Policy
+module: FI
+kind: transaction
+summary: The Expense Policy screen defines the rules under which employees may claim expenses.
+purpose: |
+  What it is: A company- and year-specific record that holds the limits and rates applying to expense categories [fExpensePolicy.vb:695-723; ExpenseMgmt.EXEPSave:33-60]. When it applies: When finance sets the rules for expense claims at the start of a year or when rules change. Business outcome: Claims can be checked against agreed allowances, rates and tolerances.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Code Area: A group box at the top holding Code and the reference button [fExpensePolicy.Designer.vb:301-311].
+  - Code Field: A read-only text box labelled "Code" [fExpensePolicy.Designer.vb:279,291].
+  - Reference Button: An icon-only button next to Code with no caption [fExpensePolicy.Designer.vb:311-318].
+  - General Detail Tab: A tab holding Policy Name, Policy Description, Remarks, the currency control and the Notes control [fExpensePolicy.Designer.vb:77-98,202].
+  - Policy Name Field: A mandatory text box labelled "Policy Name", up to 100 characters [fExpensePolicy.vb:46; fExpensePolicy.Designer.vb:169,181].
+  - Policy Description Field: A mandatory text box labelled "Policy Description", up to 300 characters [fExpensePolicy.vb:46; fExpensePolicy.Designer.vb:107,120].
+  - Remarks Field: An optional text box labelled "Remarks", up to 1000 characters [fExpensePolicy.Designer.vb:135,148].
+  - Currency Control: The shared currency control; its currency conversion and rates are saved with the policy [fExpensePolicy.vb:706-709].
+  - Notes Control: The shared notes control with Print Area, Notes and Default columns [fExpensePolicy.vb:124-127; fExpensePolicy.vb:819-839].
+  - Custom Field Tab: A tab with the shared custom-field control [fExpensePolicy.Designer.vb:154-161,205].
+  - Category Detail Grid: The main rule grid with columns Category Type, Category Name, Location, Per Diem Child, Effective From, Effective To, Daily Allowances, Percentage Tolerance, Use Rate, Rate, Unit, Rate Override, Validation Type, Remarks (up to 500 characters); serial number and "used further" columns are hidden [fExpensePolicy.vb:94-98,595-628].
+  - Per Diem Detail Panel: A pop-up row-edit panel with a grid (Category Name, Use Rate, Rate, Unit, Rate Override) and buttons "Ok" and "Cancel" [fExpensePolicy.Designer.vb:211-252].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fExpensePolicy.vb:253-285].
+actions:
+  New: Toolbar action that clears the form [fExpensePolicy.vb:217-224; fExpensePolicy.vb:287-318].
+  Save: Toolbar action that saves the policy [fExpensePolicy.vb:685-745].
+  Search: Toolbar action that opens the search dialog [fExpensePolicy.vb:226-251].
+  Delete: Toolbar action that deletes the opened policy [fExpensePolicy.vb:53-81].
+validations:
+- Enter Policy Name.
+- Duplicate Policy Name not allowed.
+- Enter Policy Description.
+- Enter atleast one Category Detail.
+- Select valid Category Name
+- ' in row n.'
+- Enter atleast one details of Per Diem
+- Duplicate Category Name and Location  not allowed.
+- 'Category Name and Location already used '
+- Duplicate Category Name  not allowed.
+- Enter Rate
+- Select valid Unit
+- Select valid Effective From
+- Effective To cannot be less than Effective From
+- Percentage Tolerance cannot be greater than 100
+- Select valid Validation Type
+- 'Cannot be deleted,Some data exists for '
+- Can't be deleted as some record exist against this entry..
+manages:
+- expense-policy
+uses_concepts:
+- expense-category
+- expense-entry
+method_notes:
+  Delete: Deletes the record through ExpenseMgmt.EXEPDelete.
+  FillValues: Fills the lookup lists through ExpenseMgmt.EXEPFillValues.
+  LoadData: Loads the selected record through ExpenseMgmt.EXEPLoadData.
+  Open: Searches records through ExpenseMgmt.EXEPSearchData.
+  Save: Saves the record through ExpenseMgmt.EXEPSave.
+  SaveCategoryDetail: Saves the record through ExpenseMgmt.EXEPSaveCategoryDetail.
+  SaveDiemDetail: Saves the record through ExpenseMgmt.EXEPSaveDiemDetail.
+  SaveNotesDetail: Saves the record through ExpenseMgmt.EXEPSaveNotesDetail.
+  ValidateForm: Validates the entry through ExpenseMgmt.EXEPValidate.
+  ubtnReferenceItem_Click: Searches records through ExpenseMgmt.EXEPSearchData.

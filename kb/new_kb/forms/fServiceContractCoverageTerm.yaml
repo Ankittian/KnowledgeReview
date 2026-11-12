@@ -1,0 +1,38 @@
+form: fServiceContractCoverageTerm
+title: Service Contract Coverage Term
+module: MD
+kind: master
+summary: The Service Contract Coverage Term screen defines named coverage schedules for service contracts.
+purpose: |
+  What it is: A master record that states on which weekdays and between which hours a service contract covers the customer [fServiceContractCoverageTerm.vb:344-421; masterdata.SCCTSave:30-51; masterdata.SCCTSaveServiceContractCoverageTermDetail:21-36]. When it applies: When a new support window is to be offered on service contracts, or when an existing one changes. Business outcome: Contract coverage hours are defined once and reused instead of retyped on each contract (BR-02; BR-04; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Detail Area: The top area holding Code, Description and Include Holiday [fServiceContractCoverageTerm.Designer.vb:39-85].
+  - Code Field: A read-only text box labelled "Code" [fServiceContractCoverageTerm.Designer.vb:39; fServiceContractCoverageTerm.Designer.vb:50].
+  - Description Field: A mandatory text box labelled "&Description", 100 characters [fServiceContractCoverageTerm.vb:33; fServiceContractCoverageTerm.vb:82; fServiceContractCoverageTerm.Designer.vb:67].
+  - Include Holiday Field: An optional check box labelled "&Include Holiday" [fServiceContractCoverageTerm.Designer.vb:85].
+  - Coverage Detail Grid: A grid with the columns Day, Weekly Off, Start Time, End Time and Total Hrs.; a hidden day-number column is also present [masterdata.SCCTFillValues:15-27; fServiceContractCoverageTerm.vb:315-330].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions [fServiceContractCoverageTerm.vb:167-199].
+actions:
+  New: The toolbar action that asks the main window for a blank record and reloads the seven day rows [fServiceContractCoverageTerm.vb:129-138].
+  Save: The toolbar action that validates and stores the term [fServiceContractCoverageTerm.vb:344-394].
+  Search: The toolbar action that opens a search list [fServiceContractCoverageTerm.vb:140-165].
+  Delete: The toolbar action that removes the opened term [fServiceContractCoverageTerm.vb:39-65].
+validations:
+- Enter Description.
+- Enter Strat time in row N.
+- Enter End time in row N.
+- End Time can not be less than Start Time.
+- Duplicate Description not allowed.
+manages:
+- service-contract-coverage-term
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.SCCTDelete.
+  FillValues: Fills the lookup lists through masterdata.SCCTFillValues.
+  LoadData: Loads the selected record through masterdata.SCCTLoadData.
+  Open: Searches records through masterdata.SCCTSearchData.
+  Save: Saves the record through masterdata.SCCTSave.
+  SaveContractCoverageDetail: Saves the record through masterdata.SCCTSaveServiceContractCoverageTermDetail.
+  ValidateForm: Validates the entry through masterdata.SCCTValidate.

@@ -1,0 +1,83 @@
+form: fReceiptVoucher
+title: Receipt Voucher
+module: FI
+kind: transaction
+summary: The Receipt Voucher screen records money received into a cash or bank account.
+purpose: |
+  What it is: Records the accounting entry for money received, crediting the payers and debiting cash or bank. When it applies: A user needs this when money is received from a customer or other party in cash, cheque, draft or transfer. Business outcome: Party, cash and bank balances change together in one approved document with its payment particulars.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: Document number, document date, finance book, status and prefix, with a repeat entry button when the voucher copy setting is on ([fReceiptVoucher.vb:38; Voucher.cs:154-161]).
+  - Voucher Type Field: "Voucher T&ype" list with Regular and Inter FB ([Voucher.Designer.cs:226]).
+  - Voucher Grid: Columns Type, Account Name, Current Balance, Balance Amount, Debit Amount, Credit Amount, Ref.
+  - Ref. Detail, Cost Center, Qty. Detail and TDC Rule Pop-ups: Pop-up editors opened from the grid cells.
+  - Payment Detail Grid: Columns Payment Mode, Issued To, Cheque/DD/UTR No., Date, Amount, In Favour Of, Party Bank Name, Branch Name.
+  - Narration Field: "&Narration" text area.
+  - Total Debit and Total Credit: Running totals of the grid.
+actions:
+  Toolbar: New, Save, Open, Delete, Navigation, Print, Print Preview, Export, Email ([fReceiptVoucher.vb:23-33]).
+validations:
+- Authorized entry can't be updated.
+- Can't authorize, Voucher is Rejected.
+- Duplicate Document No. not allowed.
+- Opening Date is not set against selected Finance Book.
+- Document Date can't be less than Finance Book Opening Date.
+- Finance Book is closed for this Document Date.
+- Document Date can't be less than Inventory Start Date.
+- Select valid Voucher Type.
+- In InterFB Voucher can't select multiple InterFB Account and multiple Regular Account.
+- Select atleast one cash/ bank account.
+- Duplicate Account with same bank account type can't be selected.
+- Duplicate Account with same cash account type can't be selected.
+- Duplicate Account with same cash/bank account type can't be selected.
+- Enter Cheque/DD/UTR No.
+- Select Date
+- Cheque Date can't be greater than Document Date
+- Amount can't be empty or zero
+- Enter In Favour Of
+- Select valid Branch Name
+- Select valid Party Bank Name
+- 'Account '
+- ' has amount less than voucher amount.Do you want to continue?'
+- Total Payment Amount should be equal to voucher Amount.
+- 'Select valid Account Name in row '
+- 'Debit Amount can''t be empty in row '
+- 'Credit Amount can''t be empty in row '
+- Total Debit Amount should be equal to Total Credit Amount.
+- TDC Rule is not selected againt account. Do you want to continue?
+- Select valid TDC Rule Description.
+- ' is not mapped with COA of selected Finance Book.'
+- ' is Inactive.'
+- Amount withdrawn from bank can't be greater than it's drawing limit.
+- Bank balance can't be less than it's credit limit.
+- Cash/ Bank balance can't be negative.
+- Do you want to continue?
+- Can't authorize, Limit (
+- ) exceeds.
+- Contact your vendor,Reference getting -ve
+- Do you want to print?
+- Problem arised.
+manages:
+- receipt-voucher
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- cash-journal
+- change-voucher-status
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- recurring-voucher
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.VoucherDelete.
+  Open: Searches records through Finance.VoucherSearchData.

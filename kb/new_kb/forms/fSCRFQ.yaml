@@ -1,0 +1,91 @@
+form: fSCRFQ
+title: Service RFQ
+module: MM
+kind: transaction
+summary: The Service RFQ screen creates and maintains the request for quotation that a buying company sends to subcontractors
+  and service vendors to invite prices for services, conversion (job work) or activities.
+purpose: |
+  What it is: A numbered request to selected service vendors to quote for a defined list of services, conversion jobs or activities, with quantities and delivery dates. [fSCRFQ.vb:630-655] When it applies: When a subcontract requirement exists, either an approved service request or a need entered directly, and the buyer wants quotations before placing a service order. Business outcome: Every invited vendor receives the same requirement and deadlines; requisition lines taken into the RFQ are linked to it so the requirement is tracked (BR-21); downstream quotations refer back to the RFQ.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Control: The standard document control at the top showing division (when divisions apply), document number, document date and document status.
+  - Tab Layout: Two tab groups: General (General Detail, Vendor Detail, Requisition Detail, Custom Field) and Main (Service Detail, Item Detail, Activity Details, Work Order Details, Mark Detail).
+  - RFQ Against Field: A mandatory dropdown listing "Direct" and "Subcontract Requisition".
+  - Subcontract Type Field: A mandatory dropdown: Service, Conversion, Activity.
+  - Submission Date, Opening Date and Validity Date Fields: Three date pickers: "Submission Da&te" (last day for vendors to submit), "Opening Da&te" and "Validity Da&te".
+  - Service Description Field: An optional multi-line text box, "Service Description", up to 1000 characters.
+  - Remarks Field: An optional multi-line text box "Remarks", up to 1000 characters.
+  - Vendor Group Field: An optional dropdown "Vendor Group" on the Vendor Detail tab.
+  - Vendor Detail Grid: Grid with Vendor Name, Location, Contact Person and an information icon column.
+  - Requisition Detail Grid: A two-level grid: requisitions (Select, Requisition No., Requisition Date, Subcontract Nature, Item or Activity, Sequence No., Short Text, Unit, Quantity, Delivery Date) with the input and output items of each underneath.
+  - Service Detail Grid: Grid for types Service and Conversion with Item Code, Item Description, Short Text (opens a pop-up editor, 1000 characters), Unit, Quantity (up to 3 decimals), Delivery Date and Remarks.
+  - Item Detail Grid: Grid of input and output material: Sequence No.
+  - Activity Details Grid: Grid for type Activity with Select (shown only when work-order driven), Sequence No., Activity Code, Activity, Short Text (pop-up editor), Unit, Quantity and Remarks (500).
+  - Work Order Details and Mark Detail Grids: Work Order Details lists work orders with sales order, customer order and project code and the quantity; Mark Detail lists structure marks with BOM quantity, work order quantity, previous RFQ quantity, balance and RFQ quantity, with a pop-up per mark to split RFQ quantity and weight over work orders.
+  - Notes Control: The shared notes grid (Print Area, Notes, Default) on the General Detail tab.
+  - Custom Field Tab: The shared custom field control.
+actions:
+  New: Starts a blank RFQ.
+  Save: Validates and saves the RFQ.
+  Search: Opens the shared search list of RFQs of the current company and year.
+  Delete: Deletes the loaded RFQ after the standard confirmation.
+  Navigation: First / Previous / Next / Last record navigation is enabled on the toolbar.
+  Print, Preview, Export and Email: Produce the RFQ report, one copy for each vendor on the Vendor Detail grid.
+validations:
+- Authorized data can't be updated.
+- Duplicate Document No. not allowed.
+- Gate Pass out is not prepared against service request
+- 'Please select Vendor as in Gatepass '
+- Select valid RFQ Against.
+- Select valid Subcontract Type.
+- Submission Date can't be less than Document Date.
+- Opening Date can't be less than Submission Date.
+- Validity Date can't be less than Opening Date.
+- Select atleast one Vendor Name
+- Duplicate Vendor Name not allowed.
+- Select valid Location
+- Indent of different nature can't be selected
+- Indent of different Work order can't be selected
+- 'Document Date can''t be Less than Requisition Date in row '
+- Duplicate Item Code not allowed.
+- Duplicate Activity Code not allowed.
+- Qty. can't be greater than balance qty.
+- Duplicate Service Description, Item Flow, Item Code and Make not allowed.
+- 'Select Issuable Input Item against Service Item '
+- 'Select Primary Output Item against Service Item '
+- 'Document No. '
+- ' saved successfully.'
+- Only one vendor can be selected for Service/Job Work case.
+- Only one Requisition can be selected for Service/Job Work case
+- Select atleast one Requsition
+- Select atleast one Item for Service
+- Quantity can't be empty or 0
+- Select Delivery Date
+- 'Delivery Date can''t be less than Document Date in row '
+- 'Select valid Activity in row '
+- 'Select valid Service Description in row '
+- 'Select valid Item Description in row '
+- Select valid Item Flow
+- Select valid Item Code
+- Quantity can't be 0 or empty
+- Select atleast one Activity
+- Select valid Activity Code in row
+- 'Select valid Unit in row '
+- 'Quantity can''t be empty or zero in row '
+- 'Select Issuable Input Item '
+- 'Select Primary Output Item '
+manages:
+- service-rfq
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Purchase.SRFQDelete.
+  FillValues: Fills the lookup lists through Purchase.SRFQFillValues.
+  FillValuesDependent: Fills the lookup lists through Purchase.SRFQFillValuesDependent.
+  GetItemInfo: Runs through Purchase.SRFQGetItemInfo.
+  GetVendorInfo: Runs through Purchase.SRFQGetVendorInfo.
+  LoadData: Loads the selected record through Purchase.SRFQLoadData.
+  Open: Searches records through Purchase.SRFQSearchData.
+  Save: Saves the record through Purchase.SRFQSaveMain.
+  SaveActivityDetail: Saves the record through Purchase.SRFQSaveActivityDetail.
+  SaveCustomFieldDetail: Saves the record through Purchase.SRFQSaveCustomFieldDetail.

@@ -1,0 +1,22 @@
+key: p7-master-entry-masters
+name: Master data set-up (Phase 7)
+module: MD
+status: active
+summary: Phase 7 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 7 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Depreciation Book, Head Definition, Resource Master.
+steps:
+- order: 1
+  name: Maintain Depreciation Book
+  form: fDepreciationBook
+- order: 2
+  name: Maintain Head Definition
+  form: fHeadDefinition
+- order: 3
+  name: Maintain Resource Master
+  form: fResourceMaster
+concepts:
+- depreciation-book
+- head-definition
+- resource-master

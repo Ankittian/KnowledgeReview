@@ -1,0 +1,242 @@
+form: fSalesOrder
+title: Sales Order
+module: SD
+kind: transaction
+summary: 'The Sales Order screen records a customer''s confirmed order for the company: who ordered (customer and location),
+  against which source (direct, an authorized quotation, a sales agreement, an opportunity or a transport delivery order),
+  which items or turnkey particulars are sold, at what rate, quantity, tolerance and delivery schedule, and under which commercial
+  terms (freight, consignees, bill-to '
+purpose: |
+  What it is: A formal, numbered record of a customer order with its commercial, tax, logistic and delivery terms. When it applies: When a customer confirms a purchase, either directly or after a quotation, under a sales agreement, from an opportunity or from a transport delivery order. Business outcome: A single controlled order that dispatch, invoicing, production and finance rely on, with prices and quantities checked against price settings, agreements and tax rules.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "Sales Order" with a document number strip on top and tabs "General Information", "Other Information", "Shipment Detail", "Billing Detail", "Tax Detail", "Document Required", "Export Detail", "Inspection Detail", "Cost Detail", "Terms & Condition", "Account Assignment", "Custom Field" and "Multi-Level Authorization".
+  - Document Number Strip: Shared document number control with prefix, document no., "Document Date", status and division, plus information and repeated-entry buttons; read-only "Amendment No." and "Amendment Date".
+  - Order Type Field: Dropdown "Order Type", mandatory.
+  - Source Document Field: Dropdown "Source Document", mandatory.
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Dropdown "Ref.
+  - Customer Name and Customer Location Fields: Dropdowns "Customer Name" (with search button) and "Customer Location", both mandatory; double-clicking the customer info label shows pending agreements, orders, dispatches and invoices of the customer.
+  - Customer Order No. and Customer Order Date Fields: Text "Customer Order No." (may default from settings) and date "Customer Order Date", both mandatory.
+  - Sales Category Field: Dropdown "Sales Category", mandatory, with default.
+  - Agent, Distributor and Sales Person Name Fields: Dropdown "Agent" (double-click label for agent information), read-only "Distributor" shown for agreement orders, dropdown "Sales Person Name".
+  - Validity Date and Booking Time Fields: Date "Validity Date" (defaulted to document date plus configured validity days) and time "Booking Time" (visible only when booking time is maintained).
+  - Other General Fields: "Customer Project Code", "Project Code", "Lift", "Sales Classification", "Supply Type", "Vessel Name", "Remarks", checkboxes "Additional Cost" (visible per setting) and currency control (currency, rate type, conversion rate).
+  - Item Details Grid: Main grid with "Import" button.
+  - Item Popups: Popups opened from item cells: Item Attribute ("Attribute", "Attribute Booking Nature", attribute values, price display "Base Price", "Price Variation", "Min.
+  - Shipment Detail Tab: "Freight Type" (mandatory, defaulted) and the consignee grid ("Consignee Name", "Consignee Location", "From Location", "To Location", "Freight Rate Type", "Freight Rate", "Freight Order").
+  - Billing Detail Tab: "Bill To Party" and "Location" (mandatory), "Pay Term Code", payment terms grid ("Pay Code", "Payment Type", "Payment Description", "Payment Mode", "Credit Days", "Pay Value", "Remarks"), "Cash Discount" with "Level", "Basis", "Value", "SD Applicable" and "Security Deposit %" (per setting), and excise and export documents "CT1/ CT3 No.
+  - Other Information Tab: "Order Nature", "Approved By", "LOI Number", "LOI Date", "Micron Name", "PV Clause", "LD Clause".
+  - Export Detail Tab: "Customer's Contact Person", contact no.
+  - Inspection Detail, Cost Detail and Document Required Tabs: Inspection grid ("Inspection By", "Reference Document"); cost grid with "Inco Terms" ("Cost Group", "Cost Head", "Quantity", "Unit", "Currency", "Rate", "Amount", "Amount (Base Currency)", "Amount (Export Currency)", "Agreement No.", billing reference popup); "Document Group" with document checklist grid ("Document Name", "No.
+  - Tax Detail, Terms & Condition, Custom Field, Account Assignment and Multi-Level Authorization Tabs: Shared controls for item-wise and order taxes, terms and conditions groups, custom fields, account assignment grid and authorization group.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Preview and Export of the "rptSalesOrder" daily print report, and Email with the exported report attached (internal mail or Outlook by mail type).
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Open (Search): Toolbar Open showing the search list for the company and year.
+  Delete: Toolbar Delete.
+  Navigation: First, Previous, Next, Last are enabled on the toolbar.
+validations:
+- Sales Order No. <number> saved successfully.
+- Sales Organization is not set for login company.
+- '... and Division.'
+- Authorized Sales Order can't be updated.
+- Selected wrong Combination (<combination>) for Item (<item>).
+- Quantity can't be less than Dispatch Quantity.
+- Unable to Send Mail please send it manually.
+- Duplicate Document No. is not allowed.
+- Quantity can't be less than Total Production Planned Quantity.
+- Previous SO Qty. (<a>) + Current Total SO Qty. (<b>) can't be greater than Agreement Qty.+ Tolerance Qty. (<c>).
+- Selected Freight order is not mapped for select items.
+- Unable to Authorize.Sales Order BOM Entry is not released
+- Unable to Authorize.BOM revision is not generated.
+- Sum of Previous Agreement Qty. and Current Agreement Qty. can not be greater than Credit Limit Qty. Do you want to continue?
+- Project code can't be empty
+- Another agreement already exists for sames customer + item.
+- Quantity can't be less than Invoice Quantity.
+- Can't authorize, Limit exceeds from configuration.
+- SGST or CGST is not applicable for inter state sales.
+- IGST is not applicable for intra state sales.
+- Select valid agent.
+- Select sales person name.
+- Enter Project Code.
+- Select Sales Classification.
+- GST not selected. Do you want to save?
+- Specification Detail not found. Do you want to save?
+- Unable to save, Specification detail not found.
+- Source Document is Direct. Do you want to save?
+- Source Document can't be Direct.
+- Sales Order can not be authorized without saving Sales Order as released. Do you want to save?
+- Sales Order can not be authorized without saving Sales Order as released.
+- Can not authorize as last level is not approved.
+- Select valid Order Type.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Document Date can't be less than Ref. Doc. Date.
+- Select valid Customer Name.
+- Select valid Customer Location.
+- Enter Customer Order No.
+- Select Valid Customer Order Date.
+- Select Customer Order Date.
+- Customer Order Date can't be greater than Document Date.
+- Select valid Sales Category.
+- Validity Date can't be less than Document Date.
+- Sales Order validity cannot be more than Sales Agreement.
+- Select valid Freight type.
+- Select valid Supply Type.
+- GST can not be applied when Supply Type is Export Without Payment.
+- Only IGST is applicable when Supply Type is Export With Payment.
+- IGST should be applied when Supply Type is Export With Payment.
+- GST can not be applied when Supply Type is SEZ Without Payment.
+- Only IGST is applicable when Supply Type is SEZ With Payment.
+- IGST should be applied when Supply Type is SEZ With Payment.
+- Select atleast one Consignee Name.
+- Select valid Consignee Location in row n.
+- Select valid From Location in row n.
+- Select valid ToLocation in row n.
+- Select valid Freight Rate Type in row n.
+- Freight Rate can't be empty in row n.
+- Select valid Inco Term.
+- Select atleast one Cost Head of Insurance type.
+- '... of Freight type.'
+- '... of Cost type.'
+- Select valid Bill To Party.
+- Select valid Location.
+- Document Status can't be Authorized for multi level Authorization
+- Select valid Order Nature No.
+- Select valid LOI Date.
+- Select atleast one Payment Term.
+- Duplicate Pay Code is not allowed.
+- Duplicate Payment Type and Payment Description is not allowed.
+- Select/Enter valid Payment Description in row n.
+- Select valid Payment Mode in row n.
+- Credit Days can't be empty in row n.
+- Select valid Cash Discount Level.
+- Select valid Cash Discount Basis.
+- Cash Discount Value can't be empty or zero.
+- Remark of last payment terms must have keyword 'Final Stage'
+- No. of Copy can't be empty or zero in row n.
+- Select atleast one Item Code.
+- Enter Particular.
+- Select valid Unit in row n.
+- Select valid Attribute Value in row n
+- Enter value for mandatory quality parameter  in row n.
+- Enter value for atleast one quality parameter in row n.
+- Select valid Processing Type in row n.
+- Quantity can't be empty or zero in row n.
+- Quantity can't be greater than Balance Agreement Qty.+ Tolerance Qty. in row n.
+- Rate is empty or zero in row n do you want to continue.
+- Tolerance selection is not allowed,remove it from row n.
+- Select valid Cash Discount Basis in row n.
+- Cash Discount Value can't be greater than Rate in row n.
+- Attribute Booking Natrue is Variant so duplicate Item Description not allowed in row n.
+- HSN & SAC Code is not selected in row n. Do you want to continue?
+- Select HSN & SAC Code in row n.
+- Tolerance(-) is not allowed in row n. Do you want to continue?
+- Tolerance(-) is not allowed in row n.
+- Specification is empty in row n. Do you want to continue?
+- Select Specification in row n.
+- Quantity can not be greater than DO Qty. in row n.
+- Rate should be equal to <total> in row n.
+- Estimated Amount can't be empty or zero in row n.
+- Select Estimated Start Date in row n.
+- Estimated Start Date Can't be less than Document Date in row n.
+- Select Estimated End Date in row n.
+- Estimated End Date Can't be less than Estimated Start Date in row n.
+- Select valid Account Name in row n.
+- Select valid Attribute.
+- Select valid Attribute Booking Nature.
+- Duplicate Item,Make and Attributes not allowed.
+- Enter Tolerance(+) or Tolerance(-).
+- Tolerance(+) can't be greater than 100.
+- Tolerance(-) can't be greater than 100.
+- Select valid Basis.
+- Enter First CF.
+- Enter Second CF.
+- Value can't be empty or zero  in row n.
+- Enter lower limit  in row n.
+- Enter upper limit  in row n.
+- Qty. can't be empty or zero  in row n.
+- Rate can't be empty or zero  in row n.
+- Amount can't be empty or zero  in row n.
+- Some items are not valid or duplicate.View log for detail.
+- Row n- Inserted.
+- Row n- Item Code/Item Description doesn't exists or duplicate.
+- Excel is not in valid format.
+- Select valid Customer's Contact Person.
+- Select valid Method Of Shipment.
+- Select valid Type Of Dispatch.
+- Select valid Place Of Receipt.
+- Select valid Port Of Loading.
+- Select valid Port Of Discharge.
+- Select valid Place Of Delivery.
+- Select valid Pre Carriage.
+- Select valid Country Of Origin.
+- Select valid Country Of Final Destination.
+- Select valid Conatct Person Name.
+- Select Valid Bank Name.
+- Enter Packing Instructions.
+- Select either GST or Bond No. and Date.
+- Select LUT No. or Bond No. and Date.
+- Select atleast one Inspection By.
+- Select valid Inspection By in row n.
+- Select valid Reference Document in row n.
+- Inspection By can not be Internal Team when Reference Document is Commercial Invoice in row n.
+- Select atleast one Cost Head.
+- Select Unit in row n.
+- Select Currency in row n.
+- Rate can't be empty or zero in row n.
+- For same currency, Exchange Rate (General Information) should be equal to Exchange Rate of Cost Head in row n.
+- Select atleast one Billing Refermce in row n.
+- Select atleast one form in Billing Reference.
+- Rate should be between tolerance range <min>-<max> in row n.
+- Duplicate Document Name is not allowed.
+- Duplicate Item Code,Make and Item Information is not allowed.
+- Duplicate Consignee Name and Consignee Location is not allowed.
+- Duplicate Quality Parameter is not allowed.
+- Duplicate Inspection By and Reference Document is not allowed.
+- Duplicate Cost Head is not allowed.
+- Amendment is done against this Order.
+- Can't be deleted as some record exist against this entry.
+- Tax Rule is not set against charges.
+manages:
+- sales-order
+uses_concepts:
+- account-mapping
+- accounting-voucher
+- attribute-master
+- check-list-document-group
+- company
+- cost-group
+- cost-head
+- customer-enquiry
+- delivery-challan
+- dispatch-challan
+- lut-master
+- multiple-layout-mapping
+- order-nature
+- pricing-factor
+- proforma-invoice
+- quotation
+- revised-quotation
+- sale-account-posting-rule
+- sales-agreement
+- sales-order-amendment
+- sales-order-change-status
+- sales-order-shipment-detail
+- sales-organization
+- sales-person
+- sales-return
+- tax-invoice
+- vendor-group
+method_notes:
+  CustomValidation: Validates the entry through ODTSalesOrder.ProcedureName.
+  Delete: Deletes the record through Sales.SDSODelete.
+  FillFreightOrderDetail: Runs through Sales.SDSOFillFreightOrder.
+  FillItemCombo: Runs through Sales.SDSOFillItemCombo.
+  FillRefDocCombo: Runs through Sales.SDSOFillRefDocCombo.
+  FillValueDependent: Fills the lookup lists through Sales.SDSOFillValuesDependent.
+  FillValues: Fills the lookup lists through Sales.SDSOFillValues.
+  FillValuesAccountAssignment: Fills the lookup lists through Sales.SDSOFillValuesAccountAssignment.
+  GetAgentInfo: Runs through Sales.SDSOGetAgentInfo.
+  GetCustomerInfo: Runs through Sales.SDSOGetCustomerInfo.

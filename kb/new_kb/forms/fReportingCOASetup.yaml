@@ -1,0 +1,34 @@
+form: fReportingCOASetup
+title: Reporting COA Setup
+module: FI
+kind: master
+users:
+- Finance controller (inferred)
+summary: The Reporting COA Setup screen links the posting accounts of the transaction charts of accounts to the accounts of
+  a reporting chart of accounts.
+purpose: |
+  What it is: A mapping between each posting account of the linked transaction charts of accounts and an account of the selected reporting chart of accounts. When it applies: When a reporting chart of accounts is introduced or its account structure changes, or when new posting accounts appear in a linked transaction chart. Business outcome: Transaction figures can be presented under a common reporting account structure (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single page with the COA Name selector at the top, a finance book grid and an account mapping grid below.
+  - COA Name Field: Mandatory dropdown showing COA Name and Code (BR-01, BR-02).
+  - Finance Book Detail Grid: Read-only grid with columns Transaction FB, Unit Level FB, Consolidate FB (comma-separated list) and COA Name (the transaction COA).
+  - Account Mapping Detail Grid: Grid with read-only columns Posting Account Name, Posting Account Group, Posting Account Parent Group, Reporting Account Group, Reporting Account Parent Group, and one editable dropdown column Reporting Account Name (shows Account Name and Code).
+  - Other Toolbar Actions (Open, Delete, Navigation, Print, Preview, Export, Email): Not implemented; the screen enables only New (BR-07).
+actions:
+  New: Standard toolbar New, the only toolbar action this screen enables (BR-07).
+  Save: Saves the full mapping of the selected reporting COA.
+validations:
+- Select valid COA Name.
+manages:
+- reporting-coa-mapping
+uses_concepts:
+- account-group
+- chart-of-accounts
+- finance-book
+- ledger-account
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.RCASFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.RCASFillValuesDependent.
+  Save: Saves the record through masterdata.RCASDeleteAccountGroupDetail.
+  SaveAccountMappingDetail: Saves the record through masterdata.FIAMSaveAccountGroupDetail.

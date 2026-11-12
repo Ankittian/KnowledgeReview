@@ -1,0 +1,38 @@
+form: fServiceTaxDataVerify
+title: Service Tax Data Verification
+module: FI
+kind: transaction
+summary: The Service Tax Data Verification screen lets finance users complete and correct the service tax details that vouchers
+  carry before the tax is paid by challan.
+purpose: |
+  What it is: A bulk correction of the party account, rule, bill, taxable and abatement amounts on voucher service tax details [fServiceTaxDataVerify.vb:492-516; Finance.STDVSaveMain:22-30]. When it applies: Before the monthly service tax challan, when vouchers lack a rule or carry wrong bill data. Business outcome: The challan and returns use complete and consistent data (BR-04 to BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Tax Book, Month and Service Tax Rule; the designer caption is "ServiceTaxDataVerify" [fServiceTaxDataVerify.Designer.vb:52; fServiceTaxDataVerify.Designer.vb:71; fServiceTaxDataVerify.Designer.vb:90; fServiceTaxDataVerify.Designer.vb:127].
+  - Tax Book and Service Tax Rule Fields: Mandatory drop-downs [fServiceTaxDataVerify.vb:44; fServiceTaxDataVerify.vb:180-191].
+  - Month Field: A month picker [fServiceTaxDataVerify.vb:583-590].
+  - Detail Grid: A grid with column groups for the main data, "Service Tax Input/ Expense" and "Service Tax Payable", a filter row, multi-column sorting and sum footers; rows cannot be deleted [fServiceTaxDataVerify.vb:282-320; fServiceTaxDataVerify.vb:405-452].
+  - Select Column: A tick box per row; ticking a row loads the account choices of its voucher and the rule choices [fServiceTaxDataVerify.vb:523-545].
+  - Service Tax Rule, Taxable Amount and Abatement Amount Cells: The rule can be chosen only on rows that had no rule on the voucher; taxable and abatement amounts are not editable by hand [fServiceTaxDataVerify.vb:245-259; fServiceTaxDataVerify.vb:363-370; Finance.STDVFillValuesDependent:65].
+  - Other Toolbar Actions (Delete, Search, Print, Preview, Export, Email): Empty handlers [fServiceTaxDataVerify.vb:50-52; fServiceTaxDataVerify.vb:95-131].
+actions:
+  Save: Validates and updates the service tax details of the ticked rows in one transaction [fServiceTaxDataVerify.vb:460-490].
+  New: Opens a blank screen [fServiceTaxDataVerify.vb:86-93].
+validations:
+- Select valid Tax Book.
+- Select valid Service Tax Rule.
+- Select atleast one Detail.
+- Select valid Service Tax Rule in row n.
+- Select valid Account Name in row n.
+- Vendor Bill Amount can't be empty or zero in row n.
+- Challan is filed against this entry, can't be selected.
+manages:
+- service-tax-data-verification
+uses_concepts:
+- accounting-voucher
+- company
+method_notes:
+  FillValues: Fills the lookup lists through Finance.STDVFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.STDVFillValuesDependent.
+  SaveDetail: Saves the record through Finance.STDVSaveMain.
+  ValidateForm: Validates the entry through Finance.STDVValidate.

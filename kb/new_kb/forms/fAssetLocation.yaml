@@ -1,0 +1,42 @@
+form: fAssetLocation
+title: Asset Location
+module: MD
+kind: master
+summary: The Asset Location screen maintains the list of physical locations where fixed assets are kept.
+purpose: |
+  What it is: A master list of named, typed and optionally nested locations for fixed assets [fAssetLocation.vb:361-415; FixedAsset.AMALSaveMain:21-60]. When it applies: When a new site, building, room or yard is brought into use, or when a location moves under another parent. Business outcome: Assets can be tied to a controlled location instead of free text, and reports can group them by location.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A group box holding Code, Location Name, Parent Location and Location Type [fAssetLocation.designer.vb:133-145].
+  - Code Field: A read-only text box that cannot be tabbed into [fAssetLocation.designer.vb:61-65].
+  - Location Name Field: A mandatory text box, up to 50 characters [fAssetLocation.vb:38; fAssetLocation.vb:94].
+  - Parent Location Field: An optional drop-down of location names [fAssetLocation.vb:104].
+  - Location Type Field: A mandatory drop-down of location type names [fAssetLocation.vb:38; fAssetLocation.vb:105].
+  - Fast Entry Grid: A grid with columns Location Name (up to 50 characters), Parent Location (drop-down), Location Type (drop-down) and Remarks (read-only, 326 wide) [fAssetLocation.vb:472-488; fAssetLocation.vb:96-99].
+  - Code Link (Fast Entry Mode): A link labelled "Code" with the tooltip "Switch to fast entry mode." at the top of the main layout [fAssetLocation.vb:40-41; fAssetLocation.designer.vb:145].
+  - Switch back to detail mode. Link: A link labelled "Switch back to detail mode." in the fast-entry container [fAssetLocation.designer.vb:178].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fAssetLocation.vb:172-204].
+actions:
+  Import: An "Import" button in the fast-entry container that loads an Excel sheet into the grid [fAssetLocation.designer.vb:163-166].
+  New: The toolbar action that asks the main window to start a blank record [fAssetLocation.vb:136-143].
+  Save: The toolbar action that stores the location, or all grid rows in fast-entry mode [fAssetLocation.vb:286-359].
+  Search: The toolbar action that opens a search dialog listing Code, Location Name, Parent Location, Location Type, Created
+    By and Created Date [FixedAsset.AMALSearchData:17-28].
+  Delete: The toolbar action that removes the open location [fAssetLocation.vb:52-77].
+validations:
+- Enter Location Name.
+- Select valid Location Type.
+- Duplicate Location Name not allowed.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+- Refer remarks for saved status.
+- Successfully Created.
+manages:
+- asset-location
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMALDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMALFillValues.
+  LoadData: Loads the selected record through FixedAsset.AMALLoadData.
+  Open: Searches records through FixedAsset.AMALSearchData.
+  SaveMain: Saves the record through FixedAsset.AMALSaveMain.
+  ValidateForm: Validates the entry through FixedAsset.AMALValidate.

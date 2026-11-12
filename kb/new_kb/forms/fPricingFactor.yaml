@@ -1,0 +1,43 @@
+form: fPricingFactor
+title: Pricing Factor
+module: MD
+kind: master
+summary: The Pricing Factor screen maintains named pricing factors, each with a list of particulars and rates, that are applied
+  to sales order item prices (for example finish, size or packing surcharges, Inferred).
+purpose: |
+  What it is: Reusable price adjustment tables, each a list of options with a rate. When it applies: When the business prices items by selectable attributes (Inferred). Business outcome: Consistent price build-up on sales orders (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields and a value grid.
+  - Code Field: Read-only text box.
+  - Pricing Factor Name Field: Mandatory text box, up to 100 characters (BR-01).
+  - Inactive Field: Disabled checkbox.
+  - Value Detail Grid: Columns Particular (up to 100 characters) and Rate (numeric, 2 decimals); hidden line identifier and used flag.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the factor and its lines.
+  Search: Standard search with Code, PricingFactorName, Inactive, Created By, sorted by code.
+  Delete: Deletes the loaded factor after confirmation (MSG-06).
+validations:
+- Enter Pricing Factor Name.
+- Duplicate Pricing Factor Name not allowed.
+- Do you want to save ?
+- Data saved successfully.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+- Enter Particular in row n.
+manages:
+- pricing-factor
+uses_concepts:
+- company
+- sales-agreement
+method_notes:
+  Delete: Deletes the record through masterdata.MPRFDelete.
+  FillValues: Fills the lookup lists through masterdata.MPRFFillValues.
+  LoadData: Loads the selected record through masterdata.MPRFLoadData.
+  Open: Searches records through masterdata.MPRFSearchData.
+  Save: Saves the record through masterdata.MPRFSave.
+  SaveValueDetail: Saves the record through masterdata.MPRFSaveDetail.
+  ValidateForm: Validates the entry through masterdata.MPRFValidate.

@@ -1,0 +1,59 @@
+form: fRatioAnalysis
+title: Ratio Analysis
+module: FI
+kind: transaction
+summary: The Ratio Analysis screen (window caption "RatioAnalysis") calculates a financial ratio for a layout and Finance
+  Book, using the recipe defined on [Ratio Analysis Setting](Functional_Doc_fRatioAnalysisSetting.md).
+purpose: |
+  What it is: A dated, reviewable calculation of a ratio such as a liquidity or leverage measure. When it applies: At period end or whenever management wants the ratio. Business outcome: A saved, authorizable record of the ratio value and the amounts behind it (BR-02; BR-08).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header fields above a section grid and a summary grid.
+  - Document Status Field: Dropdown labelled "Document Status", mandatory [fRatioAnalysis.vb:47].
+  - Description Field: Text labelled "Description", up to 100 characters, mandatory [fRatioAnalysis.vb:47; fRatioAnalysis.vb:97].
+  - Document Date Field: Date picker labelled "Document Date".
+  - FSL Name, COA Name and Finance Book Fields: Dropdown "FSL Name", read-only text "COA Name", dropdown "Finance Book" or "Profit Center" [fRatioAnalysis.vb:47-50].
+  - Balance Sheet Field: Optional dropdown "Balance Sheet" [fRatioAnalysis.vb:762-785].
+  - Ratio Analysis Category Field: Dropdown, mandatory [fRatioAnalysis.vb:47].
+  - Formula Text Box (Hidden): Read-only text "As Per Ratio Analysis Formula", never visible [fRatioAnalysis.Designer.vb:279-283].
+  - Section Grid: One row per section from the setting, with Amount, Add/Deduct Amount and Net Amount; the Amount cell has a button for the description pop-up [fRatioAnalysis.vb:629-631; fRatioAnalysis.vb:713-745].
+  - Description Pop-up: Read-only list of the accounts, groups or schedules behind a section amount [fRatioAnalysis.vb:713-745].
+  - Add/Deduct Amount Pop-up: Rows with an editable Less (%) and a computed Net Amount; "Ok" adds the Net Amounts to the section, taking Deduction rows as negative [fRatioAnalysis.vb:645-647; fRatioAnalysis.vb:713-745].
+  - Summary Grid: A fixed bottom row showing the category name and the computed ratio value [fRatioAnalysis.vb:876-911].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fRatioAnalysis.vb:199-236].
+actions:
+  New: Clears the screen through the MDI shell.
+  Save: Validates and saves the entry.
+  Search: Search dialog with Document Status, Description, Document Date, FSL Name, Finance Book, Balance Sheet, Ratio Analysis
+    Category, Created By and Authorized By [Finance.FSRASearchData:18-37].
+  Delete: Deletes the loaded entry after the standard confirmation [fRatioAnalysis.vb:62-86].
+validations:
+- Select valid Document Status.
+- Enter Description.
+- Select valid FSL Name.
+- Select valid Finance Book.
+- Select valid Profit Center.
+- Select valid Ratio Analysis Category.
+- Detail data is unavailable.
+- Less(%) can't be empty in row N.
+- Authorized Ratio Analysis can't be updated.
+- Duplicate Description not allowed.
+- Duplicate Ratio Analysis. This type of entry already exists.
+- Authorized entry can't be updated.
+manages:
+- ratio-analysis
+uses_concepts:
+- balance-sheet
+- layout
+- ratio-analysis-setting
+method_notes:
+  Delete: Deletes the record through Finance.FSRADelete.
+  FillValues: Fills the lookup lists through Finance.FSRAFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSRAFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FSRALoadData.
+  Open: Searches records through Finance.FSRASearchData.
+  Save: Saves the record through Finance.FSRASaveMain.
+  SaveAddDeductDetail: Saves the record through Finance.FSRASaveAddDeductDetail.
+  SaveDescriptionDetail: Saves the record through Finance.FSRASaveDescriptionDetail.
+  SaveRatioAnalysisDetail: Saves the record through Finance.FSRASaveDetail.
+  ValidateForm: Validates the entry through Finance.FSRAValidate.

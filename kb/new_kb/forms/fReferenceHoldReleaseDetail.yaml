@@ -1,0 +1,47 @@
+form: fReferenceHoldReleaseDetail
+title: Reference Hold/ Release
+module: FI
+kind: transaction
+summary: The Reference Hold/ Release screen lets a finance user place part of an open payable reference on Hold, or Release
+  an amount that was held earlier.
+purpose: |
+  What it is: A dated entry that holds or releases an amount against one open reference of an account, with a free-text reason [fReferenceHoldReleaseDetail.vb:442-469; Finance.RMHRSaveMain:28-59]. When it applies: When a payable (or other referenced balance) is disputed or must not be paid yet, and later when the block is lifted. Business outcome: The reference carries a visible hold amount and a history of holds and releases, so payment processing can leave blocked amounts alone (BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header and Reference Grid Layout: A header with four fields (Da&te, Finance &Book, Account &Name, &Status) above a grid of references [fReferenceHoldReleaseDetail.Designer.vb:55; fReferenceHoldReleaseDetail.Designer.vb:74; fReferenceHoldReleaseDetail.Designer.vb:93; fReferenceHoldReleaseDetail.Designer.vb:112].
+  - Date Field: A date picker, defaulting to the current date.
+  - Finance Book Field: A mandatory dropdown "Finance Book" (labelled "Profit Center" when that setting is on) (BR-01; MSG-01) [fReferenceHoldReleaseDetail.vb:31; fReferenceHoldReleaseDetail.vb:270-274].
+  - Account Name Field: A mandatory dropdown "Account Name" with Account Group shown (BR-01; MSG-02) [fReferenceHoldReleaseDetail.vb:87; fReferenceHoldReleaseDetail.vb:276-280].
+  - Status Field: A mandatory dropdown "Status" with the values Hold and Release (BR-01; MSG-03) [fReferenceHoldReleaseDetail.vb:83; fReferenceHoldReleaseDetail.vb:282-286; Finance.RMHRFillValues:59-61].
+  - Reference Detail Grid: A grid with columns Select, Finance Book (Profit Center), Reference No., Reference Date, Due Date, Source Document, Source Document No., Source Document Date, Reference Amount, Balance/ Hold Amount, Amount, Reason and a hidden reference key [fReferenceHoldReleaseDetail.vb:211-223; fReferenceHoldReleaseDetail.vb:375].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fReferenceHoldReleaseDetail.vb:162-194].
+actions:
+  New: Standard toolbar New; the form asks the MDI shell to open a fresh record [fReferenceHoldReleaseDetail.vb:127-134].
+  Save: Saves a new entry.
+  Search: Opens the search window listing saved entries with Date, Finance Book, Account Name, Reference No., Reference Date,
+    Status, Amount and Created By [fReferenceHoldReleaseDetail.vb:136-160; Finance.RMHRSearchData:44-60].
+  Delete: Deletes the loaded entry after the standard delete confirmation [fReferenceHoldReleaseDetail.vb:45-69].
+validations:
+- Select valid Finance Book.
+- Select valid Profit Center.
+- Select valid Account Name.
+- Select valid Status.
+- Select atleast one reference.
+- Amount can't be empty or zero in row <n>.
+- Amount can't be greater than Balance/ Hold Amount.
+- Reference Hold/ Release can't be updated.
+- Amount is released against this hold amount.
+- Contact your vendor,Reference getting -ve
+manages:
+- reference-hold-release
+uses_concepts:
+- account-opening
+- company
+method_notes:
+  Delete: Deletes the record through Finance.RMHRDelete.
+  FillValues: Fills the lookup lists through Finance.RMHRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.RMHRFillValuesDependent.
+  FillValuesFB: Fills the lookup lists through Finance.RMHRFillValuesFB.
+  LoadData: Loads the selected record through Finance.RMHRLoadData.
+  Open: Searches records through Finance.RMHRSearchData.
+  SaveReferenceDetail: Saves the record through Finance.RMHRSaveMain.

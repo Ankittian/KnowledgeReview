@@ -1,0 +1,63 @@
+form: fSalesBOQ
+title: Bill Of Quantity
+module: SD
+kind: transaction
+summary: The Bill Of Quantity screen records, for one authorized Sales Order, what must be produced or bought (the Output
+  Detail) and which raw materials or components are expected to go into it (the Input Detail).
+purpose: |
+  What it is: A document that breaks a confirmed Sales Order into the items to be delivered (outputs) and the materials needed to make them (inputs), with a delivery schedule per output item [fSalesBOQ.vb:640-700; fSalesBOQ.vb:701-760; fSalesBOQ.vb:761-789]. When it applies: After a Sales Order has been authorized and before delivery and production are planned. Business outcome: Planning, dispatch and invoicing work from one agreed list of quantities, units and dates per Sales Order, with each revision tracked as an amendment (BR-03; BR-14).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: Four stacked areas: a top group with Document Status, Division Name, Document Date and the Sales Order block; a "General Detail" group with the checkbox and Remarks; the "Output Detail" grid; and the "Input Detail" grid [fSalesBOQ.Designer.vb:266; fSalesBOQ.Designer.vb:318; fSalesBOQ.Designer.vb:502; fSalesBOQ.Designer.vb:522].
+  - Document Status Field: A mandatory dropdown "Document Status" listing every status [fSalesBOQ.Designer.vb:675; fSalesBOQ.vb:54; fSalesBOQ.vb:148].
+  - Division Name Field: A dropdown "Division Name", mandatory only when divisions apply (BR-01; MSG-02) [fSalesBOQ.Designer.vb:600; fSalesBOQ.vb:316-321].
+  - Document Date Field: A date "Document Date" [fSalesBOQ.Designer.vb:695].
+  - Sales Order No. Field: A mandatory dropdown "Sales Order No." showing order number, date, customer and location (BR-01; MSG-03) [fSalesBOQ.Designer.vb:183; fSalesBOQ.vb:126; fSalesBOQ.vb:322-326].
+  - Order Date, Amendment No., Party Name and Location Fields: Read-only boxes "Order Date", an unlabelled amendment box, "Party Name" and "Location" [fSalesBOQ.Designer.vb:190; fSalesBOQ.Designer.vb:209; fSalesBOQ.Designer.vb:219; fSalesBOQ.Designer.vb:238].
+  - Take Input From BOM Checkbox: A checkbox "Take Input From BOM" [fSalesBOQ.Designer.vb:277].
+  - Remarks Field: Multi-line text "Remarks", up to 1000 characters, trimmed on save [fSalesBOQ.Designer.vb:285; fSalesBOQ.vb:603].
+  - Output Detail Grid: Editable grid with columns Service Description, Item Code, Item Description, a button column, Unit, Quantity, Schedule (button), Processing Type, CF (button) and Remarks (500 characters on screen) [fSalesBOQ.vb:482-532; Sales.SDBQFillValues:61-80].
+  - Input Detail Grid: Editable grid with Service Description, Item Code, Item Description, Unit, Make, Tech.
+  - Schedule Dialog: The shared item schedule control opens as a row-edit panel from the Schedule button [fSalesBOQ.vb:932-934; fSalesBOQ.Designer.vb:509].
+  - Conversion Factor Dialog: A panel with Output unit conversion (first factor, unit, equals, second factor, output unit, Qty.) and Stock unit conversion (same layout with Stock Qty.) and the buttons "OK" and "Cancel" [fSalesBOQ.Designer.vb:717-721; fSalesBOQ.Designer.vb:897; fSalesBOQ.Designer.vb:906].
+  - Tolerance Dialog: A panel with "Tolerance Basis", "Tolerance(+)", "Tolerance(-)" (11 characters each) and the buttons "OK" and "Cancel" [fSalesBOQ.Designer.vb:325-329; fSalesBOQ.Designer.vb:351; fSalesBOQ.Designer.vb:366; fSalesBOQ.Designer.vb:461; fSalesBOQ.Designer.vb:482; fSalesBOQ.Designer.vb:376; fSalesBOQ.Designer.vb:385].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fSalesBOQ.vb:240-272].
+actions:
+  New: Standard toolbar New, which asks the main window to open a blank record [fSalesBOQ.vb:203-210].
+  Save: Validates and saves the document with all rows [fSalesBOQ.vb:570-639].
+  Search: Opens the search list of the company's documents for the current year [fSalesBOQ.vb:212-238].
+  Delete: Deletes the loaded document after a delete confirmation [fSalesBOQ.vb:60-84].
+validations:
+- Select Valid Document Status.
+- Select Valid Division Name.
+- Select Valid Sales Order No.
+- Select atleast one Item Code.
+- Select valid Unit in row <n>.
+- Quantity can't be empty or zero in row <n>.
+- Select valid Processing Type in row <n>.
+- Select valid Liability in row <n>.
+- Authorized Sales BOQ can't be updated.
+- Authorized entry can't be updated.
+- Unauthorized BOQ entry exists for same sales order no.
+- Document No. <number> saved successfully.
+- Duplicate Item Description not allowed.
+- Enter Tolerance(+) or Tolerance(-).
+- Tolerance(+) can't be greater than 100.
+- Tolerance(-) can't be greater than 100.
+- Enter First CF.
+- Enter Second CF.
+manages:
+- bill-of-quantity
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through Sales.SDBQDelete.
+  FillValues: Fills the lookup lists through Sales.SDBQFillValues.
+  FillValuesDependent: Fills the lookup lists through Sales.SDBQFillValuesDependent.
+  LoadData: Loads the selected record through Sales.SDBQLoadData.
+  Open: Searches records through Sales.SDBQSearchData.
+  Save: Saves the record through Sales.SDBQSave.
+  SaveInputDetail: Saves the record through Sales.SDBQSaveInputDetail.
+  SaveOutputDetails: Saves the record through Sales.SDBQSaveOutputDetail.
+  SaveScheduleDetail: Saves the record through Sales.SDBQSaveScheduleDetail.
+  ugdOutputDetails_BeforeRowEditTemplateDisplayed: Runs through Sales.SDBQFillUnits.

@@ -1,0 +1,45 @@
+form: fFPeriod
+title: Financial Period
+module: MD
+kind: master
+summary: The Financial Period screen divides a financial year into reporting periods for either the Financial Calendar or
+  the Depreciation Calendar.
+purpose: |
+  What it is: A period set that splits one financial year into named date ranges for a calendar type. When it applies: When a new financial year is opened and the business needs monthly, quarterly, half-yearly, yearly or custom periods. Business outcome: Periods cover the whole year without a gap at year end and are not duplicated per year and calendar type (BR-03; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header with Calendar Type, Year Name, Start Date, End Date and Period Frequency, above a Period Detail grid.
+  - Calendar Type Field: Dropdown, mandatory, with Financial Calendar and Depreciation Calendar [fFPeriod.vb:13; fFPeriod.vb:66].
+  - Year Name Field: Dropdown, mandatory, of open financial years [fFPeriod.vb:63].
+  - Start Date and End Date Fields: Read-only text boxes showing the selected year's dates [fFPeriod.Designer.vb:68; fFPeriod.Designer.vb:87].
+  - Period Frequency Field: Dropdown, mandatory, with Monthly, Quaterly, Halfyearly, Yearly, Manual [fFPeriod.vb:64].
+  - Period Detail Grid: Grid with Period Name (max 50 characters), Start Date and End Date [fFPeriod.vb:348-354].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Empty methods [fFPeriod.vb:143-158; fFPeriod.vb:522-528].
+actions:
+  New: Clears the screen through the MDI shell and sets focus on Calendar Type [fFPeriod.vb:105-114].
+  Save: Validates and saves the header and all period rows.
+  Search: 'Opens the search dialog listing existing period sets: Calendar Type, Year Name, Start Date, End Date, Period Frequency,
+    Created By [fFPeriod.vb:116-141; masterdata.FIFPSearchData:19-38].'
+  Delete: Deletes the loaded period set after the standard delete confirmation [fFPeriod.vb:19-46].
+validations:
+- Select valid Calendar Type.
+- Select valid Year Name.
+- Select valid Period Frequency.
+- With Depreciation Calendar Period Frequency should be Yearly.
+- Enter atleast one Period Name.
+- Select Start Date in row N.
+- Start Date can't be less than End Date of previous row in row N.
+- Select End Date in row N.
+- End Date of Period Detail should be equal to Financial Year End Date.
+- End Date can't be less than Start Date.
+- Duplicate Calendar Type and Year Name not allowed.
+manages:
+- financial-period
+method_notes:
+  Delete: Deletes the record through masterdata.FIFPDelete.
+  FillValues: Fills the lookup lists through masterdata.FIFPFillValues.
+  LoadData: Loads the selected record through masterdata.FIFPLoadData.
+  Open: Searches records through masterdata.FIFPSearchData.
+  Save: Saves the record through masterdata.FIFPSaveMain.
+  SavePeriodDetail: Saves the record through masterdata.FIFPSavePeriodDetail.
+  ValidateForm: Validates the entry through masterdata.FIFPValidate.

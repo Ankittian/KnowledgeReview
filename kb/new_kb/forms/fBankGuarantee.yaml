@@ -1,0 +1,59 @@
+form: fBankGuarantee
+title: Bank Guarantee
+module: MD
+kind: master
+summary: The Bank Guarantee screen (window caption "BankGuarantee") records the bank guarantees the organisation holds from
+  its vendors.
+purpose: |
+  What it is: A register of vendor bank guarantees with amount, validity, bank, branch, purpose, type, covered vendors and the companies or divisions that may use them. When it applies: When a vendor furnishes a guarantee and the purchase team needs to record it before mapping it to orders or agreements. Business outcome: Guarantees are held centrally, with duplicate numbers refused and mapped guarantees protected from changes that would break the mapping.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header panel with the guarantee fields, and below it two group boxes titled "Vendor Detail" and "Company and Division Detail" [fBankGuarantee.designer.vb:576; fBankGuarantee.designer.vb:645; fBankGuarantee.designer.vb:719].
+  - Code Field: A read-only text box labelled "Code" [fBankGuarantee.designer.vb:281; fBankGuarantee.designer.vb:293].
+  - BG No. Field: A mandatory text box labelled "BG No.", up to 50 characters [fBankGuarantee.designer.vb:482; fBankGuarantee.designer.vb:494; fBankGuarantee.vb:23].
+  - BG Date Field: A date picker labelled "BG Date", shown as dd/MM/yyyy and mandatory [fBankGuarantee.designer.vb:466; fBankGuarantee.designer.vb:470; fBankGuarantee.vb:23].
+  - Bank Name Field: A mandatory dropdown labelled "Bank Name" [fBankGuarantee.designer.vb:375; fBankGuarantee.vb:428].
+  - Branch Name Field: A mandatory dropdown labelled "Branch Name" [fBankGuarantee.designer.vb:302; fBankGuarantee.vb:453-467].
+  - BG Amount Field: A mandatory number box labelled "BG Amount" with two decimals, up to 16 characters [fBankGuarantee.designer.vb:445; fBankGuarantee.designer.vb:457; fBankGuarantee.vb:409].
+  - Validity Days Field: A mandatory whole-number box labelled "Validity Days", up to 4 digits [fBankGuarantee.designer.vb:261; fBankGuarantee.designer.vb:273; fBankGuarantee.vb:408].
+  - Validity Date Field: A date picker labelled "Validity Date", shown as dd/MM/yyyy [fBankGuarantee.designer.vb:245; fBankGuarantee.designer.vb:249-251].
+  - Purpose Field: A mandatory dropdown labelled "Purpose" [fBankGuarantee.designer.vb:503; fBankGuarantee.vb:429].
+  - BG Type Field: A mandatory dropdown labelled "BG Type" [fBankGuarantee.designer.vb:171; fBankGuarantee.vb:431].
+  - Vendor Detail Grid: A grid in the "Vendor Detail" group with columns "Code" and "Vendor Name", each a dropdown over the vendor list; choosing one fills the other [fBankGuarantee.vb:416-418; fBankGuarantee.vb:516-528; fBankGuarantee.vb:549-555].
+  - Company and Division Detail Grid: A grid in the "Company and Division Detail" group with a "Select" tick box, "Company Name" and "Division Name" [fBankGuarantee.vb:497-511; fBankGuarantee.designer.vb:645].
+  - Other Toolbar Actions (Preview, Print, Email, Export): Standard toolbar actions [fBankGuarantee.vb:389-395; fBankGuarantee.vb:481-487].
+actions:
+  New: The toolbar action that clears the screen [fBankGuarantee.vb:11-19; fBankGuarantee.vb:257-276].
+  Save: The toolbar action that stores the guarantee [fBankGuarantee.vb:278-341].
+  Search: The toolbar action that opens the guarantee search list [fBankGuarantee.vb:228-255].
+  Delete: The toolbar action that removes the open guarantee [fBankGuarantee.vb:193-226].
+validations:
+- Enter BG No.
+- Select valid Bank Name.
+- Select valid Bank Branch.
+- BG Amount can't be empty or zero.
+- Validity Date can't be less than BG Date.
+- Select valid Purpose.
+- Select at least one Vendor in Vendor Detail.
+- Select at least one Company in Company and Division Detail.
+- Select valid BG Type.
+- 'Duplicate Vendor Name cannot be selected in row '
+- 'Unable to delete this vendor '
+- ' ,BG Mapping is alreay done.'
+- Duplicate BG No. not allowed.
+- ' saved successfully.'
+manages:
+- bank-guarantee
+uses_concepts:
+- bank-branch-detail
+- bank-guarantee-fbankguaranteemapping
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MMBGDelete.
+  FillValues: Fills the lookup lists through masterdata.MMBGFillValues.
+  FillValuesBankBranch: Fills the lookup lists through GlobalData.FillValuesBankBranch.
+  LoadData: Loads the selected record through masterdata.MMBGLoadData.
+  Open: Searches records through masterdata.MMBGSearchData.
+  SaveDivisionDetail: Saves the record through masterdata.MMBGSaveDivisionDetail.
+  SaveVendorDetail: Saves the record through masterdata.MMBGSaveVendorDetail.
+  ValidateForm: Validates the entry through masterdata.MMBGValidate.

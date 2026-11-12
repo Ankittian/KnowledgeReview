@@ -1,0 +1,41 @@
+form: fChangeEquipmentDriver
+title: Change Equipment Driver
+module: PM
+kind: transaction
+summary: The Change Equipment Driver screen records a change of driver on a vehicle.
+purpose: |
+  What it is: A dated record of which driver is assigned to a vehicle, with the driver's shift. When it applies: When a vehicle is handed to a different driver or shift. Business outcome: The driver assignment keeps a history, so later documents can be traced to the right driver.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: Three blocks: an upper block for the equipment and its current driver, a middle block titled "Previous Driver Detail", and a block titled "New Driver Detail".
+  - Equipment Name Field: Dropdown (Equipment, Code), mandatory.
+  - Driver Name, Contact No, License No, Old Shift and Effective From Fields (current driver): Five read-only text boxes in the upper block.
+  - New Effective Date Field: Date and time picker, defaulting to now.
+  - New Driver Name Field: Dropdown (Driver), mandatory.
+  - New Contact No and License No Fields: Two read-only text boxes in the New Driver Detail block.
+  - New Driver Shift Field: Dropdown (Shift, Code), optional.
+  - Previous Driver Detail Block: A group of five read-only text boxes (Driver Name, Contact No, License No, Old Shift, Effective From) in the middle block.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Methods exist but are empty.
+actions:
+  New: Toolbar action that asks the main window to open a new record.
+  Save: Toolbar action that validates and saves the driver change.
+  Search: Opens the search list ([Search](Functional_Doc_fSearch.md)).
+  Delete: Toolbar action that deletes the loaded entry.
+validations:
+- Select valid Equipment.
+- Select valid Driver.
+- some Entry already exists in future date
+- Trip Sheet is prepared against this Driver
+- Driver Changed Sucessfully.
+manages:
+- change-equipment-driver
+uses_concepts:
+- equipment-master
+- tripsheet
+method_notes:
+  Delete: Deletes the record through EAM.EMCDDelete.
+  FillValues: Fills the lookup lists through EAM.EMCDFillValues.
+  LoadData: Loads the selected record through EAM.EMCDLoadData.
+  Open: Searches records through EAM.EMCDSearchData.
+  Save: Saves the record through EAM.EMCDSaveDriverDetail.
+  ValidateForm: Validates the entry through EAM.EMCDValidate.

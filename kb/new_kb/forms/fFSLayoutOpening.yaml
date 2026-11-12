@@ -1,0 +1,30 @@
+form: fFSLayoutOpening
+title: Layout Opening
+module: FI
+kind: transaction
+summary: The Layout Opening screen (window caption "FSLayoutOpening") lets the user enter opening amounts against the sections
+  and groups of a financial statement layout, for one Finance Book (or Profit Center).
+purpose: |
+  What it is: Opening amounts per layout line, book by book. When it applies: When opening figures for statement lines cannot be derived from account balances alone. Business outcome: Statement lines start with entered opening figures (BR-03; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Header with FSL Name, COA Name and Finance Book (Profit Center), above the Layout Detail grid.
+  - FSL Name Field: Dropdown, mandatory [fFSLayoutOpening.vb:15; fFSLayoutOpening.vb:44].
+  - COA Name Field: Read-only text filled from the layout [fFSLayoutOpening.vb:277].
+  - Finance Book Field: Dropdown; the label reads "Profit Center" when the company treats books as profit centers [fFSLayoutOpening.vb:17-21].
+  - Layout Detail Grid: Columns Particular, Type, Sequence Id (all read-only), Opening Amount (two decimals) and "Dr/ Cr"; line key and level are hidden [fFSLayoutOpening.vb:174-189; fFSLayoutOpening.vb:48].
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Email, Export): Empty methods [fFSLayoutOpening.vb:27-29; fFSLayoutOpening.vb:90-126].
+actions:
+  New: Clears the screen through the MDI shell [fFSLayoutOpening.vb:81-88; fFSLayoutOpening.vb:128-135].
+  Save: Validates and saves the amounts.
+validations:
+- Select valid FSL Name.
+- Select valid Dr/ Cr in row N.
+manages:
+- layout-opening
+uses_concepts:
+- layout
+method_notes:
+  FillValues: Fills the lookup lists through Finance.FSLOFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FSLOFillValuesDependent.
+  Save: Saves the record through Finance.FSLOSaveMain.

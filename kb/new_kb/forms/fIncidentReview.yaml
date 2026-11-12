@@ -1,0 +1,52 @@
+form: fIncidentReview
+title: Incident Review
+module: PM
+kind: transaction
+summary: The Incident Review screen records one department's review of an authorized incident.
+purpose: |
+  What it is: A review record by one reviewer for one incident and one review type, with remarks per damaged part [fIncidentReview.vb:346-400; EAM.INCVSave:47-136]. When it applies: After an incident has been entered and authorized, and each time the next required review is due (BR-02). Business outcome: Each incident is assessed by every required function in sequence, ending with a management decision and a decision on insurance (BR-02; BR-04; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A general detail area (review type, incident, reviewer and findings), a damaged part grid, a group with employee id, deduction and damage amounts and the insurance checkbox, and a grid of other reviews on the same incident [fIncidentReview.designer.vb:246-297].
+  - Review Type Field: A dropdown "Review Type" (active types, original order).
+  - Incident No. Field: A dropdown "Incident No." showing Incident Entry No, Incident Entry Date, Division and Equipment.
+  - Incident Date & Time, Equipment Description and Incident Description Fields: Read-only displays of the incident's date and time, equipment and reported narration [fIncidentReview.vb:555-557; fIncidentReview.designer.vb:152; fIncidentReview.designer.vb:171; fIncidentReview.designer.vb:190].
+  - Entry Date Field: A date and time picker "Entry Date", defaulting to the current time on a new form [fIncidentReview.vb:236; fIncidentReview.designer.vb:379-390].
+  - Entry Person Type, Name, Designation, Department and Contact No. Fields: An option "Emp" / "Others", a name dropdown whose label follows the review type, and "Designation", "Department" and "Contact No." boxes.
+  - Nature of Incident Field: A dropdown "Nature of Incident" [fIncidentReview.vb:85; fIncidentReview.designer.vb:505].
+  - Damage Detail, Cause Of Incident, Action Taken, Further Cause of Action, Decision On Recovery and Final Management Decision Fields: Multi-line text boxes of up to 500 characters each [fIncidentReview.designer.vb:511-606].
+  - Estimated Expenses Field: A numeric box with two decimals, up to 12 characters, editable only in a Technical review [fIncidentReview.vb:77; fIncidentReview.vb:504; fIncidentReview.designer.vb:624].
+  - Employee Id, Deduction Amount, Deduction Narration and Total Damage Amount Fields: Text and numeric boxes, up to 50, 12, 500 and 12 characters; the amounts have two decimals [fIncidentReview.vb:75-76; fIncidentReview.designer.vb:304; fIncidentReview.designer.vb:322; fIncidentReview.designer.vb:341; fIncidentReview.designer.vb:359].
+  - Insurance Claim Checkbox: A checkbox "Insurance Claim" [fIncidentReview.designer.vb:297].
+  - Damaged Part Grid: A grid with Part Name, Description (read-only) and Remark (up to 500 characters); a hidden column carries the part number [fIncidentReview.vb:313-326].
+  - Reviews Grid: A read-only grid of Review Type, Review By, Cause Of Incident and Action Taken of the other reviews already recorded for the incident [fIncidentReview.vb:458-470; EAM.INCVFillValuesDependent:54-59].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fIncidentReview.vb:196-229].
+actions:
+  New: Standard toolbar New [fIncidentReview.vb:161-168].
+  Save: Validates and saves the review and part remarks [fIncidentReview.vb:335-419].
+  Search: Opens the search list of the company's reviews for the current year [fIncidentReview.vb:170-195].
+  Delete: Deletes the loaded review after a delete confirmation [fIncidentReview.vb:38-62].
+validations:
+- Select valid Review Type
+- Select valid Incident Entry
+- Enter <label>
+- Enter Designation
+- Enter Department
+- Enter Contact No.
+- Enter Cause Of Incident
+- Enter Action Taken
+- Enter Deduction Narration.
+- Document No. <incident entry no> saved successfully.
+manages:
+- incident-review
+uses_concepts:
+- equipment-master
+- incident-entry
+method_notes:
+  Delete: Deletes the record through EAM.INCVDelete.
+  FillValues: Fills the lookup lists through EAM.INCVFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.INCVFillValuesDependent.
+  LoadData: Loads the selected record through EAM.INCVLoadData.
+  Open: Searches records through EAM.INCVSearchData.
+  Save: Saves the record through EAM.INCVSave.
+  SaveDamagedPart: Saves the record through EAM.INCVSaveDetail.

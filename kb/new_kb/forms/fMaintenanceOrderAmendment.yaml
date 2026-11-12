@@ -1,0 +1,100 @@
+form: fMaintenanceOrderAmendment
+title: Maintenance Order Amendment
+module: PM
+kind: transaction
+summary: The Maintenance Order Amendment screen lets a planner change the plan of a maintenance order that has already been
+  authorized, without creating a new order.
+purpose: |
+  What it is: A way to revise an authorized maintenance order in place; the order number, date and division are fixed and shown read-only as "MO No.", "MO Date" and "Division Name" [fMaintenanceOrderAmendment.Designer.vb:1685; fMaintenanceOrderAmendment.Designer.vb:1694; fMaintenanceOrderAmendment.Designer.vb:1703; fMaintenanceOrderAmendment.Designer.vb:1653; fMaintenanceOrderAmendment.Designer.vb:1663; fMaintenanceOrderAmendment.vb:288-293]. When it applies: When an authorized order's tasks, dates, resources or needs must change before the order is closed. Business outcome: The plan stays current while work is reported against it (BR-01; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: An order picker block ("MO No.", "MO Date", "Division Name") in place of the document header control, then the same tab groups as the order screen: General Detail, Reference Detail, Log Detail, Affected Equipment/Location Detail, Permit Detail and Custom Fields above; Task Detail, Inspection Check Points, Resource Detail, Skill Required, Tools Required, Item Required and Meter Reading Detail below
+  - MO No. Field: A dropdown of amendable orders showing number with year, and date; choosing one loads the whole order, clearing it empties the form [fMaintenanceOrderAmendment.vb:223; fMaintenanceOrderAmendment.vb:4645-4656].
+  - Header, Reference and Detail Fields: The same fields as on the order screen; none of them is switched to read-only after an order is loaded [fMaintenanceOrderAmendment.vb:294-333; fMaintenanceOrderAmendment.vb:51].
+  - Task and Resource Grids: The same grids as the order screen.
+actions:
+  Save: Validates, asks the standard confirmation, then saves the whole plan in one transaction under the loaded order number
+    and the status Authorized [fMaintenanceOrderAmendment.vb:1865-2010].
+  Search and New: Search opens the list of orders of the company and year using the screen's form code; New asks the main
+    window for a fresh record [fMaintenanceOrderAmendment.vb:407-440].
+  Delete and Other Toolbar: Empty handlers [fMaintenanceOrderAmendment.vb:57-62; fMaintenanceOrderAmendment.vb:446-479].
+validations:
+- Select valid Reference Object.
+- 'Select valid '
+- Select valid Order Type.
+- Select valid Source Document.
+- Select valid Responsible Person.
+- Select valid Maintenance Category.
+- Document date can't be less than schedule date.
+- Estimated start date can not be less than document date.
+- Estimated end date can not be less than estimated start date.
+- Estimated duration can't be empty or zero.
+- Estimated Start Date can't be more than Estimated Start Date in Task Detail tab.
+- Estimated Start Date can't be more than Estimated Start Date in Resource Detail tab.
+- Estimated End Date can't be less than Estimated End Date in Task Detail tab.
+- Estimated End Date can't be less than Estimated End Date in Resource Detail tab.
+- Is Breakdown not selected whereas Is Breakdown is checked in Maintenance Request,Do you want to continue?
+- Select atleast one maintenance detail.
+- Select valid Fault in row n.
+- Select valid Description in row n.
+- Select valid Occurrence Date in row n.
+- Occurrence Date can not be more than document date in row n.
+- Select atleast one Task Name .
+- Select valid Service Item in row n.
+- Service Item Quantity can not be empty or zero in row n.
+- Select valid Priority in row n.
+- Select valid Assign To in row n.
+- Only selected Faults can be used in task detail.
+- Enter quantity in row n.
+- Select valid Item Code in row n.
+- Select valid Item Description in row n.
+- Quantity can't be empty or zero in row n.
+- Select valid Estimated Start Date in row n.
+- Select valid Estimated End Date in row n.
+- 'Invalid Time : minute should be less than 60.'
+- There is reporting against the task, so can't delete this entry.
+- Child row exists,so can't delete this entry.
+- Shift is not selected. Do you want to continue?
+- Select a valid Shift.
+- Permit is mandatory, so can't delete this entry.
+- Duplicate fault not allowed.
+- Duplicate Task Description not allowed.
+- Duplicate Resource Name not allowed.
+- Duplicate Skill Name not allowed.
+- Duplicate Tools not allowed.
+- Duplicate Item not allowed.
+- Select valid service item.
+- Enter quantity.
+manages:
+- maintenance-order-amendment
+uses_concepts:
+- change-equipment-driver
+- company
+- eam-resource-master
+- equipment-category
+- equipment-down-period
+- equipment-master
+- functional-location
+- maintenance-category-task
+- maintenance-order
+- maintenance-order-closing
+- maintenance-reporting
+- maintenance-request
+- maintenance-schedule
+- maintenance-schedule-occurrence
+- shutdown-work-list
+- skill-master
+- work-center
+- work-log-category
+- worklog
+method_notes:
+  FillValues: Fills the lookup lists through EAM.EAMOFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EAMOFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EAMOLoadData.
+  Open: Searches records through EAM.EAMOSearchData.
+  Save: Saves the record through EAM.EAMOSave.
+  SaveAffectedObjectDetail: Saves the record through EAM.EAMOSaveAffectedObjectDetail.
+  SaveCheckPoints: Saves the record through EAM.EAMOSaveCheckPoints.
+  SaveCustomFieldDetail: Saves the record through EAM.EAMOSaveCustomFieldDetail.
+  SaveItemRequired: Saves the record through EAM.EAMOSaveItemRequired.
+  SaveLogDetail: Saves the record through EAM.EAMOSaveLogDetail.

@@ -1,0 +1,50 @@
+key: p7-settings-settings-utilities-phase-7
+name: 'Settings: Settings & utilities (Phase 7) (Phase 7)'
+module: ADM
+status: active
+summary: Phase 7 screens of the settings & utilities (phase 7) group in Settings.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 7 forms that the KB validation plan puts in 'Settings & utilities (Phase 7)' (Settings). The steps follow the plan order, not a verified business sequence: Company Update, Trading Item Type Setting, Form Exchange Rate Type, Service Tax Advance Account, Service Tax Abatement Rule, Transaction Account Mapping, Bank Account Commission, DiscreteRM Setting, Inter Unit SCO Setting, InterUnit Material Transfer Setting.
+steps:
+- order: 1
+  name: Record Company Update
+  form: fCompanyUpdate
+- order: 2
+  name: Record Trading Item Type Setting
+  form: fTradingItemTypeSetting
+- order: 3
+  name: Record Form Exchange Rate Type
+  form: fFormExchangeRateSetting
+- order: 4
+  name: Record Service Tax Advance Account
+  form: fServiceTaxAdvanceAccount
+- order: 5
+  name: Record Service Tax Abatement Rule
+  form: fServiceTaxAbatementRule
+- order: 6
+  name: Record Transaction Account Mapping
+  form: fTransactionAccountMapping
+- order: 7
+  name: Record Bank Account Commission
+  form: fBankAccountCommission
+- order: 8
+  name: Record DiscreteRM Setting
+  form: fDiscreteRMSetting
+- order: 9
+  name: Record Inter Unit SCO Setting
+  form: fInterUnitSCOSetting
+- order: 10
+  name: Record InterUnit Material Transfer Setting
+  form: fInterUnitMaterialTransferSetting
+concepts:
+- company-update
+- trading-item-type-setting
+- form-exchange-rate-type
+- service-tax-advance-account
+- service-tax-abatement-rule
+- transaction-account-mapping
+- bank-account-commission
+- discreterm-setting
+- inter-unit-sco-setting
+- interunit-material-transfer-setting

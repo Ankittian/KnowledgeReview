@@ -1,0 +1,42 @@
+form: fSalesOrderStatusCategory
+title: Sales Order Status Category
+module: MD
+kind: master
+summary: The Sales Order Status Category screen maintains the categories under which custom sales order statuses are grouped
+  (for example production, dispatch or commercial stages, Inferred).
+purpose: |
+  What it is: A short list of headings that group custom sales order statuses and set their order. When it applies: When the business introduces a new stage grouping for tracking sales orders. Business outcome: Custom statuses are organised consistently and shown in a fixed sequence (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel with four fields.
+  - Code Field: Disabled text box.
+  - Category Name Field: Mandatory text box, up to 50 characters (BR-01).
+  - SNo. Field: Mandatory numeric text box, up to 3 digits (BR-02).
+  - Inactive Field: Disabled checkbox.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Creates or updates the category.
+  Search: Standard search list with Code, Category Name, SNO., Inactive, Created By, Created Date, sorted by name.
+  Delete: Deletes the loaded category after confirmation (MSG-08).
+validations:
+- Enter Category Name.
+- Enter SNo..
+- Duplicate Category Name not allowed.
+- Duplicate SNo. not allowed.
+- Do you want to save ?
+- Data saved successfully.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- sales-order-status-category
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MCSCDelete.
+  FillValues: Fills the lookup lists through masterdata.MCSCFillValues.
+  LoadData: Loads the selected record through masterdata.MCSCLoadData.
+  Open: Searches records through masterdata.MCSCSearchData.
+  Save: Saves the record through masterdata.MCSCSave.
+  ValidateForm: Validates the entry through masterdata.MCSCValidate.

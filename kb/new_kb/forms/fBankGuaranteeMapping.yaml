@@ -1,0 +1,54 @@
+form: fBankGuaranteeMapping
+title: Bank Guarantee
+module: MM
+kind: transaction
+summary: 'The screen, captioned "Bank Guarantee" and known as Bank Guarantee Mapping, links a vendor bank guarantee, recorded
+  in [Bank Guarantee](Functional_Doc_fBankGuarantee.md), to the purchase documents it secures: purchase orders, service orders,
+  material agreements and service agreements.'
+purpose: |
+  What it is: A document that ties one bank guarantee to a chosen set of orders and agreements. [Purchase.PBGMSave:67-102; Purchase.PBGMSaveBGMappingDetail:19-35] When it applies: When a vendor's guarantee is accepted as security for specific orders or agreements whose payment mode is the guarantee payment mode. Business outcome: Shows which documents each guarantee covers and prevents the same documents or balance being used twice.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Number Strip: The shared document number control with division, date, status and number.
+  - BG No. Field: Dropdown showing BG No., BG Date and Bank Name; marked mandatory (BR-02, MSG-02).
+  - BG Date, Bank Name, Branch Name, BG Amount, Validity Date, Purpose and BG Balance Amount Fields: Read-only displays of the guarantee.
+  - Remarks Field: Optional text box labelled "Remarks", trimmed on save.
+  - Document Details Grid: Grid of eligible documents with a tick box, Division Name, Vendor Name, Vendor Location, Document No., Document Date, Document Name, Net Amount, and for balance guarantees Invoice Amount, Paid Amount and Balance Invoice Amount; the document key and form number are hidden.
+  - Previous Document Details Grid: Read-only grid of documents mapped to the same guarantee elsewhere, with Company Name and the same amount columns.
+  - Net Amount and Paid Amount Totals: Read-only boxes: Net Amount (Document Detail), Net Amount (Previous Doc.
+  - Other Toolbar Actions (Print, Preview, Export, E-mail): Empty.
+actions:
+  New: Standard New toolbar action.
+  Save: Validates, confirms and stores the mapping and ticked documents.
+  Search: 'A list of the company''s mappings for the year: document number and date, BG No.'
+  Delete: Deletes the mapping and its documents after confirmation.
+validations:
+- Select BG No.
+- Document Date can't be less than BG Date.
+- Select atleast one Document
+- BG Balance Amount can not be less than Total Net Amount - Total Paid Amount.
+- BG Balance Amount can not be less than BG Amount - Total Net Amount + Total Paid Amount.
+- Document Date can not be less than BG Date in <n>.
+- Document Date can not be more than BG Validity Date in <n>.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Authorized BG Mapping can't be updated.
+- Document No. <number> saved successfully.
+- Unable to delete transaction is done against this .
+manages:
+- bank-guarantee-fbankguaranteemapping
+uses_concepts:
+- accounting-voucher
+- bank-branch-detail
+- bank-guarantee
+- company
+method_notes:
+  Delete: Deletes the record through Purchase.PBGMDelete.
+  FillValues: Fills the lookup lists through Purchase.PBGMFillValues.
+  FillValuesBankGuarantee: Fills the lookup lists through Purchase.PBGMFillValuesBankGuarantee.
+  FillValuesDependent: Fills the lookup lists through Purchase.PBGMFillValuesDependent.
+  LoadData: Loads the selected record through Purchase.PBGMLoadData.
+  Open: Searches records through Purchase.PBGMSearchData.
+  Save: Saves the record through Purchase.PBGMSave.
+  SaveBGMappingDetail: Saves the record through Purchase.PBGMSaveBGMappingDetail.
+  ValidateForm: Validates the entry through Purchase.PBGMValidate.

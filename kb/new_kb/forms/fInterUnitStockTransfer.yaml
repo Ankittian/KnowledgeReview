@@ -1,0 +1,81 @@
+form: fInterUnitStockTransfer
+title: Inter Unit Stock Transfer
+module: MM
+kind: transaction
+summary: The Inter Unit Stock Transfer screen (menu caption "InterUnit Stock Transfer") is a simplified version of the Stock
+  Transfer screen, built for moving stock from a warehouse of the logged-in company to a warehouse of another group company
+  in a single step [fInterUnitStockTransfer.Designer.vb:773].
+purpose: |
+  What it is: A numbered transfer document that issues stock from lots of a warehouse in the current company and receives the same value into a warehouse of another group company in the same step. When it applies: When material moves between units (companies) of the group without a separate goods receipt at the destination. Business outcome: The stock and the inter-book finance entries of both units are updated by one document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header group with document control and five fields, and a tab set with "Issue Detail", "Receipt Detail", "Finance Posting", "Receiving Finance Posting" and "Disposal Posting" [fInterUnitStockTransfer.Designer.vb:614-758].
+  - Document No., Date, Status and Division: The shared document control, numbered in this screen's own series, with division validation when divisions apply [fInterUnitStockTransfer.vb:317-323].
+  - Transfer To Company Field: Required list of receiving companies [fInterUnitStockTransfer.vb:140] [fInterUnitStockTransfer.vb:2375-2376].
+  - From Warehouse and To Warehouse Fields: Required lists of sending and receiving warehouses [fInterUnitStockTransfer.vb:140].
+  - Requested By and Remarks Fields: A required requester list and a free-text remark of up to 1,000 characters [fInterUnitStockTransfer.vb:315] [fInterUnitStockTransfer.vb:266].
+  - Issue Detail Grid: Lines with select, item, description, make, grade, cost centre, quantity, current and on date stock, rate, amount and buttons for lots, serials and asset tags.
+  - Lot Details, Serial Number, Stock Details and Asset Detail Pop-ups: The same pop-ups as the base screen [fInterUnitStockTransfer.vb:2472-2552] [fInterUnitStockTransfer.vb:2554-2591] [fInterUnitStockTransfer.vb:3043-3069].
+  - Receipt Detail Grid: Lines built from the issue; item, description, make, grade and rate are read-only; "Receipt Qty.", "Amount", "Cost Center", "BIN No." and serials are editable [fInterUnitStockTransfer.vb:1804-1848].
+  - Posting Tabs: Issue voucher, receiving voucher and disposal posting controls [fInterUnitStockTransfer.Designer.vb:705-721].
+validations:
+- Authorized InterUnit Stock Transfer can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Some of selected Asset Tag(s) are unauthorized.
+- Some of selected Asset Tag(s) have Document Date greater than current Document Date.
+- Select valid Transfer To Company.
+- Select valid From Warehouse.
+- Select valid To Warehouse.
+- Select valid Requested By
+- Select atleast one Item Code.
+- Item is not mapped with selected warehouse  in row n.
+- Quantity can't be empty or zero in row n.
+- Quantity can't be greater than <stock> in row n.
+- Stock Qty. should be equal to <quantity> in row n.
+- You have selected Lot Of Route. in row n.
+- Serial No. detail should be same as issued Quantity in row n.
+- Total Tag Qty. is not equal to total LOT Quantity.
+- All the items selected should be of Capital Nature only if any one is of Capital Nature.
+- Processing Type should be 2 Step if capital nature type item(s) selected.
+- Select atleast one Warehouse.
+- Select valid Item Code in row n.
+- Receipt Qty. can't be empty or zero in row n.
+- Rate  can't be empty in row n.
+- Amount  can't be empty in row n.
+- Sum of amount should be equal to issued Amount.
+- 'Make is not LInked with receipt Item '
+- Qty. can't be empty or zero in row n.
+- Qty. is not equal to Total LOT Quantity in row n.
+- Qty. can't be greater than Balance Qty.
+- Qty can't be greater than stock Qty. <balance> in row n.
+- Quantity should equal to <quantity>
+- Quantity can't be greater than Stock Qty.
+- Duplicate Warehouse and Item Code is not allowed.
+- Finance Book is not mapped.
+- Multiple Input or Output can not be selected
+- 'amount Difference in Issue <amount> and receiveing Detail '
+- Document No. <number> saved successfully.
+- Default FB is not set against this.
+manages:
+- inter-unit-stock-transfer
+uses_concepts:
+- company
+- multi-item-opening
+- pack-slip
+- picking
+- service-order
+- service-order-amendment
+- single-item-opening
+- stock-transfer
+method_notes:
+  Delete: Deletes the record through Inventory.IMSTDelete.
+  FillValues: Fills the lookup lists through Inventory.IMSTFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMSTFillValuesDependent.
+  FillValuesLotAsset: Fills the lookup lists through Inventory.IMSTFillValuesLotAsset.
+  FillValuesSetFB: Fills the lookup lists through GlobalData.GetFBNoDivisionWise.
+  GetItemInfo: Runs through Inventory.IMSTGetItemInfo.
+  ItemLotDetail: Runs through Inventory.IMSTItemLotDetail.
+  LoadData: Loads the selected record through Inventory.IMSTLoadData.
+  LoadRepeatedEntry: Searches records through Inventory.IMSTSearchData.
+  Open: Searches records through Inventory.IMSTSearchData.

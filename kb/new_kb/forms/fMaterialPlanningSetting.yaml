@@ -1,0 +1,46 @@
+form: fMaterialPlanningSetting
+title: Material Planning Setting
+module: MM
+kind: transaction
+summary: 'The Material Planning Setting screen records, for a Material Planning Unit and an Effective From date, the stock
+  control quantities of each critical item: Minimum Qty.'
+purpose: |
+  What it is: A dated set of reorder parameters per planning unit and item [Inventory.IMPSSave:22-34; Inventory.IMPSSaveItemDetail:53-74]. When it applies: When min/max or reorder levels are first set for a planning unit, and whenever they are revised from a given date. Business outcome: Stock reports and notifications compare stock with the latest agreed levels, while earlier levels stay on record under their own dates (BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: One group box with Planning Unit, Effective From, a small Copy Item button at the top right and the item grid [fMaterialPlanningSetting.Designer.vb:90-104].
+  - Planning Unit Field: A mandatory drop-down showing name and code [fMaterialPlanningSetting.vb:57; fMaterialPlanningSetting.vb:118].
+  - Effective From Field: A date picker with format dd/MM/yyyy; no default or limit is set in the screen design [fMaterialPlanningSetting.Designer.vb:56-60].
+  - Copy Item Button: A small image-only button without caption [fMaterialPlanningSetting.Designer.vb:97-104].
+  - Item Grid: Columns Item Code, Item Description, Unit, Planning Type, Last Effective Date (all read-only), then Lead Time, Minimum Qty., Maximum Qty., Reorder Level and Reorder Qty.
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard actions with empty handlers [fMaterialPlanningSetting.vb:189-221].
+actions:
+  New: The toolbar action that starts a blank record [fMaterialPlanningSetting.vb:155-162].
+  Save: The toolbar action that validates and stores the setting [fMaterialPlanningSetting.vb:449-502].
+  Search: The toolbar action that lists settings for the logged-in company with Planning Unit, Effective From, Created By,
+    Created Date, Modified By and Modified Date [Inventory.IMPSSearchData:17-30].
+  Delete: The toolbar action that removes the open setting [fMaterialPlanningSetting.vb:63-93].
+validations:
+- Select valid Planning Unit.
+- Some entry(s) exists for planning unit '<unit name>' on/after date <dd/mm/yyyy>.
+- Enter Minimum Qty. in row <n>.
+- Enter Maximum Qty. in row <n>.
+- Minimum Qty. can't be greater than or equal to Maximum Qty. in row <n>.
+- Enter Reorder Level in row <n>.
+- Enter Reorder Qty. in row <n>.
+- Enter Min/Max Qty. or Reorder Qty. for atleast one item.
+manages:
+- material-planning-setting
+uses_concepts:
+- material-planning-method
+- material-planning-unit
+method_notes:
+  Delete: Deletes the record through Inventory.IMPSDelete.
+  FillValues: Fills the lookup lists through Inventory.IMPSFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.IMPSFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.IMPSLoadData.
+  Open: Searches records through Inventory.IMPSSearchData.
+  Save: Saves the record through Inventory.IMPSSave.
+  SaveItemDetail: Saves the record through Inventory.IMPSSaveItemDetail.
+  ValidateForm: Validates the entry through Inventory.IMPSValidate.
+  ubtnCopyItem_Click: Searches records through Inventory.IMPSSearchData.

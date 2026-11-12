@@ -1,0 +1,52 @@
+form: fQDAStocktransfer
+title: QDA in Stock Transfer
+module: MM
+kind: transaction
+summary: The QDA in Stock Transfer screen (menu caption "QDA in Stock Transfer"; window caption "QDAStocktransfer") records
+  a quantity and value adjustment (QDA) at the end of a stock movement chain [fQDAStocktransfer.Designer.vb:372].
+purpose: |
+  What it is: A numbered adjustment document that compares the quantity and value that left a source with what arrived, and spreads the value difference over the received lots. When it applies: After a purchase order with a multi-leg freight route is manually closed, or after a direct warehouse transfer has been received. Business outcome: Stock value and moving average rates reflect the true cost; the gap is booked in finance.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: Document control; an upper tab set with "General Details" and "Custom Field"; a lower tab set with "Details" and "Online Posting"; a "Summary" group [fQDAStocktransfer.Designer.vb:325-349] [fQDAStocktransfer.Designer.vb:238].
+  - Document No., Date, Status and Division: The shared document control using this screen's series [fQDAStocktransfer.vb:137].
+  - Source Document Field: Required list "Source Document" [fQDAStocktransfer.Designer.vb:123] [fQDAStocktransfer.vb:73].
+  - Ref. Doc. No. and Ref. Doc. Date Fields: Required reference list and a read-only date box [fQDAStocktransfer.Designer.vb:142] [fQDAStocktransfer.Designer.vb:144-160].
+  - Remarks Field: Free text up to 1,000 characters [fQDAStocktransfer.Designer.vb:166] [fQDAStocktransfer.Designer.vb:179].
+  - Currency and Notes Controls: The shared currency control and a notes control [fQDAStocktransfer.vb:129-134].
+  - Custom Field Tab: The shared custom field control for this form [fQDAStocktransfer.vb:136].
+  - Details Grid: Read-only lines with "Item Description", "Make", "Route ID", "Location", "Receipt Qty.", "Receipt Amt", "Transfer Qty.", "Transfer Amt", "Consumption Qty.", "Consumption Amt", "Return Qty.", "Return Amt", "Shortage/Excess Qty.", "Shortage/ Excess Amt", "Stock Qty." and "Stock Amt" [fQDAStocktransfer.vb:426-465].
+  - Summary Group: A grid with "Stock Value", "Actual Value" and "Adjustment Value" [fQDAStocktransfer.vb:467-494].
+  - Online Posting Tab: The shared posting control for the adjustment journal [fQDAStocktransfer.vb:74] [fQDAStocktransfer.vb:138].
+validations:
+- Authorized QDA can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Receipt Qty. can't be empty or zero in row n,Do you want to continue
+- Total Quantity is not transfered in row n.
+- Receipt Qty. is zero in row n,Do you want to continue?
+- Document Date can't be less than <dd/mm/yyyy>
+- Difference in Voucher and Lot -- ...
+- Not found in Lot
+- Not found in Voucher
+- Document No. <number> saved successfully.
+manages:
+- qda-in-stock-transfer
+uses_concepts:
+- accounting-voucher
+- company
+- inter-unit-stock-transfer
+- single-item-opening
+- stock-transfer
+method_notes:
+  Delete: Deletes the record through Inventory.QDASDelete.
+  FillValues: Fills the lookup lists through Inventory.QDASFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.QDASFillValuesDependent.
+  LoadData: Loads the selected record through Inventory.QDASLoadData.
+  Open: Searches records through Inventory.QDASSearchData.
+  Save: Saves the record through Inventory.QDASAuthorize, Inventory.QDASSave, Inventory.VoucherVsLotValidation.
+  SaveDetail: Saves the record through Inventory.QDASSaveDetail.
+  ValidateForm: Validates the entry through Inventory.QDASValidate.
+  fQDAStocktransfer_KeyUp: Saves the record through Finance.VoucherSaveForTransaction.

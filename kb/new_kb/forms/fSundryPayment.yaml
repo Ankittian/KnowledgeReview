@@ -1,0 +1,111 @@
+form: fSundryPayment
+title: Sundry Payment
+module: FI
+kind: transaction
+summary: 'The Sundry Payment screen records a payment obligation that does not come from a purchase bill: an employee salary
+  advance, an authorized payment request, or a direct payment to a vendor, a ledger account, an employee or a one-time payee.'
+purpose: |
+  What it is: A finance document that books a miscellaneous payable or payment against a payee, with optional service-line expense allocation, taxes and an automatic voucher [fSundryPayment.vb:1141-1354; fSundryPayment.vb:1800-1903]. When it applies: When an expense, advance or deposit must be paid outside the purchase bill cycle, for example a salary advance, an authorized payment request, or a direct expense bill. Business outcome: Every such payment carries a bill reference, a payee account and, once authorized, a posted voucher or a cash/payment-plan entry, so that liabilities and cash outflows are recorded consistently (BR-29; BR-31; BR-32).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The document number control at the top, the main group with header fields, and a tab area with Service Detail, Tax Detail, Finance Posting and GST Posting [fSundryPayment.Designer.vb:427-467; fSundryPayment.Designer.vb:739-752].
+  - Document No., Date, Finance Book and Status: Shared document number control with a repeated-entry (copy) button [fSundryPayment.vb:165].
+  - Source Document Field: Dropdown, mandatory (BR-03; MSG-04).
+  - Source Document No. Field and Date: Dropdown of eligible source documents with a read-only Date beside it; mandatory unless Source Document is Direct (BR-05; MSG-05).
+  - Requested Amount Field: Read-only amount from the source document [fSundryPayment.Designer.vb:583].
+  - Request Type Field: Dropdown, mandatory (BR-06; MSG-07).
+  - Payee Type Field: Dropdown, mandatory (BR-07; MSG-08).
+  - Payee Name Field: Mandatory dropdown, 100 characters; free text for the Others type [fSundryPayment.vb:164; fSundryPayment.vb:220].
+  - Payee Location Field: Dropdown of the vendor's locations, captioned "Payee Location" [fSundryPayment.vb:1697-1699].
+  - Amount Field: Numeric, 12 characters, 2 decimals, mandatory non-zero (BR-11; MSG-16).
+  - Bill No., Bill Date and Bill Amount Fields: Vendor bill reference: Bill No.
+  - Payment Mode Field: Mandatory dropdown [fSundryPayment.vb:164].
+  - Currency Control: Shared currency and exchange-rate control [fSundryPayment.vb:274].
+  - Project Name, Cost Center and Narration Fields: Optional Project Name and Cost Center dropdowns and multi-line Narration [fSundryPayment.vb:276-281; fSundryPayment.Designer.vb:392].
+  - Bill Period Check Box and From/To Date: Check box that enables the Bill Period group with From Date and To Date [fSundryPayment.vb:1455-1461].
+  - Service Tax Rule, GST Tax Rule and Place of State Fields: Service Tax Rule dropdown (hidden when GST applies), GST Tax Rule dropdown, and mandatory Place of State [fSundryPayment.vb:284-287; fSundryPayment.vb:236].
+  - Service Detail Grid: Grid with Description, HSN & SAC Code (read-only), Unit, Quantity (3 decimals), Rate, Amount, GST Tax Rule [fSundryPayment.vb:222-237; fSundryPayment.vb:1125-1139].
+  - Tax Detail Tab: Shared tax control calculating charges on Amount (not per item) [fSundryPayment.vb:229; fSundryPayment.vb:270].
+  - Finance Posting and GST Posting Tabs: Shared voucher control and GST posting control [fSundryPayment.vb:2107-2126].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Print, Preview, Export and Email of the voucher report [fSundryPayment.vb:449-468; fSundryPayment.vb:1731-1754].
+actions:
+  New: Starts a new record through the main window [fSundryPayment.vb:412-420].
+  Save: Validates and saves the header, lines, taxes, voucher and GST posting in one transaction [fSundryPayment.vb:1141-1354].
+  Search: Opens the common search with documents of the current company and year [fSundryPayment.vb:422-447; Finance.FISPSearchData:20-49].
+  Delete: Deletes the loaded record after confirmation [fSundryPayment.vb:172-199].
+  Repeated Entry (Copy): Button on the number control that copies an existing document into a new one [fSundryPayment.vb:2162-2204].
+  Navigation: First / Previous / Next / Last are enabled in the toolbar list [fSundryPayment.vb:156].
+validations:
+- Authorized Sundry Payment can't be updated.
+- Authorized entry can't be updated.
+- Authorized Entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Source Document.
+- Select valid Source Document No.
+- Document Date can't be less than Source Document Date.
+- Select valid Request Type.
+- Select valid Payee Type.
+- Enter Payee Name.
+- Select valid Payee Name.
+- Please Update GST Registration Type in Payee Name.
+- Select valid Payee Location.
+- Please Update State/City in Location Master.
+- Please Update GST Registration Type in Vendor.
+- Vendor is not GST Registered ,so GST Tax can't be added
+- Amount can't be empty or zero.
+- Select valid Payment Mode.
+- Enter Vendor Bill No.
+- Select Bill Date.
+- Vendor Bill Date can't be greater than Document Date.
+- Vendor Bill Amount can't be empty or zero.
+- To Date can't be less than From Date.
+- Select valid Service Tax Rule.
+- SGST or IGST is not applicable for service related to Union Territory.
+- IGST or UTGST is not applicable for intra state service.
+- CGST, SGST or UTGST is not applicable for inter state service.
+- Select Valid Place of State.
+- GST Taxes and GST Rule can't be selected simultaneously
+- GST Rule And GST Taxes can't be selected simultaneously.
+- Duplicate Description not allowed.
+- Amount can't be empty or zero in row n.
+- Select valid GST Tax Rule in row n.
+- Same Bill No. exists (for same date, same Payee Location and same Financial Year) in another entry. Do you still want to
+  continue?
+- Advance account is not created against this Payee Name.
+- Imprest account is not created against this Payee Name.
+- Supplier Payable account is not created against this Payee Location.
+- Select valid HSN & SAC Code in row n.
+- Select valid Cost Center.
+- Document No. <number> saved successfully.
+- Do you want to print?
+- Finance Book is closed for this Document Date.
+- Amount is not equal to total amount in Service Description.
+- Select atleast one Description
+manages:
+- sundry-payment
+uses_concepts:
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  CustomValidation: Validates the entry through Finance.FISPCustomValidation.
+  Delete: Deletes the record through Finance.FISPDelete.
+  FillValues: Fills the lookup lists through Finance.FISPFillValues.
+  FillValuesPayeeType: Fills the lookup lists through Finance.FISPFillValuesPayeeType.
+  FillValuesSourceDocument: Fills the lookup lists through Finance.FISPFillValuesSourceDocument.
+  FillValuesSourceDocumentNo: Fills the lookup lists through Finance.FIPRLoadData.
+  FillValuesVendor: Fills the lookup lists through GlobalData.VendorLocationSelect.
+  LoadData: Loads the selected record through Finance.FISPLoadData.
+  Open: Searches records through Finance.FISPSearchData.
+  Save: Saves the record through Finance.FISPSaveMain, Finance.VoucherSaveStatuory.

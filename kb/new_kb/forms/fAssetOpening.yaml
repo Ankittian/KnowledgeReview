@@ -1,0 +1,84 @@
+form: fAssetOpening
+title: Asset Opening
+module: FI
+kind: transaction
+summary: The Asset Opening screen loads the opening balances of fixed assets for a Finance Book and a Depreciation Book on
+  the date the books start.
+purpose: |
+  What it is: A document that creates the opening asset register for a Finance Book in one depreciation book [fAssetOpening.vb:738-810; fAssetOpening.vb:812-826]. When it applies: When a company starts using the fixed asset module or opens a new Finance Book or reporting depreciation book. Business outcome: The asset register agrees with the ledger opening, so later depreciation starts from correct values.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: "- Main Layout Area: A window captioned in code \"AssetOpening\" with the document block, the \"Depreciation\
+  \ Book\" field and two tabs, \"Transaction\" and \"Summary\" [fAssetOpening.Designer.vb:147-171; fAssetOpening.Designer.vb:211].\n\
+  - Document Block (Document No., Date, Status, Finance Book): A shared control for number, date, status and finance book\
+  \ [fAssetOpening.vb:92; fAssetOpening.vb:278-280].\n- Depreciation Book Field: A mandatory drop-down labelled \"Depreciation\
+  \ &Book\" [fAssetOpening.vb:29; fAssetOpening.Designer.vb:147].\n- Transaction Grid: Columns: Asset Class, Asset Group,\
+  \ Account Name, Cummulative Depreciation A/C, Supplier Name, Supplier Location, Bill No., Bill Date, GRN No., GRN Date,\
+  \ Asset No., Asset Description, Tag No., Tag Description, Asset Location, Cost Center, Department, Item Description, Serial\
+  \ No., Qty., In Service Date, Acquisition Value, Salvage Value, Accumulated Depreciation Value, Asset Opening Value, Custodian\
+  \ \n- Summary Grid: A read-only grid with Account Name, Opening As Per Account, Opening As Per Asset, Prev.\n- Hide Optional\
+  \ Fields Option: The option \"Hide Optional Fields\" or \"Show All Fields\" [fAssetOpening.Designer.vb:84-94].\n- Row Delete:\
+  \ Deleting rows in the grid asks for confirmation; rows can be deleted only in the main book; deleted saved rows are removed\
+  \ from the register on save [fAssetOpening.vb:1295-1328; fAssetOpening.vb:1069-1099].\n- Other Toolbar Actions (Print, Preview,\
+  \ Export, Email): Empty routines [fAssetOpening.vb:227-259].\n"
+actions:
+  Import: A button "Import" that reads an Excel sheet named after the form code [fAssetOpening.Designer.vb:78; fAssetOpening.vb:1330-1344;
+    fAssetOpening.vb:1379].
+  New: Asks the main window for a blank record [fAssetOpening.vb:191-198].
+  Save: Validates and stores the opening [fAssetOpening.vb:738-810].
+  Search: Opens a list of openings of the company and year with Document No., Document Date, Finance Book, Depreciation Book,
+    Document Status, Created By, Released By and Authorized By [fAssetOpening.vb:200-225; FixedAsset.AMAOSearchData:18-36].
+  Delete: Deletes the open opening after confirmation [fAssetOpening.vb:42-70].
+validations:
+- Select valid Depreciation Book.
+- Document Date should be equal to Depreciation Book Opening Date.
+- Select atleast one Asset Group in Transaction.
+- Select valid Account Name
+- ' in row '
+- Select valid Supplier Name
+- Select valid Supplier Location
+- Enter Asset No.
+- Select valid/ Enter Asset Description
+- Enter Tag No.
+- Select valid/ Enter Tag Description
+- Select valid Asset Location
+- Qty. can't be empty or zero
+- Select In Service Date
+- In Service Date can't be greater than Depreciation Book Opening Date
+- Qty. should be equal to 1 in case Serial No. is available
+- Acquisition Value can't be empty or zero
+- Salvage Value can't be greater than Acquisition Value
+- Accumulated Depreciation Value can't be empty or zero
+- 'Accumulated Depreciation Value can''t be greater than Acquisition Value '
+- 'Duplicate Asset No. '
+- ' for other Asset Group/ Account Name/ Asset Description/ Cost Center/ Department/ Custodian found.'
+- Can't authorize, Opening As Per Account is not equal to Opening As Per Asset
+- Authorized Asset Opening can't be updated.
+- Authorized entry can't be updated.
+- 'Your excel should consists of sheet with name '
+- . Do you want to continue?
+- Authorized corporate depreciation book against finance book is not created.
+- Duplicate Asset No. and Tag No. not allowed.
+- Duplicate Asset No. and Asset Tag No. are not allowed.
+- Duplicate Finance Book and Asset No. are not allowed.
+- Duplicate Document No. not allowed.
+- Finance Book is closed for this Document Date.
+- Can't be deleted.Reporting/ Tax Depreciation Book opening is available against this Finance Book.
+manages:
+- asset-opening
+uses_concepts:
+- asset-class
+- asset-disposal
+- asset-group
+- asset-location
+- class-account-item-mapping
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMAODelete.
+  DeleteAsset: Deletes the record through FixedAsset.AssetDelete.
+  DeleteAssetTag: Deletes the record through FixedAsset.AssetTagDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMAOFillValues.
+  FillValuesDB: Fills the lookup lists through FixedAsset.AMAOFillValuesDB.
+  FillValuesFB: Fills the lookup lists through FixedAsset.AMAOFillValuesFB.
+  LoadData: Loads the selected record through FixedAsset.AMAOLoadData.
+  Open: Searches records through FixedAsset.AMAOSearchData.
+  Save: Saves the record through FixedAsset.AMAOSaveMain.
+  SaveAssetMain: Saves the record through FixedAsset.AssetSaveMain.

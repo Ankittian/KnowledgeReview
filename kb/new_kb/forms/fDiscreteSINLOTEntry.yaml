@@ -1,0 +1,79 @@
+form: fDiscreteSINLOTEntry
+title: SIN Lot Entry
+module: DRM
+kind: transaction
+summary: The SIN Lot Entry screen records the physical lot detail of one item received against a Stores Inward Note (SIN).
+purpose: |
+  What it is: A document that turns the quantity received on a SIN into individually identified lots (dimensions, heat, cast, certificate and serial numbers) and allocates them to order lines [fDiscreteSINLOTEntry.vb:898-1047]. When it applies: After a SIN has been authorized for an item that is flagged to maintain lots (BR-03). Business outcome: Stock is held by heat, length and width instead of a single bulk quantity, and order balances, challan weight and tolerances are reconciled at the moment of receipt (BR-10; BR-11).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header with SIN, vendor and item fields, a "Lot Detail" grid, a tolerance panel with weights, and a tab control with "Order Detail", "Order Challan Detail" and "Online Posting" tabs.
+  - SIN No. Field: Drop-down listing "SIN No", "SIN Date" and "Vendor Name".
+  - SIN Date, Vendor Name and Location Fields: Read-only text boxes "SIN Date", "Vendor Name" and "Location" [fDiscreteSINLOTEntry.Designer.vb:284-294; fDiscreteSINLOTEntry.Designer.vb:481].
+  - Item Description Field: Drop-down listing "Item Description", "Unit Name" and "Make".
+  - Make and Unit Fields: Read-only "Make" and "Unit" text boxes [fDiscreteSINLOTEntry.Designer.vb:525; fDiscreteSINLOTEntry.vb:1755-1756].
+  - Total Pcs Field: Numeric text box, up to 6 digits, listed as mandatory [fDiscreteSINLOTEntry.vb:94; fDiscreteSINLOTEntry.vb:169].
+  - Status Field: Drop-down "Status" of document statuses, default value 10 on a new entry.
+  - Lot Detail Grid: An editable grid with columns A/c Length, Width, TC No., Heat No., Cast No., Serial No.
+  - Lot Wt, Challan Wt, Received Wt, Accepted Wt and Tolerance Fields: Read-only boxes "Lot Wt", "Challan Wt", "Received Wt", "Accepted Wt", "Challan Wt Tolerance" and "Received Wt Tolerance" [fDiscreteSINLOTEntry.Designer.vb:788-903; fDiscreteSINLOTEntry.Designer.vb:821].
+  - Adjust Button: Button "&Adjust" [fDiscreteSINLOTEntry.Designer.vb:397].
+  - Order Detail Tab: A grid with Order No., Indent No., Customer Order No., Project Code, Order Qty., Unit, Prev Received Qty., Balance Qty., Tolerance %, Challan Qty., Qty., a "Lot Detail" button column and an editable Warehouse column.
+  - Lot Detail Pop-up: A row-edit template with a grid of the lot rows (Select, length, width, TC/Heat/Cast/Serial numbers, Pcs, Unit Wt., Qty.) and buttons "O&k" and "Cance&l" [fDiscreteSINLOTEntry.Designer.vb:314-353; fDiscreteSINLOTEntry.vb:1583-1633].
+  - Order Challan Detail Tab: A grid of order, order date, order qty, previous received qty, balance qty and an editable Challan Qty.; rows cannot be deleted [fDiscreteSINLOTEntry.vb:1906-1925].
+  - Online Posting Tab: The shared finance posting control and a currency control [fDiscreteSINLOTEntry.Designer.vb:85-87].
+  - Other Toolbar Actions (Print, Preview, Email, Export): Standard toolbar actions.
+actions:
+  New: Toolbar action that starts a blank entry [fDiscreteSINLOTEntry.vb:438-449].
+  Save: Toolbar action that validates and saves [fDiscreteSINLOTEntry.vb:784-895].
+  Search: Opens a search dialog listing existing entries of the company and year [fDiscreteSINLOTEntry.vb:451-479; DiscreteRM.RSLESearchData:18-30].
+  Delete: Toolbar action that deletes the loaded entry [fDiscreteSINLOTEntry.vb:103-134].
+validations:
+- Authorized SIN Lot Entry can't be updated.
+- Select valid SIN No.
+- Select valid Item Description.
+- Select valid Status.
+- Enter Lot Detail.
+- Width can't be zero or empty in row <n>.
+- Pcs can't be zero or empty in row <n>.
+- Qty. can't be empty in row <n>.
+- Total No. of Pcs should be equal to <Total Pcs>.
+- Select atleast one Order Detail.
+- Lot Weight can't be greater than Order Weight + SIN Tolerance allowed Weight.
+- Challan Qty / Received Qty. can't be greater than SIN Chalan Tolerance % in row <n>.
+- Select atleast one Dimension in row <n>.
+- Total Weight should be equal to <Qty.>.
+- Select valid warehouse in row <n>.
+- No Order Detail found against this Entry.
+- Sum Challan Qty. should be equal to Actual Challan <Challan Wt>.
+- Sum of Challan Qty. should be equal to Actual Challan <Challan Wt>.
+- Enter Challan Qty.
+- Challan Qty. should be equal to sum of Challan Qty in Indent.
+- Pcs can't be greater than balance Pcs <n>.
+- Qty. can't be greater than balance Pcs <n>.
+- Unit Conversion is defined for selected Item Unit.
+- Finance Book is not Linked.
+- Entry is already authorized
+- Authorized SIN Lot Entry can't be updated
+- Warehouse should be same as taken in SIN Entry for Item <item description>
+manages:
+- sin-lot-entry
+uses_concepts:
+- accounting-voucher
+- company
+- gate-entry-fgateentrydrm
+- material-issue-fmaterialissuedrm
+- rawmaterial-opening
+- stock-transfer
+- store-inward-note
+- update-dr-opening-balance
+method_notes:
+  Delete: Deletes the record through DiscreteRM.RSLEDelete.
+  FillValues: Fills the lookup lists through DiscreteRM.RSLEFillValues.
+  FillValuesDependent: Fills the lookup lists through DiscreteRM.RSLEFillValuesDependent.
+  LoadData: Loads the selected record through DiscreteRM.RSLELoadData.
+  Open: Searches records through DiscreteRM.RSLESearchData.
+  Save: Saves the record through DiscreteRM.RSLEAuthorize, DiscreteRM.RSLESave, Inventory.VoucherVsLotValidation.
+  SaveDimensionDetail: Saves the record through DiscreteRM.RSLESaveDimensionDetail.
+  SaveLotDetail: Saves the record through DiscreteRM.RSLESaveSINLotDetail.
+  SaveOrderDetails: Saves the record through DiscreteRM.DRSNSaveLotDetail.
+  ValidateGeneralDetails: Validates the entry through DiscreteRM.RSLEValidate.

@@ -1,0 +1,31 @@
+form: fServiceCallResourceAllocation
+title: Service Call Resource Allocation
+module: PM
+kind: transaction
+summary: The Service Call Resource Allocation screen lets a dispatcher assign a service resource to many service calls in
+  one pass.
+purpose: |
+  What it is: A bulk assignment grid that sets the responsible resource on each selected service call and keeps a history of who was assigned and when [fServiceCallResourceAllocation.vb:166-178; fServiceCallResourceAllocation.vb:259-278; CustomerService.SCRASave:23-32]. When it applies: When calls need an owner, or a call has to be moved to another resource. Business outcome: Every call can be traced to a responsible resource, and changes of owner are auditable (BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A single grid of service calls plus a hidden edit panel for the assignment history [fServiceCallResourceAllocation.Designer.vb:63].
+  - Service Call Resource Detail Grid: A grid with the columns Service Call Id, Entry Date, Customer Name, Customer Location, Equipment Description, Item Description, Serial No., Subject, Status, Current Assign To and Assign To [CustomerService.SCRAFillValues:40-52].
+  - Assign To History Panel: A row-edit panel containing a read-only grid with Entry Date, Created By, Form and Assign To, and a "Cance&l" button that closes it [fServiceCallResourceAllocation.vb:316-342; fServiceCallResourceAllocation.Designer.vb:81].
+  - Other Toolbar Actions (Open, Delete, Print, Preview, Export, Email): Open and Delete are disabled; Print, Preview, Export and Email are empty; the Delete code is commented out [fServiceCallResourceAllocation.vb:48-72; fServiceCallResourceAllocation.vb:89-91; fServiceCallResourceAllocation.vb:119-151].
+actions:
+  New: Asks the main window to open a fresh allocation screen [fServiceCallResourceAllocation.vb:106-113].
+  Save: Checks that at least one resource is chosen, asks for confirmation (MSG-02) and saves every chosen row in one transaction
+    [fServiceCallResourceAllocation.vb:248-297].
+validations:
+- Enter atleast one Assign Resource On Service Call Details.
+- Saved successfully.
+manages:
+- service-call-resource-allocation
+uses_concepts:
+- eam-resource-master
+- equipment-master
+- service-call
+method_notes:
+  FillValues: Fills the lookup lists through CustomerService.SCRAFillValues.
+  Save: Saves the record through CustomerService.SCRASave.
+  ugdServiceCallResourceDetail_BeforeRowEditTemplateDisplayed: Runs through CustomerService.SCRAAssignToHistory.

@@ -1,0 +1,42 @@
+key: p7-weigh-bridge-weigh-bridge
+name: 'Weigh Bridge: Weigh bridge (Phase 7)'
+module: WB
+status: active
+summary: Phase 7 screens of the weigh bridge group in Weigh Bridge.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 7 forms that the KB validation plan puts in 'Weigh bridge' (Weigh Bridge). The steps follow the plan order, not a verified business sequence: Weighment Machine Master, Weighment Setting, Weigh Bridge Item Setting, Weigh Bridge Default Machine Setting, First Weighment, Second Weighment, Weighment Direct Entry, Weighment Delete.
+steps:
+- order: 1
+  name: Record Weighment Machine Master
+  form: fWeighmentMachineMaster
+- order: 2
+  name: Record Weighment Setting
+  form: fWeighmentSetting
+- order: 3
+  name: Record Weigh Bridge Item Setting
+  form: fWeighBridgeItemSetting
+- order: 4
+  name: Record Weigh Bridge Default Machine Setting
+  form: fWeighBridgeDefaultMachineSetting
+- order: 5
+  name: Record First Weighment
+  form: fFirstWeighment
+- order: 6
+  name: Record Second Weighment
+  form: fSecondWeighment
+- order: 7
+  name: Record Weighment Direct Entry
+  form: fWeighmentDirectEntry
+- order: 8
+  name: Record Weighment Delete
+  form: fWeighmentDelete
+concepts:
+- weighment-machine-master
+- weighment-setting
+- weigh-bridge-item-setting
+- weigh-bridge-default-machine-setting
+- first-weighment
+- second-weighment
+- weighment-direct-entry
+- weighment-delete

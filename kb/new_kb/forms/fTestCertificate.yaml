@@ -1,0 +1,63 @@
+form: fTestCertificate
+title: Test Certificate
+module: SD
+kind: transaction
+summary: The Test Certificate screen issues a quality test certificate to a customer for goods sold on a tax invoice or a
+  commercial invoice.
+purpose: |
+  What it is: A numbered certificate linked to one invoice that records the items, quality parameter values, inspection results, lots and testing laboratory. When it applies: After an invoice is raised and the customer requires test evidence for the supplied goods. Business outcome: A traceable, printable conformity record per invoice (BR-05, BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: Shared control for document number (with prefix), date, division and status.
+  - Header Group: Main header area with source, reference, customer information, lab name, notes and remarks.
+  - Source Document Field: Mandatory list of active source types (BR-04).
+  - Ref. Doc. No. Field: Mandatory searchable list showing invoice number, date, customer, customer location and agent (BR-05).
+  - Ref. Doc. Date, Customer Name, Customer Location and Agent Name Fields: Read-only displays filled from the selected invoice.
+  - LAB Name Field: Editable list (up to 100 characters) of lab names used before in the company; a new name can be typed (BR-03).
+  - Notes Control: Shared notes control in the header.
+  - Remarks Field: Optional text, up to 1000 characters.
+  - Item Detail Tab: Grid with tick, "Item Description", "Item Code", "Make", "Item Attribute", "Unit", "Quantity", "QC" button and "Remarks" (500 characters); only tick, QC and Remarks are editable.
+  - Inspection Result Tab: Grid with "Item Description", "Item Code", "Make", "Item Attribute", "Batch No.", "Inspection Result No.", "Inspection Result Date", "Prev.
+  - Lot Detail Tab: Grid with tick, "Item Name", "Grade", "Size", "Item Attribute", "Batch No.", "Lot No.", "Heat No.
+  - Custom Fields Tab: Shared custom field control.
+  - Other Toolbar Actions (Export, Email): Not enabled on the toolbar for this form; their routines are empty [fTestCertificate.vb:57-67] [fTestCertificate.vb:261-276].
+actions:
+  New: Standard toolbar action handled by the main window.
+  Save: Validates and saves the certificate in one transaction.
+  Open (Search): Opens the common search window.
+  Delete: Deletes the loaded certificate after MSG-13.
+  Navigation: First / Previous / Next / Last, enabled for this form [fTestCertificate.vb:64].
+  Print and Print Preview: Print or preview the test certificate report for the loaded certificate.
+validations:
+- Do you want to save ?
+- Document No. <number> saved successfully.
+- Authorized TestCertificate can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Enter or select Lab Name.
+- Select valid Source Document.
+- Select valid Ref. Doc. No.
+- Select atleast one Item.
+- Test Sr. No. is empty for row no. <n> . Do you want to continue?
+- Test Sr. No. Can't be empty for row no. <n> .
+- Select at least one lot for <item>.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+- Select Item in Item Detail(Tab) for item <item>.
+manages:
+- test-certificate
+uses_concepts:
+- company
+- tax-invoice
+method_notes:
+  Delete: Deletes the record through Sales.SDTCDelete.
+  FillRefDetails: Fills the lookup lists through Sales.SDTCFillValuesRefDetail.
+  FillValues: Fills the lookup lists through Sales.SDTCFillValues.
+  LoadData: Loads the selected record through Sales.SDTCLoadData.
+  Open: Searches records through Sales.SDTCSearchData.
+  Save: Saves the record through Sales.SDTCSave.
+  SaveCustomFields: Saves the record through Sales.SDTCSaveCustomFieldDetail.
+  SaveInspectionResultDetail: Saves the record through Sales.SDTCSaveInspectionResultDetail.
+  SaveItemDetail: Saves the record through Sales.SDTCSaveItemDetail.
+  SaveLotDetail: Saves the record through Sales.SDTCSaveLotDetail.

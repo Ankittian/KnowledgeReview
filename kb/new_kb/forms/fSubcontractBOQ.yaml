@@ -1,0 +1,78 @@
+form: fSubcontractBOQ
+title: Bill of Quantity
+module: MM
+kind: transaction
+summary: The Bill of Quantity (BOQ) screen records, for a subcontract (service) order or for a purchase order, the exact material
+  the company will issue to the subcontractor and the material it expects back, with quantities, rates, tolerances and the
+  percentage split of the output items.
+purpose: |
+  What it is: A document that fixes, against one subcontract order (or one purchase order item), the material issued out and received back. [fSubcontractBOQ.vb:391-465] When it applies: After a subcontract order exists and its issue and receipt quantities must be specified or revised, or when quantities and rates for a purchase order item are to be set. Business outcome: Issues to and receipts from the subcontractor are controlled against an agreed list; later issue and receipt cannot fall below what has already moved (BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: The header fields "&Document Status", "Document Da&te", "Division &Name", "&Source Document", the reference order dropdown ("Subcontract Order &No." or "Purchase Order &No."), and read-only "Order Date", "Amendment No.", "Party &Name " and "L&ocation"; for purchase orders also "&Item Name", "&Make", "&Tech.
+  - Document Status Field: A mandatory dropdown of Initial, Release, Authorized; defaults to Initial on a new document.
+  - Document Date and Division Name Fields: "Document Da&te" date picker and "Division &Name" dropdown (visible only when divisions apply).
+  - Source Document Field: Mandatory dropdown "Subcontract Order" / "Purchase Order".
+  - Reference Order Dropdown: Mandatory dropdown of orders (label "Subcontract Order &No." or "Purchase Order &No.") showing order number, date and party.
+  - Item Name, Make and Tech. Grade Fields: Dropdowns for a purchase-order BOQ.
+  - Issue List Grid: Grid with Service Description or Activity, Item ID and Mark No.
+  - Receipt List Grid: The same layout for returning items: Item Flow offers Returnable Input, Primary Output and Secondary Output; additional "Bifercation %" and Received Qty.
+  - Requisition Split Pop-up: A pop-up grid listing, for the selected line, the requisition (or PO) number, date, and quantity; rows cannot be deleted; buttons "O&k" and "Cance&l".
+  - Tolerance Pop-up: Pop-up with "&Tolerance Basis", "Tolerance(-)" and "Tolerance(+)" (11 characters, 2 decimals).
+actions:
+  New: Starts a blank BOQ.
+  Save: Validates and saves the BOQ.
+  Search: Opens the shared search list of BOQs for the company and year.
+  Delete: Deletes the loaded BOQ after standard confirmation.
+  Navigation: Navigation is enabled on the toolbar.
+validations:
+- Authorized Entry can't be updated.
+- Select valid status.
+- Select valid Division Name.
+- Document Date should be in Financial year.
+- Select valid Source Document.
+- 'Select valid '
+- Subcontract Order No.
+- Purchase Order No.
+- Document Date Can't be greater than Order Date.
+- Select valid Item Name.
+- 'Unable to save, Line Item can''t be removed or item quantity can not be reduced. Due to GRN/GE prepared. Item Detail -  '
+- 'Unable to save, Line item exceeds the balance PO quantity for item : '
+- Select valid Item Flow
+- Select valid Item Code
+- Enter Bifercation %
+- No Issueable Input Found against Returnable Input
+- Sum of Bifurcation % should be equal to 100 %.
+- 'Select Requisition '
+- Quantity can't be 0 or empty
+- Released Entry Can't be change to Initial.
+- Authorized Entry Can't be change to Release.
+- Rate can't be 0 or empty
+- 'Select atleast one valid '
+- 'Select Issuable Input Item against Service Item '
+- 'Select Primary Output Item against Service Item '
+- 'Select Issuable Input Item '
+- 'Select Primary Output Item '
+- 'Quantity can''t be less than '
+- Duplicate Service Description, Item Id, Mark No., Item Flow, Item Code, Item Description, Make is not allowed.
+- Duplicate Item Description not allowed.
+- 'Document No. '
+- ' saved successfully.'
+- Authorized BOQ can't be deleted
+manages:
+- bill-of-quantity
+uses_concepts:
+- company
+- material-category
+- service-order
+- service-order-amendment
+method_notes:
+  Delete: Deletes the record through Purchase.SCBQDelete.
+  FillValues: Fills the lookup lists through Purchase.SCBQFillValues.
+  FillValuesDependent: Fills the lookup lists through Purchase.SCBQFillValuesDependent.
+  LoadData: Loads the selected record through Purchase.SCBQLoadData.
+  Open: Searches records through Purchase.SCBQSearchData.
+  Save: Saves the record through Purchase.SCBQSave.
+  SaveItemDetail: Saves the record through Purchase.SCBQSaveCreateItem, Purchase.SCBQSaveItemDetail.
+  SaveItemReqDetail: Saves the record through Purchase.SCBQSaveItemReqDetail.
+  ValidateForm: Validates the entry through Purchase.SCBQValidate.

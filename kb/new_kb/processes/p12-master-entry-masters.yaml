@@ -1,0 +1,74 @@
+key: p12-master-entry-masters
+name: Master data set-up (Phase 12)
+module: MD
+status: active
+summary: Phase 12 screens of the masters group in Master Entry.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 12 forms that the KB validation plan puts in 'Masters' (Master Entry). The steps follow the plan order, not a verified business sequence: Asset Class, Asset Group, Asset Number Structure, Chart of Depreciation, Asset Location, Depreciation Rule, Class Account/ Item Mapping, Depreciation Rule Class Mapping, Layout, Financial Period, Layout Schedule, Expense Category, Bank Limit, Ratio Analysis Setting, Expense Category Supplementary Field, Tax Concession Form.
+steps:
+- order: 1
+  name: Maintain Asset Class
+  form: fAssetClass
+- order: 2
+  name: Maintain Asset Group
+  form: fAssetGroup
+- order: 3
+  name: Maintain Asset Number Structure
+  form: fAssetNumberStructure
+- order: 4
+  name: Maintain Chart of Depreciation
+  form: fChartOfDepreciation
+- order: 5
+  name: Maintain Asset Location
+  form: fAssetLocation
+- order: 6
+  name: Maintain Depreciation Rule
+  form: fDepreciationRule
+- order: 7
+  name: Maintain Class Account/ Item Mapping
+  form: fClassMapping
+- order: 8
+  name: Maintain Depreciation Rule Class Mapping
+  form: fDepreciationRuleClassMapping
+- order: 9
+  name: Maintain Layout
+  form: fFSLayoutMaster
+- order: 10
+  name: Maintain Financial Period
+  form: fFPeriod
+- order: 11
+  name: Maintain Layout Schedule
+  form: fLayoutSchedule
+- order: 12
+  name: Maintain Expense Category
+  form: fExpenseCategory
+- order: 13
+  name: Maintain Bank Limit
+  form: fBankLimit
+- order: 14
+  name: Maintain Ratio Analysis Setting
+  form: fRatioAnalysisSetting
+- order: 15
+  name: Maintain Expense Category Supplementary Field
+  form: fExpenseCategorySupplementaryField
+- order: 16
+  name: Maintain Tax Concession Form
+  form: fTaxConcessionForm
+concepts:
+- asset-class
+- asset-group
+- asset-number-structure
+- chart-of-depreciation
+- asset-location
+- depreciation-rule
+- class-account-item-mapping
+- depreciation-rule-class-mapping
+- layout
+- financial-period
+- layout-schedule
+- expense-category
+- bank-limit
+- ratio-analysis-setting
+- expense-category-supplementary-field
+- tax-concession-form

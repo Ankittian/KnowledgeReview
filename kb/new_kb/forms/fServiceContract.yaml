@@ -1,0 +1,158 @@
+form: fServiceContract
+title: Service Contract
+module: PM
+kind: transaction
+summary: The Service Contract screen records a service contract between the company and a party.
+purpose: |
+  What it is: The transaction that fixes what service is promised, for which equipment, for which period and at what price [fServiceContract.vb:2770-3038; CustomerService.ESCOSave:87-213]. When it applies: When equipment is sold or installed and a warranty or maintenance commitment begins, or when a vendor commitment for the company's own equipment is recorded. Business outcome: The contract is the base for service calls, service orders and billing; its occurrences schedule the preventive maintenance visits (BR-12; BR-13).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A document header (Division, Document No., Date, Status), an upper tabbed area (General Detail, Warranty Detail, Contract Detail, Billing Detail, Payment Detail, Term And Condition) and a lower tabbed area (Equipment Description, Preventive Maintenance, Service Detail, Spare Parts, Resource Detail, Occurance Detail) [fServiceContract.Designer.vb:2871-2921; fServiceContract.Designer.vb:2962].
+  - Document Header: The shared document control with Division, prefix, Document No., Document Date and Status [fServiceContract.vb:2796-2810].
+  - Party Fields: "Service Nature", "Party Name" and "Location" are mandatory [fServiceContract.vb:67-78; fServiceContract.Designer.vb:553-592].
+  - Source Document and Reference Fields: "Source Document" and "Reference Document No." with a read-only "Reference Document Date", plus a free "Reference No." (100 characters) and an optional "Reference Date" [fServiceContract.Designer.vb:612-727; fServiceContract.Designer.vb:694].
+  - Contract Type and Category Fields: Mandatory drop-downs "Contract Type" and "Contract Category" [fServiceContract.Designer.vb:669-688].
+  - Template Field: A drop-down "Template" listing authorised setups [fServiceContract.Designer.vb:746; CustomerService.ESCOFillValues:192-200].
+  - Remarks Field: A text area "Remarks", 1000 characters [fServiceContract.Designer.vb:752].
+  - Warranty Detail Tab: "Warranty Condition", "Warranty Life in Days" and "Warranty Float in Days" (3 digits each), "Warranty Base Date", and a Measurement Parameters grid [fServiceContract.Designer.vb:804-881; fServiceContract.vb:4985-5035].
+  - Contract Detail Tab: "Contract Acceptance Date" (optional), "Start Date", "End Date" (format dd/MM/yyyy hh:mm tt), "Installation Date" and "Invoice Date" (read-only), "Coverage Terms", "Response Time" and "Resolution Time" (5 characters each), "Service Area" (Km) and "Service Location" [fServiceContract.Designer.vb:957-1142; fServiceContract.vb:1192-1277].
+  - Billing Detail Tab: "Bill To", "Location", "Payment Mode", "Due Days", "Billing Type", "Billing Start Date", "Period", "Horizon", "Billing Date", "Date" and "Contract Value", and a Billing Plan grid (Schedule Id, Bill Date, Invoice Value) that is disabled for editing [fServiceContract.Designer.vb:1260-1446; fServiceContract.vb:1279-1394].
+  - Billing Start Date Choice: A drop-down of Billing Date, Installation Date, Contract Date and Acceptance Date [fServiceContract.vb:5141-5159].
+  - Payment Detail Tab: A Payment Terms grid and a "Pay Term Code" drop-down that replaces the grid with the lines of a payment setting [fServiceContract.Designer.vb:1482-1543; CustomerService.ESCOFillValuesDependent:311-338].
+  - Terms and Conditions Tab and Notes: The shared terms and conditions control and the Notes control [fServiceContract.vb:2700-2724; fServiceContract.vb:3500-3586].
+  - Equipment Description Tab: A grid of Equipment Description, Item Description, Serial Number, Start Date, End Date and Warranty Nature [fServiceContract.vb:1782-1898].
+  - Preventive Maintenance Tab and Trigger Dialog: "Schedule Interval", "Preventive Maintenance Based On" and a Trigger grid; a Trigger dialog with By Time fields (Schedule Type, Every, On, Start Date, End Date, End After, Occurrence) and By Meter Reading fields (Measurement Parameter, Schedule Type, Every, Start At, End By, End For Value, Threshold On, Threshold Value or Days, Condition, Reading Value) and Ok and Cancel buttons [fServiceContract.
+  - Service Detail, Spare Parts and Resource Detail Tabs: Grids of services with a pricing dialog (Rate Type, Value, Quantity), spare part items and resources, each tied to a Trigger No when triggers are used [fServiceContract.vb:2176-2390].
+  - Occurance Detail Tab: A grid of Trigger No, Occurrence No., Expected Occurrence Date, Equipment Description and Item Description, filled by the system and editable [fServiceContract.vb:391-435; fServiceContract.vb:1621-1780].
+  - Action Buttons: Save, Open, Delete and New through the standard toolbar; Email, Export, Preview and Print are empty [fServiceContract.vb:581-640; fServiceContract.vb:2770].
+validations:
+- Authorized Service Contract can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Service Nature.
+- Select valid Party Name.
+- Select valid Location.
+- Select valid Source Document.
+- Select valid Reference Document No.
+- Select valid Contract Type.
+- Select valid Contract Category.
+- Select Reference Date.
+- 'Document Date Should be greater the Reference document Date. '
+- Document Date can't be less then Reference Date.
+- Select valid Contact Acceptance Date.
+- Contract Acceptance Date should not be less then Document Date.
+- Start Date can't be less then Document Date.
+- End Date can't be Less then Start date.
+- Select valid Coverage Terms.
+- Enter Response Time (Hrs.).
+- Enter Resolution Time (Hrs.).
+- Enter Service Area (K.m.).
+- Select valid Service Location.
+- Select valid Bill To.
+- Select valid Payment Mode.
+- Enter Due Days.
+- Select valid Billing Type.
+- Select valid Billing Start Date.
+- Select valid Period.
+- Select valid Billing Date.
+- Enter Horizon.
+- Enter Date.
+- Date should be between 1 to 31.
+- Enter Contract Value.
+- Enter atleast one Bill Date Detail.
+- Sum of Invoice Value should be Equal To Contract value.
+- Enter Invoice Value in row N.
+- Select valid Warranty Condition
+- Fill atleast one detail either Time Based Detail or Measurement Parameter Detail.
+- Enter Warranty Life in Days.
+- Enter Warranty Float in Days.
+- Select valid Warranty Base Date.
+- Select atleast one Measurement Parameter.
+- Select valid Value in row N.
+- Select atleast one Payment Term.
+- Duplicate Pay Code is not allowed.
+- Duplicate Payment Type and Payment Description is not allowed.
+- Select/Enter valid Payment Description in row N.
+- Select valid Payment Mode in row N.
+- Credit Days can't be empty or zero in row N.
+- Select valid Item Description in row N.
+- Select valid Serial Number in row N.
+- Enter Start Date in row N.
+- Enter End Date in row N.
+- Select valid Warranty Nature in row N.
+- Start Date can't be less then Document date in row N.
+- End Date can't be less then Start Date in row N.
+- Select valid Schedule Interval.
+- Select valid Preventive Maintenance Based On.
+- Enter Trigger No in row N.
+- Select atleast one Trigger Type in row N.
+- Select valid Schedule Type in row N.
+- Enter atleast one Trigger No.
+- Start Date can not be less than Document Date in row N.
+- End Date can not be less than Document Date in row N.
+- End Date should be between contract Start Date and End Date.
+- Select valid Schedule Type.
+- Enter Every Duration.
+- Select valid Every Duration Period.
+- Select valid On Day.
+- Select valid End Condition.
+- Start Date can not be less than Document Date.
+- End Date can not be less than Document Date.
+- End Date can not be less than Start Date.
+- Select valid Measurement Parameter.
+- Enter Recursive value(Every).
+- Enter End For Value.
+- Enter Threshold Value.
+- Threshold Value can't be less then StartAt Value.
+- End For Value can't be less then Start At + Every.
+- Select valid Condition.
+- Enter Reading Value.
+- Enter atleast one Service Description.
+- Enter at least One Pricing Detail in row N.
+- Trigger No can't be null For <service> in row N.
+- Select atleast one Rate Type Detail.
+- 'Select only one Rate Type either Fixed Rate Or Fixed Amount '
+- Enter Value in row N.
+- Enter Quantity in row N.
+- Enter Rate Type in row N.
+- Enter Rate in row N.
+- Select valid Resource Name in row N.
+- Select valid Rate Unit in row N.
+- Select valid Rate Type in row N.
+- Enter Expected Occurrence Date in row N.
+- Enter Occurrence No. Date in row N.
+- Enter Equipment Description or Item Description in row N.
+- Enter Item Description or Equipment Description in row N.
+- Expected Occurrence Date should be between Contract Start Date and End Date in row  N.
+- No. Of Occurences should be .
+- No. Of Occurences should be X for Trigger No Y
+- Duplicate Resource  not allowed for Same Trigger No.
+- Duplicate Service Description not allowed for Same Trigger No.
+- Duplicate Item Descriptuion  not allowed for Same Trigger No.
+- Duplicate Measurement Parameter not allowed.
+- Duplicate Trigger Description not allowed.
+- Duplicate Rate Type is not allowed.
+- Installation date is not define.
+- 'Document No. '
+- ' saved successfully.'
+- Unable to delete entry exist for this Service Contract.
+manages:
+- service-contract
+uses_concepts:
+- company
+- eam-resource-master
+- equipment-master
+- maintenance-service-order
+- service-contract-coverage-term
+- service-contract-setup
+method_notes:
+  Delete: Deletes the record through CustomerService.ESCODelete.
+  FillBillingPlan: Runs through CustomerService.ESCOFillBillingPlan.
+  FillOccurenceDetail: Runs through CustomerService.ESCOFillOccuranceDetail.
+  FillValueDepaendent: Fills the lookup lists through CustomerService.ESCOFillValuesDependent.
+  FillValues: Fills the lookup lists through CustomerService.ESCOFillValues.
+  LoadData: Loads the selected record through CustomerService.ESCOLoadData.
+  LoadPartyLocation: Runs through GlobalData.VendorLocationSelect.
+  Open: Searches records through CustomerService.ESCOSearchData.
+  Save: Saves the record through CustomerService.ESCOSave.
+  SaveBilling: Saves the record through CustomerService.ESCOSaveBillingDetail.

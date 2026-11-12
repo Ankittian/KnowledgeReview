@@ -1,0 +1,68 @@
+form: fTripSheet
+title: TripSheet
+module: PM
+kind: transaction
+summary: 'The TripSheet screen records the journeys of a vehicle for a day or shift: which driver drove, when the vehicle
+  left and arrived, between which locations, and what the meters read.'
+purpose: |
+  What it is: A numbered document listing a vehicle's trips with drivers, times, locations and meter readings [fTripSheet.vb:992-1097; fTripSheet.vb:1099-1171]. When it applies: For every day or shift in which a vehicle is used. Business outcome: Vehicle usage is traceable by driver and trip, and the vehicle's meters stay current for maintenance planning (BR-15).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window titled "TripSheet" with the document control, a General group (Vehicle Name, initial readings, Shift, Shift Incharge, Remarks, Notes), the Last Trip Reading Details group and the trip grid [fTripSheet.Designer.vb:483; fTripSheet.Designer.vb:267].
+  - Document Control: The shared control with document number, date, status and division [fTripSheet.vb:232; fTripSheet.vb:54-56].
+  - Vehicle Name Field: Mandatory dropdown "Vehicle Name" showing name and code [fTripSheet.Designer.vb:102; fTripSheet.vb:61; fTripSheet.vb:234].
+  - Initial Reading (Milometer) and Initial Reading (Hours) Fields: Read-only boxes "Initial Reading(Milometer)" and "Initial Reading(Hours)" [fTripSheet.Designer.vb:328; fTripSheet.Designer.vb:426].
+  - Shift, Shift Incharge and Remarks Fields: Dropdown "Shift", editable dropdown "Shift Incharge" and text "Remarks" up to 1000 characters [fTripSheet.Designer.vb:388; fTripSheet.Designer.vb:407; fTripSheet.Designer.vb:347; fTripSheet.Designer.vb:334].
+  - Notes Control: The shared notes control with print area, note text and default tick; default notes of earlier trip sheets are preloaded for a new document [fTripSheet.vb:210-215; EAM.EMTSFillValues:101-110; fTripSheet.vb:1172-1193].
+  - Last Trip Reading Details Group: Read-only boxes Last Trip Sheet No., Trip Sheet Date, Opening Reading, Closing Reading, Departure Date Time, Arrival Date Time, Total Hours, Opening (Hrs) and Closing (Hrs) [fTripSheet.Designer.vb:121; fTripSheet.Designer.vb:140; fTripSheet.Designer.vb:161; fTripSheet.Designer.vb:182; fTripSheet.Designer.vb:201; fTripSheet.Designer.vb:220; fTripSheet.Designer.vb:241; fTripSheet.Designer.vb:288; fT
+  - Trip Grid: Columns Driver Name, Departure Date, Departure Time, Arrival Date, Arrival Time, Total Hours, Opening (Hrs), Closing (Hrs), Total Duration(Hrs), Opening Reading (Milometer), Closing Reading (Milometer), Total Distance, From Location, To Location and Remarks (up to 500 characters) [fTripSheet.vb:923-988].
+actions:
+  New: Starts a fresh document [fTripSheet.vb:397-408; fTripSheet.vb:473-491].
+  Save: Validates, then saves header, trips and notes in one transaction [fTripSheet.vb:992-1097].
+  Search: Opens the standard search window [fTripSheet.vb:410-437].
+  Delete: Deletes the open document after the standard confirmation [fTripSheet.vb:162-197].
+validations:
+- Select valid Vehicle Name.
+- Select or enter valid ShiftIncharge.
+- Opening Reading should equal to <reading> in  row <n>.
+- Select Departure Date in row <n>.
+- Select Departure Time in row <n>.
+- Select Arrival Date in row <n>.
+- Select Arrival Time in row <n>.
+- Total Hours can't be empty or zero in row <n>.
+- 'Invalid Time : minute should be less than 10.'
+- 'Invalid Time : minute should be less than 100.'
+- Closing (Hrs) can't be empty or zero in row <n>.
+- Closing (Hrs) can't be less than Opening (Hrs) in row <n>.
+- Total Hours can't be greater than <hh.mm> in row <n>.
+- Closing Reading  can't be empty or zero in row <n>.
+- Closing Reading  can't be less than Or equal to Opening Reading in row <n>.
+- Arrival Date and Time can't be less than Departure Date and Time.
+- Select at least one Driver Name.
+- Document Date can't be less than Departure Date.
+- Document Date can't be less than Arrival Date.
+- Departure Date and Time <dd/MM/yyyy hh:mm tt> can't be OverLap.
+- Arrival Date and Time <dd/MM/yyyy hh:mm tt> can't be OverLap.
+- Authorized Trip Sheet can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Entry already exists on between <dd/mm/yyyy time> and <dd/mm/yyyy time>.
+- Data already exists before <dd/mm/yyyy> Document date.
+- Some unauthorized entry exists against selected Vehicle.
+- Unable to save,some unauthorized entry exist for selected Vehicle.
+- Document No. <number> saved successfully.
+manages:
+- tripsheet
+uses_concepts:
+- equipment-master
+- meter-reading
+method_notes:
+  Delete: Deletes the record through EAM.EMTSDelete.
+  FillValues: Fills the lookup lists through EAM.EMTSFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.EMTSFillValuesDependent.
+  LoadData: Loads the selected record through EAM.EMTSLoadData.
+  Open: Searches records through EAM.EMTSSearchData.
+  Save: Saves the record through EAM.EMTSSave.
+  SaveNotesDetail: Saves the record through EAM.EMTSSaveNotesDetail.
+  SaveTripSheetDetail: Saves the record through EAM.EMTSSaveTripSheetDetail.
+  ValidateForm: Validates the entry through EAM.EMTSValidate.

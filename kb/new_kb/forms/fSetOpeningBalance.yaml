@@ -1,0 +1,41 @@
+form: fSetOpeningBalance
+title: Account Opening
+module: FI
+kind: transaction
+summary: The Account Opening screen (window caption "Set Opening Balance") captures the opening balance of each ledger account
+  for a Finance Book (or Profit Center when that company option is on).
+purpose: |
+  What it is: Entry of opening debit or credit amounts per account, with optional quantity, reference breakdown and cost center breakdown. When it applies: At the start of a Finance Book's first year. Business outcome: Books start with correct balances and open reference items (BR-02; BR-03).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header with Finance Book and Opening Date, an account grid, and a "Difference In Opening Balance" box with Total Debit, Total Credit, Difference and Type [fSetOpeningBalance.Designer.vb:265-344].
+  - Finance Book Field: Dropdown; mandatory [fSetOpeningBalance.vb:138-142].
+  - Opening Date Field: Read-only text [fSetOpeningBalance.Designer.vb:194].
+  - Total Debit, Total Credit, Difference and Type: Four read-only displays [fSetOpeningBalance.Designer.vb:288; fSetOpeningBalance.Designer.vb:310; fSetOpeningBalance.Designer.vb:332].
+  - Account Detail Grid: Columns: Select, Group Name, Account Name, Qty., Amount, Type, Currency, Ref.
+  - Reference Detail, Cost Center and Currency Pop-ups: Button cells that open row-edit editors for reference rows, cost center splits and currency, rate type and conversion rate [fSetOpeningBalance.vb:449-461].
+  - TDC Rule Pop-up: Editor with "TDC Rule Description" dropdown and "Ok" and "Cancel" buttons [fSetOpeningBalance.Designer.vb:375-403].
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Email, Export): Empty methods; only New and Save are enabled [fSetOpeningBalance.vb:20-21; fSetOpeningBalance.vb:110-116; fSetOpeningBalance.vb:675-681].
+actions:
+  New: Clears the screen via the MDI shell [fSetOpeningBalance.vb:416-423; fSetOpeningBalance.vb:118-127].
+  Save: Validates and saves ticked rows.
+validations:
+- Could not be saved on year other than Finance Book opening year.
+- Select valid Finance Book.
+- Select valid Type in row N.
+- Select valid Currency in row N.
+- Select valid Rate Type in row N.
+- Conversion Rate can't be empty or zero in row N.
+- TDC Rule is not selected againt account. Do you want to continue?
+- ' Account : <name> already exists in Asset Opening. Amount must be equal to <value>'
+- Select valid TDC Rule Description.
+- Contact your vendor,Reference getting -ve
+manages:
+- account-opening
+uses_concepts:
+- accounting-voucher
+- bank-journal
+- company
+method_notes:
+  FillValuesForTDCRule: Fills the lookup lists through Finance.VoucherFillValuesForTDCRule.
+  SaveReferenceDetail: Saves the record through Finance.VoucherSaveReferenceDetail.

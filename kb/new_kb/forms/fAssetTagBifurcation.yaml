@@ -1,0 +1,67 @@
+form: fAssetTagBifurcation
+title: Asset Tag Bifurcation
+module: FI
+kind: transaction
+summary: The Asset Tag Bifurcation screen splits one asset tag into two or more new tags.
+purpose: |
+  What it is: A document that divides the value of one asset tag among new tags, keeping totals unchanged [fAssetTagBifurcation.vb:281-386; fAssetTagBifurcation.vb:583-752]. When it applies: When part of an asset is sold, moved, tracked separately or valued separately, or when a lot has to be split into units. Business outcome: Each new tag has its own value, reference and depreciation history while the asset's total value is unchanged.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned in code "AssetTagBifurcation" with the document block, an asset section, a tag section and the bifurcation grid [fAssetTagBifurcation.Designer.vb:603; fAssetTagBifurcation.Designer.vb:139-461].
+  - Document Block (Document No., Date, Status, Finance Book): A shared control for number, date, status and finance book [fAssetTagBifurcation.vb:73; fAssetTagBifurcation.vb:215-217].
+  - Asset No. Field: A mandatory drop-down labelled "Asset &No." [fAssetTagBifurcation.vb:17; fAssetTagBifurcation.Designer.vb:139].
+  - Asset Value Fields: Read-only text boxes: Asset Description, Item Description, Acquisition Value, Salvage Value, Accumulated Depreciation [fAssetTagBifurcation.Designer.vb:146-242].
+  - Tag No. Field: A mandatory drop-down labelled "Tag &No." [fAssetTagBifurcation.vb:17; fAssetTagBifurcation.Designer.vb:261].
+  - Tag Value Fields: Read-only: Tag Description, In Service Date, Item Description, Serial No., Quantity, Acquisition Value, Salvage Value, Accumulated Depreciation, Location, Last Depreciation Processing Date [fAssetTagBifurcation.Designer.vb:268-461].
+  - Bifurcation Detail Grid: A grid with Tag No., Tag Description, Item Description, Ref.
+  - Other Depreciation Books Pop-up: A row-edit pop-up with the other books of the tag: Depreciation Book, Acquisition Value, Salvage Value, Accumulated Depreciation, Tag Value, with an "Ok" button [fAssetTagBifurcation.Designer.vb:469; fAssetTagBifurcation.vb:816-861; FixedAsset.AMTBFillValues:38-47].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty routines [fAssetTagBifurcation.vb:163-195].
+actions:
+  New: Asks the main window for a blank record [fAssetTagBifurcation.vb:126-133].
+  Save: Validates and stores the document and, on authorization, creates the new tags [fAssetTagBifurcation.vb:514-581].
+  Search: Opens a list of documents of the company and working year with Document No., Document Date, Finance Book, Status,
+    Asset Number, Tag Number, Created By and Authorized By [fAssetTagBifurcation.vb:135-161; FixedAsset.AMTBSearchData:18-38].
+  Delete: Deletes the open document after confirmation [fAssetTagBifurcation.vb:24-49].
+validations:
+- Select valid Asset No.
+- Select valid Tag No.
+- Document Date can't be less than Last Depreciation Processing Date.
+- 'Tag Description should not be empty in row '
+- Enter atleast two rows for bifurcation.
+- Enter Ref. No.
+- ' in row '
+- Select Ref. Date
+- Quantity should be equal to 1 in case Serial No. is available
+- Quantity can't be empty or zero
+- Acquisition Value can't be empty or zero
+- Salvage Value can't be greater than Acquisition Value
+- Total Acquisition Value should be equal to Tag Acquisition Value.
+- Total Salvage Value should be equal to Tag Salvage Value.
+- Total Accumulated Depreciation should be equal to Tag Accumulated Depreciation.
+- Authorized Asset Tag Bifurcation can't be updated.
+- Authorized entry can't be updated.
+- All depreciation should be authorized for bifurcation.
+- Duplicate Document No. not allowed.
+- Duplicate Asset No. and Asset Tag No. are not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- asset-tag-bifurcation
+uses_concepts:
+- asset-class
+- asset-disposal
+- asset-group
+- asset-location
+- company
+- depreciation
+method_notes:
+  Delete: Deletes the record through FixedAsset.AMTBDelete.
+  FillValues: Fills the lookup lists through FixedAsset.AMTBFillValues.
+  FillValuesAsset: Fills the lookup lists through FixedAsset.AMTBFillValuesAsset.
+  FillValuesFB: Fills the lookup lists through FixedAsset.AMTBFillValuesFB.
+  LoadData: Loads the selected record through FixedAsset.AMTBLoadData.
+  Open: Searches records through FixedAsset.AMTBSearchData.
+  Save: Saves the record through FixedAsset.AMTBSaveMain.
+  SaveBifurcationDetail: Saves the record through FixedAsset.AMTBSaveDetail.
+  SaveTagNumberDetail: Saves the record through FixedAsset.AssetSaveTagDepreciationDetail, FixedAsset.AssetSaveTagMain.
+  SaveTransactionMain: Saves the record through FixedAsset.AssetSaveTransactionMain.

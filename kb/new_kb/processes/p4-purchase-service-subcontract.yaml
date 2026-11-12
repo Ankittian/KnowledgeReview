@@ -1,0 +1,30 @@
+key: p4-purchase-service-subcontract
+name: 'Purchase: Service / subcontract (Phase 4)'
+module: MM
+status: active
+summary: Phase 4 screens of the service / subcontract group in Purchase.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 4 forms that the KB validation plan puts in 'Service / subcontract' (Purchase). The steps follow the plan order, not a verified business sequence: Service RFQ, Service Agreement, Service Order, Service Order Amendment, Bill of Quantity.
+steps:
+- order: 1
+  name: Record Service RFQ
+  form: fSCRFQ
+- order: 2
+  name: Record Service Agreement
+  form: fSCAgreement
+- order: 3
+  name: Record Service Order
+  form: fSCOrder
+- order: 4
+  name: Record Service Order Amendment
+  form: fSCOrderAmendment
+- order: 5
+  name: Record Bill of Quantity
+  form: fSubcontractBOQ
+concepts:
+- service-rfq
+- service-agreement
+- service-order
+- service-order-amendment
+- bill-of-quantity

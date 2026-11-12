@@ -1,0 +1,22 @@
+key: p7-utility-settings-utilities-phase-7
+name: 'Utility: Settings & utilities (Phase 7) (Phase 7)'
+module: ADM
+status: active
+summary: Phase 7 screens of the settings & utilities (phase 7) group in Utility.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Grouping of the Phase 7 forms that the KB validation plan puts in 'Settings & utilities (Phase 7)' (Utility). The steps follow the plan order, not a verified business sequence: Voucher Account Modify, Asset Tag Lot Mapping, Generate E Way Bill.
+steps:
+- order: 1
+  name: Record Voucher Account Modify
+  form: fVoucherAccountModify
+- order: 2
+  name: Record Asset Tag Lot Mapping
+  form: fAssetTagLotMapping
+- order: 3
+  name: Record Generate E Way Bill
+  form: fGenerateEWayBill
+concepts:
+- voucher-account-modify
+- asset-tag-lot-mapping
+- generate-e-way-bill

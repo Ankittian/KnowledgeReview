@@ -1,0 +1,64 @@
+form: fGSTReversal
+title: GST ITC Reversal
+module: FI
+kind: transaction
+summary: The GST ITC Reversal screen reverses input tax credit that was used against a supplier invoice that the company has
+  not paid within 180 days.
+purpose: |
+  What it is: A document that reverses previously used input tax credit with interest for unpaid purchase invoices [fGSTReversal.vb:536-566; Finance.GITRFillValuesDependent:39-48]. When it applies: When a supplier invoice stays unpaid for more than 180 days after its date, as seen on the document date. Business outcome: The company returns the credit it may not keep, with interest, and the credit is released for later use (BR-04; BR-05; BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Header Area: Document number, date and status control, Tax Book, a Show button, Remark and the totals; the window caption in the designer is still "GSTTaxCreditUtilization" [fGSTReversal.Designer.vb:207; fGSTReversal.Designer.vb:460; fGSTReversal.Designer.vb:475].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status and finance book [fGSTReversal.vb:113; fGSTReversal.vb:159-172].
+  - Tax Book Field: A mandatory dropdown [fGSTReversal.vb:349; fGSTReversal.vb:116].
+  - Month Field: A month picker and its label that are both hidden [fGSTReversal.Designer.vb:180; fGSTReversal.Designer.vb:190].
+  - Remark Field: An optional text box [fGSTReversal.vb:492].
+  - Show Button: The "Show" button that loads the ITC Detail grid [fGSTReversal.vb:860-862].
+  - ITC Detail Grid: The grid described in the Glossary.
+  - Reversal and Interest Totals: Eight read-only totals: CGST, SGST, IGST and Cess Input Reversal and CGST, SGST, IGST and Cess Interest Amount [fGSTReversal.Designer.vb:228-291; fGSTReversal.Designer.vb:389-452].
+  - Finance Posting Tab: The journal preview [fGSTReversal.vb:608-648].
+  - Journal Repair Shortcut (Ctrl+Alt+V): A keyboard shortcut that rebuilds the journal and calls the voucher linking routine [fGSTReversal.vb:715-781].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fGSTReversal.vb:239-271].
+actions:
+  New: Opens a blank document [fGSTReversal.vb:203-209].
+  Save: Validates and saves the document, voucher and reversal rows in one transaction [fGSTReversal.vb:446-533].
+  Search: Lists reversals of this company and year [fGSTReversal.vb:212-233].
+  Delete: Deletes the loaded document [fGSTReversal.vb:58-82].
+validations:
+- Authorized Credit Utilization can't be updated.
+- Authorized entry can't be updated.
+- Select valid Tax Book.
+- Select at least one row.
+- Document No. <number> saved successfully.
+manages:
+- gst-itc-reversal
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bill-entry
+- cash-journal
+- commission-invoice
+- company
+- expense-advance
+- expense-approval
+- freight-invoice
+- general-proforma-invoice-receipt
+- gst-credit-utilization
+- input-excise-invoice-posting
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.GITRDelete.
+  FillValues: Fills the lookup lists through Finance.GITRFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.GITRFillValuesDependent.
+  LoadData: Loads the selected record through Finance.GITRLoadData.
+  Open: Searches records through Finance.GITRSearchData.
+  Save: Saves the record through Finance.GITRAuthorize, Finance.GITRSave.
+  SaveITCDetail: Saves the record through Finance.GITRSaveVoucherDetail.
+  ValidateForm: Validates the entry through Finance.GITRValidate.
+  fGSTReversal_KeyUp: Saves the record through Finance.VoucherSaveForTransaction, Inventory.VoucherVsLotValidation.

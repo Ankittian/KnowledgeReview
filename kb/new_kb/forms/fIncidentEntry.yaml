@@ -1,0 +1,64 @@
+form: fIncidentEntry
+title: Incident Entry
+module: PM
+kind: transaction
+summary: The Incident Entry screen records an incident that happened to a vehicle or equipment item.
+purpose: |
+  What it is: A formal incident report for one equipment item with people, parts and the reviews required [fIncidentEntry.vb:516-590; EAM.INCRSave:88-163]. When it applies: When an accident, breakdown or damage involving equipment is reported. Business outcome: Incidents are captured once with all facts and a defined list of reviews, so management can review them and decide on insurance (BR-01 to BR-09).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Areas: A document control strip at the top and two tabs: "GeneralDetail" (key GD) with the incident, reporter, incharge and witness fields, and "Detail" (key DD) with the Emp Involve, Part Detail and Incident Reivew Detail grids [fIncidentEntry.Designer.vb:643-671; fIncidentEntry.Designer.vb:586; fIncidentEntry.Designer.vb:604; fIncidentEntry.Designer.vb:622].
+  - Document Status, Division, Document No. and Document Date: The shared document control; the number is generated for a new incident when a document setting applies [fIncidentEntry.vb:528-535; EAM.INCRSave:73-87].
+  - Incident Date Field: A date and time picker "Incident Date" in the format dd/MM/yyyy HH:mm tt [fIncidentEntry.Designer.vb:344-359].
+  - Equipment Name Field: A dropdown "Equipment Name" showing Equipment and Code.
+  - Driver Name Field: An optional dropdown "Driver Name" [fIncidentEntry.vb:542-546; fIncidentEntry.Designer.vb:246].
+  - Report Initator Type, Report Initator Name, Designation, Department and Contact No. Fields: An option "Emp" / "Others" and a name dropdown, followed by "Designation", "Department" and "Contact No." boxes.
+  - Incident Narration Field: A multi-line text box, up to 500 characters, mandatory (BR-03; MSG-07) [fIncidentEntry.Designer.vb:412; fIncidentEntry.vb:367-372].
+  - Incharge Type, Incharge Name, Designation, Department and Contact No. Fields: An option "Emp" / "Others", a name dropdown and "Designation", "Department", "Contact No." boxes; all mandatory (BR-04; MSG-08; MSG-09; MSG-10; MSG-11) [fIncidentEntry.vb:375-398].
+  - Incharge Comment Field: A multi-line text box, up to 500 characters, mandatory (BR-04; MSG-12) [fIncidentEntry.Designer.vb:501; fIncidentEntry.vb:399-404].
+  - Cause Of Incident, Action Taken and Remarks Fields: Three multi-line text boxes, up to 500 characters each (no limit is set in the Designer; the database limit applies) [fIncidentEntry.vb:572-574; EAM.INCRSave:31-33].
+  - Witness Name, Witness Statement and Contact No. Fields: Optional text boxes, 100, 500 and 50 characters [fIncidentEntry.Designer.vb:197; fIncidentEntry.Designer.vb:215; EAM.INCRSave:35-37].
+  - Emp Involve Grid: A grid with Employee Code, Employee Name, Designation, Department, Contact No., Incident Narration and Incident Reported To [fIncidentEntry.vb:453-478; EAM.INCRFillValues:20-21].
+  - Part Detail Grid: A grid with Part Name and Description [fIncidentEntry.vb:772-785].
+  - Incident Reivew Detail Grid: A grid with Review Type chosen from the review type list [fIncidentEntry.vb:486-499; fIncidentEntry.vb:112].
+  - Other Toolbar Actions (Navigation, Print, Preview, Export, Email): The toolbar offers navigation and print actions [fIncidentEntry.vb:45-55], but the Print, Preview, Export and Email handlers are empty [fIncidentEntry.vb:234-266].
+actions:
+  New: Standard toolbar New [fIncidentEntry.vb:198-205].
+  Save: Validates and saves the incident with all rows [fIncidentEntry.vb:501-609].
+  Search: Opens the search list of the company's incidents for the current year [fIncidentEntry.vb:207-232].
+  Delete: Deletes the loaded incident after a delete confirmation [fIncidentEntry.vb:63-87].
+validations:
+- Duplicate Document No. not allowed.
+- Select valid Equipment.
+- Enter Report Initator
+- Enter Report Initator Designation
+- Enter Report Initator Department
+- Enter Report Initator Contact No.
+- Enter Incident Narration.
+- Enter Incharge Name
+- Enter Incharge Designation
+- Enter Incharge Department
+- Enter Incharge Contact No.
+- Enter Incharge Comment.
+- Incident Narration can't be empty  in row <n>.
+- Incident Reported to can't be empty in row <n>.
+- Select atleast one review.
+- Document No. <number> saved successfully.
+manages:
+- incident-entry
+uses_concepts:
+- change-equipment-driver
+- equipment-category
+- equipment-master
+- incident-review
+method_notes:
+  Delete: Deletes the record through EAM.INCRDelete.
+  FillValues: Fills the lookup lists through EAM.INCRFillValues.
+  FillValuesDependent: Fills the lookup lists through EAM.INCRFillValuesDependent.
+  LoadData: Loads the selected record through EAM.INCRLoadData.
+  Open: Searches records through EAM.INCRSearchData.
+  Save: Saves the record through EAM.INCRSave.
+  SaveEMPDetail: Saves the record through EAM.INCRSaveEmpDetail.
+  SavePartDetail: Saves the record through EAM.INCRSavePartDetail.
+  SaveReviewDetail: Saves the record through EAM.INCRSaveReviewDetail.
+  ValidateForm: Validates the entry through EAM.INCRValidate.

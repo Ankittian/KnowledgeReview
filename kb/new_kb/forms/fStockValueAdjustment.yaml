@@ -1,0 +1,66 @@
+form: fStockValueAdjustment
+title: Value Stock Adjustment
+module: MM
+kind: transaction
+summary: The Value Stock Adjustment screen (technical name fStockValueAdjustment, requested as "Stock Value Adjustment") revalues
+  stock that is already held in a warehouse without changing its quantity.
+purpose: |
+  What it is: A transaction document that changes the book value of selected stock lots of a warehouse while leaving quantities untouched. When it applies: When stock is found to be over- or under-valued, for example after a price correction (Inferred). Business outcome: Lot rates and stock value reflect the corrected value, and the difference can be posted to finance.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Control Area: The top band with document number, document date, status and division, with financial-year and division validation [fStockValueAdjustment.Designer.vb:347-348]; window caption "Value Stock Adjustment" [fStockValueAdjustment.Designer.vb:372].
+  - General Details Tab: The "General Details" tab with Warehouse, Reason, Remarks and notes [fStockValueAdjustment.Designer.vb:312].
+  - Warehouse Field: Mandatory dropdown with Warehouse and Code [fStockValueAdjustment.vb:92] (BR-01).
+  - Reason Field: Optional text, up to 1000 characters, labelled "&Reason" [fStockValueAdjustment.Designer.vb:102] [fStockValueAdjustment.Designer.vb:108].
+  - Remarks Field: Optional text, up to 1000 characters, labelled "Remar&ks", trimmed on save [fStockValueAdjustment.Designer.vb:137] [fStockValueAdjustment.vb:740].
+  - Notes Control: Shared notes grid with Print Area, Notes and Default, pre-filled on a new document with the company's default notes from earlier value adjustments [Inventory.MSVAFillValues:53-59].
+  - Custom Field Tab: The "Custom Field" tab with the shared custom-field grid [fStockValueAdjustment.Designer.vb:315].
+  - Item Detail Grid: The "Item &Detail" tab grid with Item Code, Item Description, Make, Tech.
+  - Lot Details Pop-up: A pop-up from the "Lot Details" cell with Select, Item Description, LOT No., Received Doc No., Received Doc Date, BIN Card No., Heat No.
+  - Finance Posting Tab: The "&Finance Posting" tab with the shared voucher posting control [fStockValueAdjustment.Designer.vb:334].
+  - Row Delete: Deleting rows in the Item Detail grid.
+  - Voucher Regeneration Shortcut: Ctrl+Alt+V [fStockValueAdjustment.vb:20-88].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty implementations [fStockValueAdjustment.vb:330-345] [fStockValueAdjustment.vb:1151-1157].
+actions:
+  New: Standard toolbar New, handled by the main window.
+  Save: Standard toolbar Save.
+  Search: Standard toolbar Open showing the search list.
+  Delete: Standard toolbar Delete.
+  Navigation: First / Previous / Next / Last over the search result, handled by the main window (Inferred).
+validations:
+- Select valid Warehouse.
+- Select atleast one Item Description.
+- Actual Amount can't be empty  in row <n>.
+- On Date Stock can't be empty or zero  in row <n>.
+- Select atleast one Lot  in row <n>.
+- Stock Qty. can't be zero  in row <n>.
+- Stock Amount and Actual Amount can't be same  in row <n>.
+- Capital And Non-Capital can't be select atonce.
+- Stock Qty. can't be zero in row <n>.
+- Actual Amount can't be empty in row <n>.
+- Authorized Stock Adjustment can't be updated.
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+- 'Difference in Voucher and Lot -- '
+- Month is locked via Stock Monthly Closing(ISML)
+- Stock Amount is Changed in row <n>.   Do you want to continue?
+manages:
+- value-stock-adjustment
+uses_concepts:
+- accounting-voucher
+- company
+- material-return
+- raw-material-issue
+- stock-adjustment
+method_notes:
+  Delete: Deletes the record through Inventory.MSVADelete.
+  FillValues: Fills the lookup lists through Inventory.MSVAFillValues.
+  FillValuesDependent: Fills the lookup lists through Inventory.MSVAFillValuesDependent.
+  ItemLotDetail: Runs through Inventory.MSVAItemLotDetail.
+  LoadData: Loads the selected record through Inventory.MSVALoadData.
+  Open: Searches records through Inventory.MSVASearchData.
+  Save: Saves the record through Inventory.MSVAAuthorize, Inventory.MSVASave, Inventory.VoucherVsLotValidation.
+  SaveItemDetail: Saves the record through Inventory.MSVASaveItemDetail.
+  SaveLotDetail: Saves the record through Inventory.MSVASaveLotDetail.
+  SaveNotesDetail: Saves the record through Inventory.MSVASaveNotesDetail.

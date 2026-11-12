@@ -1,0 +1,59 @@
+key: material-master-setup
+name: Material Master Data Setup
+module: MM
+status: active
+summary: Units, classification, items and their technical and tax attributes are set up before purchasing.
+description: |
+  Evidence: code + ERP domain (inferred)
+  Material master data is built top-down: units, then the Category > Group > Sub Group hierarchy, then items with makes, tariff and GST codes, technical grades, specification heads and attribute values.
+steps:
+- order: 1
+  name: Define units of measure and conversion factors
+  form: fUnitMaster
+- order: 2
+  name: Define material categories and other single-field lists
+  form: fSingleFieldMaster
+- order: 3
+  name: Define material groups
+  form: fMaterialGroup
+- order: 4
+  name: Define material sub groups with approved vendors, makes, units and GST
+  form: fMaterialSubGroupMaster
+- order: 5
+  name: Define makes
+  form: fMakeMaster
+- order: 6
+  name: Define chapter headings
+  form: fChapterHeading
+- order: 7
+  name: Define HSN / SAC codes
+  form: fHSNCode
+- order: 8
+  name: Define technical specification heads
+  form: fTechSpecificationHeadMaster
+- order: 9
+  name: Create items
+  form: fItemMaster
+- order: 10
+  name: Map technical grades to items
+  form: fItemTechGradeMapping
+- order: 11
+  name: Define item attribute standard values
+  form: fItemStandardAttributeValue
+- order: 12
+  name: Correct item unit weights
+  form: fChangeItemUnitWeight
+concepts:
+- unit-of-measure
+- material-category
+- material-group
+- material-sub-group
+- material-item
+- make
+- hsn-sac-code
+- chapter-heading
+leads_to:
+- procure-to-pay
+- inventory-storage
+- goods-receipt-quality-inspection
+- gst-tax-determination

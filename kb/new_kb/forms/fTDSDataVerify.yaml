@@ -1,0 +1,39 @@
+form: fTDSDataVerify
+title: TDS Data Verification
+module: FI
+kind: transaction
+summary: The TDS Data Verification screen lets Finance review and correct the TDS lines that were deducted on vendor bills
+  and other vouchers, month by month, before the TDS payment and the quarterly return are prepared.
+purpose: |
+  What it is: A correction tool for the bill amount and taxable amount held on each TDS deduction line [Finance.TDSVSaveMain:21-27]. When it applies: After vouchers carrying TDS are posted and before TDS is paid or returned. Business outcome: Wrong bill or taxable amounts are fixed at line level so payment and return start from verified figures (BR-03; BR-05).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: Three header fields (Tax Book, Month, TDS Rule) above one detail grid [fTDSDataVerify.Designer.vb:52; fTDSDataVerify.Designer.vb:71; fTDSDataVerify.Designer.vb:90].
+  - Tax Book Field: Mandatory dropdown "Tax Book" [fTDSDataVerify.vb:44; fTDSDataVerify.vb:66].
+  - Month Field: Date picker "Month", format MMM-yyyy; a change snaps it to the first of the month and reloads the grid [fTDSDataVerify.Designer.vb:56-58; fTDSDataVerify.vb:466-473].
+  - TDS Rule Field: Mandatory dropdown "TDS Rule" including "[All]" [fTDSDataVerify.vb:44; fTDSDataVerify.vb:67; Finance.TDSVFillValues:36-37].
+  - Detail Grid: Columns: tick box (no caption), Unit Name, TDS Rule, Document No., Document Date, Document Type, Party Name, PAN No., Vendor Bill No., Vendor Bill Date, Vendor Bill Amount, TDS Rate %, Taxable Amount, TDS Amount, Edu Cess, SHE Cess, Total TDS; hidden columns: line key, voucher accounts, payment number, employee number, Account/ Employee Name [fTDSDataVerify.vb:271-358; Finance.TDSVFillValues:40-62
+  - Other Toolbar Actions (Search, Delete, Print, Preview, Export, Email): Search, Delete and Load do nothing, and Print, Preview, Export and Email are empty [fTDSDataVerify.vb:50-52; fTDSDataVerify.vb:81-83; fTDSDataVerify.vb:94-130].
+actions:
+  New: Resets the screen through the main window [fTDSDataVerify.vb:85-92; fTDSDataVerify.vb:132-141].
+  Save: Validates and saves the ticked lines in one transaction [fTDSDataVerify.vb:367-397].
+validations:
+- Select valid Tax Book.
+- Select valid TDS Rule.
+- Select atleast one Detail.
+- Select valid Account Name
+- ' in row '
+- Vendor Bill Amount can't be empty or zero
+- Taxable Amount can't be empty or zero
+- Return is filed against this entry, can't be selected.
+- TDS amount is against employee, can't be selected.
+manages:
+- tds-data-verification
+uses_concepts:
+- accounting-voucher
+- company
+method_notes:
+  FillValues: Fills the lookup lists through Finance.TDSVFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.TDSVFillValuesDependent.
+  SaveDetail: Saves the record through Finance.TDSVSaveMain.
+  ValidateForm: Validates the entry through Finance.TDSVValidate.

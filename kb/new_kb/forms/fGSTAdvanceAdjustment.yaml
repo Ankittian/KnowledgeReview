@@ -1,0 +1,58 @@
+form: fGSTAdvanceAdjustment
+title: GST Advance Adjustment
+module: FI
+kind: transaction
+summary: The GST Advance Adjustment screen adjusts customer or supplier advances against the invoice or bill that finally
+  supplies the goods or service.
+purpose: |
+  What it is: A document that applies one or more open advances to a single invoice or bill reference, with the amount taken from each advance [fGSTAdvanceAdjustment.vb:597-620; Finance.FGAASaveDetail:19-30]. When it applies: When an invoice or bill is raised for a party that has paid, or been paid, an advance on which GST was declared. Business outcome: The advance liability and the GST booked on it are cleared against the invoice, and the party's reference balances are reduced (BR-05; BR-09; BR-10).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Tabbed Layout: Tabs General, Finance Posting, Advance GST Posting and GST Posting [fGSTAdvanceAdjustment.Designer.vb:461-474].
+  - Document Number, Date and Status Control: The shared control with number or prefix, date, status and division [fGSTAdvanceAdjustment.vb:148; fGSTAdvanceAdjustment.vb:193-203].
+  - Source Document Field: A mandatory dropdown labelled "Source Document" [fGSTAdvanceAdjustment.vb:98; fGSTAdvanceAdjustment.vb:166].
+  - Account Name Field: A mandatory dropdown with Account Name and Account Group [Finance.FGAAFillValuesDependent:23-25].
+  - Party Reference No Field: A mandatory dropdown with Party Ref No, Party Ref Date, Voucher No and Voucher Date [fGSTAdvanceAdjustment.vb:676].
+  - Reference Information Fields: Read-only Party Reference Date, Reference Amount, Ref.
+  - GST Tax Rule Field: An optional dropdown of GST rules; stored on the document [fGSTAdvanceAdjustment.vb:548-552].
+  - Remark Field: An optional text box, trimmed on save [fGSTAdvanceAdjustment.vb:554].
+  - Currency Control: The shared currency control [fGSTAdvanceAdjustment.vb:212-214; fGSTAdvanceAdjustment.vb:412].
+  - Adjustment Mode Option: An option set with Manual and Automatic [fGSTAdvanceAdjustment.Designer.vb:498-500].
+  - Open Advances Grid: Grid of open advances with all columns read-only except Adjusting Amount; AccountNo and ReferenceNo are hidden [fGSTAdvanceAdjustment.vb:471-484].
+  - Finance Posting Tab, Advance GST Posting Tab and GST Posting Tab: Grid-only voucher previews and the GST detail view [fGSTAdvanceAdjustment.vb:158-159; fGSTAdvanceAdjustment.vb:626-637].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty handlers [fGSTAdvanceAdjustment.vb:288-320].
+actions:
+  New: Opens a blank document [fGSTAdvanceAdjustment.vb:252-258].
+  Save: Validates and saves the document with its vouchers in one transaction [fGSTAdvanceAdjustment.vb:491-594].
+  Search: Lists adjustments of this company and year [fGSTAdvanceAdjustment.vb:261-282].
+  Delete: Deletes the loaded document [fGSTAdvanceAdjustment.vb:106-130].
+validations:
+- Authorized GST Advance Receipt can't be updated.
+- Authorized entry can't be updated.
+- Select valid Voucher Type.
+- Select valid Account Name.
+- Select valid Party Reference No.
+- Adjusted Amount can't be greater than balance amount.
+- Adjusting Amount can't be greater than Balance Amount  in row n.
+- No Detail found
+- Duplicate Document No. not allowed.
+- Document No. <number> saved successfully.
+manages:
+- gst-advance-adjustment
+uses_concepts:
+- account-opening
+- accounting-voucher
+- general-proforma-invoice-receipt
+- gst-advance-receipt
+- service-invoice
+method_notes:
+  Delete: Deletes the record through Finance.FGAADelete.
+  FillValues: Fills the lookup lists through Finance.FGAAFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.FGAAFillValuesDependent.
+  LoadData: Loads the selected record through Finance.FGAALoadData.
+  Open: Searches records through Finance.FGAASearchData.
+  ReferenceDetail: Runs through Finance.FGAAReferenceDetail.
+  Save: Saves the record through Finance.FGAASave.
+  SaveDetail: Saves the record through Finance.FGAASaveDetail.
+  ValidateForm: Validates the entry through Finance.FGAAValidate.
+  createGSTVoucher: Runs through Finance.FGAAReferenceDetail, Finance.SDEIGetReferences.

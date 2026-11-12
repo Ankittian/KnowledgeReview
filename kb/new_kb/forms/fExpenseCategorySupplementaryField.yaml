@@ -1,0 +1,42 @@
+form: fExpenseCategorySupplementaryField
+title: Expense Category Supplementary Field
+module: MD
+kind: master
+summary: The Expense Category Supplementary Field screen defines the extra data fields that can be attached to expense categories,
+  such as a reference number or a date.
+purpose: |
+  What it is: A master record describing one additional piece of information to collect on expense claims, with its data type and, for Fixed fields, its allowed values [fExpenseCategorySupplementaryField.vb:376-399; masterdata.MDESSave:22-57]. When it applies: When finance needs a new detail captured for one or more expense categories. Business outcome: Claim details are structured and, for Fixed fields, restricted to approved values.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - General Area: The upper panel with Code, Field Name, Data Type, Value Type and Inactive [fExpenseCategorySupplementaryField.Designer.vb:140].
+  - Code Field: A read-only text box [fExpenseCategorySupplementaryField.Designer.vb:48].
+  - Field Name Field: A mandatory text box labelled "Field Name", up to 50 characters [fExpenseCategorySupplementaryField.vb:42; fExpenseCategorySupplementaryField.Designer.vb:66,78].
+  - Data Type Field: A mandatory drop-down labelled "Data Type" [fExpenseCategorySupplementaryField.vb:42,96; fExpenseCategorySupplementaryField.Designer.vb:97].
+  - Value Type Field: A mandatory drop-down labelled "Value Type" with Fixed and Variable [fExpenseCategorySupplementaryField.vb:42,97; fExpenseCategorySupplementaryField.Designer.vb:116].
+  - Inactive Field: A disabled check box labelled "Inactive" [fExpenseCategorySupplementaryField.Designer.vb:120-125].
+  - Values Grid: An editable grid with "S.No." (numeric, automatic) and "Value" columns [fExpenseCategorySupplementaryField.vb:91-92,355-358].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Handlers exist but are empty [fExpenseCategorySupplementaryField.vb:177-209].
+actions:
+  New: Toolbar action that clears the form [fExpenseCategorySupplementaryField.vb:142-150].
+  Save: Toolbar action that saves the field and its values [fExpenseCategorySupplementaryField.vb:365-419].
+  Search: Toolbar action that opens the search dialog [fExpenseCategorySupplementaryField.vb:152-175].
+  Delete: Toolbar action that removes the opened field [fExpenseCategorySupplementaryField.vb:48-78].
+validations:
+- Enter Field Name.
+- Select valid Data Type.
+- Select valid Value Type.
+- Enter atleast one Value.
+- Duplicate values Not Allowed.
+- Duplicate Field name not allowed.
+manages:
+- expense-category-supplementary-field
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MDESDelete.
+  FillValues: Fills the lookup lists through masterdata.MDESFillValues.
+  LoadData: Loads the selected record through masterdata.MDESLoadData.
+  Open: Searches records through masterdata.MDESSearchData.
+  Save: Saves the record through masterdata.MDESSave.
+  SaveValueDetail: Saves the record through masterdata.MDESSaveSuppFieldValue.
+  ValidateForm: Validates the entry through masterdata.MDESValidate.

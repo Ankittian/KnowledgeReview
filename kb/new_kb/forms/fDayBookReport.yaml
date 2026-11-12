@@ -1,0 +1,43 @@
+form: fDayBookReport
+title: Day Book
+module: RPT
+kind: transaction
+summary: The Day Book screen is a read-only finance report that lists vouchers posted in a chosen period, one block per voucher,
+  for a selected Finance Book and chart of accounts (COA).
+purpose: |
+  What it is: A chronological listing of authorised vouchers of a Finance Book for a period, grouped by voucher [Finance.MisAccountDayBook:197-211; Finance.MisAccountDayBook:203]. When it applies: When a user reviews the day's or period's postings, checks a voucher, or prints the book. Business outcome: One place to see every posted voucher with its ledgers, cost centres, narration and bill references. Voucher lines are taken from the book's selected ledger groups (BR-07).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A header band with Finance Book (or Profit Center), COA, From and To and the "Export With Borders" tick box, a left explorer bar of actions, and a result grid [fDayBookReport.designer.vb:132-142; fDayBookReport.designer.vb:215; fDayBookReport.designer.vb:290-310].
+  - Finance Book / Profit Center Field: A drop-down of finance books with the name "Finance Book" as the column; its label becomes "&Profit Center" when the company setting says so [fDayBookReport.vb:66; fDayBookReport.vb:99-103].
+  - COA Field: A drop-down of COAs for the selected book; the default one is preselected [fDayBookReport.vb:771-777].
+  - From and To Fields: Read-only date labels in dd/MM/yyyy, set to today at opening [fDayBookReport.vb:85-86].
+  - Export With Borders Field: A tick box, ticked by default [fDayBookReport.vb:93-94; fDayBookReport.vb:785-791].
+  - Day Book Grid: A read-only grid.
+  - Detail Action (Alt F1): An explorer-bar item whose caption alternates between "Alt F1 : Details" and "Alt F1 : Condensed" [fDayBookReport.designer.vb:82-83; fDayBookReport.vb:677-714].
+  - Period Action (F2): An explorer-bar item labelled "Ctrl F2 : Period"; the key that triggers it is F2 [fDayBookReport.designer.vb:85-86; fDayBookReport.vb:23-24].
+  - Configuration Action (F12): An explorer-bar item "F12 : Configuration" opening the "Day Book Configuration" dialog [fDayBookReport.designer.vb:87-88; fDayBookReport.vb:55].
+  - Range Action (Alt F12): An explorer-bar item "Alt F12 : Range" opening the "Filtering" dialog [fDayBookReport.designer.vb:89-90; fFiltering.vb:57-75; fFiltering.Designer.vb:95].
+actions:
+  Print, Print Preview, Export and Close: 'Explorer-bar items "Ctrl P : Print", "Ctrl R : Print Preview", "Ctrl T : Export"
+    and "Ctrl L : Close" [fDayBookReport.designer.vb:91-98; fDayBookReport.vb:27-34].'
+  Row: Double-click or Enter on a row opens its voucher; Alt+R hides the active voucher row, Alt+U restores the last hidden
+    row, Alt+S restores all [fDayBookReport.vb:111-117; clsMISFinanceReports.vb:1497-1550; clsMISFinanceReports.vb:1564-1566].
+  New, Save, Search, Delete and Other Toolbar: The screen implements the report interface, not the master toolbar; no New,
+    Save, Search or Delete handler exists [fDayBookReport.vb:6-7; fDayBookReport.vb:550-574].
+validations:
+- Unable to update <unit name>'s Account as Login Unit is Different.
+- Select valid From Date.
+- Select valid To Date.
+- To date can't be less than From Date.
+- Range can't be empty
+- Value can't be empty
+- Error occured while exporting.
+- 'Select valid '
+- Select valid Format
+manages:
+- day-book
+uses_concepts:
+- company
+method_notes:
+  fOutStandingReport_Load: Runs through Finance.TrialBalanceConfiguration.

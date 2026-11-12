@@ -1,0 +1,50 @@
+form: fTDSQuarterlyReturn
+title: TDS Quarterly Return
+module: FI
+kind: transaction
+summary: The TDS Quarterly Return screen records that a quarterly TDS return has been filed with the tax authority and ties
+  that filing to the TDS Payments it covers.
+purpose: |
+  What it is: A register of filed returns, each with its acknowledgement and the TDS Payments it includes [Finance.TDQRSave:43-72; Finance.TDQRSaveQuarterlyReturnDetail:18-27]. When it applies: After the quarterly return is filed and acknowledged. Business outcome: Each TDS Payment is reported once and the filing evidence is kept (BR-04; BR-05; BR-06).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: A header group with Acknowledgement No., Acknowledgement Date, Tax Book, TDS Quarterly Return Form, Period, From Date, To Date and Responsible Person for TDS Deduction, above a grid of payments [fTDSQuarterlyReturn.Designer.vb:69-214].
+  - Acknowledgement No. Field: Mandatory text box, up to 50 characters, trimmed [fTDSQuarterlyReturn.Designer.vb:57; fTDSQuarterlyReturn.vb:304-309; fTDSQuarterlyReturn.vb:460].
+  - Acknowledgement Date Field: Date picker "Acknowledgement Date", format dd/MM/yyyy [fTDSQuarterlyReturn.Designer.vb:73-88].
+  - Tax Book Field: Mandatory dropdown "Tax Book"; shows active payment-side books, plus the saved book of the opened return if it is now inactive [Finance.TDQRFillValues:37-41].
+  - TDS Quarterly Return Form Field: Mandatory dropdown "TDS Quarterly Return Form" [fTDSQuarterlyReturn.Designer.vb:126].
+  - Period, From Date and To Date Fields: Mandatory dropdown "Period"; read-only "From Date" and "To Date" shown as dd/MM/yyyy and filled from the chosen Period [fTDSQuarterlyReturn.Designer.vb:152; fTDSQuarterlyReturn.Designer.vb:171; fTDSQuarterlyReturn.vb:589-610].
+  - Responsible Person for TDS Deduction Field: Mandatory dropdown [fTDSQuarterlyReturn.vb:56; fTDSQuarterlyReturn.Designer.vb:214].
+  - Return Detail Grid: Read-only columns Month, TDS Rule, Reference No., Reference Date, Bank Name, Bank Challan No., Bank Challan Date, Taxable Amount, TDS, EDU Cess, SHE Cess; hidden payment number, tax code number and document date [fTDSQuarterlyReturn.vb:391-433].
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Handlers are empty [fTDSQuarterlyReturn.vb:210-242].
+actions:
+  Search: Opens the common search window for returns of the company and year [fTDSQuarterlyReturn.vb:181-208; Finance.TDQRSearchData:18-34].
+  New: Resets the screen through the main window [fTDSQuarterlyReturn.vb:170-179; fTDSQuarterlyReturn.vb:244-258].
+  Save: Validates then saves the header and payments in one transaction [fTDSQuarterlyReturn.vb:441-506].
+  Delete: Deletes the loaded return after confirmation [fTDSQuarterlyReturn.vb:64-99].
+validations:
+- Enter Acknowledgement No..
+- Select valid Tax Book.
+- Select valid TDS Quarterly Return Form.
+- Select valid Period.
+- Select valid Responsible Person for TDS Deduction.
+- Acknowledge Date can't be less then From Date.
+- Return detail should not be empty.
+- Duplicate Acknowledgement No. not allowed.
+- 'Document No. '
+- ' saved successfully.'
+manages:
+- tds-quarterly-return
+uses_concepts:
+- bank-journal
+- tds-payment
+- tds-return-bank-challan-detail
+method_notes:
+  Delete: Deletes the record through Finance.TDQRDelete.
+  FillValues: Fills the lookup lists through Finance.TDQRFillValues.
+  FillvalueDependent: Fills the lookup lists through Finance.TDQRFillValuesDependent.
+  LoadData: Loads the selected record through Finance.TDQRLoadData.
+  Open: Searches records through Finance.TDQRSearchData.
+  Save: Saves the record through Finance.TDQRSave.
+  SaveReturnDetail: Saves the record through Finance.TDQRSaveQuarterlyReturnDetail.
+  ValidateForm: Validates the entry through Finance.TDQRValidate.

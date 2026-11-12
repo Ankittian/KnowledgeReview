@@ -1,0 +1,70 @@
+form: fDebitNote
+title: Debit Note
+module: FI
+kind: transaction
+summary: 'The Debit Note screen records a debit note as an accounting voucher: an entry that debits an account (typically
+  a supplier or customer) and credits the related accounts.'
+purpose: |
+  What it is: Records the accounting entry for a debit note, with a debit line first and balancing lines. When it applies: A user needs this when a return, rate difference or other adjustment must be debited to an account. Business outcome: The party and ledger balances change in one approved, balanced document.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Strip: Document number, document date, finance book, status and prefix, with a repeat entry button when the voucher copy setting is on ([fDebitNote.vb:38; Voucher.cs:154-161]).
+  - Voucher Type Field: "Voucher T&ype" list with Regular and Inter FB ([Voucher.Designer.cs:226]).
+  - Voucher Grid: Columns Type, Account Name, Current Balance, Balance Amount, Debit Amount, Credit Amount, Ref.
+  - Ref. Detail, Cost Center, Qty. Detail and TDC Rule Pop-ups: Pop-up editors opened from the grid cells.
+  - Narration Field: "&Narration" text area.
+  - Total Debit and Total Credit: Running totals of the grid.
+actions:
+  Toolbar: New, Save, Open, Delete, Navigation, Print, Print Preview, Export, Email ([fDebitNote.vb:23-33]).
+validations:
+- Authorized entry can't be updated.
+- Can't authorize, Voucher is Rejected.
+- Duplicate Document No. not allowed.
+- Opening Date is not set against selected Finance Book.
+- Document Date can't be less than Finance Book Opening Date.
+- Finance Book is closed for this Document Date.
+- Document Date can't be less than Inventory Start Date.
+- Select valid Voucher Type.
+- In InterFB Voucher can't select multiple InterFB Account and multiple Regular Account.
+- 'Select valid Account Name in row '
+- 'Debit Amount can''t be empty in row '
+- 'Credit Amount can''t be empty in row '
+- Total Debit Amount should be equal to Total Credit Amount.
+- TDC Rule is not selected againt account. Do you want to continue?
+- Select valid TDC Rule Description.
+- ' is not mapped with COA of selected Finance Book.'
+- ' is Inactive.'
+- Amount withdrawn from bank can't be greater than it's drawing limit.
+- Bank balance can't be less than it's credit limit.
+- Cash/ Bank balance can't be negative.
+- Do you want to continue?
+- Direct voucher entry for stock account is not valid.
+- Can't authorize, Limit (
+- ) exceeds.
+- Contact your vendor,Reference getting -ve
+- Do you want to print?
+- Problem arised.
+manages:
+- debit-note
+uses_concepts:
+- account-opening
+- accounting-voucher
+- asset-disposal
+- bank-journal
+- cash-journal
+- change-voucher-status
+- commission-invoice
+- expense-advance
+- expense-approval
+- freight-invoice
+- recurring-voucher
+- reverse-voucher
+- service-invoice
+- service-tax-challan
+- sundry-payment
+- sundry-receipt
+- supplier-advance
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.VoucherDelete.
+  Open: Searches records through Finance.VoucherSearchData.

@@ -1,0 +1,39 @@
+form: fWorkCenter
+title: Work Center
+module: MD
+kind: master
+summary: The Work Center screen maintains the work centers where production and maintenance work is carried out.
+purpose: |
+  What it is: A master record made of a code, a name and a list of default expenses [fWorkCenter.vb:274-351; masterdata.MEWCSave:20-52; masterdata.MEWCSaveExpenseDetail:21-36]. When it applies: When a plant sets up a production line or work area that production and maintenance records are booked against. Business outcome: Production and maintenance records refer to a controlled list of work centers, and standard expenses can be preset per work center.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A window captioned "WorkCenter" (see Section 13) with a general box (Code, Work Center Name, Inactive) above two boxes titled "Expense Detail" and "Formula Detail", each with a grid [fWorkCenter.Designer.vb:151; fWorkCenter.Designer.vb:118; fWorkCenter.Designer.vb:136].
+  - Code Field: A read-only text box that cannot be tabbed into, labelled "Code" [fWorkCenter.Designer.vb:48-60].
+  - Work Center Name Field: A mandatory text box labelled "Work Center Name", up to 50 characters, marked as compulsory on load; leading and trailing spaces are removed [fWorkCenter.vb:11; fWorkCenter.Designer.vb:66; fWorkCenter.Designer.vb:78; fWorkCenter.vb:188; fWorkCenter.vb:289].
+  - Inactive Field: A disabled tick box labelled "Inactive" [fWorkCenter.Designer.vb:94-99].
+  - Expense Detail Grid: A grid with the columns Expense Head (drop-down), Expense Type (drop-down), Expense Value (decimal, 2 places) and Remarks (up to 500 characters) [fWorkCenter.vb:54-64; fWorkCenter.vb:241-253].
+  - Formula Detail Grid: A grid with the columns Formula Code and Description, not editable [fWorkCenter.vb:259-270].
+  - Other Toolbar Actions (Print, Preview, Export, Email): Standard toolbar actions with empty handlers [fWorkCenter.vb:134-166].
+actions:
+  New: The toolbar action that asks the main window to start a blank record [fWorkCenter.vb:98-105].
+  Save: The toolbar action that validates and stores the work center and its expense rows [fWorkCenter.vb:274-319].
+  Search: The toolbar action that opens a search dialog listing the work centers of the logged-in company with Code, Work
+    Center Name, Inactive, Created By and Authorized By [fWorkCenter.vb:107-132; masterdata.MEWCSearchData:17-26].
+  Delete: The toolbar action that removes the open work center [fWorkCenter.vb:17-43].
+validations:
+- Duplicate Work Center Name not allowed.
+- Enter Work Center Name.
+- Select valid Expense Type.
+- Duplicate Expense Name not allowed.
+manages:
+- work-center
+uses_concepts:
+- company
+method_notes:
+  Delete: Deletes the record through masterdata.MEWCDelete.
+  FillValues: Fills the lookup lists through masterdata.MEWCFillValues.
+  LoadData: Loads the selected record through masterdata.MEWCLoadData.
+  Open: Searches records through masterdata.MEWCSearchData.
+  Save: Saves the record through masterdata.MEWCSave.
+  SaveExpenseDetail: Saves the record through masterdata.MEWCSaveExpenseDetail.
+  ValidateForm: Validates the entry through masterdata.MEWCValidate.

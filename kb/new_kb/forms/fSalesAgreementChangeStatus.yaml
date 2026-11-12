@@ -1,0 +1,54 @@
+form: fSalesAgreementChangeStatus
+title: Sales Agreement Change Status
+module: SD
+kind: transaction
+summary: The Sales Agreement Change Status screen records a numbered, dated document that changes the status of an authorized
+  sales agreement (a customer contract by rate, quantity or amount against which sales orders are later raised), either for
+  the whole agreement or line by line.
+purpose: |
+  What it is: A controlled, auditable record of status changes to sales agreements. When it applies: When an agreement must be suspended, resumed, cancelled or short-closed in full or for some items. Business outcome: Agreement availability for new sales orders is changed with a reason and through document authorization.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: Shared document control with division, prefix, document number, date and document status.
+  - General Detail Area: Panel with "Sales Agreement No." and reference search button, "Sales Agreement Date", "Customer Name", "Location Name", "Agent", "Current Status", "Agreement Type", "Agreement Qty.", "Agreement Unit", "Agreement Qty Validation", "Total Sales Order Qty.", "Status" and "Reason".
+  - Sales Agreement No. Field: Mandatory dropdown (Sales Agreement No, Sales Agreement Date, Customer Name, Agent, Location Name, Status).
+  - Reference Sales Agreement Button: Search button beside "Sales Agreement No.".
+  - Read-Only Agreement Fields: "Sales Agreement Date", "Customer Name", "Location Name", "Agent", "Current Status", "Agreement Type", "Agreement Qty." (3 decimals), "Agreement Unit", "Agreement Qty Validation", "Total Sales Order Qty." (3 decimals).
+  - Status Field: Dropdown of new statuses permitted from the agreement's current status.
+  - Reason Field: Editable dropdown of reasons previously used on this screen in the company.
+  - Item Detail Grid: One row per agreement line: "Item Code", "Item Description", "Make", "Tech Specification", "Item Attribute", "Unit", "Agreement Qty.", "Agreement Amt.", "Sales Order Qty.", "Sales Order Amt.", "Balance Qty.", "Balance Amt.", "Current Status", "Status", "Reason".
+  - Other Toolbar Actions (Delete, Print, Preview, Export, Email): Not offered; their routines are empty.
+actions:
+  New: Toolbar New.
+  Save: Toolbar Save.
+  Search (Open): Toolbar Open listing change status documents of the company and financial year.
+  Navigation: First / Previous / Next / Last through search results via the shared toolbar.
+validations:
+- Authorized entry can't be updated.
+- Duplicate Document No. not allowed.
+- Select valid Sales Agreement No..
+- Document Date can't be less than Sales Agreement Date.
+- Select valid Reason.
+- Select valid Status.
+- Select status for atleast one Item.
+- Select valid Reason in row <n>.
+- Authorized SalesAgreementChangeStatus can't be updated.
+- Sales Order already exists in Initial or Release mode against this Sales Agreement.
+- Document No. <number> saved successfully.
+manages:
+- sales-agreement-change-status
+uses_concepts:
+- company
+- sales-agreement
+- sales-order
+- sales-order-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Sales.CSASFillValues.
+  LoadData: Loads the selected record through Sales.CSASLoadData.
+  Open: Searches records through Sales.CSASSearchData.
+  Save: Saves the record through Sales.CSASSave.
+  SaveItemDetail: Saves the record through Sales.CSASSaveSalesAgreementChangeStatusItemDetail.
+  ValidateForm: Validates the entry through Sales.CSASValidate.
+  uDocNoYearly_DivisionValueChange: Fills the lookup lists through Sales.CSASFillValues.
+  ubtnReferenceSalesAgeement_Click: Searches records through Sales.CSASSalesOrderSearchForm.
+  ucmbSalesAgreementNo_ValueChanged: Fills the lookup lists through Sales.CSASFillValuesDependent.

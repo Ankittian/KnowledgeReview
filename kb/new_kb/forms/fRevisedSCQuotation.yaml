@@ -1,0 +1,61 @@
+form: fRevisedSCQuotation
+title: Revised Service Quotation
+module: MM
+kind: transaction
+summary: This screen is a variant of the [Service Quotation](Functional_Doc_fSCQuotation.md) screen and uses the same procedures
+  and the same data-layer class; this document describes only what differs, and everything not mentioned works as described
+  there.
+purpose: |
+  What it is: A numbered revision (1, 2, 3 and so on) of a service quotation, kept next to the original so that the history of price and term changes remains on record [Purchase.SVQAFillValues:126-135]. When it applies: When a vendor changes price, terms or quantities after the quotation was authorized. Business outcome: Agreements and orders use the latest authorized offer while earlier ones stay on record.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Document Header Area: A header box with "Quotation No.", "Quotation Date", "Division Name", "Revision No.", "Document Date" and "Document Status", replacing the shared document-number control of the base screen [fRevisedSCQuotation.Designer.vb:1146-1344].
+  - Quotation No. Field: Mandatory drop-down of quotations that can be revised, showing number and date [fRevisedSCQuotation.vb:62-64; fRevisedSCQuotation.vb:856-860].
+  - Revision No. and Quotation Date Fields: Read-only displays [fRevisedSCQuotation.Designer.vb:1146; fRevisedSCQuotation.Designer.vb:1156].
+  - Document Date Field: Date picker labelled "Document Date" in dd/MM/yyyy, saved as the revision date [fRevisedSCQuotation.Designer.vb:1265-1267; fRevisedSCQuotation.vb:499].
+  - Document Status Field: Mandatory drop-down in list order [fRevisedSCQuotation.vb:66-68; fRevisedSCQuotation.vb:864].
+  - RFQ, Vendor, Location, Vendor Quotation, Terms and Remarks Fields: Same fields as the base screen; RFQ, vendor and location are read-only once loaded [fRevisedSCQuotation.vb:340-342].
+  - Service Lines Grid: Same grid, but the "Select" column is hidden and the information icon column is not styled [fRevisedSCQuotation.vb:926-927].
+  - Tax Detail, Terms & Condition, Custom Field, Addition Cost and Notes: Same controls as the base screen, loaded from the live offer; default notes are taken from the revision notes list [fRevisedSCQuotation.vb:876].
+actions:
+  New, Search, Save, Delete and Navigation: Standard actions [fRevisedSCQuotation.vb:36-47; fRevisedSCQuotation.vb:345-436;
+    fRevisedSCQuotation.vb:438-558].
+validations:
+- Select valid Quotation No.
+- Select valid Document Status.
+- Authorized data can't be updated.
+- Document Date should be in Financial year.
+- Vendor Quotation Date can't be greater than Document Date.
+- Vendor Quotation Date can't be less than SC RFQ Date.
+- Validity Date can't be less than Revision Date.
+- Select valid Subcontract RFQ No.
+- Select valid Vendor Name.
+- Select valid Location.
+- Enter Vendor Quotation No.
+- Select valid Freight Type.
+- Select valid Payment Mode.
+- Quantity can't be empty or 0
+- Rate can't be empty or 0
+- Net Amount can't be less than or equal to 0
+- Delivery Days can't be empty or 0
+- Select atleast one Activity
+- Select atleast one item for Service
+- Subcontract order is prepared against this Quotaion.
+- Can't be deleted as above revision exists.
+- Document No. <number> saved successfully.
+manages:
+- revised-service-quotation
+uses_concepts:
+- company
+- service-quotation
+method_notes:
+  Delete: Deletes the record through Purchase.SVQADelete.
+  FillValues: Fills the lookup lists through Purchase.SVQAFillValues.
+  FillValuesDependent: Fills the lookup lists through Purchase.SVQAFillValuesDependent.
+  LoadData: Loads the selected record through Purchase.SVQALoadData.
+  Open: Searches records through Purchase.SVQASearchData.
+  Save: Saves the record through Purchase.SVQASaveMain.
+  SaveAdditionItemDetail: Saves the record through Purchase.SVQASaveAdditionItemDetail.
+  SaveCustomFields: Saves the record through Purchase.SVQASaveCustomFieldDetail.
+  SaveItemTaxDetail: Saves the record through Purchase.SVQASaveItemTaxDetail.
+  SaveNotesDetail: Saves the record through Purchase.SVQASaveNotesDetail.

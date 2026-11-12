@@ -1,0 +1,32 @@
+form: fFSLayoutDesignMapping
+title: Account Mapping
+module: MD
+kind: master
+summary: The Account Mapping screen links the account groups, subgroups and ledger accounts of a chart of accounts to the
+  sections and groups of a financial statement layout.
+purpose: |
+  What it is: The assignment of each account group and ledger account of a chart of accounts to a line (section or group) of a financial statement layout. When it applies: After a layout and its sections have been designed, or when new accounts or groups are added to the chart of accounts. Business outcome: Financial statements show every balance under the intended heading and no account is left out of the statement (Inferred).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: One panel with the layout selector, chart of accounts name, filter option and the mapping grid.
+  - FSL Name Field: Mandatory dropdown of layouts, marked as a compulsory field (BR-01, BR-02).
+  - COA Name Field: Read-only text showing the chart of accounts of the selected layout.
+  - Account Selection Option: Three-way option: Show All Accounts (default), Show Mapped Account, Show Unmapped Account (BR-04).
+  - Layout Detail Grid: Columns Particular (indented name, read-only), Type (Subgroup or Account, read-only) and Section/ Group Name (dropdown); identifiers and level are hidden (BR-07).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Present as empty handlers.
+actions:
+  New: Standard toolbar New.
+  Save: Saves the mapping of the selected layout.
+validations:
+- Select valid FSL Name.
+- Do you want to save ?
+- Data saved successfully.
+manages:
+- account-mapping
+uses_concepts:
+- layout-design
+- multiple-layout-mapping
+method_notes:
+  FillValues: Fills the lookup lists through masterdata.FSLAFillValues.
+  FillValuesDependent: Fills the lookup lists through masterdata.FSLAFillValuesDependent.
+  Save: Saves the record through masterdata.FSLASaveMain.

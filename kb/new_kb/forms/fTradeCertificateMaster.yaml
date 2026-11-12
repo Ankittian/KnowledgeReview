@@ -1,0 +1,34 @@
+form: fTradeCertificateMaster
+title: Trade Certificate Master
+module: SD
+kind: transaction
+summary: The Trade Certificate Master screen (window caption "TradeCertificateMaster") keeps the list of trade certificates
+  the organisation holds, each with its certificate number and the period during which it is valid.
+purpose: |
+  What it is: A register of trade certificates with their number and validity dates. When it applies: When a new certificate is obtained, renewed or corrected, before it is used on sales documents. Business outcome: Sales documents refer to a known certificate that is valid on the document date, and the same certificate number cannot be entered twice.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Trade Detail Area: A single group of fields for one certificate [fTradeCertificateMaster.Designer.vb:136; fTradeCertificateMaster.Designer.vb:30].
+  - Code Field: A read-only text box labelled "Code", up to 6 characters [fTradeCertificateMaster.Designer.vb:112; fTradeCertificateMaster.Designer.vb:118-120].
+  - Trade Certificate No. Field: A mandatory text box labelled "Trade Certificate No.", up to 100 characters [fTradeCertificateMaster.Designer.vb:50; fTradeCertificateMaster.Designer.vb:38; fTradeCertificateMaster.vb:33; fTradeCertificateMaster.vb:81].
+  - From Date Field: A date picker labelled "From Date" [fTradeCertificateMaster.Designer.vb:69; fTradeCertificateMaster.vb:275].
+  - To Date Field: A date picker labelled "To Date" [fTradeCertificateMaster.Designer.vb:88; fTradeCertificateMaster.vb:276].
+  - Other Toolbar Actions (Preview, Print, Email, Export): Standard toolbar actions [fTradeCertificateMaster.vb:157-189].
+actions:
+  New: The toolbar action that clears the screen [fTradeCertificateMaster.vb:124-131; fTradeCertificateMaster.vb:191-203].
+  Save: The toolbar action that stores the certificate [fTradeCertificateMaster.vb:257-311].
+  Search: The toolbar action that opens the certificate list [fTradeCertificateMaster.vb:133-155].
+  Delete: The toolbar action that removes the open certificate [fTradeCertificateMaster.vb:39-74].
+validations:
+- Enter Trade Certificate No.
+- 'To Date should be greater then From Date. '
+- Duplicate Trade Certificate not allowed.
+- Document saved successfully.
+manages:
+- trade-certificate-master
+method_notes:
+  Delete: Deletes the record through masterdata.STCMDelete.
+  LoadData: Loads the selected record through masterdata.STCMLoadData.
+  Open: Searches records through masterdata.STCMSearchData.
+  Save: Saves the record through masterdata.STCMSave.
+  ValidateForm: Validates the entry through masterdata.STCMValidate.

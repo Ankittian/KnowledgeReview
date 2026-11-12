@@ -1,0 +1,39 @@
+form: fTDSReturnBankChallanDetail
+title: 'TDS Return: Bank Challan Detail'
+module: FI
+kind: transaction
+summary: 'The TDS Return: Bank Challan Detail screen lets Finance record, for one Tax Book and one month, the bank challan
+  number and challan date against each TDS Payment of that month.'
+purpose: |
+  What it is: A record linking each TDS Payment to the bank challan by which the tax was deposited [Finance.TRBCSave:26-41]. When it applies: After TDS has been paid to the bank and before the TDS return is prepared. Business outcome: The return can quote a challan for every payment, so deposits and returns reconcile (BR-02; BR-04).
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout: Two header fields (Tax Book, Month) above a grid of TDS Payment rows [fTDSReturnBankChallanDetail.designer.vb:52; fTDSReturnBankChallanDetail.designer.vb:71].
+  - Tax Book Field: Mandatory dropdown "Tax Book" showing Tax Book name and code [fTDSReturnBankChallanDetail.vb:52; fTDSReturnBankChallanDetail.vb:113].
+  - Month Field: Date picker "Month" in format MMM-yyyy [fTDSReturnBankChallanDetail.designer.vb:56-58].
+  - TDS Return Detail Grid: Grid with columns TDS Rule, Reference No., Reference Date, Taxable Amount, TDS Amount, EDU Cess, SHE Cess, Bank Name, Bank Challan No., Bank Challan Date, and a hidden payment number.
+  - Other Toolbar Actions (Print, Preview, Export, Email, Navigation): Handlers are empty [fTDSReturnBankChallanDetail.vb:206-238].
+actions:
+  Search: Opens the common search window listing saved sets [fTDSReturnBankChallanDetail.vb:177-204].
+  New: Resets the screen via the main window and re-enables Tax Book and Month [fTDSReturnBankChallanDetail.vb:161-175].
+  Save: Validates and saves each row in one transaction [fTDSReturnBankChallanDetail.vb:400-440].
+  Delete: Deletes the loaded set after confirmation [fTDSReturnBankChallanDetail.vb:60-95].
+validations:
+- Select valid Tax Book.
+- Enter Bank Challan No.
+- ' in row '
+- Bank Challan Date can't be empty or zero
+- Unable to Save,Bank Challan detail for selected tax book and month can be only once.
+manages:
+- tds-return-bank-challan-detail
+uses_concepts:
+- bank-journal
+- tds-payment
+method_notes:
+  Delete: Deletes the record through Finance.TRBCDelete.
+  FillValues: Fills the lookup lists through Finance.TRBCFillValues.
+  FillValuesDependent: Fills the lookup lists through Finance.TRBCFillValuesDependent.
+  LoadData: Loads the selected record through Finance.TRBCLoadData.
+  Open: Searches records through Finance.TRBCSearchData.
+  SaveTDSReturnDetails: Saves the record through Finance.TRBCSave.
+  ValidateForm: Validates the entry through Finance.TRBCValidate.

@@ -1,0 +1,46 @@
+form: fEnquiryRejection
+title: Enquiry Rejection
+module: SD
+kind: transaction
+summary: The Enquiry Rejection screen records the company's decision not to quote, in whole or in part, for an authorized
+  customer enquiry.
+purpose: |
+  What it is: A dated record that an enquiry, or some of its items, will not be quoted, with the reason. When it applies: After an enquiry is authorized, when the company decides not to offer (for example because a product is not made or the delivery date cannot be met) (Inferred examples). Business outcome: Rejected lines leave the pending-enquiry workload, and the reasons can be analysed.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Main Layout Area: A single panel: entry date, enquiry selection, read-only enquiry details, rejection reason, and an item grid below.
+  - Entry Date Field: Date field "Entry Da&te" [fEnquiryRejection.Designer.vb:70].
+  - Enquiry No. Field: Mandatory dropdown "Enquiry &No." showing number and date of eligible enquiries (BR-01) [fEnquiryRejection.vb:62].
+  - Enquiry Date, Customer Name, Location, Enquiry Priority and Sales Person Name Fields: Read-only text boxes [fEnquiryRejection.Designer.vb:96-184].
+  - Rejection Reason Field: Mandatory editable dropdown "&Rejection Reason" listing earlier reasons.
+  - Item Detail Grid: Columns Select, Item Description, Make, Item Attribute (read-only) and Rejection Reason (up to 500 characters).
+  - Other Toolbar Actions (Print, Preview, Export, Email): Empty procedures [fEnquiryRejection.vb:132-147] [fEnquiryRejection.vb:363-369].
+actions:
+  New: The standard New, handled by the main window [fEnquiryRejection.vb:96-103].
+  Save: Validates and saves the rejection and its item lines in one transaction [fEnquiryRejection.vb:229-289].
+  Search: Opens the standard search with the company's rejections of the current financial year [fEnquiryRejection.vb:105-130].
+  Delete: Deletes the loaded rejection after confirmation [fEnquiryRejection.vb:18-44].
+validations:
+- Do you want to save ?
+- Select valid Enquiry No.
+- Entry date can't be less than Enquiry Date.
+- Enter/Select valid Rejection Reason.
+- Select atleast one Item.
+- Enter Rejection Reason in row {n}.
+- Data saved successfully.
+- Do you want to delete ?
+- Data deleted successfully.
+- Some data already exists against this record.
+manages:
+- enquiry-rejection
+uses_concepts:
+- customer-enquiry
+- sales-person
+method_notes:
+  Delete: Deletes the record through Sales.SDERDelete.
+  FillValues: Fills the lookup lists through Sales.SDERFillValues.
+  LoadData: Loads the selected record through Sales.SDERLoadData.
+  Open: Searches records through Sales.SDERSearchData.
+  Save: Saves the record through Sales.SDERSave.
+  SaveItemDetail: Saves the record through Sales.SDERSaveItemDetail.
+  ucmbEnquiryNo_ValueChanged: Fills the lookup lists through Sales.SDERFillValuesDependent.

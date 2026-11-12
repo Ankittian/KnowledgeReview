@@ -1,0 +1,47 @@
+form: fFreightOrderMapping
+title: Freight - Order Mapping
+module: MM
+kind: transaction
+summary: 'The Freight - Order Mapping screen maintains the three lists of an authorized freight order after it has been authorized:
+  the items it covers, the transporters allowed to use it and the orders (Purchase Orders, Service Orders or Sales Orders)
+  it serves.'
+purpose: |
+  What it is: A maintenance screen that links additional or changed items, transporters and orders to an existing authorized freight order. [fFreightOrderMapping.vb:289-326] When it applies: When new orders must be covered by an agreed freight order, or when the item or transporter list changes, after authorization. Business outcome: Freight terms stay unchanged while their coverage grows, without a new amendment.
+  (Roles under Used by are inferred from ERP practice.)
+functional_description: |
+  - Screen Layout: A Freight Order No.
+  - Freight Order No. Field: The only mandatory field; the list holds authorized freight orders (MSG-01).
+  - Transporter Detail Grid and Transporter Group: Editable list of transporters with location.
+  - Item Detail Grid: Editable list of items.
+  - Freight Basis Detail Grid: Read-only display of the order's rate rows (location pairs or distance ranges).
+  - Order Detail Grid: Editable list of orders: Order No., Route Id, Order Date, flag (PO, SC or SO), Party Name and Location, and for Sales Orders Consignee Name and Location.
+actions:
+  New: Resets to a blank screen.
+  Save: Runs the validation (BR-02 to BR-05), asks for confirmation (MSG-10) and in one transaction replaces the order list,
+    the item list and the transporter list, then shows the standard saved message (MSG-11) and resets.
+validations:
+- Select valid Freight Order No.
+- Select valid Route Id in row N.
+- Select valid Consignee Name in row N.
+- Select valid Consignee Location in row N.
+- Select valid Transporter Location in row N.
+- Select valid Item Name in row N.
+- Duplicate Transporter Name not allowed.
+- Duplicate Item Name not allowed.
+- Duplicate Order No. and Route Id not allowed.
+- '[RouteIdentity] is not valid'
+manages:
+- freight-order-mapping
+uses_concepts:
+- bill-of-quantity
+- freight-order
+- freight-order-amendment
+- service-order
+- service-order-amendment
+method_notes:
+  FillValues: Fills the lookup lists through Purchase.PUFOFillValues.
+  FillValuesFO: Fills the lookup lists through Purchase.PUFOFillValuesFO.
+  FillValuesTransporterGroup: Fills the lookup lists through Purchase.PUFOFillValuesTransporterGroup.
+  SaveItemDetail: Saves the record through Purchase.PUFOSaveItemDetail.
+  SaveOrderDetail: Saves the record through Purchase.PUFOSaveOrderDetail.
+  SaveTransporterDetail: Saves the record through Purchase.PUFOSaveTransporterDetail.
