@@ -1,6 +1,6 @@
 import "./_env";
 import { eq } from "drizzle-orm";
-import { createDb, migrateDb } from "@/db/client";
+import { createDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { hashPassword } from "@/lib/auth/password";
 import { normalizeUsername, usernameSchema, passwordSchema } from "@/lib/validation";
@@ -19,8 +19,7 @@ if (!password) {
 usernameSchema.parse(username);
 passwordSchema.parse(password);
 
-const h = await createDb();
-if (h.kind === "pglite") await migrateDb(h);
+const h = createDb();
 const passwordHash = await hashPassword(password);
 const [existing] = await h.db.select().from(users).where(eq(users.username, username));
 if (existing) {

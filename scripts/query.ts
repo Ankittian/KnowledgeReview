@@ -12,7 +12,7 @@ if (!/^\s*(select|with|table|explain)\b/i.test(text)) {
   console.error("Only read-only queries (SELECT / WITH / TABLE / EXPLAIN) are allowed here.");
   process.exit(1);
 }
-const h = await createDb();
+const h = createDb();
 try {
   const rows = await h.db.transaction(async (tx) => {
     await tx.execute(sql`SET TRANSACTION READ ONLY`);
@@ -27,7 +27,7 @@ try {
     ),
   );
   console.table(flat);
-  console.log(`${rows.length} row(s) · ${h.kind}`);
+  console.log(`${rows.length} row(s)`);
 } finally {
   await h.close();
 }

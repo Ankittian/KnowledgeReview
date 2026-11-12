@@ -1,14 +1,15 @@
 import path from "node:path";
 import fs from "node:fs";
 import { sql, type SQL } from "drizzle-orm";
-import { drizzle as drizzlePg, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
 import * as schema from "./schema";
 
 export type DB = PostgresJsDatabase<typeof schema>;
 
 export interface DbHandle {
   db: DB;
-  kind: "postgres" | "pglite";
   close: () => Promise<void>;
 }
 
@@ -16,43 +17,36 @@ const MIGRATIONS_DIR = path.join(process.cwd(), "db", "migrations");
 const VIEWS_FILE = path.join(process.cwd(), "db", "views.sql");
 
 /**
- * Managed Postgres when DATABASE_URL is set (Neon / Supabase), otherwise embedded PGlite on disk
- * (`PGLITE_DIR`, default ./.data/pglite) or in memory (`memory: true`, used by tests).
+ * Connects to Postgres (Docker locally and on EC2, or any managed Postgres).
+ * `DATABASE_URL` is required: postgresql://user:password@host:5432/dbname
  */
-export async function createDb(opts: { url?: string; memory?: boolean; dir?: string } = {}): Promise<DbHandle> {
+export function createDb(opts: { url?: string } = {}): DbHandle {
   const url = opts.url ?? process.env.DATABASE_URL;
-  if (url && !opts.memory) {
-    const postgres = (await import("postgres")).default;
-    // prepare:false keeps transaction-mode poolers (Supabase pgbouncer, Neon pooler) happy.
-    const client = postgres(url, { prepare: false, max: Number(process.env.DB_POOL_MAX ?? 5), onnotice: () => {} });
-    return { db: drizzlePg(client, { schema }), kind: "postgres", close: () => client.end() };
+  if (!url) {
+    throw new Error(
+      "DATABASE_URL is not set. Start Postgres with `docker compose up -d` and set DATABASE_URL in .env (see .env.example).",
+    );
   }
-  const { PGlite } = await import("@electric-sql/pglite");
-  let client;
-  if (opts.memory) {
-    client = new PGlite();
-  } else {
-    const dir = opts.dir ?? process.env.PGLITE_DIR ?? path.join(process.cwd(), ".data", "pglite");
-    fs.mkdirSync(path.dirname(dir), { recursive: true });
-    client = new PGlite(dir);
-  }
-  const { drizzle } = await import("drizzle-orm/pglite");
-  const db = drizzle({ client, schema }) as unknown as DB;
-  return { db, kind: "pglite", close: () => client.close() };
+  // prepare:false keeps transaction-mode poolers (PgBouncer, Supabase, Neon pooled) happy.
+  const client = postgres(url, { prepare: false, max: Number(process.env.DB_POOL_MAX ?? 5), onnotice: () => {} });
+  return { db: drizzle(client, { schema }), close: () => client.end() };
 }
 
 /** Apply drizzle migrations, then (re)create the reporting views. */
 export async function migrateDb(h: DbHandle): Promise<void> {
-  if (h.kind === "postgres") {
-    const { migrate } = await import("drizzle-orm/postgres-js/migrator");
-    await migrate(h.db, { migrationsFolder: MIGRATIONS_DIR });
-  } else {
-    const { migrate } = await import("drizzle-orm/pglite/migrator");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await migrate(h.db as any, { migrationsFolder: MIGRATIONS_DIR });
-  }
+  await migrate(h.db, { migrationsFolder: MIGRATIONS_DIR });
   const views = fs.readFileSync(VIEWS_FILE, "utf8");
   for (const stmt of splitSql(views)) await h.db.execute(sql.raw(stmt));
+}
+
+/**
+ * Wipe everything (schema `public` and drizzle's migration table). Only for throw-away databases:
+ * refuses unless the database name contains "test" or "e2e".
+ */
+export async function resetDatabase(h: DbHandle): Promise<void> {
+  const [{ name }] = await query<{ name: string }>(h.db, sql`SELECT current_database() AS name`);
+  if (!/test|e2e/i.test(name)) throw new Error(`Refusing to reset database '${name}': its name must contain 'test' or 'e2e'.`);
+  await h.db.execute(sql.raw("DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public;"));
 }
 
 function splitSql(text: string): string[] {
@@ -62,7 +56,7 @@ function splitSql(text: string): string[] {
     .filter(Boolean);
 }
 
-/** Run raw SQL and return plain rows, whichever driver is in use. */
+/** Run raw SQL and return plain rows. */
 export async function query<T = Record<string, unknown>>(db: DB, q: SQL): Promise<T[]> {
   const r = (await db.execute(q)) as unknown;
   if (Array.isArray(r)) return r as T[];
@@ -71,20 +65,12 @@ export async function query<T = Record<string, unknown>>(db: DB, q: SQL): Promis
 
 // ---------------------------------------------------------------- app singleton
 
-const g = globalThis as unknown as { __kr_db?: Promise<DbHandle> };
+const g = globalThis as unknown as { __kr_db?: DbHandle };
 
-export function getDbHandle(): Promise<DbHandle> {
-  if (!g.__kr_db) {
-    g.__kr_db = (async () => {
-      const h = await createDb();
-      // Embedded PGlite is single-process: make local dev zero-setup by migrating on first use.
-      if (h.kind === "pglite") await migrateDb(h);
-      return h;
-    })();
-  }
-  return g.__kr_db;
+export function getDbHandle(): DbHandle {
+  return (g.__kr_db ??= createDb());
 }
 
 export async function getDb(): Promise<DB> {
-  return (await getDbHandle()).db;
+  return getDbHandle().db;
 }

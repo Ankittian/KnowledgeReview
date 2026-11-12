@@ -12,19 +12,21 @@ knowledge needs to change, and export it in a form that maps straight back onto 
 
 This folder is self-contained. Apart from a copy of the YAML in `kb/`, it does not depend on the SpectrumERP repo.
 
-## Quick start (local, no database server needed)
+## Quick start (local, needs Docker)
+
+Postgres runs in Docker (the same setup is used on EC2).
 
 ```powershell
-cd D:\KnowledgeReview
 npm install
-copy .env.example .env        # set ADMIN_PASSWORD (leave DATABASE_URL empty for local)
+copy .env.example .env        # set POSTGRES_PASSWORD (and the same password inside the three *_DATABASE_URL lines) and ADMIN_PASSWORD
+npm run db:up                 # starts Postgres 16 in Docker and waits until it is healthy
 npm run db:setup              # migrate + build cards from kb/ + create the admin
 npm run dev                   # http://localhost:3000
 ```
 
-If `DATABASE_URL` is empty, the app uses **embedded Postgres (PGlite)** in `.data/pglite`. Embedded PGlite allows
-only one process at a time, so stop `npm run dev` before running CLI scripts against it. While the app is running,
-use **Admin → Settings → Sync now** to sync instead.
+Postgres listens on `127.0.0.1:5432` only. Data lives in the `kr_pgdata` Docker volume: `npm run db:down` keeps it,
+`docker compose down -v` deletes it. The first start also creates `knowledge_review_test` and `knowledge_review_e2e`,
+which `npm test` and `npm run e2e` wipe on every run.
 
 ## Access from other devices on the LAN
 
@@ -46,15 +48,13 @@ other PCs on the same network.
 * Only one `next dev` can run per project folder. Stop an existing one (or use it; it already listens on all
   interfaces) before starting `dev:lan`.
 
-## Production: managed Postgres (Neon or Supabase)
+## Production (EC2)
 
-1. Create a database and copy its connection string into `DATABASE_URL`:
-   * Neon: the pooled connection string.
-   * Supabase: Settings → Database → *Session pooler* string.
-2. Run `npm run db:migrate`, `npm run cards:sync` and `npm run seed:admin`.
-3. Deploy the Next.js app (Vercel, Azure App Service, a VM with `npm run build && npm start`, and so on). Set
-   `DATABASE_URL`, `KB_DIR` (if not `./kb`), `COOKIE_SECURE=true` (HTTPS) and optionally `APP_TIMEZONE`
-   (default `Asia/Kolkata`; daily decks roll over at local midnight).
+1. Install Docker on the instance, copy `.env.example` to `.env`, set strong `POSTGRES_PASSWORD`, matching `DATABASE_URL`,
+   `ADMIN_PASSWORD` and `COOKIE_SECURE=true` (HTTPS). Keep `.env` out of Git (`chmod 600`).
+2. `docker compose up -d --wait`, then `npm run db:migrate`, `npm run cards:sync`, `npm run seed:admin`.
+3. `npm run build && npm start` behind nginx with HTTPS. Never open port 5432 in the security group.
+4. Back up the database daily: `docker exec kr-postgres pg_dump -U kr_app knowledge_review | gzip > kr-$(date +%F).sql.gz`.
 
 ## Refreshing the knowledge base
 
@@ -158,7 +158,7 @@ Answers and events are written to `localStorage` first, then sent with retry and
 | `npm run dev` / `build` / `start` | Next.js |
 | `npm run db:migrate` | apply migrations + (re)create views |
 | `npm run db:setup` | migrate + sync + seed admin |
-| `npm run db:studio` | browse every table in the browser (Drizzle Studio; local PGlite or `DATABASE_URL`) |
+| `npm run db:studio` | browse every table in the browser (Drizzle Studio on `DATABASE_URL`) |
 | `npm run db:query -- "SELECT ..."` | run one read-only SQL query and print the rows |
 | `npm run kb:import -- <dir>` | copy a `domain/` folder into `kb/` |
 | `npm run cards:sync` | build cards from `kb/` and upsert |

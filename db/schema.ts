@@ -55,6 +55,32 @@ export const sessions = pgTable(
   (t) => [index("sessions_user_idx").on(t.userId)],
 );
 
+/**
+ * Rotating refresh tokens. `sessions` is the login session (its id is the JWT `sid` claim); every refresh marks the
+ * presented token as used and inserts a new one. Presenting a used token again (outside the short grace window)
+ * means it was stolen, so the whole session is deleted. Only the sha256 of the token is stored.
+ */
+export const refreshTokens = pgTable(
+  "refresh_tokens",
+  {
+    id: text("id").primaryKey(), // sha256(token); the raw token only lives in the cookie
+    sessionId: text("session_id")
+      .notNull()
+      .references(() => sessions.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: ts("expires_at").notNull(), // absolute: never later than the session's expiry
+    idleExpiresAt: ts("idle_expires_at").notNull(), // extended on every refresh
+    usedAt: ts("used_at"),
+    replacedById: text("replaced_by_id"),
+    ip: text("ip"),
+    userAgent: text("user_agent"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("refresh_tokens_session_idx").on(t.sessionId), index("refresh_tokens_user_idx").on(t.userId)],
+);
+
 // ---------------------------------------------------------------- knowledge base (backend-only traceability)
 
 export const entityType = pgEnum("entity_type", ["module", "concept", "rule", "form", "usercontrol", "process"]);

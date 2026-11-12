@@ -1,9 +1,8 @@
 import "./_env";
-import { createDb, migrateDb } from "@/db/client";
+import { createDb } from "@/db/client";
 import { runKbSync } from "@/lib/kb-sync";
 
-const h = await createDb();
-if (h.kind === "pglite") await migrateDb(h);
+const h = createDb();
 const { report, warnings, quality, kbDir } = await runKbSync(h.db, { actor: null, via: "cli" });
 console.log(`KB: ${kbDir}`);
 if (warnings.length) console.warn(`${warnings.length} warning(s):\n  ${warnings.slice(0, 30).join("\n  ")}`);

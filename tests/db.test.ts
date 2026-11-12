@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, inArray, sql } from "drizzle-orm";
-import { createDb, migrateDb, query, type DbHandle } from "@/db/client";
+import { createDb, migrateDb, query, resetDatabase, type DbHandle } from "@/db/client";
 import { cards, cardVersions, dailyDecks, feedback, interactionEvents, reviews, users } from "@/db/schema";
 import { buildCatalog } from "@/lib/cards/build";
 import { loadKnowledgeBase } from "@/lib/cards/load";
@@ -24,7 +24,10 @@ async function mkUser(username: string, primaryModule = "MM") {
 const userByName = async (username: string) => (await h.db.select().from(users).where(eq(users.username, username)))[0];
 
 beforeAll(async () => {
-  h = await createDb({ memory: true });
+  const url = process.env.TEST_DATABASE_URL;
+  if (!url) throw new Error("TEST_DATABASE_URL is not set. Start Postgres (docker compose up -d) and set it in .env (see .env.example).");
+  h = createDb({ url });
+  await resetDatabase(h); // refuses unless the database name contains 'test' or 'e2e'
   await migrateDb(h);
 });
 afterAll(async () => h?.close());

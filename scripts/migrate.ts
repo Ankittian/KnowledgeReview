@@ -1,7 +1,7 @@
 import "./_env";
 import { createDb, migrateDb } from "@/db/client";
 
-const h = await createDb();
+const h = createDb();
 await migrateDb(h);
-console.log(`Migrations + views applied (${h.kind}).`);
+console.log(`Migrations + views applied.`);
 await h.close();

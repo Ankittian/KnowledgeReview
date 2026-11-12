@@ -1,12 +1,11 @@
 import "./_env";
 import fs from "node:fs";
 import path from "node:path";
-import { createDb, migrateDb } from "@/db/client";
+import { createDb } from "@/db/client";
 import { loadNeedsChange, needsChangeMarkdown } from "@/lib/reports";
 
 // Writes reports/needs-change.{jsonl,md}: what to fix in which YAML file / key / field.
-const h = await createDb();
-if (h.kind === "pglite") await migrateDb(h);
+const h = createDb();
 const rows = await loadNeedsChange(h.db);
 const out = path.resolve("reports");
 fs.mkdirSync(out, { recursive: true });
