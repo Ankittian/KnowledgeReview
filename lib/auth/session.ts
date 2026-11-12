@@ -26,7 +26,7 @@ export async function createSession(userId: string, userAgent: string | null, ip
   await db.delete(sessions).where(
     or(
       lt(sessions.expiresAt, now),
-      sql`not exists (select 1 from ${refreshTokens} where ${refreshTokens.sessionId} = ${sessions.id} and ${refreshTokens.idleExpiresAt} > ${now})`,
+      sql`not exists (select 1 from ${refreshTokens} where ${refreshTokens.sessionId} = ${sessions.id} and ${refreshTokens.idleExpiresAt} > ${now.toISOString()}::timestamptz)`, // raw sql`` doesn't encode Dates; pass ISO
     ),
   );
 

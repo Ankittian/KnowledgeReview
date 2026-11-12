@@ -13,8 +13,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:-knowledge_review}
     ports:
-      # Bound to localhost only. Never publish 5432 to the internet.
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+      # Bound to all interfaces so LAN machines can connect (firewall rule "kr-postgres" limits it to the LAN).
+      # Never publish this to the internet. To go back to local-only, use "127.0.0.1:${POSTGRES_PORT:-5432}:5432".
+      - "0.0.0.0:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - kr_pgdata:/var/lib/postgresql/data
       - ./docker/initdb:/docker-entrypoint-initdb.d:ro
