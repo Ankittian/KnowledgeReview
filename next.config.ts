@@ -12,8 +12,8 @@ const lanHosts = [
 ];
 
 const nextConfig: NextConfig = {
-  // PGlite (embedded Postgres for local dev) and argon2 ship native/WASM assets: keep them out of the bundle.
-  serverExternalPackages: ["@electric-sql/pglite", "@node-rs/argon2"],
+  // argon2 ships a native binary: keep it out of the bundle.
+  serverExternalPackages: ["@node-rs/argon2"],
   poweredByHeader: false,
   allowedDevOrigins: lanHosts,
   async headers() {

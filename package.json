@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
     "db:setup": "tsx scripts/migrate.ts && tsx scripts/sync-cards.ts && tsx scripts/seed-admin.ts",
     "db:studio": "drizzle-kit studio",
     "db:query": "tsx scripts/query.ts",
@@ -24,9 +26,9 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@electric-sql/pglite": "0.5.15",
     "@node-rs/argon2": "2.2.2",
     "drizzle-orm": "0.45.4",
+    "jose": "^6.1.0",
     "lucide-react": "1.70.0",
     "motion": "14.9.1",
     "next": "16.4.5",

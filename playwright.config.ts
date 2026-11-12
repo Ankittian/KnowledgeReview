@@ -1,10 +1,20 @@
 import { defineConfig, devices } from "@playwright/test";
 
+for (const f of [".env.local", ".env"]) {
+  try {
+    process.loadEnvFile(f);
+  } catch {
+    /* absent */
+  }
+}
+
 const PORT = Number(process.env.E2E_PORT ?? 3200);
+const E2E_DATABASE_URL = process.env.E2E_DATABASE_URL;
+if (!E2E_DATABASE_URL) throw new Error("E2E_DATABASE_URL is not set (see .env.example).");
 
 /**
- * E2E runs against a production build (`npm run build` first) with its own throw-away PGlite database
- * (.data/e2e-pglite), so it never touches your dev data.
+ * E2E runs against a production build (`npm run build` first) with its own throw-away Postgres database
+ * (E2E_DATABASE_URL, the knowledge_review_e2e database), so it never touches your dev data.
  */
 export default defineConfig({
   testDir: "e2e",
@@ -24,6 +34,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}/login`,
     timeout: 240_000,
     reuseExistingServer: false,
-    env: { PGLITE_DIR: ".data/e2e-pglite", DATABASE_URL: "", ADMIN_USERNAME: "e2e-admin", ADMIN_PASSWORD: "e2e-admin-password", KB_DIR: "./kb" },
+    env: { DATABASE_URL: E2E_DATABASE_URL, ADMIN_USERNAME: "e2e-admin", ADMIN_PASSWORD: "e2e-admin-password", KB_DIR: "./kb" },
   },
 });
