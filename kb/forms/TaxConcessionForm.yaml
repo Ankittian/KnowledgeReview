@@ -8,8 +8,8 @@ summary: Embedded tax concession form detail of orders and bills.
 purpose: |
   Captures the statutory tax concession form expected or received for the document (TaxConcessionFormFillValues / LoadData).
 functional_description: |
-  Embedded in: fPurchaseBill, fPurchaseOrder.
+  Embedded in: fDrCrNote.
 method_notes:
   DocumentNosLoadData: Loads the selected record through masterdata.TaxConcessionFormDocumentNosLoadData.
-  FillValues: Fills the lookup lists through masterdata.TaxConcessionFormFillValues.
-  LoadData: Loads the selected record through masterdata.TaxConcessionFormLoadData.
+  FillValues: Fills the lookup lists through masterdata.MECFFillValues.
+  LoadData: Loads the selected record through masterdata.MECFLoadData.

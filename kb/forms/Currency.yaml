@@ -8,7 +8,7 @@ summary: Embedded panel for document currency, rate type, date and conversion ra
 purpose: |
   Shows the currency, rate type, on-date and conversion rate of a document; the list comes from CurrencyFillValues.
 functional_description: |
-  Embedded in: CurrencyRET, Voucher, fAccountMaster, fGRN, fGateEntry, fPurchaseBill, fPurchaseOrder, fQuotation.
+  Embedded in: CurrencyRET, Voucher, fAdvancePassing, fAssetCapitalization, fAssetDisposal, fBillEntryEROS, fBillOfExchange, fCommissionBill, fDDPosting, fDepreciation, fDrCrNote, fExpenseAdvance, fExpenseApproval, fExpenseEntry, fExpensePolicy, fFreightInvoice, fGSTAdvanceAdjustment, fGSTAdvanceReceipt, fGeneralPIReceipt, fInputExcisePosting, fLC, fLCAmendment, fOutwardBillEntry, fPIReceipt, fRecurringVoucher, fServiceBill, fSetOpeningBalance, fSundryPayment, fSundryReceipt.
   On-screen fields: Conversion Rate, Currency, On Date, Rate Type.
 uses_concepts:
 - currency

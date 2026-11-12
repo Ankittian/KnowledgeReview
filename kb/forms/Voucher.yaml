@@ -8,7 +8,7 @@ summary: Embedded accounting voucher entry (debit / credit lines, TDC rule, narr
 purpose: |
   Captures and saves the accounting voucher of a payment: main, detail, cost center, quantity, reference and payment lines (VoucherSaveMain and related SPs).
 functional_description: |
-  Embedded in: fPaymentVoucher.
+  Embedded in: fCashJournal, fContraVoucher, fCreditNote, fDebitNote, fDepreciation, fDocumentCancellation, fDrCrNote, fExpenseApproval, fFinishGoodsValuation, fFreightInvoice, fGSTAdvanceAdjustment, fGeneralPIReceipt, fJournalVoucher, fPIReceipt, fPurchaseVoucher, fReceiptVoucher, fRecurringVoucher, fReverseVoucher, fSalesVoucher, fStockJournalVoucher, fVTPLDrCrNote.
   On-screen fields: Narration, Reversal Date, TDC Rule Description, Voucher Type, VoucherCrAmt, VoucherDrAmt.
 uses_concepts:
 - accounting-voucher

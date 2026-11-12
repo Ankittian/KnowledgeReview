@@ -8,7 +8,7 @@ summary: Embedded tax group calculation on an amount.
 purpose: |
   Applies a tax group to an amount and shows the total tax and net amount; it has no stored procedure of its own.
 functional_description: |
-  Embedded in: GSTVoucherDetail, fGRN, fPaymentRequest, fPurchaseBill, fPurchaseOrder, fQuotation.
+  Embedded in: GSTVoucherDetail, fAdvancePassing, fAssetDisposal, fBillEntryEROS, fCommissionBill, fDrCrNote, fExpenseApproval, fExpenseEntry, fFinishGoodsValuation, fFreightInvoice, fGSTAdvanceAdjustment, fGSTAdvanceReceipt, fGeneralPIReceipt, fInputExcisePosting, fInsuranceDeclaration, fInterestCalculator, fOutwardBillEntry, fPIReceipt, fReceiptRequest, fServiceBill, fSundryPayment, fSundryReceipt, fSupplementaryInvoice, fVTPLDrCrNote.
   On-screen fields: Net Amount, Tax Group, Total Tax.
 uses_concepts:
 - tdc-group

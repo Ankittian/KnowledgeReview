@@ -8,7 +8,7 @@ summary: Embedded bill-wise reference of a voucher line.
 purpose: |
   Allocates a voucher line amount against open references (bills, advances) of the account (VoucherReferenceFillValues / FillValuesDependent).
 functional_description: |
-  Embedded in: Voucher, fPaymentPlan.
+  Embedded in: Voucher, fSetOpeningBalance.
   On-screen fields: Account Name, Amount, Currency.
 uses_concepts:
 - ledger-account

@@ -47,3 +47,13 @@ method_notes:
   Open: Searches records through masterdata.SearchData.
   SaveMain: Saves the record through masterdata.Save.
   ValidateForm: Validates the entry through masterdata.Validate.
+uses_concepts:
+- approved-by
+- check-list-document
+- country-master
+- excisable-item-commodity
+- export-location-master
+- issue-label
+- request-type
+- sales-classification
+- vendor-group

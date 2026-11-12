@@ -8,7 +8,7 @@ summary: Embedded document number, date, name and status block.
 purpose: |
   Lists the document numbering series of the host form, fills the next number and validates that the number fits the financial year (DocumentNumberFillValues / Validate).
 functional_description: |
-  Embedded in: Voucher, fGRN, fGateEntry, fIndent, fIndentRequisition, fInspectionEntry, fInspectionIntimation, fPaymentAdvice, fPaymentPlan, fPaymentRequest, fPurchaseBill, fPurchaseOrder, fQuotation, fRequestforQuotation.
+  Embedded in: Voucher, fAdvancePassing, fAssetCapitalization, fAssetDisposal, fAssetOpening, fAssetTagBifurcation, fBG, fBillEntryEROS, fBillOfExchange, fCashReconcilation, fCenvatUtilization, fChgInDepreciationProv, fCommissionBill, fConcessionFormEntry, fDepreciation, fDocumentCancellation, fDrCrNote, fExpenseAdvance, fExpenseApproval, fExpenseEntry, fFreightInvoice, fGSTAdvanceAdjustment, fGSTAdvanceReceipt, fGSTReversal, fGSTTaxCreditUtilization, fGeneralPIReceipt, fInputExcisePosting, fInsuranceDeclaration, fInterestCalculator, fLC, fOutwardBillEntry, fPIReceipt, fReceiptRequest, fRecurringVoucher, fSalaryPaymentPlan, fServiceBill, fServiceTaxChallan, fStockDifferenceAdjustment, fStockMonthlyLocking, fSundryPayment, fSundryReceipt, fSupplementaryInvoice, fTDSPayment, fVTPLDrCrNote.
   On-screen fields: Document Date, Document No., Document Status, Name.
 method_notes:
   FillValues: Fills the lookup lists through masterdata.DocumentNumberFillValues.

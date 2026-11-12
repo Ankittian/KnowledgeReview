@@ -3,12 +3,9 @@ name: Vendor Master Data Setup
 module: MM
 status: active
 summary: Business partners, their locations and contacts are set up before purchasing or billing.
-description: 'Evidence: code + ERP domain (inferred)
-
-  A vendor card is created, then its addresses (locations, with city, tax registration and accounts) and contact persons.
-  Currencies and exchange rates support foreign vendors.
-
-  '
+description: |
+  Evidence: code + ERP domain (inferred)
+  A vendor card is created, then its addresses (locations, with city, tax registration and accounts) and contact persons. Currencies and exchange rates support foreign vendors.
 steps:
 - order: 1
   name: Define cities

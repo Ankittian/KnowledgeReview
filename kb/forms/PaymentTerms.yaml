@@ -8,7 +8,7 @@ summary: Embedded payment terms grid of a purchase order.
 purpose: |
   Picks a payment terms group and captures the payment terms of the order (PaymentTermsFillValues / LoadData / Save).
 functional_description: |
-  Embedded in: fPurchaseOrder.
+  Embedded in: fSCOrder, fSCOrderAmendment.
   On-screen fields: Payment Group, Payment Terms.
 method_notes:
   FillValues: Fills the lookup lists through masterdata.PaymentTermsFillValues.

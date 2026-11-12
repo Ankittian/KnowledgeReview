@@ -3,12 +3,9 @@ name: Finance Master Data Setup
 module: FI
 status: active
 summary: Charts of accounts, ledgers, books, periods, cost centers and account rules are set up before posting.
-description: 'Evidence: code + ERP domain (inferred)
-
-  The chart of accounts and its groups come first, then ledger accounts, reporting mappings, finance books and their periods,
-  cost centers, expense heads and the account determination rules that transactions post through.
-
-  '
+description: |
+  Evidence: code + ERP domain (inferred)
+  The chart of accounts and its groups come first, then ledger accounts, reporting mappings, finance books and their periods, cost centers, expense heads and the account determination rules that transactions post through.
 steps:
 - order: 1
   name: Define charts of accounts

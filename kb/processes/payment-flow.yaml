@@ -3,12 +3,9 @@ name: Payment Flow (Purchase Bill to Vendor Payment)
 module: FI
 status: active
 summary: Supplier documents are received, booked as purchase bills and paid through request, plan, advice and voucher.
-description: 'Evidence: code + ERP domain (inferred)
-
-  The supplier''s bill is received, booked against the receipt, requested for payment, planned for a due date, released by
-  payment advice and paid by a payment voucher that posts to the ledger.
-
-  '
+description: |
+  Evidence: code + ERP domain (inferred)
+  The supplier's bill is received, booked against the receipt, requested for payment, planned for a due date, released by payment advice and paid by a payment voucher that posts to the ledger.
 steps:
 - order: 1
   name: Receive the supplier document
@@ -17,23 +14,26 @@ steps:
   name: Book the purchase bill
   form: fPurchaseBill
 - order: 3
+  name: Raise debit notes
+  form: fDebitNote
+- order: 4
   name: Request payment
   form: fPaymentRequest
-- order: 4
+- order: 5
   name: Plan payments
   form: fPaymentPlan
-- order: 5
+- order: 6
   name: Release a payment advice
   form: fPaymentAdvice
-- order: 6
+- order: 7
   name: Pay by payment voucher
   form: fPaymentVoucher
 concepts:
-- document-receipt
 - purchase-bill
-- payment-request
 - payment-plan
-- payment-advice
-- payment-voucher
 - vendor
 - accounting-voucher
+- document-receipt
+- payment-request
+- payment-advice
+- payment-voucher

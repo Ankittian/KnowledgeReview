@@ -4,19 +4,16 @@ module: MM
 status: active
 summary: A department's need becomes a material request, a purchase request, an RFQ, quotations, a comparison and a purchase
   order.
-description: 'Evidence: code + ERP domain (inferred)
-
-  Material requests that the store cannot meet become purchase requests (indents); the buyer sends RFQs, records vendor quotations,
-  compares them and places the purchase order on an approved vendor, then receives the goods.
-
-  '
+description: |
+  Evidence: code + ERP domain (inferred)
+  Material requests that the store cannot meet become purchase requests (indents); the buyer sends RFQs, records vendor quotations, compares them and places the purchase order on an approved vendor, then receives the goods.
 steps:
 - order: 1
-  name: Define sub group approved vendors and makes
-  form: fMaterialSubGroupMaster
-- order: 2
   name: Set up purchase organizations
   form: fPurchaseOrganization
+- order: 2
+  name: Define sub group approved vendors and makes
+  form: fMaterialSubGroupMaster
 - order: 3
   name: Raise a material request
   form: fIndentRequisition
@@ -43,13 +40,13 @@ steps:
   form: fGRN
 concepts:
 - material-request
+- purchase-order
+- vendor
+- make
 - purchase-request
 - rfq
 - vendor-quotation
 - comparative-statement
-- purchase-order
-- vendor
-- make
 - purchase-organization
 leads_to:
 - goods-receipt-quality-inspection

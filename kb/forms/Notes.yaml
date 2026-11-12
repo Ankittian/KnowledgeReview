@@ -8,6 +8,6 @@ summary: Embedded notes grid of a document.
 purpose: |
   Captures free-text notes of a document; the note types come from NotesFillValues.
 functional_description: |
-  Embedded in: fDocumentReceipt, fGRN, fGateEntry, fIndent, fIndentRequisition, fInspectionEntry, fInspectionIntimation, fPurchaseBill, fPurchaseOrder, fRequestforQuotation.
+  Embedded in: fBillOfExchange, fCommissionBill, fDrCrNote, fExpenseApproval, fExpenseEntry, fExpensePolicy, fFreightInvoice, fGeneralPIReceipt, fInputExcisePosting, fInterestCalculator, fLC, fLCAmendment, fPIReceipt, fServiceBill, fSupplementaryInvoice.
 method_notes:
   FillValues: Fills the lookup lists through masterdata.NotesFillValues.

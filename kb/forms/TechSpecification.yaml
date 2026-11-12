@@ -8,7 +8,7 @@ summary: Embedded technical specification grid of an item line.
 purpose: |
   Picks a technical specification group and captures the specification values of an item line (TechSpecificationFillValues / FillValuesDependent).
 functional_description: |
-  Embedded in: fIndent, fIndentRequisition, fPurchaseOrder, fQuotation, fRequestforQuotation.
+  Embedded in: fRevisedQuotation.
   On-screen fields: Tech. Specification Group Name.
 uses_concepts:
 - tech-specification-head

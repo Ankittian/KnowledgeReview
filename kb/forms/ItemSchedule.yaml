@@ -8,6 +8,6 @@ summary: Embedded delivery schedule grid of an item line.
 purpose: |
   Captures the delivery schedule (dates and quantities) of a requested or ordered item (ItemScheduleFillValues).
 functional_description: |
-  Embedded in: fIndent, fIndentRequisition, fPurchaseOrder.
+  Embedded in: fSalesBOQ.
 method_notes:
   FillValues: Fills the lookup lists through masterdata.ItemScheduleFillValues.

@@ -8,7 +8,7 @@ summary: Embedded size detail grid of an item line.
 purpose: |
   Captures size-wise quantities of an item line (ItemSizeFillValues / FillValuesDependent).
 functional_description: |
-  Embedded in: fIndent, fIndentRequisition, fPurchaseOrder, fQuotation, fRequestforQuotation.
+  Embedded in: fRevisedQuotation.
 method_notes:
   FillValues: Fills the lookup lists through masterdata.ItemSizeFillValues.
   ugdParentGrid_BeforeRowEditTemplateDisplayed: Fills the lookup lists through masterdata.ItemSizeFillValuesDependent.

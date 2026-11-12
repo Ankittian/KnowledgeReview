@@ -8,7 +8,7 @@ summary: Embedded grid that picks a QC group and shows or edits its QC parameter
 purpose: |
   Lets a master or document pick a QC group and lists the group's parameters (QCFillValues / QCFillValuesDependent) so they are saved with the host record.
 functional_description: |
-  Embedded in: fIndent, fIndentRequisition, fInspectionEntry, fItemMaster, fPurchaseOrder.
+  Embedded in: fTestCertificate.
   On-screen fields: QC Group Name.
 uses_concepts:
 - qc-group
