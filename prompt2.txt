@@ -5,12 +5,7 @@ This is prompt2 (v2 Strategy): GENERALIZED DIFFICULTY & COMPREHENSIVE FORM COVER
 ================================================================================
 1. CORE STRATEGY: GENERALIZED DIFFICULTY (SCOPE != DIFFICULTY)
 ================================================================================
-Previously, difficulty was rigidly coupled to scope (module = easy, flow = medium, form = hard). This created a severe flaw: with dozens of forms in a module, hard questions vastly outnumbered easy and medium questions, making learning unbalanced and overwhelming.
 
-Under this revised strategy, difficulty is a matter of DEPTH, and each level has a default source emphasis. These are guidelines, not fixed rules: you may draw from any scope when the content calls for it, as long as the depth matches the level.
-- EASY: mostly MODULE-level cards (what the module governs), BUSINESS CONCEPT cards (key terms and what they mean), and FORMS OVERVIEW cards (what a screen is for and who uses it). Keep the focus on purpose, roles and terminology.
-- MEDIUM: mostly the BUSINESS RULE PROCESS (standard document sequences, hand-offs between stages, everyday validations), plus medium-depth MODULE-level questions (how the module's processes connect). Keep the focus on how work normally moves.
-- HARD: mostly FORMS (the detailed rules, locks, cascades and edge cases of individual screens), plus some of the harder BUSINESS RULE PROCESS and MODULE-level questions (cross-process governance, reconciliations, period controls). Keep the focus on depth and exceptions.
 
 Difficulty is defined by CONCEPTUAL DEPTH, COGNITIVE DEMAND, and COMPLEXITY OF BUSINESS RULES:
 
@@ -23,19 +18,19 @@ Difficulty is defined by CONCEPTUAL DEPTH, COGNITIVE DEMAND, and COMPLEXITY OF B
 ================================================================================
 2. COMPREHENSIVE COVERAGE: ALL FORMS IN THE MODULE
 ================================================================================
-Do NOT generate cards for only 2 or 3 forms. Curate cards for ALL active forms in the target module (MM has 87 forms spanning purchasing, inventory, gate control, quality inspection, material masters, and vendor masters), plus the module macro-overview and major flows.
+Curate cards for ALL active forms in the target module, plus the module macro-overview and major flows.
 
 Typical card allocation (adjust as the content requires):
-- Standard / utility forms: 1 card (usually Easy, a Medium if it has real rules).
-- Intermediate transaction / master forms: 1–2 cards (e.g. 1 Easy overview, 1 Medium rule card).
-- Core transaction anchors (e.g. Purchase Order, Material Receipt Note, Indent, Gate Entry, RFQ, Quotation, CS, Material Issue, Inspection Entry): 2–3 cards, typically including a Hard card for their governance and edge cases.
-- Module-level and business-concept cards: mostly Easy, with a few Medium where the cross-process logic is standard.
-- Business-process cards: mostly Medium, with a few Hard for the complex governance paths.
+- Standard / utility forms
+- Intermediate transaction / master forms 
+- Core transaction anchors (e.g. Purchase Order, Material Receipt Note, Indent, Gate Entry, RFQ, Quotation, CS, Material Issue, Inspection Entry)
+- Module-level and business-concept cards
+- Business-process cards
 
 This ensures a smooth, well-balanced distribution across the entire module:
-- ~35–45% Easy cards (mostly module, concept and forms-overview)
-- ~35–45% Medium cards (mostly business-process rules)
-- ~15–25% Hard cards (mostly forms, with some harder process and module cards)
+- ~35–45% Easy cards 
+- ~35–45% Medium cards 
+- ~15–25% Hard cards 
 These percentages are targets. If the source material supports a different split without losing depth, prefer the better-fitting split and keep the level-to-source emphasis above.
 
 ================================================================================
