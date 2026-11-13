@@ -25,5 +25,40 @@ services:
       timeout: 3s
       retries: 12
 
+  # ------------------------------------------------------------------------------------------------------------
+  # Full stack on the EC2 (PDF section 3). Started only with the "app" profile, so `npm run db:up` is unchanged:
+  #   docker compose --profile app up -d --build
+  # Neo4j and the KB MCP server already run separately; the web app reaches the MCP server via KG_MCP_URL.
+  # The Claude harness runs inside the web container (non-root user, minimal environment; see docs/CHAT-HARNESS.md).
+  web:
+    profiles: ["app"]
+    build: .
+    container_name: kr-web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      COOKIE_SECURE: "true"
+      CLAUDE_CONFIG_DIR: /home/app/.claude
+      CLAUDE_HARNESS_DIR: /app/claude-harness
+    volumes:
+      - kr_claude:/home/app/.claude # Claude credentials + session transcripts (needed for resume)
+    expose:
+      - "3000" # reachable only through nginx, never published
+
+  nginx:
+    profiles: ["app"]
+    image: nginx:1.27-alpine
+    container_name: kr-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on:
+      - web
+
 volumes:
   kr_pgdata:
+  kr_claude:

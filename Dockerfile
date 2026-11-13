@@ -1,0 +1,32 @@
+# Knowledge Review web app + Claude harness (PDF section 3: one EC2, Docker Compose).
+# Multi-arch: builds on x64 and on the t4g (ARM64) EC2; npm ci picks the matching Claude engine binary.
+FROM node:24-bookworm-slim AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+FROM deps AS build
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build && npm prune --omit=dev
+
+FROM node:24-bookworm-slim AS run
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
+# ca-certificates: HTTPS to Anthropic and the KB MCP server.
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/* \
+ && useradd --create-home --uid 10001 app
+WORKDIR /app
+# App files are owned by root and read-only for the runtime user (REQ-NFR-05).
+COPY --from=build /app/package.json /app/next.config.ts ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+COPY --from=build /app/db ./db
+COPY --from=build /app/claude-harness ./claude-harness
+# Claude credentials and session transcripts (for resume) live in a volume owned by the runtime user.
+ENV CLAUDE_CONFIG_DIR=/home/app/.claude CLAUDE_HARNESS_DIR=/app/claude-harness
+RUN mkdir -p /home/app/.claude && chown app:app /home/app/.claude
+USER app
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD node -e "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node_modules/.bin/next", "start", "-H", "0.0.0.0", "-p", "3000"]

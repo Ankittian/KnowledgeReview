@@ -28,6 +28,14 @@ Postgres listens on `127.0.0.1:5432` only. Data lives in the `kr_pgdata` Docker 
 `docker compose down -v` deletes it. The first start also creates `knowledge_review_test` and `knowledge_review_e2e`,
 which `npm test` and `npm run e2e` wipe on every run.
 
+## Knowledge Assistant (chat)
+
+`/chat` lets employees ask questions about the SpectrumERP knowledge base. Claude answers through the Claude Agent SDK
+using the KB MCP server, in the user's answer style (Technical / Functional / Product, set by an admin under
+Admin → Users). Admins pick the style per chat and see every conversation under Admin → All chats.
+Set `KG_MCP_URL`, `KG_MCP_TOKEN` and Claude credentials in `.env`, run `npm run db:migrate`, then
+`npm run chat:check` to verify the setup. Design, security and deployment: [docs/CHAT-HARNESS.md](docs/CHAT-HARNESS.md).
+
 ## Access from other devices on the LAN
 
 ```powershell
@@ -164,6 +172,7 @@ Answers and events are written to `localStorage` first, then sent with retry and
 | `npm run cards:sync` | build cards from `kb/` and upsert |
 | `npm run seed:admin -- --username x --password y` | create or reset an admin |
 | `npm run report:needs-change` | write `reports/needs-change.{jsonl,md}` |
+| `npm run chat:check` | ask the KB one question through the Claude harness and try a prompt injection (no database) |
 | `npm test` | unit + DB integration tests (in-memory Postgres) |
 | `npm run build && npm run e2e` | Playwright: full flow on desktop + mobile, plus screenshots in `test-results/screens` |
 | `npm run db:generate` | new migration after editing `db/schema.ts` |
