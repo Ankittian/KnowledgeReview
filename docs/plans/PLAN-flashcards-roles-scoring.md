@@ -1,6 +1,6 @@
 # Plan: role-based, level-based flashcards with card weights and a leaderboard
 
-Status: **revision 2** (decisions of 2026-11-13 applied, see "Decisions taken" below). Source of truth for behavior is `Knowledge Assistant & Flashcards — Requirements.pdf` (REQ ids below). Where this plan differs from the PDF, it says so in section 2.
+Status: **revision 2** (decisions of 2026-11-13 applied, see "Decisions taken" below). Source of truth for behavior is `docs/specs/Knowledge Assistant & Flashcards — Requirements.pdf` (REQ ids below). Where this plan differs from the PDF, it says so in section 2.
 
 This plan sits on top of the modular schema already applied to `knowledge_review_test` (`auth`, `kb`, `learning`) and the authentication work that comes first (section 10, phase A).
 

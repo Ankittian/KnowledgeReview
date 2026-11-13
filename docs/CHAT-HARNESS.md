@@ -2,7 +2,7 @@
 
 Implements sections **3 (Architecture)**, **5 (Knowledge assistant / chat)** and **6 (Claude harness)** of
 *Knowledge Assistant & Flashcards — Requirements*, inside the existing Next.js app (the decision recorded in
-`IMPLEMENTATION-PLAN.md` §0: Next.js instead of FastAPI + Vite; the same features, one login).
+`docs/plans/IMPLEMENTATION-PLAN.md` §0: Next.js instead of FastAPI + Vite; the same features, one login).
 
 ## 1. Architecture (section 3)
 

@@ -1,19 +1,24 @@
 You are an expert ERP Knowledge Engineer and Technical Educator. Your task is to generate high-quality educational flashcards for the FUNCTIONAL AUDIENCE ONLY, directly from the raw ERP Knowledge Base in the `kb/` folder.
 
-This is prompt2 (v2 Strategy): GENERALIZED DIFFICULTY & COMPREHENSIVE FORM COVERAGE.
+================================================================================
+MANDATORY FILE OUTPUT RULE: ONE SINGLE JSON FILE PER MODULE
+================================================================================
+Generate EXACTLY ONE single consolidated JSON file per module for the functional audience:
+• Output File Path: `<MODULE>.functional.json` (e.g. `MM.functional.json`, `FI.functional.json`, `PM.functional.json`)
+• ALL flashcards for the target module—including module macro-level cards, business process flows, and all individual forms—MUST be consolidated under the single `items` array of this one JSON file.
+
 
 ================================================================================
 1. CORE STRATEGY: GENERALIZED DIFFICULTY (SCOPE != DIFFICULTY)
 ================================================================================
 
-
 Difficulty is defined by CONCEPTUAL DEPTH, COGNITIVE DEMAND, and COMPLEXITY OF BUSINESS RULES:
 
 | Level | Weight | Cognitive Depth & Focus | Length & Words |
 |---|---|---|---|
-| EASY | 1 | Operational Purpose & Roles: What a screen, flow, or module is for; who uses it; what commercial/operational need triggers it; basic terminology and prerequisites. | 3–5 lines | 25–75 words |
-| MEDIUM | 3 | Standard Business Rules & Workflows: Standard document sequences; mandatory field requirements; stage-to-stage hand-offs; everyday operational validations; normal tolerances. | 5–9 lines | 80–180 words |
-| HARD | 5 | Deep Governance, Edge Cases & Cascades: Multi-tier authorization hierarchies; terminal approval locks; strict tolerance formulas; rejected goods quarantine; cross-document status cascading; period lockouts; multi-currency reconciliations. | 8–14 lines | 140–280 words |
+| EASY | 1 | Operational Purpose & Roles: What a screen, flow, or module is for; who uses it; what commercial/operational need triggers it; basic terminology and prerequisites.ERP flow knowl  | 3–5 lines | 25–75 words |
+| MEDIUM | 3 | Standard Business Rules & Workflows: Standard document sequences; mandatory field requirements; stage-to-stage hand-offs; everyday operational validations; normal tolerances. | 5–7 lines | 60–120 words |
+| HARD | 5 | Deep Governance, Edge Cases & Cascades: Multi-tier authorization hierarchies; terminal approval locks; strict tolerance formulas; rejected goods quarantine; cross-document status cascading; period lockouts; multi-currency reconciliations. | 8–12 lines | 100–200 words |
 
 ================================================================================
 2. COMPREHENSIVE COVERAGE: ALL FORMS IN THE MODULE
@@ -53,15 +58,19 @@ STRICTLY FORBIDDEN IN FUNCTIONAL CARDS:
 ================================================================================
 Each flashcard is an educational STATEMENT TO VERIFY (teaching how the ERP functions and confirming business rules):
 - `topic_key`: Unique kebab-case slug within the form/scope.
-- `title`: Concise topic title (8–110 characters, never ending in a question mark).
-- `body`: Plain sentences separated by `\n` (no markdown asterisks, no bullets, no numbered lists).
-- `source_refs`: Array of strings pointing to source sections or concepts (e.g. ["purpose", "validations", "rule:approved-vendor"]).
+- `title`: Concise topic title (8–110 characters can be a question).
+- `body`: plain sentences and bulleted if required segregated by /n .
+- `source_refs`: Array of strings pointing to source in the kb folder(form name/module name /BR/process ) (e.g. ["purpose", "validations", "rule:approved-vendor"]).
 
 ================================================================================
-5. SINGLE JSON FILE OUTPUT FORMAT
+5. SINGLE CONSOLIDATED JSON FILE OUTPUT FORMAT (ONE FILE PER MODULE)
 ================================================================================
-Instead of fragmenting cards across dozens of separate files, the entire module's cards are bundled into ONE single JSON file:
-`generate_cards_gemini_v2/MM.functional.json`
+Instead of fragmenting cards across dozens of separate files, the entire module's functional card collection MUST be bundled into ONE single JSON file:
+`generate_cards_gemini_v2/<MODULE>.functional.json` (e.g., `generate_cards_gemini_v2/MM.functional.json` or `FI.functional.json`)
+
+CRITICAL RULES FOR OUTPUT:
+1. Generate strictly ONE single `.functional.json` file per module. Never output individual JSON files per form, screen, or flow.
+2. All items for the module—including the module overview (`scope: "module"`), end-to-end flows (`scope: "flow"`), and all individual transaction/master forms (`scope: "form"`)—must reside as entries within the single root `items` array.
 
 Structure of the unified JSON file:
 ```json
@@ -156,8 +165,8 @@ Structure of the unified JSON file:
 ================================================================================
 6. VERIFICATION CRITERIA
 ================================================================================
-- Every single form in the MM module is covered.
-- Functional terminology only (zero leaks of form codes, tables, or stored procedures).
-- Easy, Medium, and Hard cards are distributed across forms, flows, and the module.
-- All cards reside in one clean, validated JSON file.
-- The cards load cleanly into Postgres and link to their corresponding `kb.kb_items`.
+- Strictly ONE consolidated JSON file is generated for the entire module (`generate_cards_gemini_v2/<MODULE>.functional.json`).
+- Every single active form, flow, and module overview in the target module is covered within the single `items` array.
+- Functional terminology only (zero leaks of form codes, tables, or stored procedures in card titles and bodies).
+- Easy, Medium, and Hard cards are balanced across forms, flows, and the module.
+- All cards reside in this one clean, validated JSON file ready to load directly into Postgres (`kb.cards` and `kb.card_versions`).
