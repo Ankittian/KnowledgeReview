@@ -76,7 +76,7 @@ No setup script runs here; the schema and data already exist.
 
 ### Step 4 (optional): `nginx` (profile `tls`)
 
-Only with `--profile tls`. `nginx:1.27-alpine`, host ports `HTTP_PORT` / `HTTPS_PORT` (default 80/443) mapped to 80/443 inside. Config template `infra/nginx/default.conf.template`: the nginx image fills in `APP_PORT` (upstream `web:${APP_PORT}`) and `HTTPS_PORT` (the http-to-https redirect) at start, certificates from `infra/certs/` (`fullchain.pem`, `privkey.pem`). Requires `COOKIE_SECURE=true` and `APP_BIND=127.0.0.1`.
+Only with `--profile tls`. `nginx:1.27-alpine`, host ports `HTTP_PORT` / `HTTPS_PORT` (default 8080/8443) mapped to 80/443 inside. Config template `infra/nginx/default.conf.template`: the nginx image fills in `APP_PORT` (upstream `web:${APP_PORT}`) and `HTTPS_PORT` (the http-to-https redirect) at start, certificates from `infra/certs/` (`fullchain.pem`, `privkey.pem`). Requires `COOKIE_SECURE=true` and `APP_BIND=127.0.0.1`.
 
 ## 3a. Ports
 
@@ -86,7 +86,7 @@ Every port is set in `.env`; nothing is fixed in the Dockerfile or compose file.
 |---|---|---|
 | `APP_PORT` | 3000 | Web app (frontend and backend, one process). Host and container side. |
 | `POSTGRES_PORT` | 5432 | Postgres on the host. Containers use `postgres:5432`. |
-| `HTTP_PORT` / `HTTPS_PORT` | 80 / 443 | nginx, `tls` profile only. |
+| `HTTP_PORT` / `HTTPS_PORT` | 8080 / 8443 | nginx, `tls` profile only. |
 | `APP_BIND` / `POSTGRES_BIND` / `NGINX_BIND` | `0.0.0.0` / `127.0.0.1` / `0.0.0.0` | Host interface each port is published on. |
 | `POSTGRES_CONTAINER` / `WEB_CONTAINER` / `NGINX_CONTAINER` | `kr-postgres` / `kr-web` / `kr-nginx` | Container names (change to run a second copy). |
 

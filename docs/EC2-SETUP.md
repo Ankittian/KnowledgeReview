@@ -25,7 +25,7 @@ How the stack works inside (what runs at each step) is in [DEPLOY-IMPLEMENTATION
    |---|---|---|
    | 22 (SSH) | your IP only | Admin access. |
    | 3000 (custom TCP) | the people who use the app | The app, over plain http. |
-   | 80 and 443 | the users | Only if you add HTTPS later (step 11). |
+   | 8080 and 8443 (`HTTP_PORT` / `HTTPS_PORT`) | the users | Only if you add HTTPS later (step 11). |
    | 5432 | **never** | Postgres stays private. |
 
 7. Launch, then copy the **public IPv4 address**.
@@ -38,7 +38,7 @@ The ports are not fixed: they come from `.env` (step 5). The table uses the defa
 |---|---|---|---|
 | Frontend **and** backend | `APP_PORT` | 3000 | One Next.js process serves the pages and the `/api` routes, so there is a single app port. Open it in the security group. The container listens on the same number (`PORT` is set from it). |
 | Postgres (on the host) | `POSTGRES_PORT` | 5432 | Containers always reach it as `postgres:5432` on the private network. Keep `POSTGRES_BIND=127.0.0.1`; never open it in the security group. |
-| nginx HTTP / HTTPS | `HTTP_PORT` / `HTTPS_PORT` | 80 / 443 | Only with `--profile tls`. |
+| nginx HTTP / HTTPS | `HTTP_PORT` / `HTTPS_PORT` | 8080 / 8443 | Only with `--profile tls`. |
 | Interface for each | `APP_BIND`, `POSTGRES_BIND`, `NGINX_BIND` | `0.0.0.0`, `127.0.0.1`, `0.0.0.0` | `127.0.0.1` = reachable from the instance only. |
 
 After changing a port: `docker compose --profile app up -d` (no rebuild needed). Container names can also be set (`POSTGRES_CONTAINER`, `WEB_CONTAINER`, `NGINX_CONTAINER`), for example to run a second copy on the same machine.
@@ -125,7 +125,7 @@ Edit the file (`nano .env`) and set at least:
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `admin@123` (already in the template). |
 | `APP_PORT` | `3000`: frontend and backend (one app). Must match the port opened in step 1. |
 | `POSTGRES_PORT` | `5432`: Postgres on the host (keep `POSTGRES_BIND=127.0.0.1`). |
-| `HTTP_PORT` / `HTTPS_PORT` | `80` / `443`: only for the nginx HTTPS profile. |
+| `HTTP_PORT` / `HTTPS_PORT` | `8080` / `8443`: only for the nginx HTTPS profile (80/443 are often taken). |
 | `POSTGRES_BIND` | `127.0.0.1` (already in the template). |
 | `COOKIE_SECURE` | `false` while you use plain `http://`. `true` only behind HTTPS. |
 | `ANTHROPIC_API_KEY` **or** `CLAUDE_CODE_OAUTH_TOKEN` | The Assistant's Claude credential. |
@@ -235,7 +235,7 @@ Start on reboot: the containers use `restart: unless-stopped`, and Docker is ena
 
 ## Step 11. HTTPS (optional, needs a domain)
 
-1. Point a DNS name at the instance's public IP and open ports 80 and 443 (close 3000).
+1. Point a DNS name at the instance's public IP and open ports 8080 and 8443 (close 3000); the site is then at `https://<your domain>:8443`. Set `HTTP_PORT=80` / `HTTPS_PORT=443` in `.env` to use the standard ports.
 2. Put `fullchain.pem` and `privkey.pem` in `infra/certs/`.
 3. In `.env` set `COOKIE_SECURE=true` and `APP_BIND=127.0.0.1`.
 4. Start with nginx:
@@ -244,7 +244,7 @@ Start on reboot: the containers use `restart: unless-stopped`, and Docker is ena
 docker compose --profile app --profile tls up -d --build
 ```
 
-Open `https://<your domain>/login`.
+Open `https://<your domain>:8443/login` (or without the port if `HTTPS_PORT=443`).
 
 ## Step 12. Troubleshooting
 
