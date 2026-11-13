@@ -74,7 +74,9 @@ SELECT c.id AS card_id,
 FROM cards c
 JOIN kb_items i ON i.id = c.kb_item_id
 LEFT JOIN agg a ON a.card_id = c.id
-LEFT JOIN fb ON fb.card_id = c.id;
+LEFT JOIN fb ON fb.card_id = c.id
+-- only the cards users can actually be shown (generated, with an audience); legacy template cards are excluded
+WHERE c.audience IS NOT NULL;
 
 -- Per KB item (form, process, concept, rule...): its own cards PLUS every card linked to it
 CREATE VIEW kb_item_health AS
