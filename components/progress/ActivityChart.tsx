@@ -18,10 +18,10 @@ const config = {
 /** Cards answered per day, stacked by knew / not yet. */
 export function ActivityChart({ data }: { data: DayPoint[] }) {
   return (
-    <ChartContainer config={config} className="aspect-auto h-44 w-full" role="img" aria-label="Cards answered per day over the last 28 days">
+    <ChartContainer config={config} className="aspect-auto h-44 w-full" role="img" aria-label="Cards answered per day over the selected period">
       <BarChart data={data} margin={{ top: 4, right: 0, left: -24, bottom: 0 }} barCategoryGap={3}>
         <CartesianGrid vertical={false} strokeDasharray="3 3" />
-        <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} interval={6} fontSize={11} />
+        <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} interval={data.length > 14 ? Math.ceil(data.length / 6) - 1 : 0} fontSize={11} />
         <YAxis tickLine={false} axisLine={false} allowDecimals={false} width={40} fontSize={11} />
         <ChartTooltip cursor={{ fill: "var(--muted)", opacity: 0.6 }} content={<ChartTooltipContent indicator="dot" />} />
         <Bar dataKey="knew" stackId="a" fill="var(--color-knew)" radius={2} animationDuration={700} />
