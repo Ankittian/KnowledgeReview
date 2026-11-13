@@ -10,6 +10,15 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build && npm prune --omit=dev
 
+# One-shot setup run by docker compose before the web app starts (`npm run deploy:init`): creates the tables on an empty
+# database, creates the first admin, loads the knowledge base and pushes the flashcards. Needs tsx and the scripts, so it
+# keeps the dev dependencies the runtime image below does not have. Runs as the unprivileged `node` user.
+FROM deps AS init
+ENV NEXT_TELEMETRY_DISABLED=1 KB_DIR=/app/kb
+COPY . .
+USER node
+CMD ["npm", "run", "deploy:init"]
+
 FROM node:24-bookworm-slim AS run
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
 # ca-certificates: HTTPS to Anthropic and the KB MCP server.
@@ -23,6 +32,8 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/db ./db
 COPY --from=build /app/claude-harness ./claude-harness
+# The admin "sync knowledge base" button reads the YAML snapshot from KB_DIR.
+COPY --from=build /app/kb ./kb
 # Claude credentials and session transcripts (for resume) live in a volume owned by the runtime user.
 ENV CLAUDE_CONFIG_DIR=/home/app/.claude CLAUDE_HARNESS_DIR=/app/claude-harness
 RUN mkdir -p /home/app/.claude && chown app:app /home/app/.claude

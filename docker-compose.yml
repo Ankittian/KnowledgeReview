@@ -1,8 +1,14 @@
-# Postgres for Knowledge Review (local dev and EC2).
-#   docker compose up -d        start
-#   docker compose ps           check health
-#   docker compose down         stop (data is kept in the kr_pgdata volume)
-#   docker compose down -v      stop AND delete all data
+# Knowledge Review: Postgres (dev and EC2) plus the full stack under the "app" profile.
+#
+#   Local dev (database only):      docker compose up -d --wait            (npm run db:up)
+#   Full stack, plain HTTP port:    docker compose --profile app up -d --build
+#   Full stack behind nginx + TLS:  docker compose --profile app --profile tls up -d --build
+#   Stop (data is kept):            docker compose down
+#   Stop AND delete all data:       docker compose down -v
+#
+# The full stack starts in this order: postgres (healthy) -> init (one-shot: tables, first admin, knowledge base,
+# flashcards) -> web (-> nginx with the tls profile). Everything is configured from .env; see .env.production.example.
+# Use another env file with KR_ENV_FILE=/path/to/file.
 services:
   postgres:
     image: postgres:16
@@ -13,40 +19,59 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:-knowledge_review}
     ports:
-      # Bound to all interfaces so LAN machines can connect (firewall rule "kr-postgres" limits it to the LAN).
-      # Never publish this to the internet. To go back to local-only, use "127.0.0.1:${POSTGRES_PORT:-5432}:5432".
-      - "0.0.0.0:${POSTGRES_PORT:-5432}:5432"
+      # Dev default: all interfaces, so LAN machines can connect (firewall rule "kr-postgres" limits it to the LAN).
+      # On EC2 set POSTGRES_BIND=127.0.0.1. Never publish this to the internet; the containers reach it internally anyway.
+      - "${POSTGRES_BIND:-0.0.0.0}:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - kr_pgdata:/var/lib/postgresql/data
-      - ./infra/initdb:/docker-entrypoint-initdb.d:ro
+      - ./infra/initdb:/docker-entrypoint-initdb.d:ro # dev only: empty extra databases for the test suites
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 12
 
-  # ------------------------------------------------------------------------------------------------------------
-  # Full stack on the EC2 (PDF section 3). Started only with the "app" profile, so `npm run db:up` is unchanged:
-  #   docker compose --profile app up -d --build
-  # Neo4j and the KB MCP server already run separately; the web app reaches the MCP server via KG_MCP_URL.
-  # The Claude harness runs inside the web container (non-root user, minimal environment; see docs/CHAT-HARNESS.md).
+  # One-shot setup. Safe to run on every deploy: the tables are only created on an empty database, the admin is only
+  # created if missing (an existing admin keeps its password), and cards are appended (never purged).
+  init:
+    profiles: ["app"]
+    build:
+      context: .
+      target: init
+    restart: "no"
+    env_file: ${KR_ENV_FILE:-.env}
+    environment:
+      # Inside compose the database host is "postgres" on its internal port. Use a URL-safe POSTGRES_PASSWORD (hex).
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kr_app}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-knowledge_review}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # The Next.js app and the Claude harness (non-root, minimal environment; see docs/CHAT-HARNESS.md).
   web:
     profiles: ["app"]
     build: .
     container_name: kr-web
     restart: unless-stopped
-    env_file: .env
+    env_file: ${KR_ENV_FILE:-.env}
     environment:
-      COOKIE_SECURE: "true"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kr_app}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-knowledge_review}
+      # false is required when the site is served over plain http, otherwise the browser drops the login cookie.
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
       CLAUDE_CONFIG_DIR: /home/app/.claude
       CLAUDE_HARNESS_DIR: /app/claude-harness
     volumes:
       - kr_claude:/home/app/.claude # Claude credentials + session transcripts (needed for resume)
-    expose:
-      - "3000" # reachable only through nginx, never published
+    ports:
+      # APP_PORT is where you open the app. With nginx (tls profile) set APP_BIND=127.0.0.1 so only nginx can reach it.
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3000}:3000"
+    depends_on:
+      init:
+        condition: service_completed_successfully
 
+  # Optional: TLS in front of the app. Needs infra/certs/fullchain.pem and privkey.pem, and COOKIE_SECURE=true.
   nginx:
-    profiles: ["app"]
+    profiles: ["tls"]
     image: nginx:1.27-alpine
     container_name: kr-nginx
     restart: unless-stopped
