@@ -14,6 +14,9 @@ const lanHosts = [
 const nextConfig: NextConfig = {
   // argon2 and the Claude Agent SDK (which spawns its native engine binary) must stay out of the bundle.
   serverExternalPackages: ["@node-rs/argon2", "@anthropic-ai/claude-agent-sdk"],
+  experimental: {
+    optimizePackageImports: ["@base-ui/react", "motion", "recharts"],
+  },
   poweredByHeader: false,
   allowedDevOrigins: lanHosts,
   async headers() {
