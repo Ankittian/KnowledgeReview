@@ -1,5 +1,6 @@
-import { sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { DB } from "@/db/client";
+import { kbItems } from "@/db/schema";
 import { cardIdOf, type Catalog } from "./catalog";
 import { linkSources, loadExistingCards, writeCard } from "./cards";
 import { ensureKbItem, KbIndex } from "./kb-items";
@@ -42,9 +43,11 @@ export async function pushCatalog(db: DB, catalog: Catalog, options: Partial<Pus
       const ids = catalog.items.flatMap((g) => g.cards.map((c) => cardIdOf(catalog, g, c)));
       const existing = await loadExistingCards(tx, ids);
 
+      const usedKbItems = new Set<number>();
       for (const group of catalog.items) {
         const kb = await ensureKbItem(tx, idx, catalog, group);
         if (kb.created) result.kbItemsCreated++;
+        usedKbItems.add(kb.id);
 
         for (const card of group.cards) {
           const { id, outcome } = await writeCard(tx, existing, kb.id, catalog, group, card);
@@ -53,6 +56,15 @@ export async function pushCatalog(db: DB, catalog: Catalog, options: Partial<Pus
           else result.cardsUnchanged++;
           result.linksInserted += await linkSources(tx, idx, id, card);
         }
+      }
+
+      // Items created by this push are not in the YAML, so the KB sync marks them inactive (and hides them in Browse)
+      // on its next run. Their cards are live, so switch them back on every time.
+      if (usedKbItems.size > 0) {
+        await tx
+          .update(kbItems)
+          .set({ active: true })
+          .where(and(inArray(kbItems.id, [...usedKbItems]), eq(kbItems.active, false), sql`${kbItems.meta}->>'generated' = 'true'`));
       }
 
       if (opts.dryRun) throw new DryRun();
