@@ -23,7 +23,7 @@ const pointsCase = sql.join(
  * Points leaderboard for signed-in users. Each card scores once: the user's first correct answer to it
  * (Known and correct, or New to me), worth the card's level points. "This week" counts only cards whose first
  * correct answer fell in the current week. `module` (a module code) limits the board to that area's cards.
- * Admins are not ranked, and only active users are listed. Ties go to whoever reached their score first.
+ * Admins are ranked like everyone else; only active users are listed. Ties go to whoever reached their score first.
  */
 export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: string, module: string | null = null): Promise<LeaderRow[]> {
   const conds: SQL[] = [];
@@ -48,7 +48,6 @@ export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: st
                count(*)::int AS cards
         FROM first_correct f
         JOIN users u ON u.id = f.user_id AND u.status = 'active'
-        JOIN roles ro ON ro.id = u.role_id AND ro.name <> 'admin'
         ${where}
         GROUP BY f.user_id, u.display_name
         ORDER BY points DESC, max(f.answered_at) ASC`,
