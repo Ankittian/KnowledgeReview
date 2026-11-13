@@ -312,3 +312,99 @@ export const settings = pgTable("settings", {
   value: jsonb("value").notNull(),
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------- knowledge assistant (chat)
+
+/** Answer style (Claude skill). General users have one, set by an admin; admins pick one per conversation. */
+export const answerRole = pgEnum("answer_role", ["technical", "functional", "product"]);
+export const chatSender = pgEnum("chat_sender", ["user", "assistant"]);
+/** streaming = answer still being written; stopped = user pressed Stop (partial text kept). */
+export const chatMessageStatus = pgEnum("chat_message_status", ["ok", "streaming", "stopped", "error"]);
+export const chatFeedbackValue = pgEnum("chat_feedback_value", ["up", "down"]);
+
+export const userAnswerRoles = pgTable("user_answer_roles", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  answerRole: answerRole("answer_role").notNull(),
+  setBy: uuid("set_by"),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const conversations = pgTable(
+  "conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    title: text("title").notNull(),
+    roleUsed: answerRole("role_used").notNull(), // fixed for the whole conversation
+    claudeSessionId: text("claude_session_id"),
+    createdAt: createdAt(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
+    deletedAt: ts("deleted_at"), // soft delete: kept for admins and the audit trail
+  },
+  (t) => [index("conversations_user_idx").on(t.userId, t.updatedAt)],
+);
+
+export const chatMessages = pgTable(
+  "chat_messages",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversations.id),
+    sender: chatSender("sender").notNull(),
+    /** For assistant messages: the user message being answered (a retry adds another answer to the same question). */
+    replyToId: bigint("reply_to_id", { mode: "number" }),
+    content: text("content").notNull().default(""),
+    status: chatMessageStatus("status").notNull().default("ok"),
+    errorCode: text("error_code"), // timeout | usage_limit | kb_unavailable | claude_unavailable | error
+    tokensIn: integer("tokens_in"),
+    tokensOut: integer("tokens_out"),
+    durationMs: integer("duration_ms"),
+    numTurns: integer("num_turns"),
+    model: text("model"),
+    createdAt: createdAt(),
+    completedAt: ts("completed_at"),
+  },
+  (t) => [index("chat_messages_conv_idx").on(t.conversationId, t.id), index("chat_messages_created_idx").on(t.sender, t.createdAt)],
+);
+
+/** Every tool call Claude made or tried, including denied attempts. */
+export const chatToolCalls = pgTable(
+  "chat_tool_calls",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    messageId: bigint("message_id", { mode: "number" })
+      .notNull()
+      .references(() => chatMessages.id),
+    toolUseId: text("tool_use_id"),
+    toolName: text("tool_name").notNull(),
+    arguments: jsonb("arguments").$type<Record<string, unknown>>().notNull().default({}),
+    allowed: boolean("allowed").notNull(),
+    isError: boolean("is_error"),
+    durationMs: integer("duration_ms"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("chat_tool_calls_msg_idx").on(t.messageId), index("chat_tool_calls_denied_idx").on(t.allowed, t.createdAt)],
+);
+
+export const chatFeedback = pgTable(
+  "chat_feedback",
+  {
+    id: serial("id").primaryKey(),
+    messageId: bigint("message_id", { mode: "number" })
+      .notNull()
+      .references(() => chatMessages.id),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    value: chatFeedbackValue("value").notNull(),
+    comment: text("comment"),
+    createdAt: createdAt(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("chat_feedback_msg_user").on(t.messageId, t.userId)],
+);

@@ -1,0 +1,29 @@
+{
+  "$comment": "Working directory for every Claude run of the Knowledge Assistant. It holds ONLY these settings and the role skills: no source code, no .env, no secrets (REQ-HARN-02). The app passes the same deny list in code and approves allowed tools in its canUseTool callback (no allow rules here, so that callback sees every call); this file is a second line of defence.",
+  "permissions": {
+    "defaultMode": "default",
+    "deny": [
+      "Bash",
+      "PowerShell",
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "NotebookEdit",
+      "NotebookRead",
+      "Glob",
+      "Grep",
+      "LS",
+      "Agent",
+      "Task",
+      "TodoWrite",
+      "KillShell",
+      "BashOutput",
+      "Monitor",
+      "Workflow",
+      "Skill"
+    ]
+  },
+  "disableAllHooks": true,
+  "enableAllProjectMcpServers": false
+}

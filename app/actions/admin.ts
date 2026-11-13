@@ -9,6 +9,8 @@ import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
 import { runKbSync } from "@/lib/kb-sync";
 import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, setDailyCardLimit } from "@/lib/settings";
+import { ANSWER_ROLES } from "@/lib/chat/config";
+import { setAnswerRole } from "@/lib/chat/service";
 
 const uuid = z.uuid();
 
@@ -43,6 +45,17 @@ export async function setUserRole(fd: FormData) {
   await db.update(users).set({ role }).where(eq(users.id, id));
   await revokeUserSessions(id); // new permissions on next sign-in
   await audit(db, actor.id, "user_role_changed", "user", id, { role });
+  revalidatePath("/admin/users");
+}
+
+/** Answer style (Claude skill) of a general user (REQ-ROLE-01). Applies to chats they start from now on. */
+export async function setUserAnswerRole(fd: FormData) {
+  const { user: actor } = await requireRole(["admin"]);
+  const id = uuid.parse(fd.get("userId"));
+  const role = z.enum(ANSWER_ROLES).parse(fd.get("answerRole"));
+  const db = await getDb();
+  await setAnswerRole(db, id, role, actor.id);
+  await audit(db, actor.id, "user_answer_role_changed", "user", id, { answerRole: role });
   revalidatePath("/admin/users");
 }
 
