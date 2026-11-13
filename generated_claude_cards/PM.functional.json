@@ -1,0 +1,2666 @@
+{
+  "module": "PM",
+  "title": "Plant Maintenance",
+  "audience": "functional",
+  "total_cards": 172,
+  "breakdown": {
+    "easy": 73,
+    "medium": 73,
+    "hard": 26
+  },
+  "items": [
+    {
+      "scope": "module",
+      "key": "PM",
+      "title": "Plant Maintenance",
+      "context": "Plant Maintenance",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "module-purpose-and-scope",
+          "title": "What the Plant Maintenance module covers",
+          "body": "Plant Maintenance manages the company's equipment, functional locations and vehicles, and the work done to keep them running.\nIt covers maintenance requests, planned and preventive schedules, maintenance orders, safety permits, meter readings, tyres, incidents and customer service under contract.\nSpares for maintenance are drawn from Material Management stores.",
+          "source_refs": [
+            "modules.yaml"
+          ]
+        },
+        {
+          "level": "easy",
+          "topic_key": "roles-and-ownership",
+          "title": "Who works in Plant Maintenance and what they own",
+          "body": "Maintenance planners own the equipment register, schedules and maintenance orders, and supervisors and technicians report the work.\nOperators and drivers record meter readings, trip sheets and fuel, while fleet staff manage tyres and incidents.\nService coordinators handle customer service calls, service orders, contracts and invoices, and safety officers issue clearance permits.",
+          "source_refs": [
+            "modules.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/p11-eam-service-calls-and-contracts.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "asset-register-foundation",
+          "title": "Why the equipment and location register comes first",
+          "body": "Every maintenance transaction points at a piece of equipment or a functional location, so these must be registered first with codes, hierarchy, custodian and location.\nEquipment carries its spare parts list, measurement parameters, supplemental details and, for vehicles, driver and tyre layout.\nPermit templates, category task lists and shutdown work lists then give planners standard content to reuse.\nChanges to location, owner, driver or custody are made through controlled documents, so the register keeps a complete history.",
+          "source_refs": [
+            "processes/preventive-maintenance.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "document-lifecycle-and-authorisation",
+          "title": "Common document lifecycle in Plant Maintenance",
+          "body": "Most maintenance documents move through Initial, Release and Authorized, with each step stamping the user and time.\nMany have their real effect only on authorisation: equipment moves, tyre status changes, schedule status changes and meter readings are applied then.\nAuthorised documents are locked, and changes go through an amendment or a status change document.\nOnly one pending document per equipment is usually allowed for location changes, replacements and meter resets, so conflicting changes cannot pile up.",
+          "source_refs": [
+            "rule:change-equipment-location-effect-on-authorization",
+            "rule:tyre-movement-tyre-effects-on-authorization",
+            "rule:maintenance-schedule-change-status-effect-only-when-authorized",
+            "rule:change-equipment-location-one-pending-document-per-equipment"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "end-to-end-maintenance-cycle",
+          "title": "How a maintenance need flows from request to closing",
+          "body": "A need arrives as a maintenance request, a work log observation, or a schedule occurrence generated when a time or meter trigger falls due.\nThe planner raises a maintenance order on the asset, consuming the request faults or occurrences so each need is handled once, and loads standard tasks, resources and spares.\nHazardous work needs a clearance permit, spares are issued from stores against the order, and progress is reported shift by shift.\nThe closing records actual times, delays, root causes and readings, and order status rolls back to the request and schedule.\nDowntime, meter readings and costs from this cycle then feed availability analysis and the next round of planning.",
+          "source_refs": [
+            "processes/preventive-maintenance.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/p11-eam-meter-readings-logs-and-utilisation.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "maintenance-master-setup",
+      "title": "Maintenance Master Data Setup",
+      "context": "Plant Maintenance › Maintenance Master Data Setup",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of maintenance master data setup",
+          "body": "This flow registers equipment and functional locations and defines the standard content maintenance reuses: permit templates, category task lists and shutdown work lists.\nMaintenance planners set it up before requests, schedules and orders are raised.\nEvery job then starts from a known asset and an agreed standard.",
+          "source_refs": [
+            "processes/preventive-maintenance.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence",
+          "title": "Setup order for maintenance master data",
+          "body": "Functional locations are defined first as the places in the plant, with their hierarchy and custodian.\nEquipment is then registered, placed at a location and given spare parts, measurement parameters and supplemental details.\nPermit templates define safety conditions for hazardous work, category task lists define standard tasks per maintenance category, and shutdown work lists define the plan for a shutdown.\nEach equipment can be on only one active task list and one shutdown list, which keeps standards unambiguous.",
+          "source_refs": [
+            "processes/preventive-maintenance.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "equipment-asset-register",
+      "title": "Equipment and Asset Register Changes",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of controlled equipment register changes",
+          "body": "This flow changes the equipment register through controlled documents: relocation, change of owner or driver, statutory documents, downtime and replacement.\nMaintenance planners and fleet administrators use it whenever equipment facts change after registration.\nThe register stays current and every change keeps a history.",
+          "source_refs": [
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-controls",
+          "title": "How register changes are controlled",
+          "body": "Location and owner changes take effect only on authorisation and write history.\nAn equipment cannot be on two pending location changes or replacements at once.\nReplacement starts with an approved request, often from a maintenance order, and is completed by a replacement document once the new equipment is installed.\nDown periods record planned shutdowns or breakdowns and take their actual dates from maintenance order closings, while document entries track expiry of certificates and permits.",
+          "source_refs": [
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "maintenance-requests-orders",
+      "title": "Maintenance Requests, Orders and Closing",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of the maintenance request and order flow",
+          "body": "This flow turns a reported need into a planned, permitted, executed and closed maintenance job.\nOperators and supervisors raise requests, planners create orders, safety officers issue permits, and technicians report the work.\nEvery job is traceable from the original fault to its root cause and actual effort.",
+          "source_refs": [
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence",
+          "title": "Steps from request to closed order",
+          "body": "Work logs record shift observations, and a maintenance request records the fault or service needed with priority and target date.\nThe planner raises a maintenance order from the request, a schedule or directly, with tasks, resources, tools and spares, and amends it if the plan changes.\nA clearance permit is issued before hazardous work, and progress is reported per shift.\nThe closing records actual times, delays, root causes and check point results, and locks the order.",
+          "source_refs": [
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "status-propagation",
+          "title": "How status flows between requests, orders and closings",
+          "body": "Each request fault can be taken into only one order; saving the order marks the fault as taken and recalculates the request status.\nRequest status can also be changed fault by fault through a status change document, and the request follows its faults.\nReporting progress moves tasks and the order to in progress, and 100 percent marks a task completed.\nClosing requires root causes, permits and any required meter reading, and the task statuses roll up to the order.\nBecause status always flows from the work actually done, planners can rely on open requests and orders being genuinely open and still awaiting work.",
+          "source_refs": [
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "preventive-scheduling",
+      "title": "Preventive Maintenance Scheduling",
+      "context": "Plant Maintenance › Preventive Maintenance Scheduling",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of preventive maintenance scheduling",
+          "body": "Preventive scheduling defines when assets should be serviced or inspected, by calendar or by meter reading, and keeps the resulting due dates under control.\nMaintenance planners set up schedules, correct individual occurrences and change schedule status.\nPlanned maintenance happens on time without relying on memory.",
+          "source_refs": [
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence-and-controls",
+          "title": "Schedule, occurrences and status changes",
+          "body": "A schedule names the asset, category, work content and one or more time or meter triggers.\nOnce authorised, it generates dated occurrences as triggers fall due, and maintenance orders are raised against them.\nIndividual occurrences can be added, re-dated or removed manually, and are marked as manual.\nA status change document puts the schedule or its occurrences on hold, cancels or short-closes them, and closing a schedule stops future generation.",
+          "source_refs": [
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "customer-service-calls",
+      "title": "Customer Service Calls",
+      "context": "Plant Maintenance › Customer Service Calls",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of the customer service call flow",
+          "body": "This flow records each customer request for service, assigns it to a resource, tracks effort and status, and closes it with a solution.\nService desk staff, dispatchers and technicians each own a step, while supervisors watch the live board.\nEvery customer request is answered, owned and traceable until fixed.",
+          "source_refs": [
+            "processes/p11-eam-service-calls-and-contracts.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence",
+          "title": "Steps from customer call to closure",
+          "body": "A service call logs the customer, location, equipment or item, problem and contract coverage.\nCalls raised for unregistered items can generate equipment records in bulk, and dispatchers assign resources to many calls at once.\nTechnicians report time spent on each call, and the monitoring board shows workload by priority.\nA status change document moves the call through progress, hold, cancellation or fixed, capturing solution and feedback on closing.",
+          "source_refs": [
+            "processes/p11-eam-service-calls-and-contracts.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "service-contracts-orders-billing",
+      "title": "Service Contracts, Orders and Billing",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of service contracts, orders and billing",
+          "body": "This flow covers service commitments to customers: contract templates and contracts, service orders for the work, reporting of what was done, and invoicing.\nService managers set up templates, administrators record contracts, coordinators raise and report orders, and billing staff invoice.\nCustomers are served and billed according to agreed terms.",
+          "source_refs": [
+            "processes/p11-eam-service-calls-and-contracts.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence",
+          "title": "From contract to service order to invoice",
+          "body": "A contract setup holds standard terms, and a service contract applies them to a customer's equipment for a period, with pricing, warranty, billing plan and preventive visit triggers.\nContract periods can be extended or shortened, and individual visits corrected.\nA maintenance service order is raised from a service call, a contract visit, earlier work or directly, and is amended if scope changes.\nResource time and service reporting record the work, and the customer service invoice bills it.",
+          "source_refs": [
+            "processes/p11-eam-service-calls-and-contracts.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "balance-and-billing-controls",
+          "title": "How contract balances and reported work control billing",
+          "body": "Service orders raised from a contract visit take the contract's lines, pricing and balances, and cannot exceed the remaining contract quantity or amount.\nAmendments cannot reduce quantities below what has been reported or amounts below what has been invoiced, and parts cannot fall below what stores issued.\nService reporting allocates parts from actual issues and sets the order's outcome status.\nInvoices against an order cannot exceed what remains to be billed, while contract billing follows the contract's billing plan, and advances are adjusted against the receivable.\nEvery billed amount can therefore be traced to an agreed contract, an order and reported work.",
+          "source_refs": [
+            "processes/p11-eam-service-calls-and-contracts.yaml",
+            "processes/p11-eam-maintenance-requests-orders-and-schedules.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "meter-readings-utilisation",
+      "title": "Meter Readings, Utilisation and Production",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of meter readings and utilisation records",
+          "body": "This flow records how equipment and vehicles are used: meter readings, running hours, trips, fuel and material consumed, and shift production.\nOperators, drivers and supervisors enter these records daily or per shift.\nUsage figures drive meter-based maintenance and cost analysis.",
+          "source_refs": [
+            "processes/p11-eam-meter-readings-logs-and-utilisation.yaml",
+            "processes/p11-eam-other-screens.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-controls",
+          "title": "How readings stay continuous and trustworthy",
+          "body": "Readings are dated, cannot go backwards for running meters, and cannot exceed a daily limit where one is set.\nOnly one pending reading per object and parameter is allowed, and a later reading blocks an earlier one.\nTrip sheets post odometer and hour readings on authorisation, and meter resets record readings before and after so totals stay continuous.\nFuel and consumption entries match material issued from stores with what was actually used per vehicle or component.",
+          "source_refs": [
+            "processes/p11-eam-meter-readings-logs-and-utilisation.yaml",
+            "processes/p11-eam-other-screens.yaml",
+            "processes/p11-eam-equipment-and-asset-register.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "tyre-management",
+      "title": "Tyre Management",
+      "context": "Plant Maintenance › Tyre Management",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of tyre management",
+          "body": "Tyre management follows each tyre through its life: registration, fitment, inspection, removal, repair, retreading and scrapping, with its cost.\nFleet maintenance staff and workshop teams own these steps.\nTyre life, wear and cost are measured per tyre and per life stage.",
+          "source_refs": [
+            "processes/p11-eam-equipment-and-asset-register.yaml",
+            "processes/p11-eam-other-screens.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence",
+          "title": "Tyre setup and life cycle steps",
+          "body": "Axle and wheel layouts define vehicle positions, and tyre and repair categories define standards and repair types.\nEach tyre is registered individually, then fitted, removed or swapped through tyre movements.\nInspections record tread depth, and removed tyres are moved to awaiting repair, retread or scrap through a status change.\nRepair requests send tyres out, repair entries record the result, and expense entries add other costs.",
+          "source_refs": [
+            "processes/p11-eam-equipment-and-asset-register.yaml",
+            "processes/p11-eam-other-screens.yaml"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "status-and-life-stage-control",
+          "title": "How tyre status and life stage are controlled",
+          "body": "A tyre's status, vehicle and position change only when a movement, status change, repair request or repair entry is authorised, and each change is written to the tyre history.\nEach document allows only valid moves; for example, only an available tyre can be installed, and only a removed tyre can be sent for retread.\nA completed retread moves the tyre to its next life stage with a new tread depth, while scrapping closes its final stage.\nExternal repairs need proof of return through a service receipt or gate pass before results are accepted.\nBecause readings are captured at each movement, distance, hours and cost can be compared across tyre makes and categories.",
+          "source_refs": [
+            "processes/p11-eam-equipment-and-asset-register.yaml",
+            "processes/p11-eam-other-screens.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "incidents-insurance",
+      "title": "Incidents and Insurance Claims",
+      "context": "Plant Maintenance › Incidents and Insurance Claims",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "flow-purpose",
+          "title": "Purpose of incident and insurance handling",
+          "body": "This flow records accidents, breakdowns and damage involving equipment or vehicles, reviews them across functions, and raises insurance claims where needed.\nFleet and safety staff enter incidents, each function reviews in turn, and insurance staff file claims.\nEach incident is assessed fully and claimed at most once.",
+          "source_refs": [
+            "processes/p11-eam-other-screens.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "flow-sequence-and-controls",
+          "title": "Incident entry, sequential reviews and claims",
+          "body": "An incident records people involved, damaged parts and the reviews required, and must be authorised before review.\nReviews follow a fixed sequence, each function recording its own assessment, and only the technical review can flag an insurance claim.\nReview results, such as damage and deduction amounts, are written back to the incident.\nAn insurance claim ties the incident to a policy document and splits the amount between insurer and company.",
+          "source_refs": [
+            "processes/p11-eam-other-screens.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEquipmentMaster",
+      "title": "Equipment Master",
+      "context": "Plant Maintenance › Maintenance Master Data Setup › Equipment Master",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What the Equipment Master register holds",
+          "body": "The Equipment Master maintains every piece of equipment the business owns, hires or services for customers: machines, vehicles, tools and installed components.\nMaintenance planners and asset administrators create it when equipment is bought, received, hired in or taken over, and update it as location, custody or parts change.\nIt gives one coded equipment register on which maintenance, service calls, meter readings and documents are based.",
+          "source_refs": [
+            "forms/fEquipmentMaster.yaml"
+          ]
+        },
+        {
+          "level": "easy",
+          "topic_key": "ownership-and-source",
+          "title": "Ownership, source documents and serial-based equipment",
+          "body": "Equipment can be company-owned or party-owned, and the ownership decides which vendors or customers are offered.\nIt can be registered directly or from a source document such as a receipt, in which case the reference and the basis are mandatory.\nWhen equipment is based on serial number, the serial number is required and can be copied from the received lot.",
+          "source_refs": [
+            "forms/fEquipmentMaster.yaml",
+            "rule:equipment-master-ownership-effects",
+            "rule:equipment-master-source-document-and-lots",
+            "rule:equipment-master-serial-no-by-basis",
+            "rule:equipment-master-party-invoice-and-contract"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "hierarchy-and-defaults",
+          "title": "Codes, hierarchy and inherited defaults",
+          "body": "A new equipment receives an automatic code and is saved as authorised.\nChoosing the parent equipment copies its category, type, cost center, work center, division and department.\nChoosing the equipment type loads that type's default supplemental fields and measurement parameters, which cannot be removed.\nDivision is mandatory when maintenance runs by division, and a chosen location needs an effective date and fixes the division.\nWhen the company setting is on, a matching component item is created automatically for equipment without an item.",
+          "source_refs": [
+            "forms/fEquipmentMaster.yaml",
+            "rule:equipment-master-automatic-code",
+            "rule:equipment-master-authorized-on-save",
+            "rule:equipment-master-part-of-defaults",
+            "rule:equipment-master-type-and-group-defaults",
+            "rule:equipment-master-division-by-setting",
+            "rule:equipment-master-location-rules",
+            "rule:equipment-master-automatic-item"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "custody-vehicles-and-details",
+          "title": "Custodian, vehicle, warranty and certificate details",
+          "body": "When a custodian is recorded, a contact number and custody date are required, and the custody date cannot precede installation.\nVehicles need a fuel type, can carry a driver with an effective date, and can have a tyre layout.\nWhere required, the vehicle registration must follow the standard national number pattern.\nWarranty lines need a number, date and expiry, certificate lines need a date, and expiry dates can never precede start dates.\nEvery supplemental field that is listed must have a value.",
+          "source_refs": [
+            "forms/fEquipmentMaster.yaml",
+            "rule:equipment-master-custodian-rules",
+            "rule:equipment-master-custodian-entry",
+            "rule:equipment-master-automobile-data",
+            "rule:equipment-master-driver-rules",
+            "rule:equipment-master-supplemental-values",
+            "rule:equipment-master-detail-row-validation"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "history-measurements-and-spares",
+          "title": "Histories, meter parameters and spare parts on the equipment",
+          "body": "Every save writes custodian and location history, and driver history when a driver is chosen, so the equipment's past can always be reconstructed.\nBill of materials lines record spare parts with quantity and life span by time, meter or both; an item appearing more than once is flagged for consumption entry, and these lines also keep a history.\nMeasurement parameters such as hours carry a date and value, only one hours parameter is allowed, and each also creates a meter reading.\nLines already used by readings are locked, and once equipment is used in a service call or order its item cannot be changed.\nThese rules keep the register stable enough to support maintenance planning, consumption tracking and service history over the equipment's life.",
+          "source_refs": [
+            "forms/fEquipmentMaster.yaml",
+            "rule:equipment-master-histories",
+            "rule:equipment-master-bom-rules",
+            "rule:equipment-master-measurement-rows",
+            "rule:equipment-master-hours-stored-as-minutes",
+            "rule:equipment-master-item-rules"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fFunctionalLocation",
+      "title": "Functional Location",
+      "context": "Plant Maintenance › Maintenance Master Data Setup › Functional Location",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Functional Location represents",
+          "body": "A Functional Location is a place in the plant where equipment sits and work is done, such as a building, line, station or bay.\nMaintenance planners create it when a plant is set up or extended, or when a place's custody, address or attributes change.\nMaintenance teams get one coded list of places to attach equipment and work to.",
+          "source_refs": [
+            "forms/fFunctionalLocation.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "hierarchy-custody-and-attributes",
+          "title": "Hierarchy, custody and maintenance attributes of a location",
+          "body": "A new location receives an automatic code and is saved as authorised.\nChoosing a parent location copies its type, cost center, work center, division and department, and only authorised active locations can be parents.\nA custodian requires a contact number and custody date, and every save writes custodian history.\nGroup templates fill supplementary, measurement, safety and skill details; measurement lines need a value, and lines used by meter readings are locked.",
+          "source_refs": [
+            "forms/fFunctionalLocation.yaml",
+            "rule:functional-location-automatic-code",
+            "rule:functional-location-always-authorized",
+            "rule:functional-location-parent-defaults-and-list",
+            "rule:functional-location-custodian-details",
+            "rule:functional-location-custodian-history",
+            "rule:functional-location-group-templates",
+            "rule:functional-location-measurement-rows"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fPermitMaster",
+      "title": "Permit Master",
+      "context": "Plant Maintenance › Maintenance Master Data Setup › Permit Master",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Permit Master template defines",
+          "body": "The Permit Master maintains reusable work permit templates: the safety conditions, tasks and equipment for a type of hazardous maintenance work.\nMaintenance planners set it up when new permit-controlled work is introduced or an existing permit changes.\nIsolation, instructions and check lists are applied consistently to every job.",
+          "source_refs": [
+            "forms/fPermitMaster.yaml",
+            "processes/preventive-maintenance.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "template-rules",
+          "title": "Equipment coverage, safety groups and copying permits",
+          "body": "Each covered line names an object type and an equipment or location of that type; lines without an object are not kept.\nChoosing a safety group replaces the safety instructions with all instructions of that group.\nA new permit can be started from an existing one, which is copied without its identity, so saving creates a new template.\nClearance permits later take their instructions and check lists from this template.",
+          "source_refs": [
+            "forms/fPermitMaster.yaml",
+            "rule:permit-master-equipment-row-completeness",
+            "rule:permit-master-safety-group-load",
+            "rule:permit-master-reference-copy",
+            "rule:clearance-permit-safety-instruction-source"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceCategoryTask",
+      "title": "Maintenance Category Task",
+      "context": "Plant Maintenance › Maintenance Master Data Setup › Maintenance Category Task",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Maintenance Category Task list defines",
+          "body": "A Maintenance Category Task list ties one maintenance category to a set of equipment and a list of standard tasks, each with estimated time and priority.\nMaintenance planners set it up when they define or revise the standard work for a type of maintenance.\nEquipment then carries one agreed task list per category.",
+          "source_refs": [
+            "forms/fMaintenanceCategoryTask.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "task-list-rules",
+          "title": "Task completeness, time entry and one active list per equipment",
+          "body": "Every task needs estimated hours and a priority; lines without a task name are ignored.\nEstimated hours are entered as hours and minutes, and the minutes cannot exceed 59.\nAn equipment included here cannot be on any other active task list, which prevents conflicting standards.\nMaintenance orders later load these standard tasks for the equipment and category, so planners start from an agreed list instead of building every job from scratch.",
+          "source_refs": [
+            "forms/fMaintenanceCategoryTask.yaml",
+            "rule:maintenance-category-task-task-row-completeness",
+            "rule:maintenance-category-task-minutes-below-60",
+            "rule:maintenance-category-task-duration-storage",
+            "rule:maintenance-category-task-one-active-list-per-equipment",
+            "rule:maintenance-order-task-and-need-seeding"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fShutdownWorkList",
+      "title": "Shutdown Work List",
+      "context": "Plant Maintenance › Maintenance Master Data Setup › Shutdown Work List",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Shutdown Work List prepares",
+          "body": "A Shutdown Work List is a reusable plan of the work done when a group of equipment is shut down: the equipment affected, the planned tasks, and the resources and items each task needs.\nMaintenance planners prepare it as the standard shutdown plan.\nOne agreed plan per equipment is ready to be pulled into a maintenance order.",
+          "source_refs": [
+            "forms/fShutdownWorkList.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "work-list-rules",
+          "title": "Equipment, tasks, resources and items on the list",
+          "body": "A new list receives an automatic code, and an equipment can be on only one work list of the company.\nAt least one task is required, and each task needs an estimated duration in hours and minutes, with minutes below 60.\nResources need a quantity and a duration, and items need a quantity, with make and grade limited to the item.\nResources and items can be linked to tasks already entered, and new task names are added to the task master.",
+          "source_refs": [
+            "forms/fShutdownWorkList.yaml",
+            "rule:shutdown-work-list-code-generation",
+            "rule:shutdown-work-list-equipment-on-one-list",
+            "rule:shutdown-work-list-task-rules",
+            "rule:shutdown-work-list-minutes-below-60",
+            "rule:shutdown-work-list-resource-rules",
+            "rule:shutdown-work-list-item-rules",
+            "rule:shutdown-work-list-make-and-grade-by-item",
+            "rule:shutdown-work-list-task-choices-for-child-rows",
+            "rule:shutdown-work-list-new-task-name-becomes-master-task"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeEquipmentLocation",
+      "title": "Change Equipment Location",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Change Equipment Location",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why equipment relocation is a controlled document",
+          "body": "Change Equipment Location moves one or more pieces of equipment to a new functional location and records who is responsible and who holds custody.\nMaintenance planners raise it when equipment moves to another site, building, department or custodian.\nAfter approval the equipment shows the right location and custodian, and every move keeps a history.",
+          "source_refs": [
+            "forms/fChangeEquipmentLocation.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "entry-rules",
+          "title": "New location, equipment lines and custodian rules",
+          "body": "A new location is required and must differ from the current one; choosing it copies its address and division.\nAt least one equipment line is required, the same equipment cannot appear twice, and every line needs a relocation reason.\nOnly authorised, active equipment is offered.\nA custodian needs a contact number, and an optional movement period needs a from date that is not after the to date.\nEquipment already on another pending location change or replacement cannot be included.",
+          "source_refs": [
+            "forms/fChangeEquipmentLocation.yaml",
+            "rule:change-equipment-location-new-location",
+            "rule:change-equipment-location-address-defaults",
+            "rule:change-equipment-location-equipment-rows",
+            "rule:change-equipment-location-relocation-reason",
+            "rule:change-equipment-location-equipment-eligibility",
+            "rule:change-equipment-location-custodian-contact",
+            "rule:change-equipment-location-duration-of-movement",
+            "rule:change-equipment-location-one-pending-document-per-equipment"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "authorisation-effects-and-child-equipment",
+          "title": "What authorisation changes and how child equipment moves",
+          "body": "Nothing changes on the equipment until the document is authorised.\nAuthorisation updates each equipment's location, effective time and division, and writes location and custodian history.\nThe effective time is the document date plus the time entered, and it must be later than the equipment's latest location entry.\nWhen child parts are to move as well, authorisation relocates the equipment and all of its descendants, so a descendant cannot also be listed separately.\nCustodian history is written only when the custodian name or contact actually changes, and an authorised document cannot be edited.\nTogether these rules keep the equipment hierarchy and its history consistent after every move.",
+          "source_refs": [
+            "forms/fChangeEquipmentLocation.yaml",
+            "rule:change-equipment-location-effect-on-authorization",
+            "rule:change-equipment-location-effective-time",
+            "rule:change-equipment-location-child-equipment",
+            "rule:change-equipment-location-custodian-contact",
+            "rule:change-equipment-location-document-control"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeEquipmentOwner",
+      "title": "Change Equipment Owner",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Change Equipment Owner",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why ownership of customer equipment is changed formally",
+          "body": "Change Equipment Owner transfers customer-owned equipment that the company services to a new customer and location.\nService administrators use it when a customer sells or transfers equipment, or when a service contract moves to another customer location.\nAfter approval, service calls, contracts and invoices follow the right customer.",
+          "source_refs": [
+            "forms/fChangeEquipmentOwner.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "sources-and-checks",
+          "title": "Equipment and contract sources and the checks applied",
+          "body": "The change can be made for individual equipment or for all equipment of a service contract.\nOnly authorised, customer-owned equipment with a known customer location is offered, and the new customer location must differ from the old one.\nEquipment under an authorised service contract valid today cannot be changed individually, and equipment on another pending change is refused.\nThe document date cannot precede the last owner change, and on authorisation the equipment's customer location changes, together with the contract's when the contract is the source.",
+          "source_refs": [
+            "forms/fChangeEquipmentOwner.yaml",
+            "rule:change-equipment-owner-equipment-source",
+            "rule:change-equipment-owner-service-contract-source",
+            "rule:change-equipment-owner-location-must-change",
+            "rule:change-equipment-owner-no-active-contract",
+            "rule:change-equipment-owner-no-pending-change",
+            "rule:change-equipment-owner-date-order",
+            "rule:change-equipment-owner-effect-on-authorization"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeEquipmentDriver",
+      "title": "Change Equipment Driver",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Change Equipment Driver",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why driver changes are recorded on a vehicle",
+          "body": "Change Equipment Driver records which driver, and optionally which shift, is assigned to a vehicle from a given date.\nFleet supervisors use it when a vehicle is handed to a different driver or shift.\nThe assignment keeps a dated history, so later documents can be traced to the right driver.",
+          "source_refs": [
+            "forms/fChangeEquipmentDriver.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "selection-and-dating-rules",
+          "title": "Which vehicles qualify and how the effective date is checked",
+          "body": "Only active automobile equipment of the logged-in company and active drivers and shifts of the company are offered.\nThe current driver shown is the latest entry for that vehicle.\nThe effective date defaults to now and must be later than every other driver entry of the vehicle, apart from the initial entry created by the equipment master.\nEach save adds a new history entry or corrects the loaded one, and the shift may be left empty.",
+          "source_refs": [
+            "forms/fChangeEquipmentDriver.yaml",
+            "rule:change-equipment-driver-selection-scope",
+            "rule:change-equipment-driver-current-driver-display",
+            "rule:change-equipment-driver-default-date",
+            "rule:change-equipment-driver-effective-date-must-be-latest",
+            "rule:change-equipment-driver-history-entry-per-change",
+            "rule:change-equipment-driver-shift-optional"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEquipmentDocumentEntry",
+      "title": "Equipment Document Entry",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Equipment Document Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why equipment documents are recorded",
+          "body": "Equipment Document Entry records statutory and commercial documents that belong to a piece of equipment or a functional location, such as road tax receipts, pollution certificates or tracking subscriptions.\nFleet and asset administrators record them when a document is issued, renewed or received.\nThe business can see which documents exist, who issued them, when they expire and what they cost.",
+          "source_refs": [
+            "forms/fEquipmentDocumentEntry.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "document-types-and-validity",
+          "title": "Document types, additional details and validity status",
+          "body": "Each entry belongs to exactly one equipment or one location, and only active document types of the company are offered.\nA document type can carry its own additional details, and those marked mandatory need a value.\nIf a type does not allow multiple entries, only one entry of that type may exist per equipment or location.\nThe latest earlier entry is shown for reference, marked expired when its validity date is today or earlier, and the validity date itself is optional.",
+          "source_refs": [
+            "forms/fEquipmentDocumentEntry.yaml",
+            "rule:equipment-document-entry-object-choice",
+            "rule:equipment-document-entry-document-type-effects",
+            "rule:equipment-document-entry-additional-fields",
+            "rule:equipment-document-entry-multiple-entry-control",
+            "rule:equipment-document-entry-previous-entry",
+            "rule:equipment-document-entry-validity-status",
+            "rule:equipment-document-entry-validity-optional"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEquipmentDownPeriod",
+      "title": "Equipment Down Period",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Equipment Down Period",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why equipment downtime is documented",
+          "body": "Equipment Down Period records when and why equipment or functional locations are out of service and for how long.\nMaintenance planners raise it for planned shutdowns or other stoppages.\nDowntime is documented and linked to the maintenance orders that carry out the work.",
+          "source_refs": [
+            "forms/fEquipmentDownPeriod.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "dates-and-down-types",
+          "title": "Down types, estimated and actual dates",
+          "body": "A reference object, down type and reason are required; the object decides whether equipment or locations are listed.\nFor a breakdown the document date cannot precede the start date, while for a shutdown the start date cannot precede the document date and an estimated end date is required.\nActual start and end cannot be earlier than the estimated dates.\nAuthorisation requires an actual end date, and only authorised down periods are offered to maintenance orders.",
+          "source_refs": [
+            "forms/fEquipmentDownPeriod.yaml",
+            "rule:equipment-down-period-reference-object",
+            "rule:equipment-down-period-down-type",
+            "rule:equipment-down-period-reason",
+            "rule:equipment-down-period-start-date-versus-document-date",
+            "rule:equipment-down-period-estimated-end-date",
+            "rule:equipment-down-period-actual-dates",
+            "rule:equipment-down-period-authorization-needs-actual-end",
+            "rule:equipment-down-period-use-by-maintenance-orders"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "actual-dates-from-order-closings",
+          "title": "How actual downtime is derived from maintenance order closings",
+          "body": "A down period is planned with estimated dates, but its actual dates come from the maintenance work done.\nWhen authorised maintenance order closings exist for the orders linked to the down period, the earliest closing start and the latest closing end are offered as the actual dates.\nA reopened document shows its own saved actual dates only if it is already authorised or has no authorised closing yet.\nBecause authorisation needs an actual end date, a down period cannot be closed before the work is.\nThis ties reported downtime to real maintenance effort, giving reliable figures for equipment availability analysis.",
+          "source_refs": [
+            "forms/fEquipmentDownPeriod.yaml",
+            "rule:equipment-down-period-actual-dates-from-closings",
+            "rule:equipment-down-period-authorization-needs-actual-end",
+            "rule:equipment-down-period-use-by-maintenance-orders",
+            "rule:equipment-down-period-document-control"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEquipmentReplacementRequest",
+      "title": "Equipment Replacement Request",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Equipment Replacement Request",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why equipment replacement is requested formally",
+          "body": "An Equipment Replacement Request asks for one or more pieces of equipment to be replaced, with approval.\nMaintenance planners raise it when equipment is worn out, damaged or obsolete, often after a maintenance order shows the need.\nReplacement decisions are documented and approved before any replacement is carried out.",
+          "source_refs": [
+            "forms/fEquipmentReplacementRequest.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "sources-and-overlap-checks",
+          "title": "Request sources, equipment scope and overlap checks",
+          "body": "A request can be direct or raised from an open maintenance order; an order source requires the order, and the request cannot be dated before it.\nFor an order source, the order's equipment and all its sub-equipment are offered; otherwise any authorised active equipment of the company.\nRequested by and reason are mandatory.\nEquipment already on another pending request, on a request still awaiting replacement, or being installed as new equipment elsewhere is refused, and an authorised request is locked.",
+          "source_refs": [
+            "forms/fEquipmentReplacementRequest.yaml",
+            "rule:equipment-replacement-request-maintenance-order-source",
+            "rule:equipment-replacement-request-equipment-scope",
+            "rule:equipment-replacement-request-requester-and-reason",
+            "rule:equipment-replacement-request-no-overlapping-open-request",
+            "rule:equipment-replacement-request-document-control"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEQUReplacement",
+      "title": "Equipment Replacement",
+      "context": "Plant Maintenance › Equipment and Asset Register Changes › Equipment Replacement",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What an Equipment Replacement records",
+          "body": "Equipment Replacement records that one piece of equipment has actually taken the place of another, following an authorised replacement request.\nMaintenance planners prepare it once the new equipment is installed.\nEquipment locations and custody stay correct, and each replacement is traceable to its request.",
+          "source_refs": [
+            "forms/fEQUReplacement.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "request-and-equipment-rules",
+          "title": "Request link, old and new equipment and authorisation effects",
+          "body": "A request is required, chosen from authorised requests containing the old equipment, and the document date cannot precede it.\nThe new equipment is required, must differ from the old one and cannot be on another pending replacement or location change.\nA responsible person is mandatory, while custodian, location and address details are optional.\nOn authorisation location history and custodian history are written for both equipment, and the replacement date must be later than their latest location entries.",
+          "source_refs": [
+            "forms/fEQUReplacement.yaml",
+            "rule:equipment-replacement-request",
+            "rule:equipment-replacement-old-equipment",
+            "rule:equipment-replacement-new-equipment",
+            "rule:equipment-replacement-responsible-person",
+            "rule:equipment-replacement-optional-destination-details",
+            "rule:equipment-replacement-effect-on-authorization"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fWorkLog",
+      "title": "Work Log",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Work Log",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What the maintenance Work Log captures",
+          "body": "The Work Log is the maintenance shift diary: logged events, task plan, resources, items, employees involved, comments and costing.\nMaintenance supervisors fill it for each shift or day of work.\nThere is a traceable diary per equipment and shift, plus a ready list of follow-up tasks with the spares they need.",
+          "source_refs": [
+            "forms/fWorkLog.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "log-types-and-rows",
+          "title": "Equipment log, daily tasks and follow-up plan",
+          "body": "An equipment log needs at least one equipment or location, each with an entry time and description; other log types record daily tasks instead.\nChoosing a maintenance category fills the daily tasks with its standard tasks marked completed.\nPlanned tasks need equipment, execution date and work center, and a child task takes its parent's date.\nResources and items cannot repeat within a task, quantities are required, durations use minutes below 60, and a shift needs a shift in-charge.",
+          "source_refs": [
+            "forms/fWorkLog.yaml",
+            "rule:worklog-log-type-decides-the-log-grid",
+            "rule:worklog-equipment-log-rows",
+            "rule:worklog-daily-task-rows",
+            "rule:worklog-task-rows",
+            "rule:worklog-resource-rows",
+            "rule:worklog-item-rows",
+            "rule:worklog-time-format",
+            "rule:worklog-shift-incharge-with-shift"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceRequest",
+      "title": "Maintenance Request",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Maintenance Request",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why maintenance needs start with a Maintenance Request",
+          "body": "A Maintenance Request asks maintenance to look at one equipment or functional location, listing faults or service descriptions with priority and target date.\nOperators, supervisors or department users raise it when a fault is noticed, a service is wanted or an earlier request must be repeated.\nEvery maintenance need is recorded once with an owner, urgency and target date.",
+          "source_refs": [
+            "forms/fMaintenanceRequest.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "request-rules",
+          "title": "Request types, dates and duplicate fault prevention",
+          "body": "A fault request needs at least one fault and a service request at least one description, and none may repeat.\nThe occurrence date cannot be after the document date, and the target date cannot be before it.\nOnly authorised, active equipment or locations are offered, filtered by division where maintenance runs by division.\nThe same fault cannot be raised again for the same equipment or location while an earlier request for it is still open, and new descriptions are added to the master automatically.",
+          "source_refs": [
+            "forms/fMaintenanceRequest.yaml",
+            "rule:maintenance-request-request-type-drives-rows",
+            "rule:maintenance-request-date-order",
+            "rule:maintenance-request-equipment-and-location-list",
+            "rule:maintenance-request-one-open-request-per-fault",
+            "rule:maintenance-request-new-description-creation"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "sources-approval-and-work-logs",
+          "title": "Request sources, work log links and approval",
+          "body": "A request can be direct or raised from a reference document; a reference requires its number, and the request cannot be dated before it.\nFor equipment, open work logs can be linked so observations recorded by operators lead straight into a request, and the request cannot be dated before a linked log.\nWhere multi-level approval is set up, the authorised status cannot be chosen directly, approval levels are saved and the authorisation step runs on save.\nRelease and authorisation stamp the user and time, and companies can make the shift a warning or a mandatory detail.\nOnly authorised requests can then be taken into maintenance orders, keeping every job traceable to an approved need.",
+          "source_refs": [
+            "forms/fMaintenanceRequest.yaml",
+            "rule:maintenance-request-source-document-rules",
+            "rule:maintenance-request-work-log-link",
+            "rule:maintenance-request-multi-level-authorization",
+            "rule:maintenance-request-fault-status-recalculation",
+            "rule:maintenance-request-status-stamps",
+            "rule:maintenance-request-shift-rule"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeMaintenanceRequestStatus",
+      "title": "Change Maintenance Request Status",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Change Maintenance Request Status",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why maintenance request status is changed fault by fault",
+          "body": "Change Maintenance Request Status moves the faults of an authorised maintenance request to a new status, such as hold, cancel, in progress, short close, authorised again or completed.\nMaintenance supervisors use it when work is paused, started, cancelled or resumed.\nThe reason and the person behind every change are kept.",
+          "source_refs": [
+            "forms/fChangeMaintenanceRequestStatus.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "allowed-transitions-and-request-status",
+          "title": "Allowed next statuses and how the request status follows",
+          "body": "Only authorised, on-hold or in-progress requests of the same division are offered, and the document date cannot precede the request date.\nThe next status depends on the current one; for example, a held fault can only go back to authorised, be cancelled or move to in progress.\nAt least one fault must be given a status, and changes reach the request only when this document is authorised.\nThe request then becomes in progress or authorised if any fault still is; otherwise it takes hold, cancel, short close or completed, in that order.",
+          "source_refs": [
+            "forms/fChangeMaintenanceRequestStatus.yaml",
+            "rule:change-maintenance-request-status-request-choice",
+            "rule:change-maintenance-request-status-valid-next-status",
+            "rule:change-maintenance-request-status-at-least-one-fault-status",
+            "rule:change-maintenance-request-status-request-updated-on-authorization",
+            "rule:change-maintenance-request-status-request-status-from-faults"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceOrder",
+      "title": "Maintenance Order",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Maintenance Order",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Maintenance Order plans",
+          "body": "A Maintenance Order turns a maintenance need into a planned job on one asset, with tasks, resources, materials, permits and dates.\nMaintenance planners raise it when a fault is requested, a scheduled occurrence falls due, an inspection is needed, or a job is started directly.\nEach job has one approved plan tied to its source, and work is reported against that plan.",
+          "source_refs": [
+            "forms/fMaintenanceOrder.yaml"
+          ]
+        },
+        {
+          "level": "easy",
+          "topic_key": "order-types-and-sources",
+          "title": "Order types and the sources each may use",
+          "body": "Orders are preventive, corrective or inspection.\nPreventive orders may use any source, corrective orders are direct or from a maintenance request, and inspection orders are direct or from a maintenance schedule.\nTasks, resources, tools and items can be loaded from the schedule, work logs, the shutdown work list or the category's standard tasks.",
+          "source_refs": [
+            "forms/fMaintenanceOrder.yaml",
+            "rule:maintenance-order-allowed-source-documents",
+            "rule:maintenance-order-task-and-need-seeding"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "plan-dates-and-detail-rules",
+          "title": "Planned dates, tasks, resources and materials",
+          "body": "Estimated start cannot precede the document date, end cannot precede start, and the duration cannot be empty.\nThe order's window must cover the dates of all tasks and resources.\nExcept for inspections at least one task is required, each with priority and assignee, and inspection orders need at least one check point.\nResources need quantity and rate type, with hourly amounts calculated from duration, and tools and items need item, description and quantity; duplicate lines are refused.",
+          "source_refs": [
+            "forms/fMaintenanceOrder.yaml",
+            "rule:maintenance-order-header-dates-and-duration",
+            "rule:maintenance-order-header-window-covers-task-and-resource-dates",
+            "rule:maintenance-order-task-rows",
+            "rule:maintenance-order-inspection-check-points",
+            "rule:maintenance-order-resource-rows",
+            "rule:maintenance-order-resource-amount",
+            "rule:maintenance-order-tools-and-item-rows",
+            "rule:maintenance-order-grid-integrity"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "source-consumption-and-authorisation",
+          "title": "How orders consume requests and schedules and get authorised",
+          "body": "Request faults are offered only when the request is authorised, of the same company, division, type and asset, and still authorised or in progress; schedule occurrences follow the same idea.\nUnless the order is direct, at least one source line must be selected, and the order cannot be dated before a selected schedule date.\nSaving marks referenced faults and occurrences as taken, and recalculates the request status, so each need is consumed by only one order.\nA breakdown fault on a request warns the planner if the order is not flagged as a breakdown.\nUnder multi-level approval the group must be valid and the order cannot be marked authorised directly from entry; release and authorisation stamp the user and time.",
+          "source_refs": [
+            "forms/fMaintenanceOrder.yaml",
+            "rule:maintenance-order-candidate-source-rows",
+            "rule:maintenance-order-source-rows",
+            "rule:maintenance-order-schedule-date",
+            "rule:maintenance-order-request-fault-status-on-save",
+            "rule:maintenance-order-schedule-occurrence-status",
+            "rule:maintenance-order-breakdown-flag-warning",
+            "rule:maintenance-order-multi-level-authorization",
+            "rule:maintenance-order-status-mapping-and-stamps"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceOrderAmendment",
+      "title": "Maintenance Order Amendment",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Maintenance Order Amendment",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why authorised maintenance orders are amended",
+          "body": "Maintenance Order Amendment revises the plan of an authorised maintenance order in place, keeping its number, date and division.\nPlanners use it when tasks, dates, resources or material needs change before the order is closed.\nThe plan stays current while work continues to be reported against it.",
+          "source_refs": [
+            "forms/fMaintenanceOrderAmendment.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "amendment-rules",
+          "title": "Eligible orders, protected lines and saving",
+          "body": "Only authorised or in-progress orders without a closing document can be amended.\nThe same header and line rules as the original order apply, and the order date is used for date checks.\nTask and resource lines that already have usage or reporting cannot be edited or deleted, nor can tasks with sub-tasks or mandatory permits.\nThere is no separate approval: every save is recorded as authorised with the saving user and time.",
+          "source_refs": [
+            "forms/fMaintenanceOrderAmendment.yaml",
+            "rule:maintenance-order-amendment-order-choice",
+            "rule:maintenance-order-amendment-fixed-identity",
+            "rule:maintenance-order-amendment-header-rules",
+            "rule:maintenance-order-amendment-detail-rules",
+            "rule:maintenance-order-amendment-reported-rows-protected",
+            "rule:maintenance-order-amendment-grid-integrity",
+            "rule:maintenance-order-amendment-saved-as-authorized",
+            "rule:maintenance-order-amendment-no-authorization-workflow"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fClearancePermit",
+      "title": "Clearance Permit",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Clearance Permit",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why maintenance work needs a clearance permit",
+          "body": "A Clearance Permit grants and documents permission to work on one piece of equipment or one functional location before maintenance starts.\nMaintenance and safety officers raise it for maintenance orders that require a permit.\nDangerous work is linked to an approved, dated permit with safety instructions and a check list.",
+          "source_refs": [
+            "forms/fClearancePermit.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "permit-scope-and-dates",
+          "title": "Equipment or location, covered orders and permit dates",
+          "body": "The permit is raised either for equipment or for a functional location, and only authorised equipment, locations, permits and safety groups are offered.\nChoosing the equipment and permit fills permit type, lockout or tagout, eligible orders and the check list.\nAt least one maintenance order must be selected, and its date cannot be after the document date.\nStart date cannot precede the document date and end date cannot precede start date, and closed orders cannot be removed from a saved permit.",
+          "source_refs": [
+            "forms/fClearancePermit.yaml",
+            "rule:clearance-permit-equipment-or-location",
+            "rule:clearance-permit-authorized-masters-only",
+            "rule:clearance-permit-permit-defaults",
+            "rule:clearance-permit-maintenance-orders",
+            "rule:clearance-permit-permit-dates",
+            "rule:clearance-permit-closed-orders-cannot-be-removed"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "safety-instructions-and-tagout",
+          "title": "Where safety instructions come from and how tagout is controlled",
+          "body": "Safety instructions come from the permit master when it lists any; otherwise they come from the equipment's or location's safety details, and a chosen safety group takes over.\nInstructions are replaced on a change of permit or equipment only while none have been entered yet, so work already done is not lost.\nWhen the lockout type is tagout, the number of tags is mandatory and exactly that many tag lines must be entered, each with tag text.\nIn division-wise installations equipment, locations and orders are limited to the document's division.\nRelease and authorisation stamp the user and date, giving a complete safety record for each job.",
+          "source_refs": [
+            "forms/fClearancePermit.yaml",
+            "rule:clearance-permit-safety-instruction-source",
+            "rule:clearance-permit-tag-count-for-tagout",
+            "rule:clearance-permit-tag-rows",
+            "rule:clearance-permit-division-filter",
+            "rule:clearance-permit-status-stamps"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceReporting",
+      "title": "Maintenance Reporting",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Maintenance Reporting",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why maintenance work is reported shift by shift",
+          "body": "Maintenance Reporting records the actual work done, shift by shift, against open maintenance orders or maintenance requests, covering tasks, resources and faults.\nTechnicians or supervisors enter it at the end of each shift or whenever work is reported.\nActual time, progress and resource use are captured as the work happens.",
+          "source_refs": [
+            "forms/fMaintenanceReporting.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "eligible-work-and-entry-rules",
+          "title": "Eligible orders and requests and the entry rules",
+          "body": "Open or in-progress orders without a closing, and requests not on hold, cancelled or short-closed, are offered; an order task is offered only while its progress is below 100 percent.\nThe entry date cannot precede the order or request date, and one report per day and shift collects all entries.\nEach task needs a status and, unless held or cancelled, start, end, duration and a progress that only increases and never exceeds 100 percent.\nResources need name, quantity, times and usage, and times cannot overlap earlier reports.",
+          "source_refs": [
+            "forms/fMaintenanceReporting.yaml",
+            "rule:maintenance-reporting-eligible-documents",
+            "rule:maintenance-reporting-tasks-not-yet-100",
+            "rule:maintenance-reporting-entry-date",
+            "rule:maintenance-reporting-one-report-per-day-and-shift",
+            "rule:maintenance-reporting-task-row-rules",
+            "rule:maintenance-reporting-resource-rules",
+            "rule:maintenance-reporting-no-overlap"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "status-and-delay-effects",
+          "title": "How reported progress drives task, order and request status",
+          "body": "Reporting 100 percent progress sets the task to completed and locks it.\nAfter each entry the task and order status are recalculated: completed at full progress, in progress once any reporting exists, and open otherwise.\nDelay is total duration plus earlier execution time beyond the estimate, and a delay reason can be recorded only while the task is still open.\nFaults reported against a request need a description and a root cause, and saving them marks the request fault as taken up.\nAn order with a closing can no longer be reported on, so the closing document remains the final word on actual work.",
+          "source_refs": [
+            "forms/fMaintenanceReporting.yaml",
+            "rule:maintenance-reporting-completion",
+            "rule:maintenance-reporting-order-status-follows-progress",
+            "rule:maintenance-reporting-delay",
+            "rule:maintenance-reporting-fault-rules",
+            "rule:maintenance-reporting-new-rca",
+            "rule:maintenance-reporting-request-fault-status",
+            "rule:maintenance-reporting-closed-order"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceOrderClosing",
+      "title": "Maintenance Order Closing",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › Maintenance Order Closing",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Maintenance Order Closing records",
+          "body": "Maintenance Order Closing records the final outcome of one maintenance order: closing status, actual start and end, duration, delay and reason, and the actual task, resource, fault and check point results.\nPlanners prepare it when work is completed, cancelled, short-closed, held or still in progress.\nThe order and its tasks take their final status, and actual times, delays and root causes are on record.",
+          "source_refs": [
+            "forms/fMaintenanceOrderClosing.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "times-progress-and-delays",
+          "title": "Actual times, progress and delay on closing",
+          "body": "Only authorised orders not already closed are offered, one closing per order, and no time may be before the order date.\nThe closing window must cover the earliest and latest task and resource times, and duration is calculated from start and end.\nDelay is the duration beyond the estimate, and any delay needs a reason.\nA completed status needs progress of 100 percent, progress can never fall below what was already reported, and hold, cancel or short close need a reason.",
+          "source_refs": [
+            "forms/fMaintenanceOrderClosing.yaml",
+            "rule:maintenance-order-closing-eligible-orders",
+            "rule:maintenance-order-closing-dates-against-order-date",
+            "rule:maintenance-order-closing-header-window-covers-details",
+            "rule:maintenance-order-closing-duration-and-delay",
+            "rule:maintenance-order-closing-progress-and-status-agree",
+            "rule:maintenance-order-closing-progress-never-falls",
+            "rule:maintenance-order-closing-reason",
+            "rule:maintenance-order-closing-task-rows"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "completion-safeguards",
+          "title": "Safeguards before an order can be closed as complete",
+          "body": "Every selected fault needs a root cause, and a new root cause typed in is added to the master list.\nTo complete, each required permit must have a clearance permit, and authorisation is refused when the order needs a meter reading that has not been recorded.\nWhere configured, shutdown details, root causes and resource names are checked as warnings or hard stops; most of these checks are skipped for a cancelled order.\nA warning appears when less material was issued than required, or when issues or service bills exist on a cancelled order.\nTask statuses then roll up to the order status, an in-progress closing cannot be authorised, and an authorised closing is locked.",
+          "source_refs": [
+            "forms/fMaintenanceOrderClosing.yaml",
+            "rule:maintenance-order-closing-root-cause",
+            "rule:maintenance-order-closing-permit-needed-to-complete",
+            "rule:maintenance-order-closing-meter-reading-before-authorization",
+            "rule:maintenance-order-closing-custom-validations",
+            "rule:maintenance-order-closing-checks-skipped-for-cancel",
+            "rule:maintenance-order-closing-items-and-services",
+            "rule:maintenance-order-closing-task-and-order-status",
+            "rule:maintenance-order-closing-in-progress-not-authorized",
+            "rule:maintenance-order-closing-authorized-is-read-only"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceReportingExtension",
+      "title": "WBS Task Reporting",
+      "context": "Plant Maintenance › Maintenance Requests, Orders and Closing › WBS Task Reporting",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What WBS Task Reporting is intended for",
+          "body": "WBS Task Reporting is intended to report progress and resource usage against the tasks of a project work breakdown structure, in the same layout as maintenance reporting.\nIt is meant for project or maintenance work planned as a work breakdown structure.\nIn its present state it does not store any data, so it delivers no business outcome yet.",
+          "source_refs": [
+            "forms/fMaintenanceReportingExtension.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "current-behaviour",
+          "title": "Current behaviour and limits of WBS Task Reporting",
+          "body": "The project list offers the company's authorised projects, and a default project is preselected.\nThe structure list offers approved revisions that are not the parent of another revision, plus the latest revision of any structure that has tasks, and it is not filtered by project.\nNo detail is mandatory and no checks run.\nSaving, deleting and loading do nothing, so users should continue to report this work through maintenance reporting until the form is completed.",
+          "source_refs": [
+            "forms/fMaintenanceReportingExtension.yaml",
+            "rule:wbs-task-reporting-project-list",
+            "rule:wbs-task-reporting-default-project",
+            "rule:wbs-task-reporting-wbs-list",
+            "rule:wbs-task-reporting-no-validation",
+            "rule:wbs-task-reporting-nothing-is-stored"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceSchedule",
+      "title": "Maintenance Schedule",
+      "context": "Plant Maintenance › Preventive Maintenance Scheduling › Maintenance Schedule",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Maintenance Schedule plans",
+          "body": "A Maintenance Schedule defines recurring or one-off preventive or inspection maintenance for one equipment or functional location, with category, work content and triggers.\nMaintenance planners set it up when an asset should be serviced or inspected on a calendar rhythm or on a meter reading such as running hours.\nDue maintenance becomes predictable, and orders are raised from dated occurrences.",
+          "source_refs": [
+            "forms/fMaintenanceSchedule.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "work-content-rules",
+          "title": "Work content: tasks, resources, tools, items and check points",
+          "body": "Only preventive maintenance and inspection can be scheduled.\nPreventive schedules need at least one task per trigger, each with priority, assignee and estimated duration; inspection schedules need check points instead of tasks and tools.\nResources and tools need quantity and duration, items need quantity, and the same resource, tool, skill or item cannot repeat for one trigger.\nChanging the asset or category reloads its standard tasks and meter parameters, and new task names are added to the task master.",
+          "source_refs": [
+            "forms/fMaintenanceSchedule.yaml",
+            "rule:maintenance-schedule-maintenance-type-and-inspection-mode",
+            "rule:maintenance-schedule-coverage-per-trigger",
+            "rule:maintenance-schedule-task-row-rules",
+            "rule:maintenance-schedule-resource-rows",
+            "rule:maintenance-schedule-tool-rows",
+            "rule:maintenance-schedule-item-rows",
+            "rule:maintenance-schedule-skill-rows",
+            "rule:maintenance-schedule-asset-or-category-change-reloads",
+            "rule:maintenance-schedule-task-source"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "trigger-setup",
+          "title": "Time-based and meter-based trigger setup",
+          "body": "A time-based trigger is fixed, on one date, or recurring every so many days, weeks or months, with an end date or a number of occurrences.\nIts start date, less any threshold days, cannot precede the document date, and the end date cannot precede the start date.\nA meter-based trigger needs a measurement parameter; recurring meter triggers need an interval, and fixed ones need a condition and reading value.\nThreshold values cannot exceed the start or interval values, and a readable trigger description is generated automatically.",
+          "source_refs": [
+            "forms/fMaintenanceSchedule.yaml",
+            "rule:maintenance-schedule-time-based-trigger-setup",
+            "rule:maintenance-schedule-time-based-date-rules",
+            "rule:maintenance-schedule-meter-reading-trigger-setup",
+            "rule:maintenance-schedule-meter-threshold-limits",
+            "rule:maintenance-schedule-trigger-description"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "occurrence-generation",
+          "title": "How authorised schedules generate occurrences and orders",
+          "body": "Only an authorised schedule generates occurrences; after every save the system evaluates each trigger and adds the due occurrences automatically.\nA time trigger fires when its expected date, less threshold days, is reached, and a meter trigger fires when the current reading reaches the expected value.\nThe order rule decides whether all triggers must fire or any one is enough, and recurring series stop at their end date, count or end value.\nWith fixed intervals several due points are counted from the planned start; with actual intervals only the next is counted from the previous order, and it waits until that order exists.\nThe planner can preview time-based occurrences, and when saved as authorised the same schedule can be copied to other assets of the same category and type.",
+          "source_refs": [
+            "forms/fMaintenanceSchedule.yaml",
+            "rule:maintenance-schedule-authorization-generates-occurrences",
+            "rule:maintenance-schedule-generate-mo-rule-and-firing",
+            "rule:maintenance-schedule-fixed-and-actual-interval",
+            "rule:maintenance-schedule-calculate-occurrences",
+            "rule:maintenance-schedule-occurrence-rows",
+            "rule:maintenance-schedule-create-same-schedule-for",
+            "rule:maintenance-schedule-parameters-must-exist-on-copies"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceScheduleOccurrence",
+      "title": "Maintenance Schedule Occurrence",
+      "context": "Plant Maintenance › Preventive Maintenance Scheduling › Maintenance Schedule Occurrence",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "When a schedule occurrence is maintained manually",
+          "body": "Maintenance Schedule Occurrence lets a planner add, correct or remove a single dated occurrence of a trigger on an authorised maintenance schedule.\nIt is used when the automatically generated series needs a manual addition, a date correction or a removal.\nThe occurrence list that drives maintenance orders stays correct without re-saving the schedule.",
+          "source_refs": [
+            "forms/fMaintenanceScheduleOccurrence.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "occurrence-rules",
+          "title": "Schedule choice, numbering, dates and manual flag",
+          "body": "Only authorised or in-progress schedules are offered, and the occurrence belongs to one of that schedule's own triggers.\nThe occurrence number is automatic: the trigger's highest number plus one.\nThe date cannot be before the schedule date or before the trigger's previous occurrence.\nA warning appears when the expected date or reading differs from the current one, and every save marks the occurrence as manually maintained.",
+          "source_refs": [
+            "forms/fMaintenanceScheduleOccurrence.yaml",
+            "rule:maintenance-schedule-occurrence-schedule-selection",
+            "rule:maintenance-schedule-occurrence-occurrence-is-per-schedule-and-trigger",
+            "rule:maintenance-schedule-occurrence-occurrence-no",
+            "rule:maintenance-schedule-occurrence-date-limits",
+            "rule:maintenance-schedule-occurrence-expected-versus-current-warning",
+            "rule:maintenance-schedule-occurrence-save-always-marks-manual"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceScheduleChangeStatus",
+      "title": "Maintenance Schedule Change Status",
+      "context": "Plant Maintenance › Preventive Maintenance Scheduling › Maintenance Schedule Change Status",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why a maintenance schedule's status is changed formally",
+          "body": "Maintenance Schedule Change Status puts a schedule and its pending occurrences on hold, cancels or short-closes them, or releases them back into progress.\nPlanners use it when equipment is retired, maintenance is postponed, a contract ends or a plan is replaced.\nStatus changes are traceable and applied consistently to the schedule and its occurrences.",
+          "source_refs": [
+            "forms/fMaintenanceScheduleChangeStatus.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "allowed-changes-and-occurrence-rules",
+          "title": "Allowed status changes and occurrence lines",
+          "body": "Only authorised, held or in-progress schedules without a final change document can be chosen, and the document cannot be dated before the schedule.\nThe target status depends on the current one; for example, a held schedule can go back to authorised, be cancelled or move to in progress.\nCompleted occurrences are locked, while every other occurrence needs a status and a reason.\nSetting an occurrence to completed only sticks if an order exists for it; otherwise it returns to authorised.",
+          "source_refs": [
+            "forms/fMaintenanceScheduleChangeStatus.yaml",
+            "rule:maintenance-schedule-change-status-eligible-schedules",
+            "rule:maintenance-schedule-change-status-date-rule",
+            "rule:maintenance-schedule-change-status-allowed-status-changes",
+            "rule:maintenance-schedule-change-status-occurrence-row-rules",
+            "rule:maintenance-schedule-change-status-occurrence-status-rule"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "closing-and-reevaluation",
+          "title": "Closing a schedule and re-evaluating its status",
+          "body": "Changes take effect only when the document is authorised; initial and released documents record the intent without changing anything.\nWhen the schedule itself is to be closed, every open occurrence must have a status, and the user must accept that automatic generation of future occurrences will stop.\nWhen it is not being closed, the schedule status is re-evaluated: it becomes in progress if any order exists and authorised otherwise, and a single-trigger schedule whose series has ended follows its occurrences.\nThe header status can be copied to lines that already have a status.\nEverything is saved together, so the schedule and its occurrences never disagree.",
+          "source_refs": [
+            "forms/fMaintenanceScheduleChangeStatus.yaml",
+            "rule:maintenance-schedule-change-status-effect-only-when-authorized",
+            "rule:maintenance-schedule-change-status-closing-the-schedule",
+            "rule:maintenance-schedule-change-status-schedule-status-re-evaluation",
+            "rule:maintenance-schedule-change-status-header-status-copied-to-rows",
+            "rule:maintenance-schedule-change-status-save-is-one-transaction"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceCall",
+      "title": "Service Call",
+      "context": "Plant Maintenance › Customer Service Calls › Service Call",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Service Call records",
+          "body": "A Service Call logs a customer's request for service with customer, location, contact, equipment or item, problem, priority, assignee, status and contract coverage.\nService desk staff record it whenever a customer reports a fault or asks for service.\nEvery request has a traceable number, status history and owner until it is fixed.",
+          "source_refs": [
+            "forms/fServiceCall.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "customer-equipment-and-coverage",
+          "title": "Customer, equipment and contract coverage on a call",
+          "body": "Each call receives an automatic number, and the entry date defaults to now.\nEquipment offered is authorised, customer-owned and at the customer location; choosing it fills the item and serial number.\nValid service contracts and invoices still under contract coverage are listed, and when any are listed one must be selected; its end date cannot precede the call.\nEarlier calls and service orders for the same equipment or item are shown as service history.",
+          "source_refs": [
+            "forms/fServiceCall.yaml",
+            "rule:service-call-automatic-call-id",
+            "rule:service-call-entry-date",
+            "rule:service-call-equipment-and-item-lists",
+            "rule:service-call-item-serial-and-equipment-link",
+            "rule:service-call-contract-list-content",
+            "rule:service-call-contract-selection",
+            "rule:service-call-service-history"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "status-assignment-and-knowledge",
+          "title": "Status, assignment history and the service knowledge base",
+          "body": "A new call starts as open and can move to in progress, fixed or cancelled; a fixed call locks its details and contract coverage, and a held call can only be changed through a status change document.\nStatus history is written on creation and whenever the status changes, with the remarks.\nThe assignee is optional, but each change of assignee adds an assignment history entry.\nFeedback values must match their parameter's data type, and notification users cannot repeat.\nWhen the problem and solution are worth keeping, the call can add a knowledge entry, authorised at once and shared across companies, so future calls can reuse the fix.",
+          "source_refs": [
+            "forms/fServiceCall.yaml",
+            "rule:service-call-status-choice",
+            "rule:service-call-status-history",
+            "rule:service-call-assignee-and-assignment-history",
+            "rule:service-call-feedback-values",
+            "rule:service-call-notification-users",
+            "rule:service-call-add-to-knowledge"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fAutogenerateServiceCallEquipment",
+      "title": "Autogenerate Service Call Equipment",
+      "context": "Plant Maintenance › Customer Service Calls › Autogenerate Service Call Equipment",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why equipment is generated from service calls",
+          "body": "Autogenerate Service Call Equipment creates equipment records in bulk for service calls that were raised against a customer item and serial number but have no equipment attached.\nService coordinators use it when calls exist for items not yet registered as equipment.\nEach call then has an equipment record for later service work and contract checks.",
+          "source_refs": [
+            "forms/fAutogenerateServiceCallEquipment.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "eligible-calls-and-generation",
+          "title": "Which calls are offered and how each row is generated",
+          "body": "Calls are listed when they belong to the company, fall in the chosen date range, have an item but no equipment, are not fixed, cancelled or completed, and have no service order.\nAt least one call must be selected, and each selected row creates one active, authorised machine named after the item and serial number, then links it to the call.\nThe call date and contract date cannot be earlier than the invoice date.\nEach row is generated separately, so a failure is recorded in that row's remarks without stopping the others.",
+          "source_refs": [
+            "forms/fAutogenerateServiceCallEquipment.yaml",
+            "rule:autogenerate-service-call-equipment-eligible-calls",
+            "rule:autogenerate-service-call-equipment-tick-at-least-one",
+            "rule:autogenerate-service-call-equipment-one-equipment-per-row",
+            "rule:autogenerate-service-call-equipment-invoice-dates",
+            "rule:autogenerate-service-call-equipment-row-by-row-result"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "contract-setup-and-spares",
+          "title": "Optional contract setup, spare parts and company-specific checks",
+          "body": "A service contract setup can be attached while generating, and if one is chosen a contract date is required.\nSetups offered must be effective on the invoice date and match the call's item or its sub group.\nSpare parts can be stored with the new equipment; each needs a non-zero quantity, and the same alias, item and make cannot repeat.\nCompanies can switch on extra checks that make serial number, contract setup, spare parts, or invoice number and date mandatory; when none is active those checks do not run.\nThis lets one bulk action produce equipment that is ready for contract-based service, not just a bare register entry.",
+          "source_refs": [
+            "forms/fAutogenerateServiceCallEquipment.yaml",
+            "rule:autogenerate-service-call-equipment-contract-setup-rules",
+            "rule:autogenerate-service-call-equipment-spare-parts",
+            "rule:autogenerate-service-call-equipment-optional-rules",
+            "rule:autogenerate-service-call-equipment-rows-processed"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceCallResourceAllocation",
+      "title": "Service Call Resource Allocation",
+      "context": "Plant Maintenance › Customer Service Calls › Service Call Resource Allocation",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Purpose of bulk resource allocation to service calls",
+          "body": "Service Call Resource Allocation lets a dispatcher assign a service resource to many service calls in one pass.\nIt is used when calls need an owner or must be moved to another resource.\nEvery call can be traced to a responsible resource, and changes of owner are auditable.",
+          "source_refs": [
+            "forms/fServiceCallResourceAllocation.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "allocation-rules",
+          "title": "Eligible calls, resource choice and assignment history",
+          "body": "Open or in-progress calls of the company that have a customer and customer location are listed.\nResources linked to the company are offered, and at least one call must receive a resource.\nCalls left blank are skipped, so an owner cannot be cleared here.\nThe owner is always updated, but a history entry is added only when the resource differs from the latest one, and the history shows who assigned whom and when.",
+          "source_refs": [
+            "forms/fServiceCallResourceAllocation.yaml",
+            "rule:service-call-resource-allocation-eligible-calls",
+            "rule:service-call-resource-allocation-resource-choice",
+            "rule:service-call-resource-allocation-at-least-one-assignment",
+            "rule:service-call-resource-allocation-only-chosen-rows-saved",
+            "rule:service-call-resource-allocation-history-only-on-change",
+            "rule:service-call-resource-allocation-history-view"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceCallResourceReporting",
+      "title": "Service Call Resource Reporting",
+      "context": "Plant Maintenance › Customer Service Calls › Service Call Resource Reporting",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why resources report time on service calls",
+          "body": "Service Call Resource Reporting lets a service resource record time spent on a service call, with date, duration and remark.\nTechnicians enter it after working on a call.\nEffort per call and per resource is captured for follow-up and costing.",
+          "source_refs": [
+            "forms/fServiceCallResourceReporting.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "time-log-rules",
+          "title": "Eligible calls, the reporting resource and duration limits",
+          "body": "Only open or in-progress calls of the company can be chosen.\nThe resource is the one linked to the logged-in user, and for a new entry it must be active for the company.\nThe entry date cannot precede the call date, and only the date is kept.\nDuration cannot be zero, cannot exceed 24 hours, and minutes cannot exceed 59; each entry gets an automatic log number.",
+          "source_refs": [
+            "forms/fServiceCallResourceReporting.yaml",
+            "rule:service-call-resource-reporting-eligible-calls",
+            "rule:service-call-resource-reporting-resource-choice",
+            "rule:service-call-resource-reporting-entry-date-not-before-call",
+            "rule:service-call-resource-reporting-date-only",
+            "rule:service-call-resource-reporting-duration-format-and-limits",
+            "rule:service-call-resource-reporting-automatic-call-log-id"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceCallChangeStatus",
+      "title": "Service Call Change Status",
+      "context": "Plant Maintenance › Customer Service Calls › Service Call Change Status",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why service call status is changed through a document",
+          "body": "Service Call Change Status moves a service call to its next permitted status and records why, with solution, feedback and contract details on closing.\nService coordinators use it when work on a call starts, pauses, is cancelled or is finished.\nOnly valid moves are allowed, and closing information is captured at completion.",
+          "source_refs": [
+            "forms/fServiceCallChangeStatus.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "permitted-moves-and-closing",
+          "title": "Permitted status moves and closing details",
+          "body": "From initial or open a call can go to hold, cancel, fixed or in progress; from in progress to hold, cancel or fixed; and from hold back to open.\nCalls already fixed are not offered, and the entry date cannot precede the call date.\nWhen completing or fixing, solution and customer feedback are recorded, and a valid contract must be selected where any is listed.\nSaving sets the call status and writes history, and the solution can be added to the knowledge base.",
+          "source_refs": [
+            "forms/fServiceCallChangeStatus.yaml",
+            "rule:service-call-change-status-permitted-status-moves",
+            "rule:service-call-change-status-entry-date-not-before-call",
+            "rule:service-call-change-status-closing-tabs",
+            "rule:service-call-change-status-contract-tick",
+            "rule:service-call-change-status-status-and-history-updated",
+            "rule:service-call-change-status-add-to-knowledge"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceCallMonitoring",
+      "title": "Service Call Monitoring",
+      "context": "Plant Maintenance › Customer Service Calls › Service Call Monitoring",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Purpose of the Service Call Monitoring board",
+          "body": "Service Call Monitoring is a live, read-only board of all service calls of the company, coloured by priority.\nSupervisors and coordinators use it whenever they need the current state of calls without editing them.\nUrgent, late or unassigned calls stand out without searching call by call.",
+          "source_refs": [
+            "forms/fServiceCallMonitoring.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "board-behaviour",
+          "title": "How the board is filled, coloured and refreshed",
+          "body": "Each call shows a contact detail built from its contact number and e-mail; calls with neither are not listed.\nRows are coloured by priority using colours each user saves for themselves, and priorities without a colour appear white.\nConfigured custom details appear as extra information on each call.\nThe board refreshes automatically when calls change, and nothing on it can be edited, saved or deleted.",
+          "source_refs": [
+            "forms/fServiceCallMonitoring.yaml",
+            "rule:service-call-monitoring-contact-detail-text",
+            "rule:service-call-monitoring-priority-colour-per-user",
+            "rule:service-call-monitoring-custom-field-columns",
+            "rule:service-call-monitoring-live-refresh",
+            "rule:service-call-monitoring-read-only-board"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceContractSetup",
+      "title": "Service Contract Setup",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Service Contract Setup",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Service Contract Setup template provides",
+          "body": "Service Contract Setup defines reusable contract templates with standard commercial and service terms, and the rule deciding where each applies.\nService managers maintain it when the company introduces or changes a standard warranty, maintenance or annual maintenance offer.\nContracts start from approved terms instead of being entered from scratch.",
+          "source_refs": [
+            "forms/fServiceContractSetup.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "applicability-and-defaults",
+          "title": "Where a template applies and default templates",
+          "body": "Each rule line uses criteria such as item or sub group, customer or customer group, and country or state, with at most one of each pair and no repeats.\nA template marked as default cannot cover items or sub groups already covered by another default template.\nBilling details apply only to outbound service, and the billing type decides which dates and values are needed.\nChoosing a payment term setting fills the payment details, and at least one term is needed unless billing is periodic.",
+          "source_refs": [
+            "forms/fServiceContractSetup.yaml",
+            "rule:service-contract-setup-contract-rule",
+            "rule:service-contract-setup-default-template-clash",
+            "rule:service-contract-setup-billing-only-for-outbound",
+            "rule:service-contract-setup-billing-type-rules",
+            "rule:service-contract-setup-pay-term-template",
+            "rule:service-contract-setup-payment-terms"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "pricing-triggers-and-warranty",
+          "title": "Pricing, preventive triggers and warranty terms in templates",
+          "body": "Every service needs at least one pricing line with a rate type; fixed rate and fixed amount exclude each other, and free-of-cost lines need a quantity.\nSpare parts and resources carry their own rate types, and rates are locked where the type makes them irrelevant.\nTime-based triggers need a schedule type and recurrence with an end condition, and meter-based triggers need a parameter and limits; a trigger used by any line cannot be edited or deleted.\nWarranty templates need a condition and either life span or measurement limits, and response and resolution times are entered as hours and minutes.\nBecause contracts and service call equipment generation start from these templates, errors here repeat across every contract.",
+          "source_refs": [
+            "forms/fServiceContractSetup.yaml",
+            "rule:service-contract-setup-service-and-pricing",
+            "rule:service-contract-setup-spare-parts",
+            "rule:service-contract-setup-resources",
+            "rule:service-contract-setup-time-based-trigger",
+            "rule:service-contract-setup-meter-trigger",
+            "rule:service-contract-setup-trigger-protection",
+            "rule:service-contract-setup-warranty-rules",
+            "rule:service-contract-setup-time-format"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceContract",
+      "title": "Service Contract",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Service Contract",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Service Contract commits to",
+          "body": "A Service Contract fixes what service is promised, for which equipment, for which period and at what price.\nService administrators record it when equipment is sold or installed and a warranty or maintenance commitment begins, or when a vendor commits to service the company's own equipment.\nIt is the base for service calls, service orders and billing.",
+          "source_refs": [
+            "forms/fServiceContract.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "nature-sources-and-coverage",
+          "title": "Contract nature, sources, period and covered services",
+          "body": "Outbound contracts can be direct or from a sales invoice or quotation; inbound contracts can be direct or from a purchase invoice, and a reference copies dates, equipment and items.\nStart and acceptance dates cannot precede the document date, and the end date cannot precede the start date.\nEach covered equipment needs item, serial number, dates and warranty nature, and a template can fill standard terms.\nServices need pricing, spare parts need quantity, rate type and rate, resources need rate details, and nothing may repeat for one trigger.",
+          "source_refs": [
+            "forms/fServiceContract.yaml",
+            "rule:service-contract-source-document-rules",
+            "rule:service-contract-contract-detail",
+            "rule:service-contract-template-fill",
+            "rule:service-contract-services-spare-parts-resources"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "billing-warranty-and-visits",
+          "title": "Billing plans, warranty terms and preventive visits",
+          "body": "Outbound contracts need billing details: bill-to party, payment mode, due days and billing type, plus the dates and value the type demands.\nFor periodic billing every planned bill carries a value, and the values must add up to the contract value; otherwise at least one payment term is required.\nBase and extended warranties need a condition and either a life span with float and base date, or measurement limits, and these set the contract dates.\nTriggers schedule preventive visits; each occurrence must fall within the contract period, cannot exceed the number the trigger allows, and follows the contract's status.\nWhere preventive maintenance is disabled for the company, triggers and occurrences are not used.",
+          "source_refs": [
+            "forms/fServiceContract.yaml",
+            "rule:service-contract-billing-rules",
+            "rule:service-contract-payment-terms",
+            "rule:service-contract-warranty-rules",
+            "rule:service-contract-trigger-rules",
+            "rule:service-contract-occurrences",
+            "rule:service-contract-occurrence-count-and-status",
+            "rule:service-contract-preventive-maintenance-switch",
+            "rule:service-contract-save-and-stamps"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeServiceContractPeriod",
+      "title": "Change Service Contract Period",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Change Service Contract Period",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "When a service contract's end date is changed",
+          "body": "Change Service Contract Period moves only the end date of an authorised service contract, together with the end dates of its time-based triggers.\nService administrators use it when a contract is extended, renewed in place or ended early.\nThe contract stays consistent with its triggers without editing the full contract.",
+          "source_refs": [
+            "forms/fChangeServiceContractPeriod.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "end-date-limits",
+          "title": "Limits on the new end date and trigger dates",
+          "body": "The new end date cannot be earlier than today.\nIt also cannot be earlier than any billing date, service invoice, expected occurrence, service call or service order already recorded on the contract, so existing activity is never left outside the period.\nOnly time-based triggers are shown and updated, and each trigger end date must fall between the contract start date and the new end date.\nThe start date can never be after the end date.",
+          "source_refs": [
+            "forms/fChangeServiceContractPeriod.yaml",
+            "rule:change-service-contract-period-to-date-against-existing-activity",
+            "rule:change-service-contract-period-only-time-based-triggers",
+            "rule:change-service-contract-period-trigger-end-within-period",
+            "rule:change-service-contract-period-from-date-not-after-to-date"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceContractOccurance",
+      "title": "Service Contract Occurrence",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Service Contract Occurrence",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "When contract visits are maintained manually",
+          "body": "Service Contract Occurrence adds, changes or deletes one scheduled service visit of an authorised service contract.\nService administrators use it when a visit must be added, re-dated, closed, cancelled or removed outside the generated schedule.\nThe visit plan is corrected without editing the contract.",
+          "source_refs": [
+            "forms/fServiceContractOccurance.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "occurrence-rules",
+          "title": "Contract, trigger and status rules for a visit",
+          "body": "Only authorised contracts of the company that have at least one trigger are offered, and the trigger must belong to that contract.\nA visit is for an equipment or an item, never both.\nThe occurrence number is automatic, one higher than the last for that trigger and object.\nOnly authorised, completed or cancelled can be chosen as status, and every save marks the visit as manually maintained.",
+          "source_refs": [
+            "forms/fServiceContractOccurance.yaml",
+            "rule:service-contract-occurrence-authorised-contracts-only",
+            "rule:service-contract-occurrence-trigger-from-the-contract",
+            "rule:service-contract-occurrence-equipment-or-item-not-both",
+            "rule:service-contract-occurrence-automatic-occurrence-no",
+            "rule:service-contract-occurrence-status-choices",
+            "rule:service-contract-occurrence-manual-flag"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceServiceOrder",
+      "title": "Maintenance Service Order",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Maintenance Service Order",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Maintenance Service Order agrees with a customer",
+          "body": "A Maintenance Service Order plans and prices repair or maintenance work on a customer's equipment, with services, parts, resources, expected meter readings, faults and payment terms.\nService coordinators raise it from a service call, a due contract occurrence, follow-up work, or directly.\nWork, materials and billing terms are agreed on one document that execution, issue and invoicing all refer to.",
+          "source_refs": [
+            "forms/fMaintenanceServiceOrder.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "sources-customer-and-equipment",
+          "title": "Sources, customer details and equipment on a service order",
+          "body": "A reference is required unless the order is direct, contract occurrences also need the occurrence, and the order cannot be dated before its reference.\nChanging the customer reloads its locations and sets the bill-to party; bill-to and due days are mandatory.\nOnly authorised, active, customer-owned equipment on the reference or at the customer location is offered.\nEstimated start and end cannot precede the document date, and at least one payment term with mode and credit days is required.",
+          "source_refs": [
+            "forms/fMaintenanceServiceOrder.yaml",
+            "rule:maintenance-service-order-reference-document",
+            "rule:maintenance-service-order-customer-and-location-cascade",
+            "rule:maintenance-service-order-billing-fields",
+            "rule:maintenance-service-order-equipment-selection",
+            "rule:maintenance-service-order-planned-dates",
+            "rule:maintenance-service-order-payment-terms"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "contract-pricing-lines-and-postings",
+          "title": "Contract pricing, line limits and postings on service orders",
+          "body": "When raised from a contract occurrence, service, parts and resource lines are replaced by the contract's lines with their pricing and balances.\nContract lines cannot exceed their balance quantity or amount, and the rate type decides whether rate or amount is entered.\nOrder value is the total of service, parts and resource amounts, and a part's quantity cannot fall below what stores already issued against the order.\nProposed accounts are loaded before authorisation, and meter readings on an authorised order are posted to the equipment's reading history.\nThis keeps contract entitlement, material issued and billing aligned for each customer job.",
+          "source_refs": [
+            "forms/fMaintenanceServiceOrder.yaml",
+            "rule:maintenance-service-order-contract-mode",
+            "rule:maintenance-service-order-contract-pricing-link",
+            "rule:maintenance-service-order-service-lines",
+            "rule:maintenance-service-order-service-rate-type-behaviour",
+            "rule:maintenance-service-order-parts-lines",
+            "rule:maintenance-service-order-resource-lines",
+            "rule:maintenance-service-order-order-amount",
+            "rule:maintenance-service-order-issued-quantity-floor",
+            "rule:maintenance-service-order-account-assignment",
+            "rule:maintenance-service-order-meter-reading-posting"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMaintenanceServiceOrderAmendment",
+      "title": "Maintenance Service Order Amendment",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Maintenance Service Order Amendment",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why authorised service orders are amended",
+          "body": "Maintenance Service Order Amendment revises the service, parts and resource lines of an authorised maintenance service order without reopening it.\nService coordinators use it when scope, quantity or price changes, for example when more parts or an extra resource are needed.\nThe order total stays correct, and work already reported or invoiced cannot be undone.",
+          "source_refs": [
+            "forms/fMaintenanceServiceOrderAmendment.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "amendment-floors-and-caps",
+          "title": "Floors and caps that protect reported and invoiced work",
+          "body": "Only authorised or in-progress orders of the company can be amended, and at least one service line must remain.\nQuantity cannot fall below what has been reported, amount cannot fall below what has been invoiced, and a part's quantity cannot fall below what stores issued.\nContract lines cannot exceed their balance quantity or amount.\nRate cannot change on contract lines or invoiced lines, and the order value is recalculated from all lines.",
+          "source_refs": [
+            "forms/fMaintenanceServiceOrderAmendment.yaml",
+            "rule:maintenance-service-order-amendment-eligible-orders",
+            "rule:maintenance-service-order-amendment-line-completeness",
+            "rule:maintenance-service-order-amendment-reported-quantity-and-invoiced-amount-floors",
+            "rule:maintenance-service-order-amendment-issued-quantity-floor",
+            "rule:maintenance-service-order-amendment-contract-balance-caps",
+            "rule:maintenance-service-order-amendment-rate-type-rules",
+            "rule:maintenance-service-order-amendment-order-amount"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fResourceReporting",
+      "title": "Service Order Resource Reporting Detail",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Service Order Resource Reporting Detail",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Purpose of resource time reporting on service orders",
+          "body": "Service Order Resource Reporting Detail records the time a technician, crew or machine worked against a maintenance service order.\nService coordinators use it when resource work on an authorised or in-progress order needs recording quickly.\nResource time becomes available to the order, its amendments and customer invoicing.",
+          "source_refs": [
+            "forms/fResourceReporting.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "time-entry-rules",
+          "title": "Eligible orders, time limits and overlap checks",
+          "body": "Only authorised or in-progress orders with planned resources are offered, and only resources planned on that order.\nStart, end and total time are required; end cannot precede start, and neither may fall before the document date.\nTotal time cannot exceed the span between start and end, and quantity cannot exceed the planned quantity.\nTimes cannot overlap other entries for the same order and resource, and each line is saved as its own record.",
+          "source_refs": [
+            "forms/fResourceReporting.yaml",
+            "rule:service-order-resource-reporting-detail-eligible-orders-and-resources",
+            "rule:service-order-resource-reporting-detail-times",
+            "rule:service-order-resource-reporting-detail-total-time-calculation-and-limit",
+            "rule:service-order-resource-reporting-detail-quantity-ceiling",
+            "rule:service-order-resource-reporting-detail-no-overlap-with-saved-entries",
+            "rule:service-order-resource-reporting-detail-no-overlap-within-the-grid",
+            "rule:service-order-resource-reporting-detail-one-record-per-row"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fServiceOrderReporting",
+      "title": "Service Order Reporting",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Service Order Reporting",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What Service Order Reporting records",
+          "body": "Service Order Reporting records what was actually done against an authorised maintenance service order: services, parts, resources, solutions, feedback, faults and equipment part changes.\nService coordinators or technicians prepare it when work starts, progresses, is held or is finished.\nActual work and material are available for invoicing and equipment history.",
+          "source_refs": [
+            "forms/fServiceOrderReporting.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "reported-work-rules",
+          "title": "Eligible orders, dates and reported services and resources",
+          "body": "Only authorised, unfinished orders of the company and division without another report can be chosen, so each order has at most one report.\nThe report cannot be dated before the order, and actual start must fall between the order date and the report date, with end not before start.\nAt least one service is reported, each with quantity no higher than ordered, dates, status and time.\nResources need start, end, time and schedule entries, and their times cannot overlap other reports of the same order.",
+          "source_refs": [
+            "forms/fServiceOrderReporting.yaml",
+            "rule:service-order-reporting-eligible-service-orders",
+            "rule:service-order-reporting-date-rules",
+            "rule:service-order-reporting-reported-services",
+            "rule:service-order-reporting-reported-resources",
+            "rule:service-order-reporting-resource-schedule-entries",
+            "rule:service-order-reporting-no-clash-with-other-reports"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "parts-status-and-knowledge",
+          "title": "Parts used, equipment part changes and order outcome",
+          "body": "Parts consumed are allocated from authorised issues against the order, net of returns; each line cannot exceed what was issued, and the lines must total the item's reported quantity.\nFor equipment, a replaced part with an old serial number needs a new serial number from stock issued on this report, and saving updates the equipment's parts record.\nFixed and completed statuses are allowed only on an authorised report, and an authorised report cannot stay on hold or in progress.\nSaving sets the service order's status to the report's status, and deleting the report returns the order to authorised.\nRoot causes and solutions can be added to their master lists, so the next technician can reuse them.",
+          "source_refs": [
+            "forms/fServiceOrderReporting.yaml",
+            "rule:service-order-reporting-issue-allocation",
+            "rule:service-order-reporting-bom-part-changes",
+            "rule:service-order-reporting-status-combinations",
+            "rule:service-order-reporting-order-status-follows-report",
+            "rule:service-order-reporting-fault-root-causes",
+            "rule:service-order-reporting-solutions",
+            "rule:service-order-reporting-customer-feedback"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fCustomerServiceInvoice",
+      "title": "Customer Service Invoice",
+      "context": "Plant Maintenance › Service Contracts, Orders and Billing › Customer Service Invoice",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What the Customer Service Invoice bills",
+          "body": "The Customer Service Invoice bills a customer for service work, with service, parts and resource lines, taxes and advance adjustments.\nService billing staff raise it when work is done, a contract billing date falls due or a direct service sale is made.\nCustomers are billed from agreed orders, contracts or measured effort, and the receivable is posted in finance.",
+          "source_refs": [
+            "forms/fCustomerServiceInvoice.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "sources-and-line-rules",
+          "title": "Invoice sources, rate types and balance limits",
+          "body": "An invoice can be direct, against a service contract or against a service order; contract and order sources need a reference dated on or before the invoice.\nFor contracts the basic amount is the contract or schedule value; otherwise it is the total of service, parts and resource amounts.\nEach line needs a rate type and a non-zero quantity, and the rate type decides whether rate or amount is entered.\nAgainst a service order, quantity cannot exceed what is still left to invoice, and resource lines need time entries that do not overlap.",
+          "source_refs": [
+            "forms/fCustomerServiceInvoice.yaml",
+            "rule:customer-service-invoice-reference-rules",
+            "rule:customer-service-invoice-basic-amount",
+            "rule:customer-service-invoice-rate-type-behaviour",
+            "rule:customer-service-invoice-service-row-rules",
+            "rule:customer-service-invoice-parts-row-rules",
+            "rule:customer-service-invoice-balance-quantities",
+            "rule:customer-service-invoice-resource-row-rules",
+            "rule:customer-service-invoice-resource-time-lines"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "advances-and-finance-postings",
+          "title": "Advance adjustment, finance vouchers and cash counter entries",
+          "body": "Taxes are calculated from the basic amount, and the due date is the document date plus the due days less one.\nWhen the invoice is authorised and has a positive net amount, a journal voucher is built from the basic amount, taxes and line amounts, and it is rebuilt whenever date, division, tax or status changes.\nAdvances dated on or before the invoice can be adjusted; each adjustment cannot exceed the advance balance, and the total cannot exceed the net amount.\nA second voucher moves adjusted advances against the customer receivable.\nAn authorised cash invoice also creates a cash counter entry, so billing, advances and cash all reconcile with the ledger.",
+          "source_refs": [
+            "forms/fCustomerServiceInvoice.yaml",
+            "rule:customer-service-invoice-taxes",
+            "rule:customer-service-invoice-due-date",
+            "rule:customer-service-invoice-invoice-voucher",
+            "rule:customer-service-invoice-advance-adjustment",
+            "rule:customer-service-invoice-advance-voucher",
+            "rule:customer-service-invoice-cash-counter-entry",
+            "rule:customer-service-invoice-voucher-link"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMeterReading",
+      "title": "Meter Reading",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Meter Reading",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why dated meter readings are recorded",
+          "body": "Meter Reading records dated readings of measurement parameters such as running hours, kilometres or fuel for equipment or functional locations.\nOperators and supervisors enter it daily, per shift, or when a maintenance order requires a reading.\nMaintenance planning then works from validated readings with a running total per parameter.",
+          "source_refs": [
+            "forms/fMeterReading.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "reading-entry-rules",
+          "title": "Objects, readings and date order",
+          "body": "Readings can be recorded for one equipment or location, or for several objects at once; a single object must be named.\nAt least one reading must be selected, and hours are entered as hours and minutes below 60.\nNeither the previous nor the latest reading date may be after the measurement date.\nWhere several objects are read together, each utilisation line needs a value and an operator, and the same work cannot repeat on one date.",
+          "source_refs": [
+            "forms/fMeterReading.yaml",
+            "rule:meter-reading-object-by-measurement-object",
+            "rule:meter-reading-multiple-objects-mode",
+            "rule:meter-reading-at-least-one-reading-row",
+            "rule:meter-reading-hours-format",
+            "rule:meter-reading-reading-date-not-earlier-than-previous",
+            "rule:meter-reading-utilization-rows"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "totals-limits-and-overlaps",
+          "title": "Running totals, daily limits and protection against conflicting readings",
+          "body": "For running parameters, an actual reading is the meter value itself, while a difference reading is added to the previous one; the running total grows by the net movement.\nAn actual running reading can never fall below the previous reading, and where equipment has a daily maximum, the day's movement cannot exceed it.\nNo other document may hold the same object and parameter at the same time, no other unauthorised reading may be pending, and no later reading may already exist.\nReadings before the opening reading are refused, and a missing issued fuel quantity can be a warning or a stop.\nThese checks keep the reading history continuous, which schedules and fuel analysis depend on.",
+          "source_refs": [
+            "forms/fMeterReading.yaml",
+            "rule:meter-reading-net-and-total-calculation",
+            "rule:meter-reading-running-reading-not-below-previous-daily-limit",
+            "rule:meter-reading-no-overlap-with-other-documents",
+            "rule:meter-reading-issued-fuel-quantity-and-unauthorized-entries"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fMeterReadingSimplified",
+      "title": "Meter Reading Simplified",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Meter Reading Simplified",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Purpose of quick fleet meter entry",
+          "body": "Meter Reading Simplified records the daily odometer and hour meter readings of all vehicles or machines at one location in a single pass, with the day's trips or loads and driver.\nSite supervisors use it at the end of a shift or day.\nFleet readings are captured quickly while passing the same checks as a full reading.",
+          "source_refs": [
+            "forms/fMeterReadingSimplified.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "entry-and-validation",
+          "title": "Which equipment is listed and how readings are validated",
+          "body": "Equipment placed at the chosen location that has an odometer or hour meter is listed, and a reading can be entered only for a meter the equipment has.\nOne reading type applies to every line, and hours must have minutes below 60.\nWhere the equipment has utilisation work, trips or loads and driver are required.\nDuplicate, overlapping, pending or out-of-order readings for the same equipment and meter are refused, and totals follow the same calculation as a full meter reading.",
+          "source_refs": [
+            "forms/fMeterReadingSimplified.yaml",
+            "rule:meter-reading-simplified-equipment-of-the-location",
+            "rule:meter-reading-simplified-readings-only-where-a-meter-exists",
+            "rule:meter-reading-simplified-one-reading-type-for-all-rows",
+            "rule:meter-reading-simplified-hour-minutes",
+            "rule:meter-reading-simplified-utilization-needs-trip-load-and-driver",
+            "rule:meter-reading-simplified-no-overlap-and-date-order",
+            "rule:meter-reading-simplified-net-and-total-calculation"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fResetMeasurementParameter",
+      "title": "Reset Measurement Parameter",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Reset Measurement Parameter",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why meter resets are recorded",
+          "body": "Reset Measurement Parameter records the moment a meter on equipment or a location is reset, rolled over or replaced, with readings before and after.\nMaintenance or fleet staff enter it when an odometer or hour meter goes back to zero or is changed.\nRunning totals stay continuous, so a reset is not mistaken for a wrong reading.",
+          "source_refs": [
+            "forms/fResetMeasurementParameter.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "reset-rules",
+          "title": "Reset date, readings and pending documents",
+          "body": "Only authorised equipment or locations of the company are offered.\nAt least one parameter must be selected, each with a reading type and readings before and after the reset.\nThe reset date cannot be after the document date, and no reading may exist after the reset date.\nA reset is refused while a trip sheet, meter reading or another reset for the same object is still unauthorised, and an authorised reset posts both readings while keeping the previous total.",
+          "source_refs": [
+            "forms/fResetMeasurementParameter.yaml",
+            "rule:reset-measurement-parameter-object-list",
+            "rule:reset-measurement-parameter-row-requirements",
+            "rule:reset-measurement-parameter-reset-date-not-after-document-date",
+            "rule:reset-measurement-parameter-no-later-reading",
+            "rule:reset-measurement-parameter-no-pending-trip-sheet-meter-reading-or-reset",
+            "rule:reset-measurement-parameter-history-posting"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fEquipmentRunningHours",
+      "title": "Equipment Running Hours",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Equipment Running Hours",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why daily equipment running hours are logged",
+          "body": "Equipment Running Hours records how many hours each piece of equipment ran on a given day and shift.\nOperators or supervisors enter it at the end of each day or shift for the equipment that worked.\nThe usage figures support maintenance planning and equipment analysis.",
+          "source_refs": [
+            "forms/fEquipmentRunningHours.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "entry-rules",
+          "title": "Running hours entry, shifts and duplicate prevention",
+          "body": "All equipment of the company is listed, limited to the document's division where division-wise display is on.\nEach selected equipment needs running hours, entered as hours and minutes with minutes no higher than 59, and a default value can be copied in.\nThe shift is optional and applies to the whole document.\nAn equipment cannot be reported twice for the same date and shift, and only authorised documents count in equipment reports.",
+          "source_refs": [
+            "forms/fEquipmentRunningHours.yaml",
+            "rule:equipment-running-hour-equipment-scope",
+            "rule:equipment-running-hour-running-hrs",
+            "rule:equipment-running-hour-default-running-hrs",
+            "rule:equipment-running-hour-shift",
+            "rule:equipment-running-hour-one-entry-per-equipment-date-and-shift",
+            "rule:equipment-running-hour-reporting-use"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTripSheet",
+      "title": "Trip Sheet",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Trip Sheet",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Trip Sheet records about vehicle use",
+          "body": "A Trip Sheet records a vehicle's journeys for a day or shift: which driver drove, departure and arrival, locations, and meter readings.\nFleet supervisors or drivers prepare it for every day or shift a vehicle is used.\nVehicle use is traceable by driver and trip, and the vehicle's meters stay current for maintenance planning.",
+          "source_refs": [
+            "forms/fTripSheet.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "trip-rules",
+          "title": "Drivers, times and meter readings on each trip",
+          "body": "At least one trip with a driver is required, each with departure and arrival date and time, and arrival cannot precede departure.\nThe first trip's opening odometer must equal the latest recorded reading, each later opening equals the previous closing, and closing must exceed opening.\nHour readings follow the vehicle's hour format, and closing hours cannot be below opening hours.\nA shift needs a shift in-charge, and the document cannot be dated before any of its trips.",
+          "source_refs": [
+            "forms/fTripSheet.yaml",
+            "rule:tripsheet-at-least-one-driver-row",
+            "rule:tripsheet-departure-and-arrival-complete",
+            "rule:tripsheet-milometer-readings",
+            "rule:tripsheet-initial-readings-from-history",
+            "rule:tripsheet-hour-readings",
+            "rule:tripsheet-hours-kept-as-time",
+            "rule:tripsheet-shift-incharge-with-shift",
+            "rule:tripsheet-document-date-not-before-trips"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "overlaps-sequence-and-meter-posting",
+          "title": "Preventing overlapping trips and posting meter readings",
+          "body": "Trips on one sheet cannot overlap each other, even by touching times, and cannot overlap trips on other sheets of the same vehicle.\nA sheet cannot be dated earlier than the vehicle's latest other sheet, and a vehicle may have only one unauthorised sheet and no pending meter reading elsewhere.\nWhen the sheet is authorised, each trip posts its closing odometer at the arrival time and its hours, either as a difference or as an actual reading depending on how the vehicle keeps hours.\nThose postings pass the same meter history checks as any other reading, so an out-of-sequence trip is refused.\nThis makes the trip sheet a reliable source of meter readings for usage-based maintenance schedules.",
+          "source_refs": [
+            "forms/fTripSheet.yaml",
+            "rule:tripsheet-no-overlap-within-the-sheet",
+            "rule:tripsheet-no-overlap-with-other-sheets",
+            "rule:tripsheet-sequence-and-open-documents",
+            "rule:tripsheet-authorization-posts-readings"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fFuelConsumption",
+      "title": "Fuel Consumption",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Fuel Consumption",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why vehicle fuel consumption is recorded",
+          "body": "Fuel Consumption records how much fuel a vehicle used on a given day and where the fuel came from: stock issues, direct stock entries or a fuel station bill.\nFleet staff enter it when a vehicle's fuel use is reported.\nFuel issued to a vehicle is matched with fuel consumed, and fuel bought outside stock is costed to the vehicle.",
+          "source_refs": [
+            "forms/fFuelConsumption.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "fuel-sources-and-amounts",
+          "title": "Fuel sources, eligible issues and amount calculation",
+          "body": "Only vehicles of the company that have a fuel item are offered.\nFrom stock issues, only issues of the vehicle's fuel item to its cost center with balance left are listed; consumed quantity defaults to that balance and is valued at the issued rate.\nFuel station lines need a driver, a bill date, a quantity and a rate, and direct lines need a date, a quantity and a rate.\nNo line may be dated after the entry date, and amount is quantity times rate.",
+          "source_refs": [
+            "forms/fFuelConsumption.yaml",
+            "rule:fuel-consumption-vehicle-list",
+            "rule:fuel-consumption-material-issue-rows",
+            "rule:fuel-consumption-default-consumed-quantity",
+            "rule:fuel-consumption-fuel-station-rows",
+            "rule:fuel-consumption-direct-stock-rows",
+            "rule:fuel-consumption-amount-calculation",
+            "rule:fuel-consumption-source-document-by-fuel-source"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fLionsConsumptionEntry",
+      "title": "Equipment Material Consumption Entry",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Equipment Material Consumption Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why consumption of issued material is recorded per equipment",
+          "body": "This consumption entry records how much of each item issued from stores was actually consumed on a piece of equipment, and in which of its components.\nMaintenance staff use it after items issued to equipment or a maintenance order have been used.\nIssued stock is matched with consumed quantity per equipment and per component.",
+          "source_refs": [
+            "forms/fLionsConsumptionEntry.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "eligible-issues-and-component-split",
+          "title": "Eligible issue lines and splitting consumption by component",
+          "body": "Only lines from authorised issues of the same company and division are offered, for items that the equipment's parts list marks as needing a consumption entry.\nThe issue must have been made for a maintenance order or to the equipment's own cost center.\nAt least one line must be selected, and for each line the quantities entered against components must add up exactly to the line quantity.\nA balance of issued less consumed and returned quantity is shown for guidance but not enforced.",
+          "source_refs": [
+            "forms/fLionsConsumptionEntry.yaml",
+            "rule:lionsconsumptionentry-lines-offered",
+            "rule:lionsconsumptionentry-at-least-one-line",
+            "rule:lionsconsumptionentry-components-add-up",
+            "rule:lionsconsumptionentry-components-only-for-ticked-lines",
+            "rule:lionsconsumptionentry-balance-display",
+            "rule:lionsconsumptionentry-equipment-list-and-division"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fProductionEntrySimplified",
+      "title": "Production Entry",
+      "context": "Plant Maintenance › Meter Readings, Utilisation and Production › Production Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What the simplified Production Entry records",
+          "body": "Production Entry records the output of one shift at one work center, with item, quantity and value per output line.\nProduction or plant supervisors enter it at the end of a shift or run when finished or semi-finished goods are declared.\nOutput reaches stock only through an authorised document, and each line carries a value for costing.",
+          "source_refs": [
+            "forms/fProductionEntrySimplified.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "lines-and-stock-receipt",
+          "title": "Output lines, rates and receipt into stock",
+          "body": "Output lines offer finished and semi-finished item types according to the line type.\nEach line needs an item and a non-zero quantity, and loss quantity cannot exceed it.\nThe receipt rate is value divided by quantity, and it is set to zero unless the company's finance settings allow it.\nWhen authorised, each output line is received into the warehouse, and the issued lot balance is checked against the lots recorded on the entry.",
+          "source_refs": [
+            "forms/fProductionEntrySimplified.yaml",
+            "rule:production-entry-items-by-item-type",
+            "rule:production-entry-line-content",
+            "rule:production-entry-receipt-rate",
+            "rule:production-entry-stock-receipt-on-authorization",
+            "rule:production-entry-authorization-check"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fVehicleAxleLayout",
+      "title": "Axle and Wheel Configuration",
+      "context": "Plant Maintenance › Tyre Management › Axle and Wheel Configuration",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What an Axle and Wheel Configuration defines",
+          "body": "Axle and Wheel Configuration defines a reusable vehicle layout: how many axles and tyres a vehicle type has and where each tyre sits.\nFleet maintenance staff create it before vehicles or tyres are assigned to a new configuration, such as a two-axle truck or a trailer with spares.\nTyres can then be fitted, moved and inspected against named positions.",
+          "source_refs": [
+            "forms/fVehicleAxleLayout.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "layout-rules",
+          "title": "Positions, axles and matching totals",
+          "body": "At least one tyre position must be defined.\nA running position needs a non-zero axle number, while other positions, such as spares, have no axle.\nThe number of positions must equal the number of tyres, and the number of distinct axles must equal the number of axles stated.\nVehicles reference the layout, and tyre fitment only offers positions that exist on it, so a wrong layout blocks correct tyre tracking.",
+          "source_refs": [
+            "forms/fVehicleAxleLayout.yaml",
+            "rule:axle-wheel-configuration-at-least-one-position",
+            "rule:axle-wheel-configuration-running-position-axle-rule",
+            "rule:axle-wheel-configuration-totals-must-match",
+            "rule:tyre-master-vehicles-and-positions"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreCategoryMaster",
+      "title": "Tyre Category Master",
+      "context": "Plant Maintenance › Tyre Management › Tyre Category Master",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Tyre Category defines",
+          "body": "The Tyre Category Master defines the classes into which tyres are grouped, such as by construction or application, with default tread depth standards.\nThe maintenance team maintains it when a new class of tyre is introduced or standards change.\nTread depth standards are held once per category and make instead of being retyped on every tyre.",
+          "source_refs": [
+            "forms/fTyreCategoryMaster.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "category-rules",
+          "title": "Category codes, tread depth values and make-specific standards",
+          "body": "A new category receives an automatic code and is authorised on save.\nEach category carries an original and a threshold tread depth, entered with one decimal place.\nMake-specific values can be added for tyre makes of the company, and lines without a make are ignored.\nWhen a tyre is registered, its tread depths default from the category's make line if one exists, otherwise from the category defaults.",
+          "source_refs": [
+            "forms/fTyreCategoryMaster.yaml",
+            "rule:tyre-category-master-automatic-code",
+            "rule:tyre-category-master-immediate-authorisation",
+            "rule:tyre-category-master-nsd-format",
+            "rule:tyre-category-master-make-rows",
+            "rule:tyre-master-nsd-defaults"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreRepairCategory",
+      "title": "Tyre Repair Category",
+      "context": "Plant Maintenance › Tyre Management › Tyre Repair Category",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Tyre Repair Category classifies",
+          "body": "The Tyre Repair Category defines the kinds of repair work that can be done on a tyre, each tied to a repair type, an optional service item and permitted roles.\nThe maintenance team maintains it when a new kind of repair is introduced or responsibilities change.\nRepairs are classified uniformly and linked to the service bought or performed.",
+          "source_refs": [
+            "forms/fTyreRepairCategory.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "category-rules",
+          "title": "Codes, roles, service items and the retread type",
+          "body": "A new category receives an automatic code and is authorised on save.\nAt least one permitted role must be selected.\nThe service item is optional and can be left empty when the repair is not bought as a service.\nThe repair type matters downstream: a retread category limits repair requests to tyres awaiting retread, while other categories apply to installed tyres or tyres awaiting repair.",
+          "source_refs": [
+            "forms/fTyreRepairCategory.yaml",
+            "rule:tyre-repair-category-automatic-code",
+            "rule:tyre-repair-category-immediate-authorisation",
+            "rule:tyre-repair-category-at-least-one-role",
+            "rule:tyre-repair-category-service-item-optional",
+            "rule:tyre-repair-request-category-type-drives-entry"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreMaster",
+      "title": "Tyre Master",
+      "context": "Plant Maintenance › Tyre Management › Tyre Master",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What the Tyre Master register holds",
+          "body": "The Tyre Master registers every individual tyre the company owns, whether in stock, fitted to a vehicle or at another stage of its life.\nFleet maintenance staff create it when a tyre is purchased, received from a material issue or brought in as opening stock.\nEach tyre can be followed through fitment, removal, repair and retreading.",
+          "source_refs": [
+            "forms/fTyreMaster.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "identity-source-and-location",
+          "title": "Tyre identity, source and current location",
+          "body": "A tyre can be registered directly or from a material issue of a serialised tyre item, which fills serial number, make and description.\nAn installed tyre needs a vehicle, a free position on its layout, an install date and tread depth; any other status needs a warehouse.\nPurchase order, invoice and opening tread depth each need their dates.\nTread depths default from the category, and the threshold must be lower than the original depth.",
+          "source_refs": [
+            "forms/fTyreMaster.yaml",
+            "rule:tyre-master-source-document-modes",
+            "rule:tyre-master-location-by-status",
+            "rule:tyre-master-vehicles-and-positions",
+            "rule:tyre-master-date-follows-value",
+            "rule:tyre-master-nsd-defaults",
+            "rule:tyre-master-threshold-below-original"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreMovement",
+      "title": "Tyre Movement",
+      "context": "Plant Maintenance › Tyre Management › Tyre Movement",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Tyre Movement records",
+          "body": "Tyre Movement records tyres being fitted to, removed from, replaced on or swapped between wheel positions, with readings at that moment.\nWorkshop staff record it whenever tyres are changed on a vehicle.\nThe current position and life history of every tyre stays correct, and tyre life can be measured.",
+          "source_refs": [
+            "forms/fTyreMovement.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "action-rules",
+          "title": "Install, remove, replace and swap rules",
+          "body": "Every line needs a vehicle, a position, an action and an assignee, and the fitment or removal date is mandatory.\nInstalling uses a free position and a tyre that is in stock, removed, repaired or retreaded, with its tread depth and readings.\nRemoving or replacing needs a fitted tyre, its readings and a reason, plus a new status and warehouse except for swaps.\nSwaps need a different position, or a different vehicle for a cross-vehicle swap.",
+          "source_refs": [
+            "forms/fTyreMovement.yaml",
+            "rule:tyre-movement-vehicle-and-position",
+            "rule:tyre-movement-assign-to",
+            "rule:tyre-movement-fitment-removal-date",
+            "rule:tyre-movement-position-lists",
+            "rule:tyre-movement-installable-tyres",
+            "rule:tyre-movement-installation-lines",
+            "rule:tyre-movement-removal-lines",
+            "rule:tyre-movement-removed-tyre-status",
+            "rule:tyre-movement-swap-rules"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "authorisation-effects",
+          "title": "How authorised tyre movements update tyre history",
+          "body": "Nothing changes on the tyres until the movement is authorised.\nOn authorisation each line updates the tyre's status, life stage, vehicle and position, and adds a history entry with the readings taken.\nThe update refuses to install a tyre that is already installed, to remove one that is not installed, to replace with a tyre that is not available, or to swap tyres that are not fitted.\nA removed tyre goes to waiting after removal, awaiting repair or awaiting retread, which feeds the repair and status change process.\nBecause readings are captured at fitment and removal, distance and hours per tyre can be calculated for each life stage.",
+          "source_refs": [
+            "forms/fTyreMovement.yaml",
+            "rule:tyre-movement-tyre-effects-on-authorization",
+            "rule:tyre-movement-removed-tyre-status",
+            "rule:tyre-movement-status-stamps"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreNSDReading",
+      "title": "Tyre Inspection Entry",
+      "context": "Plant Maintenance › Tyre Management › Tyre Inspection Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why tyre tread depth is inspected and recorded",
+          "body": "Tyre Inspection Entry records dated tread depth readings and tyre condition for a set of tyres, with the inspector and shift.\nWorkshop or fleet inspectors record it during routine tyre checks.\nA history of tread wear per tyre supports life analysis and replacement decisions.",
+          "source_refs": [
+            "forms/fTyreNSDReading.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "inspection-rules",
+          "title": "Inspection lines and average tread depth",
+          "body": "Lines can be entered by vehicle and position, which fills the tyre fitted there today, or by choosing the tyre directly.\nAt least one line is required, each with a tyre and a tread depth; vehicle-wise lines also need vehicle and position.\nUp to five tread depth readings can be taken, and the first is mandatory.\nThe line's tread depth is the average of the non-zero readings, shown to one decimal place.",
+          "source_refs": [
+            "forms/fTyreNSDReading.yaml",
+            "rule:tyre-inspection-entry-entry-type-behaviour",
+            "rule:tyre-inspection-entry-line-validation",
+            "rule:tyre-inspection-entry-nsd-readings-and-average"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreRepairRequest",
+      "title": "Tyre Repair Request",
+      "context": "Plant Maintenance › Tyre Management › Tyre Repair Request",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why tyre repairs are requested formally",
+          "body": "A Tyre Repair Request records which tyres are sent for repair or retread, where, and why.\nWorkshop or fleet staff raise it when installed or removed tyres need repair, or tyres awaiting retread are sent out.\nRepair work is requested through an authorised document, and retread hand-over is traceable in tyre history.",
+          "source_refs": [
+            "forms/fTyreRepairRequest.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "request-rules",
+          "title": "Repair category, eligible tyres and retread hand-over",
+          "body": "The repair category decides which tyres are listed: retread categories list only tyres awaiting retread, others list installed tyres or those awaiting repair; changing it reloads the list.\nLines are entered by vehicle and position, or by choosing a tyre that is not installed, and retreads allow only the latter.\nEvery line needs a tyre and a repair description, with optional current tread depth.\nOn authorisation of a retread request, each tyre moves to under retread with a history entry.",
+          "source_refs": [
+            "forms/fTyreRepairRequest.yaml",
+            "rule:tyre-repair-request-category-type-drives-entry",
+            "rule:tyre-repair-request-category-change-resets-lines",
+            "rule:tyre-repair-request-entry-type-rules",
+            "rule:tyre-repair-request-line-validation",
+            "rule:tyre-repair-request-current-nsd",
+            "rule:tyre-repair-request-effect-on-authorization"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreRepairEntry",
+      "title": "Tyre Repair Entry",
+      "context": "Plant Maintenance › Tyre Management › Tyre Repair Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What a Tyre Repair Entry records",
+          "body": "Tyre Repair Entry records the outcome of repair and retread work per tyre: the status reached, tread depth and distance, cost, assignee and, for retreads, the new tread depth and expected life.\nWorkshop staff record it when tyres come back from repair or retread, or are rejected.\nTyre condition, life stage, cost and next status are updated through one controlled document.",
+          "source_refs": [
+            "forms/fTyreRepairEntry.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "eligible-tyres-and-lines",
+          "title": "Eligible tyres, allowed results and line rules",
+          "body": "Entries can be direct or against a repair request; retread categories list tyres awaiting or under retread, and other categories list installed tyres or those awaiting repair.\nRepairs can end as repair completed or rejected, and retreads as retread completed or retread rejected.\nEvery line needs a tyre, a repair status, an assignee and remarks, and a completed retread needs a new tread depth above the threshold.\nFor requests, only selected lines are saved, and the request becomes completed or in progress accordingly.",
+          "source_refs": [
+            "forms/fTyreRepairEntry.yaml",
+            "rule:tyre-repair-entry-eligible-tyres-and-category",
+            "rule:tyre-repair-entry-allowed-repair-statuses",
+            "rule:tyre-repair-entry-line-validation",
+            "rule:tyre-repair-entry-retread-details",
+            "rule:tyre-repair-entry-which-lines-are-saved",
+            "rule:tyre-repair-entry-request-progress"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "external-proof-and-life-stage",
+          "title": "Proof for external work and moving tyres to the next life stage",
+          "body": "When the request sent tyres to an external repairer, a supplier and location are required.\nA tyre completed externally needs a service receipt note against the request, and a rejected tyre needs an authorised gate pass in, so the physical return is proven.\nOn authorisation, the tyre takes its repair status when the category is a retread or the tyre was awaiting repair.\nA completed retread moves the tyre to its next life stage with the new tread depth, so wear and cost are tracked separately for each life.\nThis links workshop results, vendor documents and tyre history in one step.",
+          "source_refs": [
+            "forms/fTyreRepairEntry.yaml",
+            "rule:tyre-repair-entry-supplier-rules",
+            "rule:tyre-repair-entry-proof-for-external-work",
+            "rule:tyre-repair-entry-effect-on-authorization"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fChangeTyreStatus",
+      "title": "Change Tyre Status",
+      "context": "Plant Maintenance › Tyre Management › Change Tyre Status",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why removed tyres get a formal status change",
+          "body": "Change Tyre Status moves removed tyres to their next decision: awaiting repair, awaiting retread or scrapped, and closes the case of a rejected retread.\nFleet maintenance staff use it when a removed tyre is judged.\nStatus changes are authorised, reasoned and traceable instead of edited on the tyre record.",
+          "source_refs": [
+            "forms/fChangeTyreStatus.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "transitions-and-authorisation",
+          "title": "Allowed tyre status moves and what authorisation does",
+          "body": "Only tyres waiting after removal, awaiting repair, awaiting retread or with a rejected retread are offered.\nThe new status is limited by the current one, and a tyre can never be set to installed here.\nEvery tyre line needs a reason and a new status, and earlier reasons can be reused.\nOnly when the document is authorised does each tyre's status change and enter the tyre history; scrapping closes the tyre's current life stage.",
+          "source_refs": [
+            "forms/fChangeTyreStatus.yaml",
+            "rule:change-tyre-status-eligible-tyres",
+            "rule:change-tyre-status-allowed-transitions",
+            "rule:change-tyre-status-line-validation",
+            "rule:change-tyre-status-reason-capture",
+            "rule:change-tyre-status-effect-on-authorization"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fTyreExpenseEntry",
+      "title": "Tyre Expense Entry",
+      "context": "Plant Maintenance › Tyre Management › Tyre Expense Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why tyre expenses are booked separately",
+          "body": "Tyre Expense Entry books costs incurred on individual tyres, such as fitting or balancing charges, that are not part of a purchase or a repair document.\nFleet or workshop staff record it whenever such a cost is incurred.\nTotal cost of ownership per tyre and per life stage can be measured.",
+          "source_refs": [
+            "forms/fTyreExpenseEntry.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "expense-lines",
+          "title": "Vehicle-wise and tyre-wise expense lines",
+          "body": "Lines can be entered by vehicle and position, which fills the fitted tyre, or by choosing the tyre directly.\nEvery line needs a tyre and a non-zero amount, and vehicle-wise lines also need a vehicle and position.\nTyres that are not scrapped are offered, and the tyre's current status and life stage are copied onto the line.\nThe total is the sum of the lines, and each status change stamps the user and time.",
+          "source_refs": [
+            "forms/fTyreExpenseEntry.yaml",
+            "rule:tyre-expense-entry-entry-type-behaviour",
+            "rule:tyre-expense-entry-line-validation",
+            "rule:tyre-expense-entry-tyre-list",
+            "rule:tyre-expense-entry-total-amount",
+            "rule:tyre-expense-entry-status-stamps"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fIncidentEntry",
+      "title": "Incident Entry",
+      "context": "Plant Maintenance › Incidents and Insurance Claims › Incident Entry",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Why incidents involving equipment are recorded",
+          "body": "Incident Entry records an accident, breakdown or damage involving a vehicle or equipment, with the people involved, damaged parts and the reviews required.\nFleet or safety staff enter it when an incident is reported.\nEach incident is captured once with all facts, so management can review it and decide on insurance.",
+          "source_refs": [
+            "forms/fIncidentEntry.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "incident-details-and-status",
+          "title": "People, damaged parts and status of an incident",
+          "body": "Every employee involved needs an incident narration and the person the incident was reported to.\nDamaged parts are recorded by name, and an existing part only has its description updated.\nChecks run in order, from document details through general details and employees to reviews, and the first failure stops the save.\nRelease and authorisation stamp the user and time, and only authorised incidents move on to review.",
+          "source_refs": [
+            "forms/fIncidentEntry.yaml",
+            "rule:incident-entry-employee-row-rules",
+            "rule:incident-entry-part-rows",
+            "rule:incident-entry-order-of-checks",
+            "rule:incident-entry-status-stamps",
+            "rule:incident-entry-status-code"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fIncidentReview",
+      "title": "Incident Review",
+      "context": "Plant Maintenance › Incidents and Insurance Claims › Incident Review",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Purpose of an Incident Review",
+          "body": "An Incident Review records one function's assessment of an authorised incident, such as operations, fleet, technical, human resources or management.\nEach reviewer records it when their review falls due in the incident's sequence.\nEvery incident is assessed by all required functions, ending in a management decision and a decision on insurance.",
+          "source_refs": [
+            "forms/fIncidentReview.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "review-sequence-and-fields",
+          "title": "Review sequence, editable details and insurance decision",
+          "body": "Only authorised incidents that require the chosen review type are offered, and each type can review an incident only once.\nThe first review in the sequence is always allowed, and a later one only after the preceding review is recorded.\nEach review type edits its own details: operations, fleet and human resources record cause and action, technical adds damage and expenses, and management records only the final decision.\nOnly the technical review can flag an insurance claim, and a deduction amount needs a narration.",
+          "source_refs": [
+            "forms/fIncidentReview.yaml",
+            "rule:incident-review-eligible-incidents",
+            "rule:incident-review-fields-by-review-type",
+            "rule:incident-review-insurance-flag-only-in-technical-review",
+            "rule:incident-review-deduction-narration"
+          ]
+        },
+        {
+          "level": "hard",
+          "topic_key": "write-back-and-amounts",
+          "title": "How review results are written back to the incident",
+          "body": "A review does not just sit beside the incident; each save writes its damage amount, deduction amount, deduction narration, responsible employee and insurance flag back onto the incident itself.\nDamage and deduction amounts are stored only when they are above zero.\nRemarks can be recorded per damaged part, and only parts with a remark are kept.\nBecause the insurance flag can only be set in the technical review, an insurance claim can only follow a technical assessment.\nThe incident therefore always shows the latest agreed financial impact, which drives employee deductions and any insurance claim that is raised against it afterwards.",
+          "source_refs": [
+            "forms/fIncidentReview.yaml",
+            "rule:incident-review-write-back-to-incident",
+            "rule:incident-review-amounts-above-zero",
+            "rule:incident-review-part-remarks",
+            "rule:incident-review-insurance-flag-only-in-technical-review"
+          ]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fInsuranceClaim",
+      "title": "Insurance Claim",
+      "context": "Plant Maintenance › Incidents and Insurance Claims › Insurance Claim",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "What an Insurance Claim records",
+          "body": "An Insurance Claim ties one incident, one insured vehicle or equipment and one insurance policy document to a claim amount and a company liability amount.\nFleet or insurance staff raise it after an incident is marked as needing a claim and a policy document exists.\nEach such incident is claimed once, against a known policy, with the split between insurer and company recorded.",
+          "source_refs": [
+            "forms/fInsuranceClaim.yaml"
+          ]
+        },
+        {
+          "level": "medium",
+          "topic_key": "claim-checks",
+          "title": "Claim date, policy validity and previous claims",
+          "body": "The claim date cannot be earlier than the date the incident was reported.\nThe policy is shown as valid when its validity date is on or after the claim date and as expired otherwise; this is informational and does not stop the claim.\nThe latest earlier claim against the same equipment and policy is shown for reference, helping avoid duplicate claims.\nRelease and authorisation stamp the user and time.",
+          "source_refs": [
+            "forms/fInsuranceClaim.yaml",
+            "rule:insurance-claim-date-not-before-incident",
+            "rule:insurance-claim-insurance-validity-indicator",
+            "rule:insurance-claim-last-claim-reference",
+            "rule:insurance-claim-status-stamps"
+          ]
+        }
+      ]
+    }
+  ]
+}

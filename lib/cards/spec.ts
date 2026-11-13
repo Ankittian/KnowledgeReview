@@ -7,15 +7,15 @@ export type Level = "easy" | "medium" | "hard";
 export type Audience = "functional" | "technical";
 
 export const LEVELS: Record<Level, { weight: number; words: [number, number]; lines: [number, number]; ceiling: number }> = {
-  // weight = what a card of this level is worth when answered (replaces "points by level")
+  // weight = points a card of this level earns for a correct answer: easy 1, medium 2, hard 3
   easy: { weight: 1, words: [20, 70], lines: [3, 4], ceiling: 5 },
-  medium: { weight: 3, words: [90, 200], lines: [6, 10], ceiling: 8 },
-  hard: { weight: 5, words: [180, 380], lines: [10, 20], ceiling: 10 },
+  medium: { weight: 2, words: [90, 200], lines: [6, 10], ceiling: 8 },
+  hard: { weight: 3, words: [180, 380], lines: [10, 20], ceiling: 10 },
 };
 export const LEVEL_ORDER: Level[] = ["easy", "medium", "hard"];
 
 /**
- * The flow-first ladder (PLAN-flashcards-flow-ladder.md): difficulty = depth of the ERP flow.
+ * The flow-first ladder (docs/plans/PLAN-flashcards-flow-ladder.md): difficulty = depth of the ERP flow.
  *   module -> easy   (what the module is for, its flows, hand-offs to other modules)
  *   flow   -> medium (one business flow, step by step)
  *   form   -> hard   (one form placed inside its flow: rules, checks, effects)
@@ -41,7 +41,7 @@ export const countLines = (s: string) => s.split(/\r?\n/).filter((l) => l.trim()
 
 /**
  * Things a business user must never see in a functional card. Each entry is [label, regex].
- * Keep this list in sync with the functional skill's "forbidden" list (PLAN-flashcards-roles-scoring.md, section 3).
+ * Keep this list in sync with the functional skill's "forbidden" list (docs/plans/PLAN-flashcards-roles-scoring.md, section 3).
  */
 export const FUNCTIONAL_FORBIDDEN: [string, RegExp][] = [
   ["form code (fXxx / mXxx / tXxx)", /\b[fmt][A-Z][A-Za-z]+\b/],
