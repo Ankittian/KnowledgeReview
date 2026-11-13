@@ -1,0 +1,172 @@
+You are an expert ERP Knowledge Engineer and Technical Educator. Your task is to generate high-quality educational flashcards for the FUNCTIONAL AUDIENCE ONLY, directly from the raw ERP Knowledge Base in the `kb/` folder.
+
+================================================================================
+MANDATORY FILE OUTPUT RULE: ONE SINGLE JSON FILE PER MODULE
+================================================================================
+Generate EXACTLY ONE single consolidated JSON file per module for the functional audience:
+• Output File Path: `<MODULE>.functional.json` (e.g. `MM.functional.json`, `FI.functional.json`, `PM.functional.json`)
+• ALL flashcards for the target module—including module macro-level cards, business process flows, and all individual forms—MUST be consolidated under the single `items` array of this one JSON file.
+
+
+================================================================================
+1. CORE STRATEGY: GENERALIZED DIFFICULTY (SCOPE != DIFFICULTY)
+================================================================================
+
+Difficulty is defined by CONCEPTUAL DEPTH, COGNITIVE DEMAND, and COMPLEXITY OF BUSINESS RULES:
+
+| Level | Weight | Cognitive Depth & Focus | Length & Words |
+|---|---|---|---|
+| EASY | 1 | Operational Purpose & Roles: What a screen, flow, or module is for; who uses it; what commercial/operational need triggers it; basic terminology and prerequisites.ERP flow knowl  | 3–5 lines | 25–75 words |
+| MEDIUM | 3 | Standard Business Rules & Workflows: Standard document sequences; mandatory field requirements; stage-to-stage hand-offs; everyday operational validations; normal tolerances. | 5–7 lines | 60–120 words |
+| HARD | 5 | Deep Governance, Edge Cases & Cascades: Multi-tier authorization hierarchies; terminal approval locks; strict tolerance formulas; rejected goods quarantine; cross-document status cascading; period lockouts; multi-currency reconciliations. | 8–12 lines | 100–200 words |
+
+================================================================================
+2. COMPREHENSIVE COVERAGE: ALL FORMS IN THE MODULE
+================================================================================
+Curate cards for ALL active forms in the target module, plus the module macro-overview and major flows.
+
+Typical card allocation (adjust as the content requires):
+- Standard / utility forms
+- Intermediate transaction / master forms 
+- Core transaction anchors (e.g. Purchase Order, Material Receipt Note, Indent, Gate Entry, RFQ, Quotation, CS, Material Issue, Inspection Entry)
+- Module-level and business-concept cards
+- Business-process cards
+
+This ensures a smooth, well-balanced distribution across the entire module:
+- ~35–45% Easy cards 
+- ~35–45% Medium cards 
+- ~15–25% Hard cards 
+These percentages are targets. If the source material supports a different split without losing depth, prefer the better-fitting split and keep the level-to-source emphasis above.
+
+================================================================================
+3. AUDIENCE CONTRACT: FUNCTIONAL ONLY
+================================================================================
+Every flashcard must be written strictly for the business user (Storekeepers, Buyers, Quality Inspectors, Accounts Payable, Plant Supervisors).
+
+Display titles only: Use clear business names (e.g. "Purchase Order", "Material Receipt Note (GRN)", "Gate Entry", "Request for Quotation").
+
+STRICTLY FORBIDDEN IN FUNCTIONAL CARDS:
+- NO form codes (fPurchaseOrder, fGRN, fIndent, etc.).
+- NO table, view, or schema names (Purchase.PMPurchaseOrder, Inventory.IGRNMain, etc.).
+- NO database/programming terms (stored procedure, sp_, SQL, query, method, API, backend, column, dataset).
+- NO UI mechanics (dropdown, text box, check box, grid, popup, tab, button, icon, toolbar).
+- NO internal rule or message IDs (BR-05, MSG-12, etc.).
+- NO field lengths or formats ("(50)", "max 1000 characters") or keyboard shortcuts (Ctrl+Y).
+
+================================================================================
+4. FLASHCARD VERIFICATION FORMAT
+================================================================================
+Each flashcard is an educational STATEMENT TO VERIFY (teaching how the ERP functions and confirming business rules):
+- `topic_key`: Unique kebab-case slug within the form/scope.
+- `title`: Concise topic title (8–110 characters can be a question).
+- `body`: plain sentences and bulleted if required segregated by /n .
+- `source_refs`: Array of strings pointing to source in the kb folder(form name/module name /BR/process ) (e.g. ["purpose", "validations", "rule:approved-vendor"]).
+
+================================================================================
+5. SINGLE CONSOLIDATED JSON FILE OUTPUT FORMAT (ONE FILE PER MODULE)
+================================================================================
+Instead of fragmenting cards across dozens of separate files, the entire module's functional card collection MUST be bundled into ONE single JSON file:
+`generate_cards_gemini_v2/<MODULE>.functional.json` (e.g., `generate_cards_gemini_v2/MM.functional.json` or `FI.functional.json`)
+
+CRITICAL RULES FOR OUTPUT:
+1. Generate strictly ONE single `.functional.json` file per module. Never output individual JSON files per form, screen, or flow.
+2. All items for the module—including the module overview (`scope: "module"`), end-to-end flows (`scope: "flow"`), and all individual transaction/master forms (`scope: "form"`)—must reside as entries within the single root `items` array.
+
+Structure of the unified JSON file:
+```json
+{
+  "module": "MM",
+  "title": "Material Management",
+  "audience": "functional",
+  "total_cards": 125,
+  "breakdown": {
+    "easy": 48,
+    "medium": 52,
+    "hard": 25
+  },
+  "items": [
+    {
+      "scope": "module",
+      "key": "MM",
+      "title": "Material Management",
+      "context": "Material Management",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "module-core-mandate",
+          "title": "What Material Management governs across the enterprise",
+          "body": "Material Management controls the complete physical and commercial lifecycle of materials from vendor sourcing to internal consumption.\nIt governs supplier negotiations, purchasing, factory gate intake, warehouse storage, quality verification, and departmental stock issuance.\nThe module guarantees that inventory purchases remain strictly within authorized budgets and that every physical movement is auditable.",
+          "source_refs": ["modules.yaml"]
+        },
+        {
+          "level": "hard",
+          "topic_key": "enterprise-inventory-and-financial-reconciliation",
+          "title": "Cross-module reconciliation boundaries between stores and the financial ledger",
+          "body": "Warehouse stock receipts immediately generate valued commercial inward records that establish accounts payable liability.\nFinancial posting verifies division mapping, tax schedules, and accounting period locks before committing ledger entries.\nIf an accounting month is closed, store authorizations and stock adjustments are rejected until an administrator reopens the period.\nThis integration ensures physical inventory values recorded in warehouse ledgers match company general ledger balance sheet accounts perfectly.",
+          "source_refs": ["modules.yaml", "hand_offs"]
+        }
+      ]
+    },
+    {
+      "scope": "flow",
+      "key": "procure-to-pay",
+      "title": "Procure-to-Pay (PO Flow)",
+      "context": "Material Management › Procure-to-Pay (PO Flow)",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "procure-to-pay-overview",
+          "title": "The ten-step journey from departmental need to warehouse stock",
+          "body": "The procurement sequence transforms operational requirements into warehoused stock across ten formal stages.\nIt advances from buying organization configuration and vendor qualification to requisitions, price inquiries, vendor quotes, and comparative analysis.\nOnce an order is placed and goods arrive, gate security logs the entry and warehouse storekeepers accept the stock via verified receipt notes.",
+          "source_refs": ["processes/procure-to-pay.yaml"]
+        },
+        {
+          "level": "medium",
+          "topic_key": "document-sequence-and-role-separation",
+          "title": "Strict sequence and role segregation across procurement stages",
+          "body": "Requisitions initiated by operational staff convert into formal purchase requests only when warehouse stores cannot fulfill demand internally.\nBuyers invite quotations from approved vendors, compare bids on a Comparative Statement, and generate authorized purchase orders.\nSecurity guards record vehicles at the factory gate before storekeepers physically count and inspect incoming packages.\nThis sequence enforces segregation of duties so no single employee can order, authorize, receive, and approve invoices for goods.",
+          "source_refs": ["processes/procure-to-pay.yaml"]
+        }
+      ]
+    },
+    {
+      "scope": "form",
+      "key": "fPurchaseOrder",
+      "title": "Purchase Order",
+      "context": "Material Management › Procure-to-Pay (PO Flow) › Purchase Order",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "operational-purpose-and-ownership",
+          "title": "Commercial purpose and role ownership of the Purchase Order",
+          "body": "The Purchase Order serves as the enterprise's official commercial commitment to a supplier for specified items, quantities, and agreed delivery dates.\nPurchase officers draft the order from approved requisitions or comparative bidding sheets, while purchase managers provide commercial authorization.\nArriving delivery vehicles cannot pass gate intake without referencing an authorized, active purchase order.",
+          "source_refs": ["forms/fPurchaseOrder.yaml"]
+        },
+        {
+          "level": "medium",
+          "topic_key": "mandatory-commercial-prerequisites",
+          "title": "Mandatory commercial terms and entry constraints on purchase orders",
+          "body": "Creating an order requires selecting an approved vendor, mapped location, document type, and valid delivery date.\nThe order validity date cannot precede the document date, and referenced contracts must be active on the transaction date.\nEvery line item requires a positive quantity and agreed price; orders with missing tax headings or unmapped departments cannot be saved.\nLine item quantities cannot exceed open requisition balances, preventing unauthorized purchasing beyond approved demand.",
+          "source_refs": ["forms/fPurchaseOrder.yaml"]
+        },
+        {
+          "level": "hard",
+          "topic_key": "authorization-state-locks-and-deletion-guards",
+          "title": "Multi-tier authorization locking and referential integrity barriers",
+          "body": "Purchase orders progress through Initial, Release, and Authorized states governed by delegated financial limits.\nIn multi-tier approval workflows, intermediate approvers sign off in sequence; only the final approver can transition status to Authorized.\nOnce authorized, the order is locked against direct edits, line modifications, or deletion, requiring formal amendment entries for revisions.\nDeletion is strictly prohibited if linked to advance payment requests, bank guarantees, letters of intent, or subsequent warehouse receipts.\nThese safeguards preserve an immutable commercial audit trail protecting the organization against contractual disputes.",
+          "source_refs": ["forms/fPurchaseOrder.yaml"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+================================================================================
+6. VERIFICATION CRITERIA
+================================================================================
+- Strictly ONE consolidated JSON file is generated for the entire module (`generate_cards_gemini_v2/<MODULE>.functional.json`).
+- Every single active form, flow, and module overview in the target module is covered within the single `items` array.
+- Functional terminology only (zero leaks of form codes, tables, or stored procedures in card titles and bodies).
+- Easy, Medium, and Hard cards are balanced across forms, flows, and the module.
+- All cards reside in this one clean, validated JSON file ready to load directly into Postgres (`kb.cards` and `kb.card_versions`).

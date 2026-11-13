@@ -1,0 +1,38 @@
+{
+  "module": "MM",
+  "title": "Material Management",
+  "audience": "functional",
+  "total_cards": 3,
+  "breakdown": { "easy": 1, "medium": 1, "hard": 1 },
+  "items": [
+    {
+      "scope": "module",
+      "key": "MM",
+      "title": "Material Management",
+      "context": "Material Management",
+      "cards": [
+        {
+          "level": "easy",
+          "topic_key": "module-purpose-and-scope",
+          "title": "Question / front of the card (one clear question)",
+          "body": "Answer / back of the card.\nEasy (1 point): length limits are in lib/cards/spec.ts.",
+          "source_refs": ["modules.yaml"]
+        },
+        {
+          "level": "medium",
+          "topic_key": "unique-slug-within-this-group-and-level",
+          "title": "Medium question",
+          "body": "Medium (2 points).",
+          "source_refs": ["processes/<flow>.yaml"]
+        },
+        {
+          "level": "hard",
+          "topic_key": "another-unique-slug",
+          "title": "Hard question",
+          "body": "Hard (3 points).",
+          "source_refs": ["rule:<rule_key>"]
+        }
+      ]
+    }
+  ]
+}
