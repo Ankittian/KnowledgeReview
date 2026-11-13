@@ -18,7 +18,7 @@ Everything is repeatable: running it again on a database that already has data c
 ## 2. Prepare the EC2 instance (once)
 
 1. **Launch** an Amazon Linux 2023 or Ubuntu instance. `t4g.large` (ARM) or `t3.large` (x64) with 30 GB disk is enough. The Dockerfile builds on both.
-2. **Security group, inbound:** port 22 from your IP only, and your app port (default 3000) from the people who need it. With TLS: 80 and 443 instead. **Never open 5432.**
+2. **Security group, inbound:** port 22 from your IP only, and your app port (default 3000) from the people who need it. With TLS: 8080 and 8443 instead (`HTTP_PORT` / `HTTPS_PORT`). **Never open 5432.**
 3. **Install Docker and Git.**
    Amazon Linux: `sudo dnf install -y docker git && sudo systemctl enable --now docker && sudo usermod -aG docker $USER`, then log out and back in.
    Ubuntu: `sudo apt-get install -y docker.io docker-compose-v2 git && sudo usermod -aG docker $USER`, then log out and back in.
@@ -95,7 +95,7 @@ With a domain name pointing at the instance:
 
 1. Put `fullchain.pem` and `privkey.pem` in `infra/certs/`.
 2. In `.env` set `COOKIE_SECURE=true` and `APP_BIND=127.0.0.1` (only nginx reaches the app).
-3. Open ports 80 and 443 (close the app port).
+3. Open ports 8080 and 8443 (close the app port). Override with `HTTP_PORT` / `HTTPS_PORT` in `.env`; the site is then at `https://<domain>:8443`.
 4. `docker compose --profile app --profile tls up -d --build`.
 
 ## 8. The database schema

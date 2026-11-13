@@ -76,10 +76,13 @@ services:
     container_name: kr-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      # Host ports; defaults avoid 80/443 which are often taken. Browse to https://<host>:8443 (http on 8080 redirects there).
+      - "${HTTP_PORT:-8080}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    environment:
+      HTTPS_PORT: ${HTTPS_PORT:-8443}
     volumes:
-      - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infra/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./infra/certs:/etc/nginx/certs:ro
     depends_on:
       - web

@@ -22,7 +22,7 @@ Browser ──HTTPS──> nginx (TLS, SSE unbuffered) ──> web: Next.js (UI 
 | Harness inside FastAPI or a sidecar | Inside the web process (`lib/chat/live.ts`), FIFO-limited to 3 concurrent answers |
 | nginx, react-static, fastapi, postgres, neo4j, mcp-server | `docker-compose.yml`: `postgres` (unchanged) + `web` and `nginx` under the `app` profile. Neo4j and the MCP server already run separately and are reached through `KG_MCP_URL` |
 
-Files: `Dockerfile` (multi-arch, runs as uid 10001, app files read-only), `infra/nginx/nginx.conf`,
+Files: `Dockerfile` (multi-arch, runs as uid 10001, app files read-only), `infra/nginx/default.conf.template`,
 `docker-compose.yml`.
 
 ## 2. Claude harness (section 6)
