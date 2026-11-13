@@ -86,7 +86,7 @@ describe("ownership (general users never see other users' chats)", () => {
   });
   it("answer roles: default functional, set by admin", async () => {
     expect(await getAnswerRole(h.db, bob.id)).toBe("functional");
-    await setAnswerRole(h.db, bob.id, "technical", admin.id);
+    await setAnswerRole(h.db, bob.id, "technical");
     expect(await getAnswerRole(h.db, bob.id)).toBe("technical");
   });
 });

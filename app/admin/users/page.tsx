@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { desc, eq, getTableColumns } from "drizzle-orm";
 import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
-import { roles, userAnswerRoles, users } from "@/db/schema";
+import { roles, users } from "@/db/schema";
 import { approveUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
 import { DEFAULT_ANSWER_ROLE } from "@/lib/chat/config";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
@@ -41,7 +41,6 @@ export default async function UsersPage() {
     .from(users)
     .innerJoin(roles, eq(roles.id, users.roleId))
     .orderBy(desc(users.createdAt));
-  const answerRoles = new Map((await db.select().from(userAnswerRoles)).map((r) => [r.userId, r.answerRole]));
   const pending = all.filter((u) => u.status === "pending");
   const others = all.filter((u) => u.status !== "pending");
 
@@ -160,7 +159,7 @@ export default async function UsersPage() {
                         <input type="hidden" name="userId" value={u.id} />
                         <NativeSelect
                           name="answerRole"
-                          defaultValue={answerRoles.get(u.id) ?? DEFAULT_ANSWER_ROLE}
+                          defaultValue={u.answerRole ?? DEFAULT_ANSWER_ROLE}
                           size="sm"
                           className="w-28"
                           aria-label={`Answer style for ${u.username}`}

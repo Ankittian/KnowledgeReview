@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { query, type DB } from "@/db/client";
-import { chatFeedback, chatMessages, chatToolCalls, conversations, userAnswerRoles, users } from "@/db/schema";
+import { chatFeedback, chatMessages, chatToolCalls, conversations, users } from "@/db/schema";
 import { DEFAULT_ANSWER_ROLE, type AnswerRole } from "./config";
 import type { ReplayTurn } from "./prompts";
 
@@ -31,15 +31,13 @@ export interface MessageView {
 
 /** General users answer in their admin-assigned role. Admins choose per conversation (REQ-ROLE-01, 04). */
 export async function getAnswerRole(db: DB, userId: string): Promise<AnswerRole> {
-  const [r] = await db.select({ role: userAnswerRoles.answerRole }).from(userAnswerRoles).where(eq(userAnswerRoles.userId, userId));
+  const [r] = await db.select({ role: users.answerRole }).from(users).where(eq(users.id, userId));
   return r?.role ?? DEFAULT_ANSWER_ROLE;
 }
 
-export async function setAnswerRole(db: DB, userId: string, role: AnswerRole, setBy: string): Promise<void> {
-  await db
-    .insert(userAnswerRoles)
-    .values({ userId, answerRole: role, setBy })
-    .onConflictDoUpdate({ target: userAnswerRoles.userId, set: { answerRole: role, setBy, updatedAt: new Date() } });
+/** Who changed it is recorded by the admin action's `user_answer_role_changed` audit event. */
+export async function setAnswerRole(db: DB, userId: string, role: AnswerRole): Promise<void> {
+  await db.update(users).set({ answerRole: role }).where(eq(users.id, userId));
 }
 
 export async function listConversations(db: DB, userId: string): Promise<ConversationListItem[]> {

@@ -60,7 +60,7 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
     return { error: "Your account is disabled. Contact an administrator.", values: { username } };
   }
 
-  const sessionId = await createSession(user.id, meta.userAgent, meta.ip);
+  const sessionId = await createSession(user.id);
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
   await logEvent(db, { userId: user.id, type: "login", sessionId, ip: meta.ip });
   const next = String(fd.get("next") ?? "");

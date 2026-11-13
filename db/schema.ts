@@ -25,6 +25,9 @@ const createdAt = () => ts("created_at").notNull().defaultNow();
 
 export const userStatus = pgEnum("user_status", ["pending", "active", "disabled"]);
 
+/** Answer style (Claude skill). General users have one, set by an admin (null = default); admins pick one per conversation. */
+export const answerRole = pgEnum("answer_role", ["technical", "functional", "product"]);
+
 export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(), // admin | functional | technical
@@ -37,6 +40,7 @@ export const users = pgTable("users", {
   displayName: text("display_name").notNull(),
   department: text("department"),
   primaryModule: text("primary_module"), // module code, e.g. MM
+  answerRole: answerRole("answer_role"), // chat answer style set by an admin; null = default (functional)
   roleId: integer("role_id")
     .notNull()
     .references(() => roles.id),
@@ -54,7 +58,6 @@ export const loginSessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     expiresAt: ts("expires_at").notNull(), // absolute expiry of the sign-in
-    userAgent: text("user_agent"),
     createdAt: createdAt(),
   },
   (t) => [index("login_sessions_user_idx").on(t.userId)],
@@ -121,7 +124,6 @@ export const kbItems = pgTable(
     contentHash: text("content_hash").notNull(),
     meta: jsonb("meta").$type<Record<string, unknown>>().notNull().default({}),
     active: boolean("active").notNull().default(true),
-    lastSyncedAt: ts("last_synced_at"),
   },
   (t) => [unique("kb_items_type_key").on(t.type, t.key)],
 );
@@ -308,21 +310,10 @@ export const roleIdOf = (name: string) => sql<number>`(SELECT id FROM roles WHER
 
 // ---------------------------------------------------------------- knowledge assistant (chat)
 
-/** Answer style (Claude skill). General users have one, set by an admin; admins pick one per conversation. */
-export const answerRole = pgEnum("answer_role", ["technical", "functional", "product"]);
 export const chatSender = pgEnum("chat_sender", ["user", "assistant"]);
 /** streaming = answer still being written; stopped = user pressed Stop (partial text kept). */
 export const chatMessageStatus = pgEnum("chat_message_status", ["ok", "streaming", "stopped", "error"]);
 export const chatFeedbackValue = pgEnum("chat_feedback_value", ["up", "down"]);
-
-export const userAnswerRoles = pgTable("user_answer_roles", {
-  userId: uuid("user_id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" }),
-  answerRole: answerRole("answer_role").notNull(),
-  setBy: uuid("set_by"),
-  updatedAt: ts("updated_at").notNull().defaultNow(),
-});
 
 export const conversations = pgTable(
   "conversations",

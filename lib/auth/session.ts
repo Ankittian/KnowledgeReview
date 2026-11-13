@@ -15,7 +15,7 @@ export type { Role, Session, SessionUser } from "./types";
  * + a rotating opaque refresh token (cookie `kr_refresh`, stored hashed in `refresh_tokens`).
  * The proxy (proxy.ts) renews the access token from the refresh token; server components only read cookies.
  */
-export async function createSession(userId: string, userAgent: string | null, ip: string | null = null): Promise<string> {
+export async function createSession(userId: string): Promise<string> {
   const db = await getDb();
   const cfg = authConfig();
   const [u] = await db
@@ -37,7 +37,7 @@ export async function createSession(userId: string, userAgent: string | null, ip
   const sid = crypto.randomUUID();
   const expiresAt = new Date(Date.now() + cfg.refreshDays * 86400_000);
   const idleExpiresAt = new Date(Math.min(expiresAt.getTime(), Date.now() + cfg.idleDays * 86400_000));
-  await db.insert(loginSessions).values({ id: sid, userId, expiresAt, userAgent: userAgent?.slice(0, 400) ?? null });
+  await db.insert(loginSessions).values({ id: sid, userId, expiresAt });
   const rt = newRefreshToken();
   await db.insert(refreshTokens).values({ id: rt.id, sessionId: sid, idleExpiresAt });
 

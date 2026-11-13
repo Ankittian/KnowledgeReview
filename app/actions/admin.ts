@@ -54,7 +54,7 @@ export async function setUserAnswerRole(fd: FormData) {
   const id = uuid.parse(fd.get("userId"));
   const role = z.enum(ANSWER_ROLES).parse(fd.get("answerRole"));
   const db = await getDb();
-  await setAnswerRole(db, id, role, actor.id);
+  await setAnswerRole(db, id, role);
   await audit(db, actor.id, "user_answer_role_changed", "user", id, { answerRole: role });
   revalidatePath("/admin/users");
 }
