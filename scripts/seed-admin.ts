@@ -22,7 +22,10 @@ passwordSchema.parse(password);
 const h = createDb();
 const passwordHash = await hashPassword(password);
 const [existing] = await h.db.select().from(users).where(eq(users.username, username));
-if (existing) {
+if (existing && process.argv.includes("--if-missing")) {
+  // Used on every deploy: never overwrite an admin whose password was changed in the app.
+  console.log(`Admin '${username}' already exists, left unchanged.`);
+} else if (existing) {
   await h.db.update(users).set({ passwordHash, roleId: roleIdOf("admin"), status: "active" }).where(eq(users.id, existing.id));
   console.log(`Admin '${username}' updated (password reset, role=admin, status=active).`);
 } else {

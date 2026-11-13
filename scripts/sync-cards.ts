@@ -3,7 +3,8 @@ import { createDb } from "@/db/client";
 import { runKbSync } from "@/lib/kb-sync";
 
 const h = createDb();
-const { report, warnings, quality, kbDir } = await runKbSync(h.db, { actor: null, via: "cli" });
+// --entities-only: load the KB items but not the YAML template cards (fresh deployments; cards come from cards:push).
+const { report, warnings, quality, kbDir } = await runKbSync(h.db, { actor: null, via: "cli", entitiesOnly: process.argv.includes("--entities-only") });
 console.log(`KB: ${kbDir}`);
 if (warnings.length) console.warn(`${warnings.length} warning(s):\n  ${warnings.slice(0, 30).join("\n  ")}`);
 if (quality.length) {

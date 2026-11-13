@@ -7,11 +7,16 @@ import { syncCatalog, type SyncReport } from "@/lib/sync";
 
 export const kbDir = () => path.resolve(/*turbopackIgnore: true*/ process.env.KB_DIR ?? "kb");
 
-/** Load KB_DIR -> build cards -> upsert. Records the outcome in the audit log. */
-export async function runKbSync(db: DB, opts: { actor: string | null; via: "cli" | "admin" }) {
+/**
+ * Load KB_DIR -> build cards -> upsert. Records the outcome in the audit log.
+ * entitiesOnly: load only the KB items (modules, concepts, rules, processes, forms) and skip the YAML template cards.
+ * Used on a fresh deployment, where the flashcards come from the generated catalogs (npm run cards:push).
+ */
+export async function runKbSync(db: DB, opts: { actor: string | null; via: "cli" | "admin"; entitiesOnly?: boolean }) {
   const dir = kbDir();
   const kb = loadKnowledgeBase(dir);
-  const catalog = buildCatalog(kb);
+  const built = buildCatalog(kb);
+  const catalog = opts.entitiesOnly ? { ...built, cards: [] } : built;
   const report: SyncReport = await syncCatalog(db, catalog);
   await audit(db, opts.actor, "kb_sync", "kb", dir, {
     via: opts.via,
