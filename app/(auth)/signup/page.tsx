@@ -15,13 +15,13 @@ export default async function SignupPage() {
     .where(eq(kbEntities.type, "module"))
     .orderBy(kbEntities.name);
   return (
-    <div className="panel p-6 shadow-card sm:p-8">
-      <h1 className="text-xl font-semibold">Request an account</h1>
-      <p className="mt-1 text-sm text-muted">An administrator approves new accounts before you can sign in.</p>
+    <div>
+      <h1 className="text-2xl font-semibold tracking-tight">Request an account</h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">An administrator approves new accounts before you can sign in.</p>
       <SignupForm modules={modules} />
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-8 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-primary hover:underline">
+        <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
           Sign in
         </Link>
       </p>

@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { Send, X } from "lucide-react";
+import { motion } from "motion/react";
+import { RotateCcw, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 export type FeedbackCategory = "incorrect" | "incomplete" | "outdated" | "unclear" | "other";
 
@@ -38,112 +43,111 @@ export function FeedbackSheet({ open, originalText, onCancel, onSubmit }: Props)
     setCategory(null);
     setText(originalText);
     setComment("");
-    const t = setTimeout(() => firstRef.current?.focus(), 60);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
-    window.addEventListener("keydown", onKey);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, originalText, onCancel]);
+  }, [open, originalText]);
 
   const changed = text.trim() !== originalText.trim();
 
   return (
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="fb-title">
-          <motion.div
-            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onCancel}
-          />
-          <motion.form
-            className="safe-bottom relative max-h-[90dvh] w-full overflow-y-auto rounded-t-3xl border border-border bg-surface px-5 pt-3 shadow-card sm:max-w-lg sm:rounded-3xl sm:p-6"
-            initial={{ y: "100%", opacity: 0.6 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 380, damping: 36 }}
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (category) onSubmit({ category, suggestedText: changed ? text : "", comment });
-            }}
-          >
-            <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-border sm:hidden" />
-            <div className="flex items-start gap-3">
-              <div className="flex-1">
-                <h2 id="fb-title" className="text-lg font-semibold">
-                  What needs improving?
-                </h2>
-                <p className="mt-0.5 text-sm text-muted">Your suggestion goes to the knowledge-base reviewers.</p>
-              </div>
-              <button type="button" className="btn btn-ghost -mt-1 -mr-2 px-2" onClick={onCancel} aria-label="Close">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+    <Dialog open={open} onOpenChange={(o) => !o && onCancel()}>
+      <DialogContent
+        initialFocus={firstRef}
+        className={cn(
+          "safe-bottom max-h-[92dvh] gap-0 overflow-y-auto p-0 sm:max-w-lg",
+          // bottom sheet on phones
+          "max-sm:top-auto max-sm:bottom-0 max-sm:max-w-full max-sm:translate-y-0 max-sm:rounded-b-none max-sm:data-closed:slide-out-to-bottom max-sm:data-closed:zoom-out-100 max-sm:data-open:slide-in-from-bottom max-sm:data-open:zoom-in-100 max-sm:data-open:duration-300",
+        )}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (category) onSubmit({ category, suggestedText: changed ? text : "", comment });
+          }}
+        >
+          <div className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-border sm:hidden" />
+          <DialogHeader className="px-5 pt-4 sm:px-6 sm:pt-6">
+            <DialogTitle className="text-lg font-semibold">What needs improving?</DialogTitle>
+            <DialogDescription>Your suggestion goes to the knowledge-base reviewers.</DialogDescription>
+          </DialogHeader>
 
-            <fieldset className="mt-4">
-              <legend className="label">Issue</legend>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {CATEGORIES.map((c, i) => (
-                  <button
-                    key={c.value}
-                    ref={i === 0 ? firstRef : undefined}
-                    type="button"
-                    role="radio"
-                    aria-checked={category === c.value}
-                    onClick={() => setCategory(c.value)}
-                    className={`rounded-xl border px-3 py-2 text-left transition ${
-                      category === c.value
-                        ? "border-primary bg-primary-soft ring-2 ring-[var(--ring)]"
-                        : "border-border bg-surface hover:bg-surface-2"
-                    }`}
-                  >
-                    <span className={`block text-sm font-semibold ${category === c.value ? "text-primary" : ""}`}>{c.label}</span>
-                    <span className="block text-[11px] leading-tight text-muted">{c.hint}</span>
-                  </button>
-                ))}
+          <div className="space-y-5 px-5 py-5 sm:px-6">
+            <fieldset>
+              <legend className="mb-2 text-sm font-medium">Issue</legend>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3" role="radiogroup">
+                {CATEGORIES.map((c, i) => {
+                  const on = category === c.value;
+                  return (
+                    <button
+                      key={c.value}
+                      ref={i === 0 ? firstRef : undefined}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => setCategory(c.value)}
+                      className={cn(
+                        "relative rounded-lg border px-3 py-2.5 text-left transition-[border-color,background-color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                        on ? "border-primary bg-primary/[0.06]" : "bg-card hover:border-foreground/20 hover:bg-accent/60",
+                      )}
+                    >
+                      {on && (
+                        <motion.span
+                          layoutId="fb-cat-dot"
+                          className="absolute top-2.5 right-2.5 size-1.5 rounded-full bg-primary"
+                          transition={{ type: "spring", stiffness: 600, damping: 40 }}
+                        />
+                      )}
+                      <span className={cn("block text-sm font-medium", on && "text-primary")}>{c.label}</span>
+                      <span className="mt-0.5 block text-[11px] leading-tight text-muted-foreground">{c.hint}</span>
+                    </button>
+                  );
+                })}
               </div>
             </fieldset>
 
-            <div className="mt-4">
-              <label className="label" htmlFor="fb-text">
-                Suggested correction <span className="font-normal text-muted">(edit the text)</span>
-              </label>
-              <textarea id="fb-text" className="input min-h-32 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} maxLength={5000} />
-              {changed && (
-                <button type="button" className="mt-1 text-xs font-medium text-primary hover:underline" onClick={() => setText(originalText)}>
-                  Reset to original
-                </button>
-              )}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="fb-text">
+                  Suggested correction <span className="font-normal text-muted-foreground">(edit the text)</span>
+                </Label>
+                {changed && (
+                  <Button type="button" variant="ghost" size="xs" className="text-muted-foreground" onClick={() => setText(originalText)}>
+                    <RotateCcw /> Reset to original
+                  </Button>
+                )}
+              </div>
+              <Textarea
+                id="fb-text"
+                className={cn("min-h-32 resize-y leading-relaxed", changed && "border-primary/50")}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                maxLength={5000}
+              />
             </div>
-            <div className="mt-3">
-              <label className="label" htmlFor="fb-comment">
-                Comment <span className="font-normal text-muted">(optional)</span>
-              </label>
-              <textarea
+            <div className="space-y-1.5">
+              <Label htmlFor="fb-comment">
+                Comment <span className="font-normal text-muted-foreground">(optional)</span>
+              </Label>
+              <Textarea
                 id="fb-comment"
-                className="input min-h-16 resize-y"
+                className="min-h-16 resize-y"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 maxLength={2000}
                 placeholder="Why is it wrong? Where did you see the right behaviour?"
               />
             </div>
-            <div className="mt-5 flex gap-2 pb-2 sm:pb-0">
-              <button type="button" className="btn btn-outline btn-lg flex-1" onClick={onCancel}>
-                Cancel
-              </button>
-              <button type="submit" className="btn btn-primary btn-lg flex-[2]" disabled={!category}>
-                <Send className="h-4 w-4" />
-                Submit
-              </button>
-            </div>
-          </motion.form>
-        </div>
-      )}
-    </AnimatePresence>
+          </div>
+
+          <DialogFooter className="mx-0 mb-0 px-5 sm:px-6">
+            <Button type="button" variant="outline" size="lg" className="h-10 sm:w-28" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" size="lg" className="h-10 sm:w-36" disabled={!category}>
+              <Send />
+              Submit
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

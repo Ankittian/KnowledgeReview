@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sql } from "drizzle-orm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, Gauge, Layers, ShieldAlert, Sparkles, UserCheck } from "lucide-react";
 import { getDb, query } from "@/db/client";
-import { Empty, Kpi, ScoreBar, TypePill, Votes, entityHref, pct } from "@/components/admin/bits";
+import { Empty, ScoreBar, TableCard, Tag, TypePill, Votes, entityHref, pct, surface, tcell, thead } from "@/components/admin/bits";
+import { FadeIn, Stagger, StaggerItem } from "@/components/common/motion";
+import { SectionTitle } from "@/components/common/PageHeader";
+import { StatCard } from "@/components/common/StatCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Knowledge item" };
 
@@ -79,80 +84,106 @@ export default async function EntityPage({ params }: { params: Promise<{ type: s
   ]);
 
   const meta = entity.meta ?? {};
+  const score = roll ? Number(roll.needs_change_score) : 0;
   return (
     <div className="space-y-6">
-      <Link href="/admin/health" className="inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-fg">
-        <ArrowLeft className="h-4 w-4" /> Back
+      <Link href="/admin/health" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <ArrowLeft className="size-4" /> Back
       </Link>
-      <header className="panel p-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <TypePill type={entity.type} />
-          {!entity.active && <span className="chip bg-danger-soft text-danger">removed from YAML</span>}
-          {entity.module && <span className="chip">{entity.module}</span>}
-        </div>
-        <h2 className="mt-2 text-xl font-bold">{entity.name}</h2>
-        <p className="mt-1 font-mono text-xs break-all text-muted">
-          {entity.yaml_file} → {entity.key}
-        </p>
-        {typeof meta.source_ref === "string" && <p className="mt-1 text-xs text-muted">Source: {meta.source_ref}</p>}
-        {Array.isArray(meta.implemented_by) && meta.implemented_by.length > 0 && (
-          <p className="mt-1 font-mono text-[11px] break-all text-muted">Implemented by: {(meta.implemented_by as string[]).join(", ")}</p>
-        )}
-      </header>
+      <FadeIn>
+        <header className={cn(surface, "p-5")}>
+          <div className="flex flex-wrap items-center gap-2">
+            <TypePill type={entity.type} />
+            {!entity.active && <Tag tone="destructive">removed from YAML</Tag>}
+            {entity.module && <Tag tone="outline">{entity.module}</Tag>}
+          </div>
+          <h2 className="mt-2.5 text-xl font-semibold tracking-tight">{entity.name}</h2>
+          <p className="mt-1 font-mono text-xs break-all text-muted-foreground">
+            {entity.yaml_file} → {entity.key}
+          </p>
+          {typeof meta.source_ref === "string" && <p className="mt-1 text-xs text-muted-foreground">Source: {meta.source_ref}</p>}
+          {Array.isArray(meta.implemented_by) && meta.implemented_by.length > 0 && (
+            <p className="mt-1 font-mono text-[11px] break-all text-muted-foreground">Implemented by: {(meta.implemented_by as string[]).join(", ")}</p>
+          )}
+        </header>
+      </FadeIn>
 
       {roll && (
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-          <Kpi label="Related cards" value={roll.cards} sub="own + linked" />
-          <Kpi label="Reviewed" value={roll.cards_reviewed} />
-          <Kpi label="Flagged cards" value={roll.cards_flagged} tone="text-warning" />
-          <Kpi label="Employees knew it" value={pct(roll.knew_rate == null ? null : Number(roll.knew_rate))} />
-          <Kpi label="Needs-change score" value={Number(roll.needs_change_score).toFixed(2)} tone={Number(roll.needs_change_score) >= 0.25 ? "text-danger" : ""} />
-        </div>
+        <Stagger className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <StaggerItem>
+            <StatCard label="Related cards" value={Number(roll.cards)} sub="own + linked" icon={<Layers />} />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard label="Reviewed" value={Number(roll.cards_reviewed)} icon={<UserCheck />} tone="primary" />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard label="Flagged cards" value={Number(roll.cards_flagged)} valueTone="warning" icon={<ShieldAlert />} tone="warning" />
+          </StaggerItem>
+          <StaggerItem>
+            <StatCard label="Employees knew it" value={roll.knew_rate == null ? null : Number(roll.knew_rate)} percent icon={<Sparkles />} tone="success" />
+          </StaggerItem>
+          <StaggerItem className="col-span-2 lg:col-span-1">
+            <StatCard label="Needs-change score" value={score} decimals={2} valueTone={score >= 0.25 ? "destructive" : "default"} icon={<Gauge />} tone={score >= 0.25 ? "destructive" : "default"} />
+          </StaggerItem>
+        </Stagger>
       )}
 
       {fb.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-semibold">Open suggestions</h3>
-          <ul className="grid gap-3 lg:grid-cols-2">
+          <SectionTitle
+            title="Open suggestions"
+            actions={
+              <Link href="/admin/feedback" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+                Go to triage <ArrowRight className="size-3.5" />
+              </Link>
+            }
+          />
+          <Stagger as="ul" className="grid gap-3 lg:grid-cols-2">
             {fb.map((f) => (
-              <li key={f.id} className="panel p-4">
+              <StaggerItem as="li" key={f.id} className={cn(surface, "p-4")}>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="chip bg-warning-soft font-semibold text-warning capitalize">{f.category}</span>
-                  <span className="text-muted">{f.username}</span>
-                  <span className="font-mono text-muted">{f.field}</span>
-                  {!f.own && <span className="chip">via linked card</span>}
-                  <span className="ml-auto text-muted capitalize">{f.status}</span>
+                  <Tag tone="warning" className="capitalize">
+                    {f.category}
+                  </Tag>
+                  <span className="text-muted-foreground">{f.username}</span>
+                  <span className="font-mono text-muted-foreground">{f.field}</span>
+                  {!f.own && <Tag tone="outline">via linked card</Tag>}
+                  <span className="ml-auto text-muted-foreground capitalize">{f.status}</span>
                 </div>
-                {f.comment && <p className="mt-2 text-sm">{f.comment}</p>}
-                {f.suggested_text && <p className="mt-2 rounded-xl bg-success-soft p-3 text-sm whitespace-pre-line">{f.suggested_text}</p>}
-              </li>
+                {f.comment && <p className="mt-2.5 text-sm">{f.comment}</p>}
+                {f.suggested_text && <p className="mt-2.5 rounded-lg border border-success/20 bg-success/[0.06] p-3 text-sm whitespace-pre-line">{f.suggested_text}</p>}
+              </StaggerItem>
             ))}
-          </ul>
-          <Link href="/admin/feedback" className="mt-2 inline-block text-sm font-semibold text-primary hover:underline">
-            Go to triage →
-          </Link>
+          </Stagger>
         </section>
       )}
 
       <section>
-        <h3 className="mb-2 text-sm font-semibold">Cards from this item ({own.length})</h3>
+        <SectionTitle title={`Cards from this item (${own.length})`} />
         {own.length === 0 ? <Empty title="No cards are generated from this item." /> : <CardTable rows={own} />}
       </section>
 
       <section>
-        <h3 className="mb-2 text-sm font-semibold">Reviewed cards linked to this item ({linked.length})</h3>
-        <p className="mb-2 text-xs text-muted">Rules, steps and concepts whose cards reference this {entity.type}. Flags here may mean this item needs a change too.</p>
+        <SectionTitle
+          title={`Reviewed cards linked to this item (${linked.length})`}
+          description={`Rules, steps and concepts whose cards reference this ${entity.type}. Flags here may mean this item needs a change too.`}
+        />
         {linked.length === 0 ? <Empty title="No reviewed linked cards yet." /> : <CardTable rows={linked} showEntity />}
       </section>
 
       {outgoing.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-semibold">This item’s cards link to</h3>
+          <SectionTitle title="This item’s cards link to" />
           <div className="flex flex-wrap gap-1.5">
             {outgoing.map((o) => (
-              <Link key={`${o.type}:${o.key}:${o.relation}`} href={entityHref(o.type, o.key)} className="chip hover:bg-border" title={o.relation}>
+              <Link
+                key={`${o.type}:${o.key}:${o.relation}`}
+                href={entityHref(o.type, o.key)}
+                className="inline-flex items-center gap-1.5 rounded-lg border bg-card px-2 py-1 text-xs font-medium shadow-card transition-colors hover:border-primary/40 hover:bg-accent"
+                title={o.relation}
+              >
                 <TypePill type={o.type} /> {o.name}
-                <span className="text-[10px] text-muted">{o.relation.replace(/_/g, " ")}</span>
+                <span className="text-[10px] font-normal text-muted-foreground">{o.relation.replace(/_/g, " ")}</span>
               </Link>
             ))}
           </div>
@@ -164,47 +195,48 @@ export default async function EntityPage({ params }: { params: Promise<{ type: s
 
 function CardTable({ rows, showEntity = false }: { rows: CardRow[]; showEntity?: boolean }) {
   return (
-    <div className="panel overflow-x-auto">
-      <table className="tbl min-w-[760px]">
-        <thead>
-          <tr>
-            <th>Card</th>
-            <th>Current YAML text</th>
-            <th>Verdicts</th>
-            <th className="text-right">Knew</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
+    <TableCard>
+      <Table className="min-w-[760px]">
+        <TableHeader className={thead}>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Card</TableHead>
+            <TableHead>Current YAML text</TableHead>
+            <TableHead>Verdicts</TableHead>
+            <TableHead className="text-right">Knew</TableHead>
+            <TableHead>Score</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((r) => (
-            <tr key={r.card_id}>
-              <td className="max-w-[300px]">
+            <TableRow key={r.card_id}>
+              <TableCell className={cn(tcell, "max-w-[300px]")}>
                 {showEntity && r.entity_type && r.entity_key && (
-                  <Link href={entityHref(r.entity_type, r.entity_key)} className="mb-1 flex items-center gap-1.5 text-xs font-semibold hover:underline">
+                  <Link href={entityHref(r.entity_type, r.entity_key)} className="mb-1.5 flex items-center gap-1.5 text-xs font-medium hover:text-primary hover:underline">
                     <TypePill type={r.entity_type} /> <span className="truncate">{r.entity_name}</span>
                   </Link>
                 )}
                 <p className="font-medium whitespace-pre-line">{r.front}</p>
-                <p className="mt-1 font-mono text-[11px] text-muted">
+                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
                   {r.source_field} · v{r.version}
                   {r.relations ? ` · ${r.relations.join(", ")}` : ""}
                 </p>
-              </td>
-              <td className="max-w-[360px]">
-                <p className="line-clamp-4 text-xs whitespace-pre-line text-muted">{r.source_text}</p>
-              </td>
-              <td>
+              </TableCell>
+              <TableCell className={cn(tcell, "max-w-[360px]")}>
+                <p className="line-clamp-4 text-xs whitespace-pre-line text-muted-foreground">{r.source_text}</p>
+              </TableCell>
+              <TableCell className={tcell}>
                 <Votes correct={Number(r.correct_votes)} improve={Number(r.improve_votes)} unsure={Number(r.unsure_votes)} />
-                {Number(r.open_feedback) > 0 && <p className="mt-1 text-[11px] font-semibold text-warning">{r.open_feedback} open</p>}
-              </td>
-              <td className="text-right tabular-nums">{pct(r.knew_rate == null ? null : Number(r.knew_rate))}</td>
-              <td>
+                {Number(r.open_feedback) > 0 && <p className="mt-1 text-[11px] font-medium text-warning">{r.open_feedback} open</p>}
+              </TableCell>
+              <TableCell className={cn(tcell, "text-right tabular-nums")}>{pct(r.knew_rate == null ? null : Number(r.knew_rate))}</TableCell>
+              <TableCell className={tcell}>
                 <ScoreBar score={Number(r.needs_change_score)} />
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableCard>
   );
 }
+

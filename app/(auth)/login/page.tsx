@@ -10,13 +10,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   if (await getSession()) redirect("/today");
   const { next } = await searchParams;
   return (
-    <div className="panel p-6 shadow-card sm:p-8">
-      <h1 className="text-xl font-semibold">Welcome back</h1>
-      <p className="mt-1 text-sm text-muted">Sign in to review today’s flashcards.</p>
+    <div>
+      <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">Sign in to review today’s flashcards.</p>
       <LoginForm next={next ?? ""} />
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-8 text-center text-sm text-muted-foreground">
         New here?{" "}
-        <Link href="/signup" className="font-semibold text-primary hover:underline">
+        <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
           Request an account
         </Link>
       </p>

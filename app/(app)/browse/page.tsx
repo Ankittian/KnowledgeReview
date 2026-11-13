@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
-import { Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, SearchX, Search } from "lucide-react";
 import { getDb, query } from "@/db/client";
 import { BrowseCard } from "@/components/browse/BrowseCard";
+import { Stagger, StaggerItem } from "@/components/common/motion";
+import { PageHeader } from "@/components/common/PageHeader";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { requireUser } from "@/lib/auth/session";
 import { getModuleNames } from "@/lib/deck";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Browse" };
 
@@ -40,49 +47,94 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
   const href = (p: number) => `/browse?${new URLSearchParams({ ...(q ? { q } : {}), ...(module ? { module } : {}), page: String(p) })}`;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pt-6 sm:pt-8">
-      <h1 className="text-2xl font-bold tracking-tight">Browse cards</h1>
-      <p className="mt-1 text-sm text-muted">Study freely. Browsing doesn’t affect your score.</p>
-      <form className="mt-5 flex flex-col gap-2 sm:flex-row" role="search">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted" />
-          <input name="q" defaultValue={q} className="input pl-10" placeholder="Search questions and answers…" aria-label="Search cards" />
-        </div>
-        <select name="module" defaultValue={module} className="input sm:w-56" aria-label="Area">
-          <option value="">All areas</option>
+    <div className="mx-auto max-w-6xl space-y-5 px-4 pt-6 sm:px-6 sm:pt-8">
+      <PageHeader title="Browse cards" description="Study freely. Browsing doesn’t affect your score." />
+
+      <form className="flex flex-col gap-2 rounded-xl bg-card p-2 shadow-card ring-1 ring-foreground/[0.07] sm:flex-row" role="search">
+        <InputGroup className="h-9 flex-1 border-transparent shadow-none dark:bg-transparent">
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+          <InputGroupInput name="q" defaultValue={q} placeholder="Search questions and answers…" aria-label="Search cards" />
+        </InputGroup>
+        <NativeSelect name="module" defaultValue={module} className="w-full sm:w-56 [&_select]:h-9" aria-label="Area">
+          <NativeSelectOption value="">All areas</NativeSelectOption>
           {[...moduleNames].map(([code, name]) => (
-            <option key={code} value={code}>
+            <NativeSelectOption key={code} value={code}>
               {name}
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
-        <button className="btn btn-primary">Search</button>
+        </NativeSelect>
+        <Button type="submit" className="h-9 px-4">
+          Search
+        </Button>
       </form>
-      <p className="mt-4 text-sm text-muted">
-        {Number(n).toLocaleString()} card{Number(n) === 1 ? "" : "s"}
-        {pages > 1 && ` · page ${page} of ${pages}`}
-      </p>
-      <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map((c) => (
-          <li key={c.v}>
-            <BrowseCard card={{ ...c, module: c.module ? (moduleNames.get(c.module) ?? c.module) : null }} />
-          </li>
-        ))}
-      </ul>
+
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <p>
+          <span className="font-medium text-foreground tabular-nums">{Number(n).toLocaleString()}</span> card{Number(n) === 1 ? "" : "s"}
+          {q && (
+            <>
+              {" "}
+              matching <span className="font-medium text-foreground">“{q}”</span>
+            </>
+          )}
+        </p>
+        {pages > 1 && (
+          <p className="tabular-nums">
+            Page {page} of {pages}
+          </p>
+        )}
+      </div>
+
+      {rows.length === 0 ? (
+        <Empty className="rounded-xl border border-dashed py-14">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <SearchX />
+            </EmptyMedia>
+            <EmptyTitle>No cards found</EmptyTitle>
+            <EmptyDescription>Try a different search term or pick another area.</EmptyDescription>
+          </EmptyHeader>
+          {(q || module) && (
+            <Link href="/browse" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Clear filters
+            </Link>
+          )}
+        </Empty>
+      ) : (
+        <Stagger as="ul" key={`${q}|${module}|${page}`} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {rows.map((c) => (
+            <StaggerItem as="li" key={c.v}>
+              <BrowseCard card={{ ...c, module: c.module ? (moduleNames.get(c.module) ?? c.module) : null }} />
+            </StaggerItem>
+          ))}
+        </Stagger>
+      )}
+
       {pages > 1 && (
-        <nav className="mt-6 flex items-center justify-center gap-2" aria-label="Pagination">
-          {page > 1 && (
-            <Link className="btn btn-outline" href={href(page - 1)}>
-              Previous
-            </Link>
-          )}
-          {page < pages && (
-            <Link className="btn btn-outline" href={href(page + 1)}>
-              Next
-            </Link>
-          )}
+        <nav className="flex items-center justify-center gap-2 pt-2" aria-label="Pagination">
+          <Link
+            className={cn(buttonVariants({ variant: "outline" }), page <= 1 && "pointer-events-none opacity-40")}
+            href={href(Math.max(1, page - 1))}
+            aria-disabled={page <= 1}
+            tabIndex={page <= 1 ? -1 : undefined}
+          >
+            <ChevronLeft /> Previous
+          </Link>
+          <span className="px-3 font-mono text-xs text-muted-foreground tabular-nums">
+            {page} / {pages}
+          </span>
+          <Link
+            className={cn(buttonVariants({ variant: "outline" }), page >= pages && "pointer-events-none opacity-40")}
+            href={href(Math.min(pages, page + 1))}
+            aria-disabled={page >= pages}
+            tabIndex={page >= pages ? -1 : undefined}
+          >
+            Next <ChevronRight />
+          </Link>
         </nav>
       )}
-    </main>
+    </div>
   );
 }

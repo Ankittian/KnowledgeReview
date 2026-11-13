@@ -1,28 +1,42 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
-export function SubmitButton({ children, icon, className = "btn btn-primary btn-lg w-full" }: { children: React.ReactNode; icon?: React.ReactNode; className?: string }) {
+export function SubmitButton({ children, icon, className }: { children: React.ReactNode; icon?: React.ReactNode; className?: string }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className={className} disabled={pending}>
-      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : icon}
+    <Button type="submit" size="lg" className={cn("h-10 w-full text-sm", className)} disabled={pending} aria-busy={pending}>
+      {pending ? <Spinner /> : icon}
       {children}
-    </button>
+    </Button>
   );
 }
 
 export function FormAlert({ message }: { message?: string }) {
-  if (!message) return null;
   return (
-    <div role="alert" className="flex items-start gap-2 rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger">
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-      <span>{message}</span>
-    </div>
+    <AnimatePresence initial={false}>
+      {message && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}>
+          <Alert variant="destructive" className="border-destructive/25 bg-destructive/5">
+            <AlertCircle />
+            <AlertDescription className="text-destructive">{message}</AlertDescription>
+          </Alert>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
 export function FieldError({ message }: { message?: string }) {
-  return message ? <p className="mt-1.5 text-xs font-medium text-danger">{message}</p> : null;
+  return message ? (
+    <motion.p initial={{ opacity: 0, y: -2 }} animate={{ opacity: 1, y: 0 }} className="mt-1.5 text-xs font-medium text-destructive">
+      {message}
+    </motion.p>
+  ) : null;
 }

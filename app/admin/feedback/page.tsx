@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
-import { Check, Download, RotateCcw, X } from "lucide-react";
+import { Check, CheckCheck, Download, GitCommitHorizontal, History, MessageSquareQuote, RotateCcw, X } from "lucide-react";
 import { getDb, query } from "@/db/client";
 import { resolveFeedback } from "@/app/actions/admin";
-import { Empty, TypePill, entityHref } from "@/components/admin/bits";
+import { Empty, Eyebrow, Tag, TypePill, entityHref, surface } from "@/components/admin/bits";
+import { Segmented } from "@/components/admin/Segmented";
+import { Stagger, StaggerItem } from "@/components/common/motion";
+import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Feedback" };
 
@@ -33,6 +39,14 @@ interface Row {
   current_version: number;
   knew_it: boolean | null;
 }
+
+const STATUS_TONE: Record<string, "neutral" | "primary" | "success" | "warning" | "destructive"> = {
+  open: "primary",
+  accepted: "success",
+  applied: "success",
+  rejected: "destructive",
+  stale: "neutral",
+};
 
 export default async function FeedbackPage({ searchParams }: { searchParams: Promise<{ status?: string; card?: string }> }) {
   const sp = await searchParams;
@@ -67,105 +81,122 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        {STATUSES.map((s) => (
-          <Link key={s} href={`/admin/feedback?status=${s}`} className={`chip px-3 py-1.5 text-sm capitalize ${status === s ? "bg-primary text-on-primary" : "hover:bg-border"}`}>
-            {s} <span className="opacity-70 tabular-nums">{count[s] ?? 0}</span>
-          </Link>
-        ))}
-        <a className="btn btn-outline ml-auto py-2" href={`/api/admin/export/feedback?format=csv${status !== "all" ? `&status=${status}` : ""}`}>
-          <Download className="h-4 w-4" /> CSV
+        <Segmented
+          id="feedback-status"
+          className="min-w-0 flex-1"
+          active={status}
+          items={STATUSES.map((s) => ({ key: s, label: s, href: `/admin/feedback?status=${s}`, count: count[s] ?? 0 }))}
+        />
+        <a className={buttonVariants({ variant: "outline" })} href={`/api/admin/export/feedback?format=csv${status !== "all" ? `&status=${status}` : ""}`}>
+          <Download /> CSV
         </a>
-        <a className="btn btn-outline py-2" href={`/api/admin/export/feedback?format=jsonl${status !== "all" ? `&status=${status}` : ""}`}>
-          <Download className="h-4 w-4" /> JSONL
+        <a className={buttonVariants({ variant: "outline" })} href={`/api/admin/export/feedback?format=jsonl${status !== "all" ? `&status=${status}` : ""}`}>
+          <Download /> JSONL
         </a>
       </div>
       {card && (
-        <p className="text-sm text-muted">
-          Filtered to card <span className="font-mono">{card}</span> ·{" "}
-          <Link href={`/admin/feedback?status=${status}`} className="font-semibold text-primary hover:underline">clear</Link>
+        <p className="flex flex-wrap items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+          Filtered to card <span className="font-mono text-xs text-foreground">{card}</span> ·
+          <Link href={`/admin/feedback?status=${status}`} className="font-medium text-primary hover:underline">
+            clear
+          </Link>
         </p>
       )}
       {rows.length === 0 ? (
-        <Empty title={`No ${status === "all" ? "" : status} feedback`}>Suggestions from the daily decks show up here.</Empty>
+        <Empty title={`No ${status === "all" ? "" : status} feedback`} icon={<MessageSquareQuote />}>
+          Suggestions from the daily decks show up here.
+        </Empty>
       ) : (
-        <ul className="space-y-4">
+        <Stagger as="ul" className="space-y-3">
           {rows.map((r) => (
-            <li key={r.id} className="panel p-4 sm:p-5" data-testid="feedback-item">
+            <StaggerItem as="li" key={r.id} className={cn(surface, "p-4 sm:p-5")} data-testid="feedback-item">
               <div className="flex flex-wrap items-center gap-2">
                 <TypePill type={r.entity_type} />
-                <Link href={entityHref(r.entity_type, r.entity_key)} className="font-semibold hover:text-primary hover:underline">
+                <Link href={entityHref(r.entity_type, r.entity_key)} className="font-medium hover:text-primary hover:underline">
                   {r.entity_name}
                 </Link>
-                <span className="chip bg-warning-soft font-semibold text-warning capitalize">{r.category}</span>
-                <span className="ml-auto text-xs text-muted">
+                <Tag tone="warning" className="capitalize">
+                  {r.category}
+                </Tag>
+                {status === "all" && (
+                  <Tag tone={STATUS_TONE[r.status] ?? "neutral"} className="capitalize">
+                    {r.status}
+                  </Tag>
+                )}
+                <span className="ml-auto text-xs text-muted-foreground">
                   {r.display_name} ({r.username}) · {new Date(r.created_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
                 </span>
               </div>
-              <p className="mt-1 font-mono text-[11px] break-all text-muted">
+              <p className="mt-1 font-mono text-[11px] break-all text-muted-foreground">
                 {r.yaml_file} → {r.entity_key} → {r.field}
               </p>
               <p className="mt-3 text-sm font-medium whitespace-pre-line">{r.front}</p>
               {r.reviewed_version !== r.current_version && (
-                <p className="mt-2 rounded-lg bg-warning-soft px-3 py-2 text-xs text-warning">
+                <p className="mt-2 flex items-center gap-2 rounded-lg bg-warning/12 px-3 py-2 text-xs text-warning">
+                  <History className="size-3.5 shrink-0" />
                   Reviewed v{r.reviewed_version}; the YAML has since changed (now v{r.current_version}).
                 </p>
               )}
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 <div>
-                  <p className="mb-1 text-[11px] font-semibold tracking-wider text-muted uppercase">Current YAML text</p>
-                  <p className="rounded-xl bg-surface-2 p-3 text-sm whitespace-pre-line">{r.reviewed_text}</p>
+                  <Eyebrow>Current YAML text</Eyebrow>
+                  <p className="rounded-lg bg-muted/60 p-3 text-sm whitespace-pre-line">{r.reviewed_text}</p>
                 </div>
                 <div>
-                  <p className="mb-1 text-[11px] font-semibold tracking-wider text-muted uppercase">Suggested</p>
+                  <Eyebrow>Suggested</Eyebrow>
                   {r.suggested_text ? (
-                    <p className="rounded-xl bg-success-soft p-3 text-sm whitespace-pre-line">{r.suggested_text}</p>
+                    <p className="rounded-lg border border-success/20 bg-success/[0.06] p-3 text-sm whitespace-pre-line">{r.suggested_text}</p>
                   ) : (
-                    <p className="rounded-xl border border-dashed border-border p-3 text-sm text-muted">No text change proposed.</p>
+                    <p className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">No text change proposed.</p>
                   )}
                 </div>
               </div>
               {r.comment && (
                 <p className="mt-3 text-sm">
-                  <span className="font-semibold">Comment: </span>
+                  <span className="font-medium">Comment: </span>
                   {r.comment}
                 </p>
               )}
-              {r.knew_it !== null && <p className="mt-1 text-xs text-muted">Reviewer {r.knew_it ? "knew" : "did not know"} the card.</p>}
-              {r.resolution_note && <p className="mt-2 text-xs text-muted">Note: {r.resolution_note}</p>}
-              {r.applied_commit && <p className="mt-1 font-mono text-xs text-muted">Applied in {r.applied_commit}</p>}
+              {r.knew_it !== null && <p className="mt-1 text-xs text-muted-foreground">Reviewer {r.knew_it ? "knew" : "did not know"} the card.</p>}
+              {r.resolution_note && <p className="mt-2 text-xs text-muted-foreground">Note: {r.resolution_note}</p>}
+              {r.applied_commit && (
+                <p className="mt-1 inline-flex items-center gap-1 font-mono text-xs text-muted-foreground">
+                  <GitCommitHorizontal className="size-3.5" /> Applied in {r.applied_commit}
+                </p>
+              )}
 
-              <form action={resolveFeedback} className="mt-4 flex flex-col gap-2 border-t border-border pt-4 lg:flex-row lg:items-center">
+              <Separator className="my-4" />
+              <form action={resolveFeedback} className="flex flex-col gap-2 lg:flex-row lg:items-center">
                 <input type="hidden" name="feedbackId" value={r.id} />
-                <input name="note" className="input py-2 text-sm lg:flex-1" placeholder="Resolution note (optional)" maxLength={2000} />
-                <input name="commit" className="input py-2 font-mono text-sm lg:w-40" placeholder="Commit (if applied)" maxLength={80} />
+                <Input name="note" className="lg:flex-1" placeholder="Resolution note (optional)" maxLength={2000} aria-label="Resolution note" />
+                <Input name="commit" className="font-mono lg:w-40" placeholder="Commit (if applied)" maxLength={80} aria-label="Commit" />
                 <div className="flex flex-wrap gap-2">
                   {r.status !== "accepted" && (
-                    <button name="status" value="accepted" className="btn btn-success py-2">
-                      <Check className="h-4 w-4" /> Accept
+                    <button name="status" value="accepted" className={cn(buttonVariants(), "bg-success/10 text-success hover:bg-success/20")}>
+                      <Check /> Accept
                     </button>
                   )}
                   {r.status !== "applied" && (
-                    <button name="status" value="applied" className="btn btn-primary py-2">
-                      Applied
+                    <button name="status" value="applied" className={buttonVariants()}>
+                      <CheckCheck /> Applied
                     </button>
                   )}
                   {r.status !== "rejected" && (
-                    <button name="status" value="rejected" className="btn btn-danger py-2">
-                      <X className="h-4 w-4" /> Reject
+                    <button name="status" value="rejected" className={buttonVariants({ variant: "destructive" })}>
+                      <X /> Reject
                     </button>
                   )}
                   {r.status !== "open" && (
-                    <button name="status" value="open" className="btn btn-outline py-2">
-                      <RotateCcw className="h-4 w-4" /> Reopen
+                    <button name="status" value="open" className={buttonVariants({ variant: "outline" })}>
+                      <RotateCcw /> Reopen
                     </button>
                   )}
                 </div>
               </form>
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       )}
     </div>
   );
 }
-

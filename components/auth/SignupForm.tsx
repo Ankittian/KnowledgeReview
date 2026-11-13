@@ -3,7 +3,23 @@
 import { useActionState } from "react";
 import { UserPlus } from "lucide-react";
 import { signupAction, type FormState } from "@/app/actions/auth";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { FieldError, FormAlert, SubmitButton } from "./FormBits";
+
+function Field({ id, label, optional, error, children }: { id: string; label: string; optional?: boolean; error?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id}>
+        {label}
+        {optional && <span className="font-normal text-muted-foreground">(optional)</span>}
+      </Label>
+      {children}
+      <FieldError message={error} />
+    </div>
+  );
+}
 
 export function SignupForm({ modules }: { modules: { code: string; name: string }[] }) {
   const [state, action] = useActionState<FormState, FormData>(signupAction, {});
@@ -13,51 +29,48 @@ export function SignupForm({ modules }: { modules: { code: string; name: string 
     <form action={action} className="mt-6 space-y-4" noValidate>
       <FormAlert message={state.error} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="label" htmlFor="displayName">Full name</label>
-          <input id="displayName" name="displayName" className="input" autoComplete="name" defaultValue={v.displayName} required />
-          <FieldError message={fe.displayName} />
-        </div>
-        <div>
-          <label className="label" htmlFor="username">Username</label>
-          <input id="username" name="username" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} defaultValue={v.username} required />
-          <FieldError message={fe.username} />
-        </div>
+        <Field id="displayName" label="Full name" error={fe.displayName}>
+          <Input id="displayName" name="displayName" className="h-10" autoComplete="name" defaultValue={v.displayName} aria-invalid={!!fe.displayName || undefined} required />
+        </Field>
+        <Field id="username" label="Username" error={fe.username}>
+          <Input
+            id="username"
+            name="username"
+            className="h-10"
+            autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
+            defaultValue={v.username}
+            aria-invalid={!!fe.username || undefined}
+            required
+          />
+        </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="label" htmlFor="department">
-            Department <span className="font-normal text-muted">(optional)</span>
-          </label>
-          <input id="department" name="department" className="input" defaultValue={v.department} />
-          <FieldError message={fe.department} />
-        </div>
-        <div>
-          <label className="label" htmlFor="primaryModule">Main area</label>
-          <select id="primaryModule" name="primaryModule" className="input" defaultValue={v.primaryModule ?? ""}>
-            <option value="">All areas</option>
+        <Field id="department" label="Department" optional error={fe.department}>
+          <Input id="department" name="department" className="h-10" defaultValue={v.department} aria-invalid={!!fe.department || undefined} />
+        </Field>
+        <Field id="primaryModule" label="Main area" error={fe.primaryModule}>
+          <NativeSelect id="primaryModule" name="primaryModule" size="lg" className="w-full" defaultValue={v.primaryModule ?? ""}>
+            <NativeSelectOption value="">All areas</NativeSelectOption>
             {modules.map((m) => (
-              <option key={m.code} value={m.code}>
+              <NativeSelectOption key={m.code} value={m.code}>
                 {m.name}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
-          <FieldError message={fe.primaryModule} />
-        </div>
+          </NativeSelect>
+        </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label className="label" htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" className="input" autoComplete="new-password" required minLength={8} />
-          <FieldError message={fe.password} />
-        </div>
-        <div>
-          <label className="label" htmlFor="confirmPassword">Confirm password</label>
-          <input id="confirmPassword" name="confirmPassword" type="password" className="input" autoComplete="new-password" required />
-          <FieldError message={fe.confirmPassword} />
-        </div>
+        <Field id="password" label="Password" error={fe.password}>
+          <Input id="password" name="password" type="password" className="h-10" autoComplete="new-password" required minLength={8} aria-invalid={!!fe.password || undefined} />
+        </Field>
+        <Field id="confirmPassword" label="Confirm password" error={fe.confirmPassword}>
+          <Input id="confirmPassword" name="confirmPassword" type="password" className="h-10" autoComplete="new-password" required aria-invalid={!!fe.confirmPassword || undefined} />
+        </Field>
       </div>
-      <SubmitButton icon={<UserPlus className="h-4 w-4" />}>Request account</SubmitButton>
+      <p className="text-xs text-muted-foreground">Use at least 8 characters for your password.</p>
+      <SubmitButton icon={<UserPlus />}>Request account</SubmitButton>
     </form>
   );
 }
