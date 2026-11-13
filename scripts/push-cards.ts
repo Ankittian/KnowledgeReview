@@ -1,7 +1,7 @@
 /**
  * push-cards.ts
  *
- * Canonical script to push generated flashcard catalogs (JSON) into Postgres (knowledge_review_final).
+ * Canonical script to push generated flashcard catalogs (JSON) into Postgres.
  *
  * Usage:
  *   npx tsx scripts/push-cards.ts [file1.json file2.json ...]
@@ -9,26 +9,22 @@
  * If no files are specified, it defaults to all *.json files in `generated_claude_cards/`.
  *
  * Workflow for each module:
- *   1. Identifies and safely removes any existing cards and dependent rows for the target module.
- *   2. Ensures required flow/module entities exist in kb_items.
- *   3. Inserts all cards and card versions.
- *   4. Establishes knowledge graph links in card_related_items from card source_refs.
- *   5. Verifies and prints a clean summary table of database status.
+ *   Append-only: nothing is ever deleted, so reviews, feedback, schedules and leaderboard points are kept.
+ *   1. Ensures required flow/module entities exist in kb_items.
+ *   2. Inserts cards that are new; cards whose text changed get a new card_versions row; unchanged cards are skipped.
+ *   3. Establishes knowledge graph links in card_related_items from card source_refs.
+ *   4. Verifies and prints a clean summary table of database status.
  */
 import "dotenv/config";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { createDb } from "../db/client";
 import {
   cards,
   cardVersions,
   cardRelatedItems,
-  deckCards,
-  reviewSchedule,
-  cardReviews,
-  cardFeedback,
   kbItems,
 } from "../db/schema";
 
@@ -89,7 +85,7 @@ async function main() {
   }
 
   const h = createDb();
-  console.log("Connecting to Postgres (knowledge_review_final)...");
+  console.log("Connecting to Postgres (DATABASE_URL)...");
 
   try {
     for (const fileRel of filesToProcess) {
@@ -105,47 +101,10 @@ async function main() {
       console.log(`Processing: ${fileRel}`);
       console.log(`Module: ${mod} | Audience: ${catalog.audience} | Total Cards: ${catalog.total_cards}`);
 
-      // ── 1. Remove existing cards for this module ──────────────────────────
-      const existingCards = await h.db
-        .select({ id: cards.id })
-        .from(cards)
-        .innerJoin(kbItems, eq(cards.kbItemId, kbItems.id))
-        .where(eq(kbItems.module, mod));
-
-      const cardIds = existingCards.map((r) => r.id);
-      if (cardIds.length > 0) {
-        console.log(`Purging ${cardIds.length} existing cards for module ${mod}...`);
-        const cardIdChunks = chunk(cardIds, 500);
-
-        // Fetch version IDs
-        const versionRows = await h.db
-          .select({ id: cardVersions.id })
-          .from(cardVersions)
-          .where(inArray(cardVersions.cardId, cardIds));
-        const versionIds = versionRows.map((r) => r.id);
-        const versionIdChunks = chunk(versionIds, 500);
-
-        for (const vchunk of versionIdChunks) {
-          await h.db.delete(cardFeedback).where(inArray(cardFeedback.cardVersionId, vchunk));
-          await h.db.delete(cardReviews).where(inArray(cardReviews.cardVersionId, vchunk));
-        }
-
-        for (const cchunk of cardIdChunks) {
-          await h.db.delete(deckCards).where(inArray(deckCards.cardId, cchunk));
-          await h.db.delete(reviewSchedule).where(inArray(reviewSchedule.cardId, cchunk));
-          await h.db.delete(cardRelatedItems).where(inArray(cardRelatedItems.cardId, cchunk));
-        }
-
-        for (const cchunk of cardIdChunks) {
-          await h.db.update(cards).set({ currentVersionId: null }).where(inArray(cards.id, cchunk));
-          await h.db.delete(cardVersions).where(inArray(cardVersions.cardId, cchunk));
-          await h.db.delete(cards).where(inArray(cards.id, cchunk));
-        }
-        console.log(`  Purged existing ${mod} cards and associated dependencies.`);
-      }
-
-      // ── 2. Push new cards from catalog ────────────────────────────────────
+      // ── 1. Append cards from the catalog (existing cards, their reviews and scores are never deleted) ────────────────────────────────────
       let cardsInserted = 0;
+      let cardsUpdated = 0;
+      let cardsUnchanged = 0;
       let relatedLinksInserted = 0;
 
       for (const group of catalog.items) {
@@ -175,7 +134,6 @@ async function main() {
               contentHash: contentHash,
               meta: { scope: group.scope, context: group.context, generated: true },
               active: true,
-              lastSyncedAt: new Date(),
             })
             .returning({ id: kbItems.id });
           kbItem = inserted;
@@ -186,32 +144,47 @@ async function main() {
           const context = group.context ?? group.title ?? key;
           const hash = sha([context, c.title, c.body].join("\n␞\n"));
 
-          await h.db.insert(cards).values({
-            id: cardId,
-            kbItemId: kbItem.id,
-            kind: `generated.${c.level}`,
-            sourceField: "generated",
-            audience: catalog.audience,
-            level: c.level,
-            topicKey: c.topic_key,
-            status: "active",
-          });
+          const [existing] = await h.db.select({ id: cards.id, currentVersionId: cards.currentVersionId }).from(cards).where(eq(cards.id, cardId));
+          if (!existing) {
+            await h.db.insert(cards).values({
+              id: cardId,
+              kbItemId: kbItem.id,
+              kind: `generated.${c.level}`,
+              sourceField: "generated",
+              audience: catalog.audience,
+              level: c.level,
+              topicKey: c.topic_key,
+              status: "active",
+            });
+          }
 
-          const [v] = await h.db
-            .insert(cardVersions)
-            .values({
-              cardId: cardId,
-              version: 1,
-              context: context,
-              front: c.title,
-              back: c.body,
-              sourceText: c.body,
-              sourceHash: hash,
-            })
-            .returning({ id: cardVersions.id });
+          const [latest] = await h.db
+            .select({ version: cardVersions.version, sourceHash: cardVersions.sourceHash })
+            .from(cardVersions)
+            .where(eq(cardVersions.cardId, cardId))
+            .orderBy(desc(cardVersions.version))
+            .limit(1);
 
-          await h.db.update(cards).set({ currentVersionId: v.id }).where(eq(cards.id, cardId));
-          cardsInserted++;
+          if (latest && latest.sourceHash === hash) {
+            cardsUnchanged++;
+          } else {
+            // new card -> version 1; changed text -> next version (old versions and their reviews stay)
+            const [v] = await h.db
+              .insert(cardVersions)
+              .values({
+                cardId: cardId,
+                version: (latest?.version ?? 0) + 1,
+                context: context,
+                front: c.title,
+                back: c.body,
+                sourceText: c.body,
+                sourceHash: hash,
+              })
+              .returning({ id: cardVersions.id });
+            await h.db.update(cards).set({ currentVersionId: v.id, status: "active" }).where(eq(cards.id, cardId));
+            if (latest) cardsUpdated++;
+            else cardsInserted++;
+          }
 
           if (c.source_refs && c.source_refs.length > 0) {
             for (const ref of c.source_refs) {
@@ -254,10 +227,10 @@ async function main() {
         }
       }
 
-      console.log(`Inserted ${cardsInserted} cards and ${relatedLinksInserted} knowledge links for ${mod}.`);
+      console.log(`${mod}: ${cardsInserted} new, ${cardsUpdated} updated (new version), ${cardsUnchanged} unchanged; ${relatedLinksInserted} knowledge links.`);
     }
 
-    // ── 3. Post-push Verification ───────────────────────────────────────────
+    // ── 2. Post-push Verification ───────────────────────────────────────────
     console.log(`\n========================================================`);
     console.log(`DATABASE SUMMARY:`);
     const summary = await h.db.execute(sql`
