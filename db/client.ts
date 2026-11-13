@@ -28,7 +28,13 @@ export function createDb(opts: { url?: string } = {}): DbHandle {
     );
   }
   // prepare:false keeps transaction-mode poolers (PgBouncer, Supabase, Neon pooled) happy.
-  const client = postgres(url, { prepare: false, max: Number(process.env.DB_POOL_MAX ?? 5), onnotice: () => {} });
+  // search_path lets raw SQL use bare table names (auth.*, kb.*, learning.* are all visible).
+  const client = postgres(url, {
+    prepare: false,
+    max: Number(process.env.DB_POOL_MAX ?? 5),
+    onnotice: () => {},
+    connection: { search_path: "auth,kb,learning,public" },
+  });
   return { db: drizzle(client, { schema }), close: () => client.end() };
 }
 
@@ -40,13 +46,13 @@ export async function migrateDb(h: DbHandle): Promise<void> {
 }
 
 /**
- * Wipe everything (schema `public` and drizzle's migration table). Only for throw-away databases:
+ * Wipe everything (the auth, kb, learning and public schemas and drizzle's migration table). Only for throw-away databases:
  * refuses unless the database name contains "test" or "e2e".
  */
 export async function resetDatabase(h: DbHandle): Promise<void> {
   const [{ name }] = await query<{ name: string }>(h.db, sql`SELECT current_database() AS name`);
   if (!/test|e2e/i.test(name)) throw new Error(`Refusing to reset database '${name}': its name must contain 'test' or 'e2e'.`);
-  await h.db.execute(sql.raw("DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public;"));
+  await h.db.execute(sql.raw("DROP SCHEMA IF EXISTS learning CASCADE; DROP SCHEMA IF EXISTS kb CASCADE; DROP SCHEMA IF EXISTS auth CASCADE; DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public;"));
 }
 
 function splitSql(text: string): string[] {
@@ -65,10 +71,17 @@ export async function query<T = Record<string, unknown>>(db: DB, q: SQL): Promis
 
 // ---------------------------------------------------------------- app singleton
 
-const g = globalThis as unknown as { __kr_db?: DbHandle };
+// The pool is cached on globalThis so dev hot-reloads don't open a new one each time. Bump CLIENT_VERSION whenever the
+// connection settings change (e.g. search_path), so a stale cached pool from before the change is replaced, not reused.
+const CLIENT_VERSION = 2;
+const g = globalThis as unknown as { __kr_db?: DbHandle & { v?: number } };
 
 export function getDbHandle(): DbHandle {
-  return (g.__kr_db ??= createDb());
+  if (g.__kr_db && g.__kr_db.v !== CLIENT_VERSION) {
+    void g.__kr_db.close().catch(() => {});
+    g.__kr_db = undefined;
+  }
+  return (g.__kr_db ??= { ...createDb(), v: CLIENT_VERSION });
 }
 
 export async function getDb(): Promise<DB> {

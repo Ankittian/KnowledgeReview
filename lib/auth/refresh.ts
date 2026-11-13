@@ -1,9 +1,9 @@
 import { and, eq, isNotNull, isNull, lt } from "drizzle-orm";
 import type { DB } from "@/db/client";
-import { refreshTokens, sessions, users } from "@/db/schema";
+import { loginSessions, refreshTokens, roles, users } from "@/db/schema";
 import { logEvent } from "@/lib/events";
 import { authConfig, newRefreshToken, sha256, signAccessToken } from "./tokens";
-import type { SessionUser } from "./types";
+import type { Role, SessionUser } from "./types";
 
 export type RotateResult =
   | { ok: true; sid: string; user: SessionUser; access: string; refresh: { token: string; expires: Date } | null }
@@ -33,24 +33,25 @@ export async function rotateRefreshToken(db: DB, token: string, meta: Meta = {})
       tokenId: refreshTokens.id,
       sid: refreshTokens.sessionId,
       usedAt: refreshTokens.usedAt,
-      expiresAt: refreshTokens.expiresAt,
+      expiresAt: loginSessions.expiresAt,
       idleExpiresAt: refreshTokens.idleExpiresAt,
       uid: users.id,
       username: users.username,
       displayName: users.displayName,
       department: users.department,
       primaryModule: users.primaryModule,
-      role: users.role,
+      role: roles.name,
       status: users.status,
     })
     .from(refreshTokens)
-    .innerJoin(sessions, eq(sessions.id, refreshTokens.sessionId))
-    .innerJoin(users, eq(users.id, refreshTokens.userId))
+    .innerJoin(loginSessions, eq(loginSessions.id, refreshTokens.sessionId))
+    .innerJoin(users, eq(users.id, loginSessions.userId))
+    .innerJoin(roles, eq(roles.id, users.roleId))
     .where(eq(refreshTokens.id, id));
   if (!row) return { ok: false, reason: "unknown" };
 
-  const killSession = () => db.delete(sessions).where(eq(sessions.id, row.sid)); // cascades to its refresh tokens
-  const event = (type: string) => logEvent(db, { userId: row.uid, type, sessionId: row.sid, ip: meta.ip, userAgent: meta.userAgent });
+  const killSession = () => db.delete(loginSessions).where(eq(loginSessions.id, row.sid)); // cascades to its refresh tokens
+  const event = (type: string) => logEvent(db, { userId: row.uid, type, sessionId: row.sid, ip: meta.ip });
 
   if (now >= row.expiresAt || now >= row.idleExpiresAt) {
     await killSession();
@@ -68,7 +69,7 @@ export async function rotateRefreshToken(db: DB, token: string, meta: Meta = {})
     displayName: row.displayName,
     department: row.department,
     primaryModule: row.primaryModule,
-    role: row.role,
+    role: row.role as Role,
   };
   const withinGrace = (usedAt: Date) => now.getTime() - usedAt.getTime() <= cfg.graceSeconds * 1000;
   const accessOnly = async (): Promise<RotateResult> => ({ ok: true, sid: row.sid, user, access: await signAccessToken(user, row.sid), refresh: null });
@@ -100,11 +101,7 @@ export async function rotateRefreshToken(db: DB, token: string, meta: Meta = {})
   await db.insert(refreshTokens).values({
     id: next.id,
     sessionId: row.sid,
-    userId: row.uid,
-    expiresAt: row.expiresAt,
     idleExpiresAt,
-    ip: meta.ip ?? null,
-    userAgent: meta.userAgent?.slice(0, 400) ?? null,
   });
   await db.update(refreshTokens).set({ replacedById: next.id }).where(eq(refreshTokens.id, id));
   // Housekeeping: drop this session's used tokens once they are well past the grace window.

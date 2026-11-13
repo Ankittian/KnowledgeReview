@@ -1,7 +1,10 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { z } from "zod";
 import type { DB } from "@/db/client";
-import { cards, cardVersions, dailyDecks, feedback, reviews, srsState } from "@/db/schema";
+import { cardFeedback, cardReviews, cards, cardVersions, dailyDecks, deckCards, reviewSchedule, roles, users } from "@/db/schema";
+import type { Role } from "@/lib/auth/types";
+import { audiencesFor } from "./cards/audience";
+import { READ_LOCK_ENABLED, countWords, minReadSeconds } from "./cards/spec";
 import { addDays } from "./dates";
 import { logEvents, type EventInput } from "./events";
 import { getDailyCardLimit } from "./settings";
@@ -20,46 +23,61 @@ export interface Meta {
 type Result = { ok: true; duplicate: boolean; deckCompleted: boolean } | { ok: false; status: number; error: string };
 
 const toDate = (s?: string | null) => (s ? new Date(s) : null);
-const ms = (a: Date | null, b: Date | null) => (a && b ? Math.max(0, Math.min(2_147_000_000, b.getTime() - a.getTime())) : null);
 
 /**
- * Records one flashcard answer. The client only sends the opaque version id; the card, YAML entity and
- * source field are resolved and stamped here, server-side.
+ * Records one flashcard answer. The client only sends the opaque version id; the card is resolved server-side
+ * (its KB item and source field are reached through the version, so they are never copied onto the answer).
  */
-export async function recordReview(db: DB, userId: string, input: ReviewInput, meta: Meta, today: string): Promise<Result> {
+export async function recordReview(
+  db: DB,
+  userId: string,
+  input: ReviewInput,
+  meta: Meta,
+  today: string,
+  opts: { enforceReadTime?: boolean } = {},
+): Promise<Result> {
+  const enforceReadTime = opts.enforceReadTime ?? READ_LOCK_ENABLED;
+  const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
+  const allowed = audiencesFor((who?.role ?? "employee") as Role);
   const [ver] = await db
-    .select({
-      versionId: cardVersions.id,
-      cardId: cardVersions.cardId,
-      sourceText: cardVersions.sourceText,
-      entityId: cards.entityId,
-      sourceField: cards.sourceField,
-    })
+    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, back: cardVersions.back, audience: cards.audience })
     .from(cardVersions)
     .innerJoin(cards, eq(cards.id, cardVersions.cardId))
     .where(eq(cardVersions.id, input.versionId));
-  if (!ver) return { ok: false, status: 404, error: "Unknown card." };
+  // a card outside the user's set (or a legacy card with no audience) does not exist for them, even with a valid id
+  if (!ver || !ver.audience || !allowed.includes(ver.audience)) return { ok: false, status: 404, error: "Unknown card." };
 
   // The answer must belong to one of the user's decks from today (or yesterday, for decks finished after midnight).
   if (input.deckDate !== today && input.deckDate !== addDays(today, -1)) return { ok: false, status: 409, error: "This deck has expired." };
-  const decks = await db
-    .select({ id: dailyDecks.id, cardIds: dailyDecks.cardIds })
+  const [deck] = await db
+    .select({ id: dailyDecks.id })
     .from(dailyDecks)
-    .where(and(eq(dailyDecks.userId, userId), eq(dailyDecks.deckDate, input.deckDate)))
-    .orderBy(desc(dailyDecks.id));
-  const deck = decks.find((d) => (input.deckId ? d.id === input.deckId : true) && d.cardIds.includes(ver.cardId));
+    .innerJoin(deckCards, eq(deckCards.deckId, dailyDecks.id))
+    .where(
+      and(
+        eq(dailyDecks.userId, userId),
+        eq(dailyDecks.deckDate, input.deckDate),
+        eq(deckCards.cardId, ver.cardId),
+        input.deckId ? eq(dailyDecks.id, input.deckId) : undefined,
+      ),
+    )
+    .orderBy(desc(dailyDecks.id))
+    .limit(1);
   if (!deck) return { ok: false, status: 409, error: "Card is not in your deck." };
 
   // hard daily limit (all sign-ins together)
   const dailyLimit = await getDailyCardLimit(db);
   const [{ n: answeredBefore }] = await db
     .select({ n: sql<number>`count(*)::int` })
-    .from(reviews)
-    .where(and(eq(reviews.userId, userId), eq(reviews.deckDate, input.deckDate)));
+    .from(cardReviews)
+    .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
+    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, input.deckDate)));
   const [already] = await db
-    .select({ id: reviews.id })
-    .from(reviews)
-    .where(and(eq(reviews.userId, userId), eq(reviews.deckDate, input.deckDate), eq(reviews.cardId, ver.cardId)));
+    .select({ id: cardReviews.id })
+    .from(cardReviews)
+    .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
+    .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
+    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, input.deckDate), eq(cardVersions.cardId, ver.cardId)));
   if (already) return { ok: true, duplicate: true, deckCompleted: false };
   if (answeredBefore >= dailyLimit) return { ok: false, status: 409, error: "Daily card limit reached." };
 
@@ -67,44 +85,50 @@ export async function recordReview(db: DB, userId: string, input: ReviewInput, m
   const flippedAt = toDate(input.flippedAt);
   const answeredAt = toDate(input.answeredAt) ?? new Date();
 
+  // Read-time lock: an answer is only valid after the card's designated read time (words / 5 s, min 4 s) of attended time.
+  // The browser can only report time to subtract (hidden/idle), never to add: attended time is capped by the wall clock between shown and answered.
+  const minReadMs = minReadSeconds(countWords(ver.back)) * 1000;
+  const wallMs = shownAt ? answeredAt.getTime() - shownAt.getTime() : 0;
+  const attendedMs = input.activeMs == null ? wallMs : Math.min(input.activeMs, wallMs);
+  if (enforceReadTime) {
+    if (answeredAt.getTime() > Date.now() + 60_000) return { ok: false, status: 400, error: "Invalid answer time." };
+    if (attendedMs < minReadMs - 750) {
+      const wait = Math.max(1, Math.ceil((minReadMs - attendedMs) / 1000));
+      return { ok: false, status: 409, error: `Read the card first: ${wait} more second${wait === 1 ? "" : "s"} before you can answer.` };
+    }
+  }
+
   return db.transaction(async (tx) => {
     const inserted = await tx
-      .insert(reviews)
+      .insert(cardReviews)
       .values({
         userId,
-        cardId: ver.cardId,
         cardVersionId: ver.versionId,
-        entityId: ver.entityId,
-        sourceField: ver.sourceField,
-        deckDate: input.deckDate,
         deckId: deck.id,
         knewIt: input.knewIt,
         verdict: input.verdict,
         shownAt,
         flippedAt,
         answeredAt,
-        timeToFlipMs: ms(shownAt, flippedAt),
-        timeToAnswerMs: ms(shownAt, answeredAt),
-        device: input.device ?? null,
         clientEventId: input.clientEventId,
       })
       .onConflictDoNothing()
-      .returning({ id: reviews.id });
+      .returning({ id: cardReviews.id });
     if (!inserted.length) return { ok: true as const, duplicate: true, deckCompleted: false };
     const reviewId = inserted[0].id;
 
     // spaced repetition
     const [prev] = await tx
       .select()
-      .from(srsState)
-      .where(and(eq(srsState.userId, userId), eq(srsState.cardId, ver.cardId)));
+      .from(reviewSchedule)
+      .where(and(eq(reviewSchedule.userId, userId), eq(reviewSchedule.cardId, ver.cardId)));
     const next = nextSrs(prev ?? null, input.knewIt, input.deckDate);
     await tx
-      .insert(srsState)
-      .values({ userId, cardId: ver.cardId, ...next, lastReviewedAt: answeredAt })
+      .insert(reviewSchedule)
+      .values({ userId, cardId: ver.cardId, ...next })
       .onConflictDoUpdate({
-        target: [srsState.userId, srsState.cardId],
-        set: { box: next.box, dueDate: next.dueDate, reps: next.reps, lapses: next.lapses, lastReviewedAt: answeredAt },
+        target: [reviewSchedule.userId, reviewSchedule.cardId],
+        set: { box: next.box, dueDate: next.dueDate, reps: next.reps, lapses: next.lapses },
       });
 
     const events: EventInput[] = [
@@ -112,7 +136,7 @@ export async function recordReview(db: DB, userId: string, input: ReviewInput, m
         userId,
         cardId: ver.cardId,
         type: "review_submitted",
-        payload: { review_id: reviewId, version_id: ver.versionId, knew_it: input.knewIt, verdict: input.verdict, deck_date: input.deckDate, deck_id: deck.id },
+        payload: { review_id: reviewId, version_id: ver.versionId, knew_it: input.knewIt, verdict: input.verdict, deck_date: input.deckDate, deck_id: deck.id, active_ms: attendedMs, wall_ms: wallMs, min_read_ms: minReadMs },
         clientEventId: `srv:review:${input.clientEventId}`,
         occurredAt: answeredAt,
         ...meta,
@@ -122,20 +146,16 @@ export async function recordReview(db: DB, userId: string, input: ReviewInput, m
     if (input.verdict === "needs_improvement" && input.feedback) {
       const suggested = input.feedback.suggestedText?.trim() || null;
       const [fb] = await tx
-        .insert(feedback)
+        .insert(cardFeedback)
         .values({
           reviewId,
           userId,
-          cardId: ver.cardId,
           cardVersionId: ver.versionId,
-          entityId: ver.entityId,
-          sourceField: ver.sourceField,
           category: input.feedback.category,
-          currentText: ver.sourceText,
           suggestedText: suggested,
           comment: input.feedback.comment?.trim() || null,
         })
-        .returning({ id: feedback.id });
+        .returning({ id: cardFeedback.id });
       events.push({
         userId,
         cardId: ver.cardId,
@@ -151,12 +171,14 @@ export async function recordReview(db: DB, userId: string, input: ReviewInput, m
     const answeredToday = answeredBefore + 1;
     const open = await tx
       .select({ id: cards.id })
-      .from(cards)
+      .from(deckCards)
+      .innerJoin(cards, eq(cards.id, deckCards.cardId))
       .where(
         and(
-          inArray(cards.id, deck.cardIds),
+          eq(deckCards.deckId, deck.id),
           eq(cards.status, "active"),
-          sql`NOT EXISTS (SELECT 1 FROM reviews r WHERE r.user_id = ${userId} AND r.deck_date = ${input.deckDate}::date AND r.card_id = ${cards.id})`,
+          sql`NOT EXISTS (SELECT 1 FROM card_reviews r JOIN daily_decks d ON d.id = r.deck_id JOIN card_versions v ON v.id = r.card_version_id
+                          WHERE r.user_id = ${userId} AND d.deck_date = ${input.deckDate}::date AND v.card_id = ${cards.id})`,
         ),
       );
     const limitReached = answeredToday >= dailyLimit;

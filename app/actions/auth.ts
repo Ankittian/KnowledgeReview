@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
 import { getDb, query } from "@/db/client";
-import { users } from "@/db/schema";
+import { roleIdOf, users } from "@/db/schema";
 import { dummyHash, hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, destroySession, getSession } from "@/lib/auth/session";
 import { logEvent } from "@/lib/events";
@@ -22,11 +22,11 @@ const MAX_SIGNUPS_PER_IP_HOUR = 10;
 
 async function recentCount(type: string, minutes: number, by: { username?: string; ip?: string | null }) {
   const db = await getDb();
-  const filter = by.username ? sql`payload->>'username' = ${by.username}` : sql`ip = ${by.ip ?? ""}`;
+  const filter = by.username ? sql`details->>'username' = ${by.username}` : sql`ip = ${by.ip ?? ""}`;
   const [{ n }] = await query<{ n: number }>(
     db,
-    sql`SELECT count(*)::int AS n FROM interaction_events
-        WHERE event_type = ${type} AND created_at > now() - make_interval(mins => ${minutes}) AND ${filter}`,
+    sql`SELECT count(*)::int AS n FROM activity_log
+        WHERE action = ${type} AND created_at > now() - make_interval(mins => ${minutes}) AND ${filter}`,
   );
   return n;
 }
@@ -48,21 +48,21 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   const [user] = await db.select().from(users).where(eq(users.username, username));
   const ok = user ? await verifyPassword(user.passwordHash, password) : (await verifyPassword(await dummyHash(), password), false);
   if (!user || !ok) {
-    await logEvent(db, { type: "login_failed", payload: { username }, ip: meta.ip, userAgent: meta.userAgent });
+    await logEvent(db, { type: "login_failed", payload: { username }, ip: meta.ip });
     return { error: "Incorrect username or password.", values: { username } };
   }
   if (user.status === "pending") {
-    await logEvent(db, { userId: user.id, type: "login_pending", ip: meta.ip, userAgent: meta.userAgent });
+    await logEvent(db, { userId: user.id, type: "login_pending", ip: meta.ip });
     redirect("/pending");
   }
   if (user.status === "disabled") {
-    await logEvent(db, { userId: user.id, type: "login_disabled", ip: meta.ip, userAgent: meta.userAgent });
+    await logEvent(db, { userId: user.id, type: "login_disabled", ip: meta.ip });
     return { error: "Your account is disabled. Contact an administrator.", values: { username } };
   }
 
   const sessionId = await createSession(user.id, meta.userAgent, meta.ip);
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
-  await logEvent(db, { userId: user.id, type: "login", sessionId, ip: meta.ip, userAgent: meta.userAgent });
+  await logEvent(db, { userId: user.id, type: "login", sessionId, ip: meta.ip });
   const next = String(fd.get("next") ?? "");
   redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/today");
 }
@@ -93,12 +93,13 @@ export async function signupAction(_prev: FormState, fd: FormData): Promise<Form
       displayName: d.displayName,
       department: d.department,
       primaryModule: d.primaryModule,
+      roleId: roleIdOf("employee"),
       status: "pending",
     })
     .onConflictDoNothing()
     .returning({ id: users.id });
   if (!u) return { fieldErrors: { username: "That username is taken." }, values };
-  await logEvent(db, { userId: u.id, type: "signup", payload: { username: d.username }, ip: meta.ip, userAgent: meta.userAgent });
+  await logEvent(db, { userId: u.id, type: "signup", payload: { username: d.username }, ip: meta.ip });
   redirect("/pending?new=1");
 }
 
@@ -106,7 +107,7 @@ export async function logoutAction(): Promise<void> {
   const s = await getSession();
   if (s) {
     const meta = await requestMeta();
-    await logEvent(await getDb(), { userId: s.user.id, type: "logout", sessionId: s.sessionId, ip: meta.ip, userAgent: meta.userAgent });
+    await logEvent(await getDb(), { userId: s.user.id, type: "logout", sessionId: s.sessionId, ip: meta.ip });
   }
   await destroySession();
   redirect("/login");

@@ -19,16 +19,16 @@ export default async function TeamPage() {
   const [people, mods, procs, days, moduleNames] = await Promise.all([
     query<{ id: string; username: string; display_name: string; department: string | null; primary_module: string | null; role: string; reviews: number; last_review: Date | null; week: number; knew: number }>(
       db,
-      sql`SELECT u.id, u.username, u.display_name, u.department, u.primary_module, u.role,
+      sql`SELECT u.id, u.username, u.display_name, u.department, u.primary_module, ro.name AS role,
                  count(r.id)::int AS reviews, max(r.created_at) AS last_review,
                  count(r.id) FILTER (WHERE r.created_at > now() - interval '7 days')::int AS week,
                  count(r.id) FILTER (WHERE r.knew_it)::int AS knew
-          FROM users u LEFT JOIN reviews r ON r.user_id = u.id
-          WHERE u.status = 'active' GROUP BY u.id ORDER BY count(r.id) DESC, u.display_name`,
+          FROM users u JOIN roles ro ON ro.id = u.role_id LEFT JOIN card_reviews r ON r.user_id = u.id
+          WHERE u.status = 'active' GROUP BY u.id, ro.name ORDER BY count(r.id) DESC, u.display_name`,
     ),
-    query<{ user_id: string; module: string; knowledge: string | null; coverage: string | null; cards_seen: number }>(db, sql`SELECT user_id, module, knowledge, coverage, cards_seen FROM v_user_knowledge_module`),
-    query<{ user_id: string; process_key: string; process_name: string; knowledge: string | null; cards_seen: number }>(db, sql`SELECT user_id, process_key, process_name, knowledge, cards_seen FROM v_user_knowledge_process`),
-    query<{ user_id: string; d: unknown }>(db, sql`SELECT DISTINCT user_id, deck_date AS d FROM reviews WHERE deck_date >= ${addDays(today, -120)}::date`),
+    query<{ user_id: string; module: string; knowledge: string | null; coverage: string | null; cards_seen: number }>(db, sql`SELECT user_id, scope_key AS module, knowledge, coverage, cards_seen FROM user_knowledge WHERE scope = 'module'`),
+    query<{ user_id: string; process_key: string; process_name: string; knowledge: string | null; cards_seen: number }>(db, sql`SELECT user_id, scope_key AS process_key, scope_name AS process_name, knowledge, cards_seen FROM user_knowledge WHERE scope = 'process'`),
+    query<{ user_id: string; d: unknown }>(db, sql`SELECT DISTINCT r.user_id, d.deck_date AS d FROM card_reviews r JOIN daily_decks d ON d.id = r.deck_id WHERE d.deck_date >= ${addDays(today, -120)}::date`),
     getModuleNames(db),
   ]);
 

@@ -24,17 +24,19 @@ export default async function ProgressPage() {
     getModuleNames(db),
     query<{ module: string; reviews: number; cards_seen: number; total_cards: number; coverage: string; knowledge: string }>(
       db,
-      sql`SELECT module, reviews, cards_seen, total_cards, coverage, knowledge FROM v_user_knowledge_module
-          WHERE user_id = ${user.id} ORDER BY reviews DESC`,
+      sql`SELECT scope_key AS module, reviews, cards_seen, total_cards, coverage, knowledge FROM user_knowledge
+          WHERE user_id = ${user.id} AND scope = 'module' ORDER BY reviews DESC`,
     ),
     query<{ v: number; context: string; front: string; back: string }>(
       db,
-      sql`SELECT DISTINCT ON (r.card_id) cv.id AS v, cv.context, cv.front, cv.back
-          FROM reviews r JOIN cards c ON c.id = r.card_id AND c.status = 'active'
+      sql`SELECT DISTINCT ON (c.id) cv.id AS v, cv.context, cv.front, cv.back
+          FROM card_reviews r JOIN card_versions rv ON rv.id = r.card_version_id
+          JOIN cards c ON c.id = rv.card_id AND c.status = 'active'
           JOIN card_versions cv ON cv.id = c.current_version_id
           WHERE r.user_id = ${user.id} AND NOT r.knew_it
-            AND NOT EXISTS (SELECT 1 FROM reviews r2 WHERE r2.user_id = r.user_id AND r2.card_id = r.card_id AND r2.knew_it AND r2.created_at > r.created_at)
-          ORDER BY r.card_id, r.created_at DESC LIMIT 6`,
+            AND NOT EXISTS (SELECT 1 FROM card_reviews r2 JOIN card_versions v2 ON v2.id = r2.card_version_id
+                            WHERE r2.user_id = r.user_id AND v2.card_id = c.id AND r2.knew_it AND r2.created_at > r.created_at)
+          ORDER BY c.id, r.created_at DESC LIMIT 6`,
     ),
   ]);
   const knewRate = summary.reviews ? summary.knew / summary.reviews : null;

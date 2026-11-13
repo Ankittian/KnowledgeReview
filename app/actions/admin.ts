@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { feedback, users } from "@/db/schema";
+import { cardFeedback, roleIdOf, users } from "@/db/schema";
 import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
 import { runKbSync } from "@/lib/kb-sync";
@@ -15,9 +15,9 @@ const uuid = z.uuid();
 export async function approveUser(fd: FormData) {
   const { user: actor } = await requireRole(["admin"]);
   const id = uuid.parse(fd.get("userId"));
-  const role = z.enum(["employee", "reviewer", "admin"]).catch("employee").parse(fd.get("role"));
+  const role = z.enum(["employee", "functional", "technical", "reviewer", "admin"]).catch("employee").parse(fd.get("role"));
   const db = await getDb();
-  await db.update(users).set({ status: "active", role, approvedBy: actor.id, approvedAt: new Date() }).where(eq(users.id, id));
+  await db.update(users).set({ status: "active", roleId: roleIdOf(role) }).where(eq(users.id, id));
   await audit(db, actor.id, "user_approved", "user", id, { role });
   revalidatePath("/admin/users");
 }
@@ -37,10 +37,10 @@ export async function setUserStatus(fd: FormData) {
 export async function setUserRole(fd: FormData) {
   const { user: actor } = await requireRole(["admin"]);
   const id = uuid.parse(fd.get("userId"));
-  const role = z.enum(["employee", "reviewer", "admin"]).parse(fd.get("role"));
+  const role = z.enum(["employee", "functional", "technical", "reviewer", "admin"]).parse(fd.get("role"));
   if (id === actor.id) throw new Error("You can't change your own role.");
   const db = await getDb();
-  await db.update(users).set({ role }).where(eq(users.id, id));
+  await db.update(users).set({ roleId: roleIdOf(role) }).where(eq(users.id, id));
   await revokeUserSessions(id); // new permissions on next sign-in
   await audit(db, actor.id, "user_role_changed", "user", id, { role });
   revalidatePath("/admin/users");
@@ -58,7 +58,7 @@ export async function resolveFeedback(fd: FormData) {
     .parse((fd.get("commit") as string)?.trim() || undefined);
   const db = await getDb();
   await db
-    .update(feedback)
+    .update(cardFeedback)
     .set({
       status,
       resolutionNote: note ?? null,
@@ -66,7 +66,7 @@ export async function resolveFeedback(fd: FormData) {
       resolvedBy: status === "open" ? null : actor.id,
       resolvedAt: status === "open" ? null : new Date(),
     })
-    .where(eq(feedback.id, id));
+    .where(eq(cardFeedback.id, id));
   await audit(db, actor.id, "feedback_resolved", "feedback", String(id), { status, note, commit });
   revalidatePath("/admin/feedback");
   revalidatePath("/admin/health");

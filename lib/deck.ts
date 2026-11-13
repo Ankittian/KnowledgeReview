@@ -1,7 +1,9 @@
 import crypto from "node:crypto";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { query, type DB } from "@/db/client";
-import { cards, cardVersions, dailyDecks, kbEntities, reviews } from "@/db/schema";
+import { cardReviews, cards, cardVersions, dailyDecks, deckCards, kbItems } from "@/db/schema";
+import { audienceIn } from "./cards/audience";
+import { LEVELS, countWords, minReadSeconds, type Audience, type Level } from "./cards/spec";
 import { logEvent } from "./events";
 import { getDailyCardLimit } from "./settings";
 
@@ -73,36 +75,37 @@ export async function loadDeckPools(
   today: string,
   size: number,
   seed: string = crypto.randomUUID(),
+  audiences: Audience[] = ["functional"],
 ): Promise<DeckPools> {
   const lim = Math.max(size * 3, 30);
   const ids = (rows: { card_id: string }[]) => rows.map((r) => r.card_id);
 
   const due = await query<{ card_id: string }>(
     db,
-    sql`SELECT s.card_id FROM srs_state s JOIN cards c ON c.id = s.card_id
-        WHERE s.user_id = ${userId} AND s.due_date <= ${today}::date AND c.status = 'active'
+    sql`SELECT s.card_id FROM review_schedule s JOIN cards c ON c.id = s.card_id
+        WHERE s.user_id = ${userId} AND s.due_date <= ${today}::date AND c.status = 'active' AND ${audienceIn(sql`c.audience`, audiences)}
         ORDER BY s.due_date, s.box, md5(s.card_id || ${seed}) LIMIT ${lim}`,
   );
-  const unseen = sql`NOT EXISTS (SELECT 1 FROM srs_state s WHERE s.user_id = ${userId} AND s.card_id = ch.card_id)`;
+  const unseen = sql`NOT EXISTS (SELECT 1 FROM review_schedule s WHERE s.user_id = ${userId} AND s.card_id = ch.card_id)`;
   const moduleFirst = module ? sql`coalesce(ch.module = ${module}, false) DESC,` : sql``;
   const priority = await query<{ card_id: string }>(
     db,
-    sql`SELECT ch.card_id FROM v_card_health ch
-        WHERE ch.status = 'active' AND ${unseen}
+    sql`SELECT ch.card_id FROM card_health ch
+        WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ${unseen}
           AND ((ch.reviewers BETWEEN 1 AND ${VERIFY_QUORUM - 1}) OR ch.conflicting)
           ${module ? sql`AND ch.module = ${module}` : sql``}
         ORDER BY ${moduleFirst} ch.conflicting DESC, ch.reviewers DESC, md5(ch.card_id || ${seed}) LIMIT ${lim}`,
   );
   const fresh = await query<{ card_id: string }>(
     db,
-    sql`SELECT ch.card_id FROM v_card_health ch
-        WHERE ch.status = 'active' AND ch.reviewers = 0 AND ${unseen}
+    sql`SELECT ch.card_id FROM card_health ch
+        WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ch.reviewers = 0 AND ${unseen}
         ORDER BY ${moduleFirst} md5(ch.card_id || ${seed}) LIMIT ${lim}`,
   );
   const fallback = await query<{ card_id: string }>(
     db,
-    sql`SELECT ch.card_id FROM v_card_health ch
-        WHERE ch.status = 'active' AND ${unseen}
+    sql`SELECT ch.card_id FROM card_health ch
+        WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ${unseen}
         ORDER BY ${moduleFirst} md5(ch.card_id || ${seed}) LIMIT ${lim}`,
   );
   return { due: ids(due), priority: ids(priority), fresh: ids(fresh), fallback: ids(fallback) };
@@ -115,6 +118,13 @@ export interface ClientCard {
   front: string;
   back: string;
   module: string | null;
+  /** generated cards are statements to verify: shown whole, answered with Known / New / Incorrect, after a read-time lock */
+  statement: boolean;
+  level: Level | null;
+  /** what a valid answer is worth (Easy 1, Medium 3, Hard 5) */
+  weight: number;
+  /** seconds before the answer buttons unlock (words / 5, at least 4); 0 for non-statement cards */
+  minRead: number;
 }
 
 export interface TodayDeck {
@@ -138,12 +148,15 @@ export async function getOrCreateDeck(
   user: { id: string; primaryModule: string | null },
   today: string,
   sessionId: string,
+  audiences: Audience[] = ["functional"],
 ): Promise<TodayDeck> {
   const dailyLimit = await getDailyCardLimit(db);
   const answeredRows = await db
-    .select({ cardId: reviews.cardId })
-    .from(reviews)
-    .where(and(eq(reviews.userId, user.id), eq(reviews.deckDate, today)));
+    .select({ cardId: cardVersions.cardId })
+    .from(cardReviews)
+    .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
+    .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
+    .where(and(eq(cardReviews.userId, user.id), eq(dailyDecks.deckDate, today)));
   const answeredCards = new Set(answeredRows.map((r) => r.cardId));
   const answeredToday = answeredCards.size;
 
@@ -154,20 +167,25 @@ export async function getOrCreateDeck(
     .orderBy(desc(dailyDecks.id))
     .limit(1);
 
-  const activeOpen = deck ? await activeUnanswered(db, deck.cardIds, answeredCards) : 0;
+  let deckCardIds = deck ? await loadDeckCardIds(db, deck.id) : [];
+  const activeOpen = deck ? await activeUnanswered(db, deckCardIds, answeredCards, audiences) : 0;
   const remaining = dailyLimit - answeredToday;
   if ((!deck || activeOpen === 0) && remaining > 0) {
     const seed = crypto.randomUUID();
-    const pools = await loadDeckPools(db, user.id, user.primaryModule, today, remaining, seed);
+    const pools = await loadDeckPools(db, user.id, user.primaryModule, today, remaining, seed, audiences);
     const cardIds = composeDeck(pools, remaining, seed).filter((id) => !answeredCards.has(id));
     if (cardIds.length) {
       const [{ dropped }] = await query<{ dropped: number }>(
         db,
-        sql`SELECT coalesce(sum((SELECT count(*) FROM unnest(d.card_ids) AS c(id)
-                                 WHERE NOT EXISTS (SELECT 1 FROM reviews r WHERE r.user_id = d.user_id AND r.deck_date = d.deck_date AND r.card_id = c.id))), 0)::int AS dropped
-            FROM daily_decks d WHERE d.user_id = ${user.id} AND d.deck_date = ${today}::date AND d.completed_at IS NULL`,
+        sql`SELECT count(*)::int AS dropped
+            FROM daily_decks d JOIN deck_cards dc ON dc.deck_id = d.id
+            WHERE d.user_id = ${user.id} AND d.deck_date = ${today}::date AND d.completed_at IS NULL
+              AND NOT EXISTS (SELECT 1 FROM card_reviews r JOIN daily_decks d2 ON d2.id = r.deck_id JOIN card_versions v ON v.id = r.card_version_id
+                              WHERE r.user_id = d.user_id AND d2.deck_date = d.deck_date AND v.card_id = dc.card_id)`,
       );
-      [deck] = await db.insert(dailyDecks).values({ userId: user.id, sessionId, deckDate: today, cardIds }).returning();
+      [deck] = await db.insert(dailyDecks).values({ userId: user.id, sessionId, deckDate: today }).returning();
+      await db.insert(deckCards).values(cardIds.map((cardId, position) => ({ deckId: deck.id, cardId, position })));
+      deckCardIds = cardIds;
       await logEvent(db, {
         userId: user.id,
         sessionId,
@@ -179,10 +197,11 @@ export async function getOrCreateDeck(
   if (!deck) return { deckId: null, date: today, cards: [], answered: [], answeredToday, dailyLimit };
 
   const rows = await db
-    .select({ cardId: cards.id, v: cardVersions.id, context: cardVersions.context, front: cardVersions.front, back: cardVersions.back, module: cards.module, status: cards.status })
+    .select({ cardId: cards.id, v: cardVersions.id, context: cardVersions.context, front: cardVersions.front, back: cardVersions.back, module: kbItems.module, status: cards.status, audience: cards.audience, level: cards.level })
     .from(cards)
     .innerJoin(cardVersions, eq(cardVersions.id, cards.currentVersionId))
-    .where(inArray(cards.id, deck.cardIds));
+    .innerJoin(kbItems, eq(kbItems.id, cards.kbItemId))
+    .where(inArray(cards.id, deckCardIds));
   const moduleNames = await getModuleNames(db);
   const byId = new Map(rows.map((r) => [r.cardId, r]));
 
@@ -190,25 +209,43 @@ export async function getOrCreateDeck(
   const answered: number[] = [];
   // answers from this deck, plus at most `remaining` open cards (the admin may have lowered the limit meanwhile)
   let open = Math.max(0, remaining);
-  for (const id of deck.cardIds) {
+  for (const id of deckCardIds) {
     const r = byId.get(id);
-    if (!r || r.status !== "active") continue;
+    if (!r || r.status !== "active" || !r.audience || !audiences.includes(r.audience)) continue;
     const isAnswered = answeredCards.has(id);
     if (!isAnswered && open-- <= 0) continue;
-    out.push({ v: r.v, context: r.context, front: r.front, back: r.back, module: r.module ? (moduleNames.get(r.module) ?? r.module) : null });
+    out.push({
+      v: r.v,
+      context: r.context,
+      front: r.front,
+      back: r.back,
+      module: r.module ? (moduleNames.get(r.module) ?? r.module) : null,
+      statement: true,
+      level: r.level,
+      weight: r.level ? LEVELS[r.level].weight : 0,
+      minRead: minReadSeconds(countWords(r.back)),
+    });
     if (isAnswered) answered.push(r.v);
   }
   return { deckId: deck.id, date: today, cards: out, answered, answeredToday, dailyLimit };
 }
 
-async function activeUnanswered(db: DB, cardIds: string[], answered: Set<string>): Promise<number> {
+async function loadDeckCardIds(db: DB, deckId: number): Promise<string[]> {
+  const rows = await db.select({ cardId: deckCards.cardId }).from(deckCards).where(eq(deckCards.deckId, deckId)).orderBy(deckCards.position);
+  return rows.map((r) => r.cardId);
+}
+
+async function activeUnanswered(db: DB, cardIds: string[], answered: Set<string>, audiences: Audience[]): Promise<number> {
   const open = cardIds.filter((id) => !answered.has(id));
   if (!open.length) return 0;
-  const rows = await db.select({ id: cards.id }).from(cards).where(and(inArray(cards.id, open), eq(cards.status, "active")));
+  const rows = await db
+    .select({ id: cards.id })
+    .from(cards)
+    .where(and(inArray(cards.id, open), eq(cards.status, "active"), inArray(cards.audience, audiences)));
   return rows.length;
 }
 
 export async function getModuleNames(db: DB): Promise<Map<string, string>> {
-  const rows = await db.select({ key: kbEntities.key, name: kbEntities.name }).from(kbEntities).where(eq(kbEntities.type, "module"));
+  const rows = await db.select({ key: kbItems.key, name: kbItems.name }).from(kbItems).where(eq(kbItems.type, "module"));
   return new Map(rows.map((r) => [r.key, r.name]));
 }

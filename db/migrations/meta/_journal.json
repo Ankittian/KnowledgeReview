@@ -22,6 +22,20 @@
       "when": 1794483072689,
       "tag": "0002_refresh_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794549055037,
+      "tag": "0003_modular_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794551815971,
+      "tag": "0004_generated_cards",
+      "breakpoints": true
     }
   ]
 }

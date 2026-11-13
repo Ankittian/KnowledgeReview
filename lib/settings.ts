@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import type { DB } from "@/db/client";
-import { settings } from "@/db/schema";
+import { appSettings } from "@/db/schema";
 
 export const DEFAULT_DAILY_CARD_LIMIT = 10;
 export const DAILY_LIMIT_MIN = 1;
@@ -8,15 +8,15 @@ export const DAILY_LIMIT_MAX = 100;
 const DAILY_LIMIT_KEY = "daily_card_limit";
 
 export async function getSetting<T>(db: DB, key: string, fallback: T): Promise<T> {
-  const [row] = await db.select().from(settings).where(eq(settings.key, key));
+  const [row] = await db.select().from(appSettings).where(eq(appSettings.key, key));
   return row ? (row.value as T) : fallback;
 }
 
 export async function setSetting(db: DB, key: string, value: unknown): Promise<void> {
   await db
-    .insert(settings)
+    .insert(appSettings)
     .values({ key, value })
-    .onConflictDoUpdate({ target: settings.key, set: { value: sql`excluded.value`, updatedAt: new Date() } });
+    .onConflictDoUpdate({ target: appSettings.key, set: { value: sql`excluded.value`, updatedAt: new Date() } });
 }
 
 /** Max cards an employee is shown per day, across all sign-ins. Configured by admins. */

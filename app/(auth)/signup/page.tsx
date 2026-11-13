@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { kbEntities } from "@/db/schema";
+import { kbItems } from "@/db/schema";
 import { SignupForm } from "@/components/auth/SignupForm";
 
 export const metadata: Metadata = { title: "Request an account" };
@@ -10,10 +10,10 @@ export const metadata: Metadata = { title: "Request an account" };
 export default async function SignupPage() {
   const db = await getDb();
   const modules = await db
-    .select({ code: kbEntities.key, name: kbEntities.name })
-    .from(kbEntities)
-    .where(eq(kbEntities.type, "module"))
-    .orderBy(kbEntities.name);
+    .select({ code: kbItems.key, name: kbItems.name })
+    .from(kbItems)
+    .where(eq(kbItems.type, "module"))
+    .orderBy(kbItems.name);
   return (
     <div className="panel p-6 shadow-card sm:p-8">
       <h1 className="text-xl font-semibold">Request an account</h1>

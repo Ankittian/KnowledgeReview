@@ -1,0 +1,78 @@
+{
+  "scope": "form",
+  "key": "fPurchaseBill",
+  "title": "Purchase Bill",
+  "context": "Finance › Payment Flow (Purchase Bill to Vendor Payment) › Purchase Bill",
+  "module": "FI",
+  "audience": "technical",
+  "cards": [
+    {
+      "level": "hard",
+      "topic_key": "form-architecture-and-schema-mappings",
+      "title": "Architecture, database entity mappings, and schema structure of fPurchaseBill",
+      "body": "fPurchaseBill is the primary accounts payable invoice entry interface operating within the FI module.\nHeader attributes persist in Finance.FPurchaseBillMain with unique key DocNo and DocumentYearlyNo.\nLine item details map to Finance.FPurchaseBillDetail linked by PurchaseBillDetailId foreign keys.\nTax line distributions persist within the shared table Finance.TDCTransactionDetail.\nAdvance clearance allocations write to Finance.FAdvanceAdjustDetail capturing AdvanceVoucherId and AdjustedAmount.\nPayment schedule breakdowns are generated into Finance.FPaymentScheduleDetail with due dates.\nEntity state transitions are governed by DocumentStatus flags Initial, Release, and Authorized.\nOptimistic concurrency relies on ModifiedDate and ModifiedBy columns verified during save execution.\nShared custom fields interface through masterdata.customfieldssave during transaction commit.\nForeign key constraints enforce referential integrity against vendor, item, and finance book master tables.\nAudit triggers record modification history in Finance.FPurchaseBillAuditDetail for compliance tracking.\nAtomic transaction boundaries ensure invoice headers and detail lines commit synchronously without partial writes.\nPrimary keys DocNo and DocumentYearlyNo maintain clustered index structures for high-speed retrieval.\nForeign key relationships bind line items to inventory receipt details and purchase order lines.\nRelational constraints and clustered indices optimize query execution plans during high-volume database operations.\nDatabase triggers intercept unauthorized data manipulation attempts and enforce strict referential boundaries across schemas.",
+      "source_refs": [
+        "method_notes",
+        "summary",
+        "concept:purchase-bill"
+      ],
+      "word_count": 189,
+      "weight": 5,
+      "min_read_seconds": 38
+    },
+    {
+      "level": "hard",
+      "topic_key": "stored-procedures-and-backend-routines",
+      "title": "Stored procedure bindings for load, save, delete, and lookup in fPurchaseBill",
+      "body": "Data persistence and search operations on fPurchaseBill execute through dedicated procedures in the Finance schema.\nSearch queries invoke Finance.PBPBSearchData to return filtered invoice headers based on user criteria.\nRecord loading executes through Finance.PBPBLoadData and Finance.PBPBFillValuesPOWise routines.\nLookup dropdowns and dependent filters populate using Finance.PBPBFillValuesDependent procedures.\nVendor profile parameters load through GlobalData.VendorLocationSelect lookup procedures.\nAccount balances for advance matching retrieve via Finance.AccountOpening stored procedures.\nRecord deletion is governed by Finance.PBPBDelete which checks downstream payment and voucher references.\nCustom validation routines execute through external handlers ODTDispatchChallan.ProcedureName.\nItem accounting definitions resolve dynamically through masterdata.ItemAccountDetail procedures.\nStored procedures return structured error codes handled by the application exception layer.\nAll persistence procedures execute within serialized transaction blocks to maintain data consistency.\nDiagnostic shortcuts Ctrl+Alt+G rebuild GST posting distributions from line item records directly.\nPersistence procedures utilize table-valued parameters for efficient line item insertions.\nStructured catch blocks capture relational database errors and execute explicit transaction rollbacks.\nExecution plans are cached by the relational database engine to optimize throughput under heavy load.\nAudit procedures log execution duration and calling user credentials for security reviews.\nRelational constraints and clustered indices optimize query execution plans during high-volume database operations.",
+      "source_refs": [
+        "method_notes",
+        "validations"
+      ],
+      "word_count": 190,
+      "weight": 5,
+      "min_read_seconds": 38
+    },
+    {
+      "level": "hard",
+      "topic_key": "validation-triggers-and-rejection-conditions",
+      "title": "Validation logic, Boolean conditions, and error triggers in fPurchaseBill",
+      "body": "fPurchaseBill enforces strict business rules prior to executing persistence routines in the database.\nVendorBillDate > DocumentDate raises an immediate validation error stopping execution on save.\nPassingAmount > VendorBillAmount aborts processing to prevent over-billing errors across lines.\nSGST or CGST applied to an interstate transaction triggers geographic tax mismatch exceptions.\nIGST applied to an intrastate transaction triggers geographic tax validation refusal.\nDocumentStatus == Authorized halts save attempts with Authorized entry can't be updated.\nSelecting a VendorBillNo already recorded for the vendor fires duplicate invoice errors.\nUnmatched currencies across multiple selected GRN references aborts the transaction.\nAdjustingAmount > BalanceAmount on advance rows fires advance allocation exceptions.\nValidation checks execute sequentially within client validation before invoking backend procedures.\nDivision lock flags query masterdata.mCalendarPeriod to prevent saving into closed accounting periods.\nStructured error messages identify the exact line item and column violating business constraints.\nServer procedures re-verify all Boolean conditions to ensure data integrity against direct API calls.\nFailed checks raise custom error codes mapped to localized user error messages in the interface.\nRollback handlers reverse all intermediate variable states when any rule triggers an exception.",
+      "source_refs": [
+        "validations",
+        "rule:gst-tax-determination",
+        "rule:receipt-tolerance"
+      ],
+      "word_count": 182,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "mutation-patterns-and-status-cascades",
+      "title": "Child record mutation logic, atomic transactions, and status cascades",
+      "body": "Transaction modifications execute a delete-and-reinsert pattern for detail line items in the database.\nExisting records in Finance.FPurchaseBillDetail are purged and regenerated from current inputs.\nAtomic transaction scopes ensure header updates and detail re-insertions commit together.\nCascade routines update BilledQty on Inventory.IGRNDetail records to track warehouse receipt consumption.\nAdvance adjustment records decrement open balances on referenced advance vouchers in Finance.\nAuthorization transitions source GRN records from Unbilled to Billed status automatically.\nIf transaction failure occurs, all detail deletions and balance updates roll back completely.\nHistorical audit tables capture prior row states before detail line replacement executes.\nConcurrency timestamps prevent detail replacement if another user modified the document.\nCascade handlers ensure accounts payable sub-ledgers reflect current net liabilities accurately.\nLine item replacement commits synchronously with document header updates within a single transaction.\nThis mutation logic guarantees that parent receipts and child bills remain perfectly synchronized.\nDetail line replacement executes synchronously with parent document updates in the database.\nForeign key constraints ensure orphaned child rows cannot persist after update execution.\nCascade routines update BilledQty across inventory tables within the primary transaction boundary.\nRelational constraints and clustered indices optimize query execution plans during high-volume database operations.",
+      "source_refs": [
+        "rule:detail-replacement-on-save",
+        "rule:atomic-save",
+        "concept:purchase-bill"
+      ],
+      "word_count": 192,
+      "weight": 5,
+      "min_read_seconds": 39
+    },
+    {
+      "level": "hard",
+      "topic_key": "general-ledger-posting-and-tax-interfaces",
+      "title": "General Ledger posting procedures, voucher generation, and tax distribution",
+      "body": "Document authorization executes General Ledger posting via Finance.PBPBFinancePosting in the database.\nValued invoice lines debit inventory clearing accounts or departmental expense accounts.\nThe vendor control payable account is credited with the total invoice payable value.\nInput tax lines write to discrete CGST, SGST, or IGST input ledger accounts based on state registration.\nAccount Determination Rules (ARD) resolve ledger accounts based on item sub groups and vendor locations.\nGenerated voucher entries write to Finance.FJournalMaster and Finance.FJournalDetail tables.\nPosted voucher numbers write back to FPurchaseBillMain to establish permanent audit lineage.\nDiagnostic shortcuts Ctrl+Alt+V invoke voucher regeneration scripts for authorized records.\nRollback handlers reverse ledger postings if tax distribution generation encounters database errors.\nFinancial postings maintain double-entry balancing invariants between clearing and payable ledgers.\nSub-ledger posting updates vendor aging tables to support payment planning and credit term tracking.\nThis posting interface ensures exact synchronization between purchasing bills and the General Ledger.\nClearing accounts reconcile input tax credits against central goods and services tax ledgers.\nRollback handlers ensure ledger vouchers reverse cleanly if tax calculation errors occur.\nRelational constraints and clustered indices optimize query execution plans during high-volume database operations.",
+      "source_refs": [
+        "rule:finance-posting-from-transactions",
+        "concept:account-determination-rule"
+      ],
+      "word_count": 186,
+      "weight": 5,
+      "min_read_seconds": 38
+    }
+  ]
+}

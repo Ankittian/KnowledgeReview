@@ -1,0 +1,92 @@
+{
+  "scope": "form",
+  "key": "fPurchaseOrder",
+  "title": "Purchase Order",
+  "context": "Material Management › Procure-to-Pay (PO Flow) › Purchase Order",
+  "module": "MM",
+  "audience": "technical",
+  "cards": [
+    {
+      "level": "hard",
+      "topic_key": "form-architecture-and-data-layers",
+      "title": "Form architecture, table bindings, and data layers of fPurchaseOrder",
+      "body": "fPurchaseOrder is a primary transaction interface residing within the Material Management module.\nHeader attributes map to Purchase.PMPurchaseOrder while line items bind to Purchase.PMPOIndentDetail.\nAssociated expense splits and freight routes persist in Purchase.PMPOExpense and Purchase.PMPORoute.\nTax line calculations write to the shared tax repository Finance.TDCTransactionDetail.\nOptimistic locking relies on ModifiedDate and ModifiedBy columns evaluated during update execution.\nUI section controls encapsulate distinct child datasets loaded asynchronously upon user navigation.\nShared custom fields interface through masterdata.customfieldssave during the primary transaction commit.\nLookup controls populate via GlobalData.VendorLocationSelect and Purchase.PMPOFillValues procedures.\nAtomic transaction scopes ensure header and child records roll back completely on execution failure.\nEntity state management coordinates with document status flags Initial, Release, and Authorized.\nDatabase triggers prevent direct row updates when DocumentStatus is marked Authorized in the header.\nForeign key constraints enforce referential integrity against item, vendor, and location master tables.\nThe data layer executes parameterized queries to prevent SQL injection vulnerabilities during persistence.\nTransactions run under read-committed snapshot isolation to avoid deadlocks during concurrent access.\nAudit triggers record prior row states to historical archive tables before modification executes.\nHeader and child entity states synchronize through explicit transaction boundaries managed by the framework.",
+      "source_refs": [
+        "method_notes",
+        "summary",
+        "concept:purchase-order"
+      ],
+      "word_count": 192,
+      "weight": 5,
+      "min_read_seconds": 39
+    },
+    {
+      "level": "hard",
+      "topic_key": "stored-procedures-and-routine-bindings",
+      "title": "Stored procedure bindings for load, save, delete, and lookup operations",
+      "body": "All backend operations on fPurchaseOrder execute through dedicated stored procedures in the Purchase schema.\nRecord searches execute through Purchase.PMPOSearchData returning paginated document headers.\nSelected records load via Purchase.PMPOFillValues and Purchase.PMPOFillValuesDependent.\nIndent line details populate through Purchase.PMPOIndentDetail and Purchase.PMPOGetIndentItemDetail.\nFreight logistics parameters are retrieved through the stored procedure Purchase.PMPOFreightOrderDetail.\nQuality parameters linked to item lines load through the routine Purchase.GetSpecificationDetail.\nRecord deletion invokes Purchase.PMPODelete which enforces child dependency validation before row removal.\nCustom validation routines execute through the external procedure ODTPurchaseOrder.ProcedureName.\nAccount assignments resolve dynamically using Purchase.PMPOFillValuesAccountAssignment.\nAll stored procedures return structured error codes handled by the application exception layer.\nTransaction commits execute within serialized isolation levels to ensure consistent record persistence.\nAudit logging procedures capture user credentials and execution timestamps across all data modifications.\nProcedure parameters pass structured table-valued parameters for bulk detail line persistence.\nExecution plans are cached by the relational database engine to optimize throughput under heavy load.\nError handling blocks implement explicit transaction rollback upon detecting database exceptions.\nReturn codes communicate operation results back to the presentation layer for user status display.\nDiagnostic logging captures stored procedure execution metrics for performance monitoring.",
+      "source_refs": [
+        "method_notes",
+        "validations"
+      ],
+      "word_count": 185,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "validation-triggers-and-error-conditions",
+      "title": "Validation logic and Boolean condition triggers in fPurchaseOrder",
+      "body": "Form validation routines evaluate business rules prior to executing persistence routines in the database.\nValidityDate < DocumentDate raises a blocking validation error stopping transaction execution.\nFromLocationId == ToLocationId triggers validation refusal during transportation route configuration.\nPOQty > BalanceIndentQty triggers an exception preventing line item over-allocation against source indents.\nNegativeTolerance >= 100 or NegativeTolerance >= POQty aborts transaction processing.\nGST validation evaluates CompanyStateId against VendorStateId to enforce CGST/SGST versus IGST.\nUnitRate <= 0 triggers validation failure unless zero-rate flags are explicitly configured.\nMissing HSN codes on item masters trigger HSNSAC Code is not defined exceptions.\nConcurrent edits trigger optimistic locking errors when ModifiedDate mismatches database state.\nValidation checks execute sequentially within client validation before invoking backend procedures.\nState transitions verify user permission mappings against authorization group tables before updating status.\nFailure at any validation stage rolls back temporary variables and returns structured diagnostic messages.\nClient validation executes prior to server invocation to minimize redundant network roundtrips.\nServer procedures re-evaluate all Boolean conditions to ensure data integrity against direct API calls.\nValidation failures raise structured SQL exceptions with specific error numbers and contextual parameters.\nRollback handlers reverse all intermediate variable states when any rule triggers an exception.",
+      "source_refs": [
+        "validations",
+        "rule:receipt-tolerance",
+        "rule:approved-vendor-restriction"
+      ],
+      "word_count": 195,
+      "weight": 5,
+      "min_read_seconds": 39
+    },
+    {
+      "level": "hard",
+      "topic_key": "line-item-persistence-and-cascade-logic",
+      "title": "Child record mutation logic and status cascading mechanisms",
+      "body": "Transaction modifications execute a delete-and-reinsert pattern for detail line items in the database.\nExisting records in Purchase.PMPOIndentDetail are cleared and regenerated from current inputs.\nCascade routines update parent indent balances by decrementing reserved quantities on indent rows.\nWhen an order is created against a Comparative Statement, CS booking balances are updated.\nAuthorization triggers status transitions in source indent lines from Open to Consumed.\nCancelling an order line invokes balance restoration procedures returning quantities to indents.\nDetail replacement executes within a database transaction to prevent orphan records upon execution failure.\nAudit logging records prior states to historical tracking tables before row regeneration.\nForeign key constraints enforce referential integrity against item and vendor masters.\nCascade handlers ensure inventory demand staging tables reflect current net requirements accurately.\nLine item replacement commits synchronously with document header updates within a single transaction.\nThis mutation logic guarantees that parent document balances stay synchronized with child purchase orders.\nDetail row regeneration calculates sequential line numbers to maintain consistent grid display order.\nParent record balance recalculation queries execute within the primary atomic transaction boundary.\nAudit log tables record previous quantity states to provide differential tracking across updates.\nForeign key constraints enforce referential integrity against item, vendor, and location master tables.",
+      "source_refs": [
+        "rule:detail-replacement-on-save",
+        "rule:atomic-save",
+        "concept:purchase-order"
+      ],
+      "word_count": 202,
+      "weight": 5,
+      "min_read_seconds": 41
+    },
+    {
+      "level": "hard",
+      "topic_key": "authorization-matrix-and-state-machine",
+      "title": "Authorization group schema, multi-level approvals, and state locks",
+      "body": "fPurchaseOrder implements a state machine governed by masterdata.mAuthorizationGroup tables.\nAuthorization groups define approval hierarchies stored in masterdata.mAuthorizationGroupUser.\nIntermediate approvals insert audit records into Purchase.PMPOApprovalHistory.\nIntermediate sign-offs maintain DocumentStatus as Release without granting final authorization.\nOnly users mapped to the terminal hierarchy level can transition status to Authorized.\nDirect status updates to Authorized bypass approval procedures and are blocked by server triggers.\nAuthorized records become read-only at database level via update-prevention triggers.\nDocument amendments create linked records in Purchase.PMPOAmendment maintaining revision IDs.\nState transitions dispatch notification emails through system background queue tables.\nAudit history logs capture approver user IDs, approval decisions, comments, and action timestamps.\nState transitions execute within serialized transactions to prevent concurrent conflicting authorizations.\nThis approval framework enforces strict regulatory compliance and financial segregation of duties.\nState transitions evaluate user security roles against authorization matrix tables dynamically.\nDirect database updates attempting to alter DocumentStatus to Authorized are intercepted by triggers.\nNotification services poll approval queue tables asynchronously to dispatch alert emails.\nSerialized transaction blocks prevent race conditions during concurrent approval submissions.\nRelational constraints and clustered indices optimize query execution plans during high-volume database operations.",
+      "source_refs": [
+        "rule:material-receipt-note-multi-level-authorization",
+        "rule:authorized-document-lock"
+      ],
+      "word_count": 185,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "referential-integrity-and-deletion-guards",
+      "title": "Referential integrity constraints and backend deletion barriers",
+      "body": "Backend deletion procedures evaluate foreign key dependencies across operational schemas.\nPurchase.PMPODelete queries Inventory.IGRNMain to detect linked material receipt notes in stores.\nThe presence of linked Gate Entry or GRN records triggers foreign key dependency errors.\nQueries against Finance.fAdvanceRequest block deletion if advance vouchers reference the PO ID.\nActive bank guarantees in Finance.fBankGuarantee create blocking integrity constraints.\nExisting revision rows in Purchase.PMPOAmendment prevent deletion of the parent order.\nDeletion handlers execute within explicit transaction blocks with rollback on violation.\nAudit tables capture deletion attempts, user credentials, and machine IP addresses.\nSoft-delete flags are set on specific line items when balances are closed manually by buyers.\nHard deletes are permitted only on unreferenced Initial status drafts by authorized users.\nReferential integrity barriers protect historical procurement data from accidental administrative deletion.\nDatabase triggers ensure child records in freight and expense tables purge synchronously on draft removal.\nReferential integrity checks execute queries across dependent transaction tables before deletion commits.\nDetected foreign references trigger structured constraint violations returned to the application interface.\nTransaction rollback handlers ensure that partial deletions never leave orphaned records in child tables.\nAudit tables log deletion attempts, user credentials, and machine IP addresses for security reviews.",
+      "source_refs": [
+        "method_notes",
+        "validations",
+        "rule:atomic-save"
+      ],
+      "word_count": 195,
+      "weight": 5,
+      "min_read_seconds": 39
+    }
+  ]
+}

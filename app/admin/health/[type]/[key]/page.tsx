@@ -37,43 +37,44 @@ export default async function EntityPage({ params }: { params: Promise<{ type: s
   const db = await getDb();
   const [entity] = await query<{ id: number; type: string; key: string; name: string; module: string | null; yaml_file: string; active: boolean; meta: Record<string, unknown> }>(
     db,
-    sql`SELECT * FROM kb_entities WHERE key = ${key} AND type::text IN (${sql.join(types.map((t) => sql`${t}`), sql`, `)}) LIMIT 1`,
+    sql`SELECT * FROM kb_items WHERE key = ${key} AND type::text IN (${sql.join(types.map((t) => sql`${t}`), sql`, `)}) LIMIT 1`,
   );
   if (!entity) notFound();
 
   const cardCols = sql`ch.card_id, ch.kind, ch.source_field, cv.context, cv.front, cv.source_text, cv.version, ch.reviewers, ch.correct_votes,
                        ch.improve_votes, ch.unsure_votes, ch.knew_rate, ch.needs_change_score, ch.open_feedback`;
   const [[roll], own, linked, outgoing, fb] = await Promise.all([
-    query<Record<string, string>>(db, sql`SELECT * FROM v_rollup_health WHERE entity_id = ${entity.id}`),
+    query<Record<string, string>>(db, sql`SELECT * FROM kb_item_health WHERE kb_item_id = ${entity.id}`),
     query<CardRow>(
       db,
-      sql`SELECT ${cardCols} FROM v_card_health ch JOIN card_versions cv ON cv.id = ch.current_version_id
-          WHERE ch.entity_id = ${entity.id} AND ch.status = 'active'
+      sql`SELECT ${cardCols} FROM card_health ch JOIN card_versions cv ON cv.id = ch.current_version_id
+          WHERE ch.kb_item_id = ${entity.id} AND ch.status = 'active'
           ORDER BY ch.needs_change_score DESC, ch.reviewers DESC, ch.kind, ch.card_id LIMIT 200`,
     ),
     query<CardRow>(
       db,
       sql`SELECT ${cardCols}, e.type AS entity_type, e.key AS entity_key, e.name AS entity_name, e.yaml_file,
                  array_agg(DISTINCT l.relation) AS relations
-          FROM card_links l JOIN v_card_health ch ON ch.card_id = l.card_id AND ch.status = 'active'
-          JOIN card_versions cv ON cv.id = ch.current_version_id JOIN kb_entities e ON e.id = ch.entity_id
-          WHERE l.entity_id = ${entity.id} AND ch.reviewers > 0
+          FROM card_related_items l JOIN card_health ch ON ch.card_id = l.card_id AND ch.status = 'active'
+          JOIN card_versions cv ON cv.id = ch.current_version_id JOIN kb_items e ON e.id = ch.kb_item_id
+          WHERE l.kb_item_id = ${entity.id} AND ch.reviewers > 0
           GROUP BY ch.card_id, ch.kind, ch.source_field, cv.context, cv.front, cv.source_text, cv.version, ch.reviewers, ch.correct_votes,
                    ch.improve_votes, ch.unsure_votes, ch.knew_rate, ch.needs_change_score, ch.open_feedback, e.type, e.key, e.name, e.yaml_file
           ORDER BY ch.needs_change_score DESC, ch.improve_votes DESC LIMIT 100`,
     ),
     query<{ type: string; key: string; name: string; relation: string }>(
       db,
-      sql`SELECT DISTINCT e.type, e.key, e.name, l.relation FROM cards c JOIN card_links l ON l.card_id = c.id
-          JOIN kb_entities e ON e.id = l.entity_id WHERE c.entity_id = ${entity.id} ORDER BY l.relation, e.name LIMIT 200`,
+      sql`SELECT DISTINCT e.type, e.key, e.name, l.relation FROM cards c JOIN card_related_items l ON l.card_id = c.id
+          JOIN kb_items e ON e.id = l.kb_item_id WHERE c.kb_item_id = ${entity.id} ORDER BY l.relation, e.name LIMIT 200`,
     ),
     query<{ id: number; card_id: string; field: string; category: string; suggested_text: string | null; comment: string | null; status: string; username: string; created_at: Date; own: boolean }>(
       db,
-      sql`SELECT f.id, f.card_id, f.source_field AS field, f.category, f.suggested_text, f.comment, f.status, u.username, f.created_at,
-                 (f.entity_id = ${entity.id}) AS own
-          FROM feedback f JOIN users u ON u.id = f.user_id
-          WHERE f.status IN ('open','accepted') AND (f.entity_id = ${entity.id}
-                OR f.card_id IN (SELECT card_id FROM card_links WHERE entity_id = ${entity.id}))
+      sql`SELECT f.id, fc.id AS card_id, fc.source_field AS field, f.category, f.suggested_text, f.comment, f.status, u.username, f.created_at,
+                 (fc.kb_item_id = ${entity.id}) AS own
+          FROM card_feedback f JOIN card_versions fv ON fv.id = f.card_version_id JOIN cards fc ON fc.id = fv.card_id
+          JOIN users u ON u.id = f.user_id
+          WHERE f.status IN ('open','accepted') AND (fc.kb_item_id = ${entity.id}
+                OR fc.id IN (SELECT card_id FROM card_related_items WHERE kb_item_id = ${entity.id}))
           ORDER BY f.created_at DESC LIMIT 50`,
     ),
   ]);

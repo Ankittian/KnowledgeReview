@@ -1,0 +1,100 @@
+{
+  "scope": "module",
+  "key": "PM",
+  "title": "Plant Maintenance",
+  "context": "Plant Maintenance",
+  "module": "PM",
+  "audience": "functional",
+  "cards": [
+    {
+      "level": "easy",
+      "topic_key": "module-purpose",
+      "title": "What Plant Maintenance covers across plant operations",
+      "body": "Plant Maintenance oversees the reliability, safety, and operational upkeep of company assets.\nIt manages the equipment register, maintenance requests, scheduled overhauls, and work permits.\nThe module ensures machinery operates safely while tracking maintenance costs and downtime.",
+      "source_refs": [
+        "summary",
+        "description"
+      ],
+      "word_count": 36,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "preventive-maintenance-lifecycle",
+      "title": "The core preventive and breakdown maintenance lifecycle",
+      "body": "Maintenance begins with defining work permit safety templates and equipment master records.\nOperational breakdowns or periodic schedules trigger maintenance requests and formal work orders.\nTechnicians consume engineering spares from warehouse stock and record job execution times.",
+      "source_refs": [
+        "process:preventive-maintenance"
+      ],
+      "word_count": 36,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "equipment-asset-register",
+      "title": "Centralized equipment register and physical tracking",
+      "body": "The equipment register maintains comprehensive records for all owned, hired, and leased machinery.\nIt tracks technical specifications, physical operating locations, serial numbers, and custodians.\nHistorical logs capture running hours, breakdown incidents, and component replacement histories.",
+      "source_refs": [
+        "concept:equipment-category",
+        "summary"
+      ],
+      "word_count": 35,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "safety-and-work-permits",
+      "title": "Work permits enforce hazardous job safety and equipment isolation",
+      "body": "High-risk maintenance activities mandate approved work permits before execution begins.\nPermits specify electrical lockout, mechanical tagout, and mandatory protective procedures.\nAuthorized clearance ensures personnel safety before technicians begin physical repair work.",
+      "source_refs": [
+        "concept:work-permit",
+        "process:preventive-maintenance"
+      ],
+      "word_count": 31,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "material-management-integration",
+      "title": "Where Plant Maintenance connects with Material Management",
+      "body": "Plant Maintenance coordinates with Material Management stores to supply replacement spares.\nApproved maintenance orders generate internal material requisitions for stocked engineering parts.\nStorekeepers issue parts against work orders, charging consumption costs to the equipment.",
+      "source_refs": [
+        "process:preventive-maintenance",
+        "hand_offs"
+      ],
+      "word_count": 34,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "meter-readings-and-utilisation",
+      "title": "Meter readings and operational utilization tracking",
+      "body": "Technicians record operating hours, odometer values, and production run times on machinery.\nCumulative utilization triggers usage-based preventive maintenance overhauls automatically.\nAbnormal operating readings alert supervisors to potential equipment failures early.",
+      "source_refs": [
+        "summary",
+        "description"
+      ],
+      "word_count": 30,
+      "weight": 1,
+      "min_read_seconds": 6
+    },
+    {
+      "level": "easy",
+      "topic_key": "service-calls-and-external-repairs",
+      "title": "Customer equipment service calls and external repair contracts",
+      "body": "Service teams record field service requests for client-owned or leased installations.\nContract terms define warranty coverage, preventive service visits, and billing rates.\nExternal repair orders track outside contractor interventions on specialized factory machinery.",
+      "source_refs": [
+        "summary",
+        "description"
+      ],
+      "word_count": 33,
+      "weight": 1,
+      "min_read_seconds": 7
+    }
+  ]
+}

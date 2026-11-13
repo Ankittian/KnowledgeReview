@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { SignJWT } from "jose";
 import { createDb, migrateDb, resetDatabase, type DbHandle } from "@/db/client";
-import { refreshTokens, sessions, users } from "@/db/schema";
+import { loginSessions, refreshTokens, roleIdOf, users } from "@/db/schema";
 import { rotateRefreshToken } from "@/lib/auth/refresh";
 import { newRefreshToken, signAccessToken, verifyAccessToken } from "@/lib/auth/tokens";
 import type { SessionUser } from "@/lib/auth/types";
@@ -73,15 +73,15 @@ describe("access token", () => {
 let n = 0;
 async function login(status: "active" | "disabled" = "active") {
   n += 1;
-  const [u] = await h.db.insert(users).values({ username: `rt-user-${n}`, passwordHash: "x", displayName: `RT ${n}`, status, role: "employee" }).returning();
+  const [u] = await h.db.insert(users).values({ username: `rt-user-${n}`, passwordHash: "x", displayName: `RT ${n}`, status, roleId: roleIdOf("employee") }).returning();
   const sid = `sid-rt-${n}`;
   const expiresAt = new Date(Date.now() + 30 * 86400_000);
-  await h.db.insert(sessions).values({ id: sid, userId: u.id, expiresAt });
+  await h.db.insert(loginSessions).values({ id: sid, userId: u.id, expiresAt });
   const t = newRefreshToken();
-  await h.db.insert(refreshTokens).values({ id: t.id, sessionId: sid, userId: u.id, expiresAt, idleExpiresAt: new Date(Date.now() + 7 * 86400_000) });
+  await h.db.insert(refreshTokens).values({ id: t.id, sessionId: sid, idleExpiresAt: new Date(Date.now() + 7 * 86400_000) });
   return { u, sid, token: t.token, tokenId: t.id };
 }
-const sessionExists = async (sid: string) => (await h.db.select().from(sessions).where(eq(sessions.id, sid))).length === 1;
+const sessionExists = async (sid: string) => (await h.db.select().from(loginSessions).where(eq(loginSessions.id, sid))).length === 1;
 
 describe("refresh token rotation", () => {
   it("returns a new access token and a new refresh token, and marks the old one used", async () => {
@@ -128,7 +128,7 @@ describe("refresh token rotation", () => {
 
   it("picks up a role change at refresh", async () => {
     const l = await login();
-    await h.db.update(users).set({ role: "admin" }).where(eq(users.id, l.u.id));
+    await h.db.update(users).set({ roleId: roleIdOf("admin") }).where(eq(users.id, l.u.id));
     const r = await rotateRefreshToken(h.db, l.token);
     expect(r.ok && r.user.role).toBe("admin");
   });
@@ -143,7 +143,7 @@ describe("refresh token rotation", () => {
   it("never extends a login past its absolute expiry", async () => {
     const l = await login();
     const soon = new Date(Date.now() + 3600_000);
-    await h.db.update(refreshTokens).set({ expiresAt: soon }).where(eq(refreshTokens.id, l.tokenId));
+    await h.db.update(loginSessions).set({ expiresAt: soon }).where(eq(loginSessions.id, l.sid));
     const r = await rotateRefreshToken(h.db, l.token);
     expect(r.ok && r.refresh!.expires.getTime()).toBeLessThanOrEqual(soon.getTime());
   });
@@ -154,7 +154,7 @@ describe("refresh token rotation", () => {
 
   it("deleting a user's sessions invalidates their refresh tokens", async () => {
     const l = await login();
-    await h.db.delete(sessions).where(eq(sessions.userId, l.u.id));
+    await h.db.delete(loginSessions).where(eq(loginSessions.userId, l.u.id));
     expect(await rotateRefreshToken(h.db, l.token)).toEqual({ ok: false, reason: "unknown" });
   });
 });

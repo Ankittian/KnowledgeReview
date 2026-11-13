@@ -1,0 +1,113 @@
+{
+  "scope": "module",
+  "key": "MM",
+  "title": "Material Management",
+  "context": "Material Management",
+  "module": "MM",
+  "audience": "functional",
+  "cards": [
+    {
+      "level": "easy",
+      "topic_key": "module-purpose",
+      "title": "What Material Management covers in the ERP",
+      "body": "Material Management controls the lifecycle of goods from sourcing to consumption.\nIt manages vendor requests, quotations, orders, warehouse receipts, and store issues.\nThe module ensures purchases match authorized demand and that inventory stays accounted for.",
+      "source_refs": [
+        "summary",
+        "description"
+      ],
+      "word_count": 35,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "procure-to-pay-lifecycle",
+      "title": "The core procurement lifecycle from request to receipt",
+      "body": "Procurement begins when an internal department raises a formal material request.\nBuyers invite vendor prices, evaluate them side by side, and place authorized purchase orders.\nGoods arrive at the factory gate and enter warehouse stock through a verified receipt.",
+      "source_refs": [
+        "process:procure-to-pay"
+      ],
+      "word_count": 39,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "quality-inspection-lifecycle",
+      "title": "Quality verification before goods enter usable stock",
+      "body": "Material arriving at the gate undergoes inspection before entering usable inventory.\nStorekeepers raise inspection intimations to notify quality teams of incoming consignments.\nOnly accepted quantities increase available stock, while rejected items are isolated.",
+      "source_refs": [
+        "process:goods-receipt-quality-inspection"
+      ],
+      "word_count": 33,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "inventory-storage-and-issue",
+      "title": "Warehouse storage and material issue to operations",
+      "body": "Accepted materials are placed in designated warehouse locations and tracked by bin.\nDepartments request spares and consumable supplies using authorized internal requests.\nIssued stock reduces warehouse balance and charges the expense to the requesting cost center.",
+      "source_refs": [
+        "process:inventory-storage"
+      ],
+      "word_count": 36,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "material-classification-hierarchy",
+      "title": "Four-level material master classification hierarchy",
+      "body": "Items are organized under a strict four-level structure to ensure consistent reporting.\nCategory forms the top level, followed by Group and Sub Group for technical attributes.\nThe Item represents the individual stocked product linked to its approved suppliers.",
+      "source_refs": [
+        "concept:material-category",
+        "concept:material-group",
+        "concept:material-sub-group",
+        "concept:material-item"
+      ],
+      "word_count": 38,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "finance-integration-hand-off",
+      "title": "Where Material Management hands over to Finance",
+      "body": "Goods received in stores create valued receipt records that pass to Finance.\nThe Finance team books supplier purchase bills directly against these receipt records.\nPayment requests, payment plans, and vouchers settle vendor balances based on these receipts.",
+      "source_refs": [
+        "process:payment-flow",
+        "hand_offs"
+      ],
+      "word_count": 37,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "plant-maintenance-hand-off",
+      "title": "Where Material Management hands over to Plant Maintenance",
+      "body": "Maintenance teams require engineering spares and equipment parts for preventive work.\nStores issue requested parts against authorized maintenance work orders.\nSpares consumption updates maintenance repair costs and decreases warehouse inventory.",
+      "source_refs": [
+        "process:preventive-maintenance",
+        "hand_offs"
+      ],
+      "word_count": 30,
+      "weight": 1,
+      "min_read_seconds": 6
+    },
+    {
+      "level": "easy",
+      "topic_key": "vendor-master-governance",
+      "title": "Vendor master setup governs all procurement activities",
+      "body": "Procurement is restricted to approved commercial business partners and verified locations.\nVendor profiles establish valid tax locations, payment currencies, and authorized contacts.\nPurchase orders cannot be issued to unapproved suppliers or unmapped locations.",
+      "source_refs": [
+        "process:vendor-master-setup",
+        "rule:approved-vendor-restriction"
+      ],
+      "word_count": 33,
+      "weight": 1,
+      "min_read_seconds": 7
+    }
+  ]
+}

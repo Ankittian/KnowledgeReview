@@ -1,0 +1,216 @@
+You are an expert ERP Knowledge Engineer and Technical Educator. Your task is to generate high-quality
+    educational flashcards directly from the raw ERP Knowledge Base located in the `kb/` folder.
+
+    Your target modules for this run are:
+    1. MM (Material Management)
+    2. FI (Finance)
+    3. PM (Plant Maintenance)
+
+    The generated flashcards must TEACH the user—explaining the "why", the end-to-end ERP flow, the role
+    hand-offs, the business rules, and (for technical cards) the underlying database tables and stored
+    procedures.
+
+    ================================================================================
+    1. KNOWLEDGE SOURCE DIRECTORY STRUCTURE (`kb/`)
+    ================================================================================
+    You must read the raw knowledge files directly from `kb/`:
+    - `kb/modules.yaml`: Module metadata, summary, core descriptions.
+    - `kb/processes/*.yaml`: Ordered process flows, step lists (`form`, `name`, `order`), `leads_to`
+    cross-module hand-offs, and `concepts`.
+    - `kb/forms/<FormCode>.yaml`: Form title, kind, summary, purpose, functional description, actions,
+    validations, and method notes (stored procedures).
+    - `kb/rules.yaml`: Business rules, validation constraints, calculation logic, `applies_to` forms, and
+    `implemented_by` procedures.
+    - `kb/concepts.yaml`: Core entity definitions, database tables, and relationships.
+
+    ================================================================================
+    2. THE 3-TIER FLOW LADDER (DIFFICULTY = DEPTH IN THE FLOW)
+    ================================================================================
+    Do NOT measure difficulty by how obscure a single fact is. Difficulty equals DEPTH IN THE ERP FLOW:
+
+    | Scope | Level | Weight | Focus & Educational Goal |
+    |---|---|---|---|
+    | module | easy | 1 | Macro Flow: What the module is for, its main business lifecycles, and how it hands       
+    over data to other modules. |
+    | flow | medium | 3 | Meso Flow: One complete business process end-to-end. The exact sequence of documents,    
+    who performs each step, and prerequisites. |
+    | form | hard | 5 | Micro Flow: One specific form placed inside its flow context. Upstream/downstream links,   
+    strict business validations, tolerances, and database posting. |
+
+    ================================================================================
+    3. AUDIENCE CONTRACT: FUNCTIONAL VS. TECHNICAL
+    ================================================================================
+    Every topic is generated in TWO distinct sets. Maintain strict content separation:
+
+    A. FUNCTIONAL AUDIENCE (Storekeepers, Buyers, Accountants, Operations):
+    - Purpose: Teaches business operations, document sequence, commercial implications, and error message
+    meanings.
+    - Naming: Use ONLY display titles (e.g., "Purchase Order", "Material Receipt Note (GRN)").
+    - STRICTLY FORBIDDEN (A script checks and rejects any violation):
+      * NO form codes (`fPurchaseOrder`, `fGRN`, `mItemMaster`).
+      * NO table or schema names (`Purchase.PMMain`, `Finance.ARDFinanceBookRule`).
+      * NO stored procedure or code words (stored procedure, sp_, query, SQL, backend, method, API).
+      * NO UI control mechanics (dropdown, text box, check box, grid, popup, tab, button, icon).
+      * NO rule/message IDs (`BR-12`, `MSG-05`).
+      * NO field character lengths ("(50)", "max 1000 characters") or keyboard shortcuts (Ctrl+Y).
+
+    B. TECHNICAL AUDIENCE (Developers, Support Engineers, ERP Implementers):
+    - Purpose: Teaches system architecture, data lineage, validation trigger logic, database mutations, and        
+    routines.
+    - Naming: MUST use form codes (`fPurchaseOrder`) alongside titles, table names, and stored procedures.
+    - Required: Specific stored procedures (`method_notes`), tables (`concepts.yaml`), validation trigger
+    conditions (`validations`), and database mutation mechanisms (atomic saves, line replacement).
+
+    ================================================================================
+    4. EXACT QUESTION & FACT TYPES EXPECTED PER LEVEL & DOMAIN
+    ================================================================================
+
+    --------------------------------------------------------------------------------
+    LEVEL 1: EASY (Scope: module | Weight: 1 | Lines: 3–4 | Words: 20–70)
+    Source files to read: `kb/modules.yaml` + `kb/processes/*.yaml` for that module
+    --------------------------------------------------------------------------------
+    1. Functional Questions / Facts:
+       - Module Purpose: What core business operations this module controls (from `modules.yaml`).
+       - Main Lifecycles: Plain summary of the 2-4 major flows inside the module (e.g., Procure-to-Pay and
+       Stores in MM).
+       - Cross-Module Hand-offs (`leads_to`): How data leaves this module and enters another (e.g., MM receipts    
+       hand over to FI Payment Flow; MM inventory issues hand over to PM Maintenance).
+       - Master Data Hierarchy: Business classification structures (e.g., Category → Group → Sub Group → Item).    
+    2. Technical Questions / Facts:
+       - Architecture & Data Ownership: Which schemas and major database domains this module owns.
+       - Shared Master Dependencies: Which enterprise master tables it relies upon (e.g., centralized Account      
+       Determination Rules, Company, Currency exchange rates).
+       - Integration Touchpoints: How operational transactions interface with the General Ledger.
+
+    --------------------------------------------------------------------------------
+    LEVEL 2: MEDIUM (Scope: flow | Weight: 3 | Lines: 6–10 | Words: 90–200)
+    Source files to read: `kb/processes/<processKey>.yaml` + referenced `kb/forms/<Form>.yaml`
+    --------------------------------------------------------------------------------
+    1. Functional Questions / Facts:
+       - Complete Step Sequence: The exact document order from Step 1 to Step N without skipping steps or
+       inventing sequences.
+       - User Role Responsibilities: Who performs each step (e.g., Department Requester → Buyer → Approver →       
+       Security → Storekeeper).
+       - Setup Prerequisites: Masters that must exist before the transaction flow can begin (e.g., Purchase        
+       Organizations and Material Sub Groups before raising RFQs).
+       - Stage Transitions & Handoffs: What document A passes to document B (e.g., Quotations are compared in a    
+       CS before a Purchase Order can be issued).
+    2. Technical Questions / Facts:
+       - Lineage & Reference Tracking: How downstream documents bind to upstream documents via `Ref. Doc. Type`    
+       and `Ref. Doc. No.`.
+       - Shared System Hooks: How common routines execute across the flow (e.g., centralized document numbering    
+       series, custom field storage).
+       - Status Cascades: How completing a downstream document updates open balances and statuses on upstream      
+       documents.
+
+    --------------------------------------------------------------------------------
+    LEVEL 3: HARD (Scope: form | Weight: 5 | Lines: 10–20 | Words: 180–380)
+    Source files to read: `kb/forms/<FormCode>.yaml` + `kb/rules.yaml` + `kb/concepts.yaml`
+    --------------------------------------------------------------------------------
+    1. Functional Questions / Facts:
+       - Flow Anchoring (Card 1): Where this document sits in its business flow (previous step, next step, what    
+       it achieves, and who uses it).
+       - Required Business Information: Mandatory business fields without which the system halts the save.
+       - Business Validations & Refusals: Why the system stops a save (e.g., From and To locations cannot be       
+       identical; delivery date cannot precede order date).
+       - Quantity Tolerances & Allocation Rules: Over-delivery tolerances, line-item allocations, and balance      
+       consumption limits.
+       - Document States & Approval Controls: Initial → Release → Authorized transitions, multi-level
+       authorization rules, and locked record states.
+       - Operational Edge Cases: Handling rejected goods, return dispatch challans, locked stock periods, and      
+       canceled references.
+    2. Technical Questions / Facts:
+       - Backend Routines & Stored Procedures: Exact procedure names executed on `Save`, `Delete`, `FillValues`,   
+       and `Validate` (from `method_notes`).
+       - Database Tables & Entity Updates: Actual tables modified (`tables` from `concepts.yaml`).
+       - Validation Trigger Conditions: Exact Boolean/field conditions that fire specific validation errors        
+       (from `validations`).
+       - Mutation & Concurrency Mechanisms: Atomic saves, row wipe-and-replace patterns on edits, and optimistic   
+       locking reload warnings.
+
+    ================================================================================
+    5. FORMAT OF TEACHING FLASHCARDS
+    ================================================================================
+    Every flashcard is a concrete, educational STATEMENT TO VERIFY (not an open-ended quiz or trivial trivia).     
+    - The employee reads it to learn how the ERP works or confirm that the Knowledge Base accurately reflects      
+    current SOPs.
+    - `title`: A concise, descriptive topic title (8–110 characters, never ending in a question mark).
+    - `body`: Plain sentences separated by `\n` (no markdown bullets, no asterisks, no numbers).
+    - Each sentence must deliver a verifiable fact.
+
+    JSON OUTPUT STRUCTURE:
+    Generate files with the following structure:
+
+    ```json
+    {
+      "scope": "module", // "module" | "flow" | "form"
+      "key": "MM",       // module code, process key, or form code
+      "title": "Material Management",
+      "context": "Material Management", // Breadcrumb: "Module" | "Module › Flow" | "Module › Flow › Form"
+      "module": "MM",    // "MM" | "FI" | "PM"
+      "audience": "functional", // "functional" | "technical"
+      "cards": [
+        {
+          "level": "easy", // "easy" for scope module, "medium" for flow, "hard" for form
+          "topic_key": "module-purpose", // unique kebab-case slug
+          "title": "What Material Management covers in the ERP",
+          "body": "Line one stating the core purpose.\nLine two describing the lifecycles.\nLine three
+          describing the hand-off.",
+          "source_refs": ["summary", "description", "process:procure-to-pay"]
+        }
+      ]
+    }
+
+  FILE NAMING & DIRECTORY PLACEMENT:
+
+  • Module level: <MODULE>/_module.<audience>.json
+  • Flow level:   <MODULE>/flow.<process-key>.<audience>.json
+  • Form level:   <MODULE>/<FormCode>.<audience>.json
+
+   ================================================================================                                
+  6. CARD LIMITS AND SIZING 
+
+  Follow these strict limits:
+
+  • Easy:   up to 8 cards per module (3–4 lines, 20–70 words per card body)
+  • Medium: up to 6 cards per flow   (6–10 lines, 90–200 words per card body)
+  • Hard:   up to 10 cards per form  (10–20 lines, 180–380 words per card body)
+
+  Never pad cards with empty text. If evidence is thin, combine related rules or write fewer cards.
+
+
+    ***
+
+    ### How the Generator Traverses the `kb/` Folder
+
+    When running this prompt against your repository, here is the exact file path traversal mapping:
+
+
+  kb/
+  ├── modules.yaml ─────────────► Generates Easy Cards (Scope: module)
+  │                               - Functional: MM/_module.functional.json
+  │                               - Technical:  MM/_module.technical.json
+  │
+  ├── processes/
+  │   ├── procure-to-pay.yaml ──► Generates Medium Cards (Scope: flow)
+  │   ├── payment-flow.yaml       - Functional: MM/flow.procure-to-pay.functional.json
+  │   └── ...                     - Technical:  MM/flow.procure-to-pay.technical.json
+  │
+  └── forms/
+  ├── fPurchaseOrder.yaml ──┐
+  ├── fGRN.yaml             ├──► Merged with rules.yaml & concepts.yaml
+  └── ...                   │    Generates Hard Cards (Scope: form)
+  │    - Functional: MM/fPurchaseOrder.functional.json
+  └    - Technical:  MM/fPurchaseOrder.technical.json
+
+
+    ### Verification & Validation
+
+    After running the generation prompt for any module:
+    1. Verify no functional leaks exist and check word limits:
+       ```bash
+       npx tsx scripts/cards/validate-cards.ts MM
+
+  2. When the generated JSON cards are validated, append --write to automatically calculate word_count, weight     
+  (1 for Easy, 3 for Medium, 5 for Hard), and min_read_seconds:
+    npx tsx scripts/cards/validate-cards.ts --write MM

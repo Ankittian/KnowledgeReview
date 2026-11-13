@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { desc } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 import { Check, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
-import { users } from "@/db/schema";
+import { roles, users } from "@/db/schema";
 import { approveUser, setUserRole, setUserStatus } from "@/app/actions/admin";
 import { Empty } from "@/components/admin/bits";
 import { requireRole } from "@/lib/auth/session";
@@ -14,7 +14,11 @@ const fmt = (d: Date | null) => (d ? new Date(d).toLocaleString("en-GB", { dateS
 export default async function UsersPage() {
   const { user: me } = await requireRole(["admin"]);
   const db = await getDb();
-  const all = await db.select().from(users).orderBy(desc(users.createdAt));
+  const all = await db
+    .select({ ...getTableColumns(users), role: roles.name })
+    .from(users)
+    .innerJoin(roles, eq(roles.id, users.roleId))
+    .orderBy(desc(users.createdAt));
   const pending = all.filter((u) => u.status === "pending");
   const others = all.filter((u) => u.status !== "pending");
 
@@ -41,7 +45,9 @@ export default async function UsersPage() {
                   <form action={approveUser} className="flex flex-1 gap-2">
                     <input type="hidden" name="userId" value={u.id} />
                     <select name="role" className="input w-auto py-2 text-sm" defaultValue="employee" aria-label="Role">
-                      <option value="employee">Employee</option>
+                      <option value="functional">Functional</option>
+                    <option value="technical">Technical</option>
+                    <option value="employee">Employee (functional cards)</option>
                       <option value="reviewer">Reviewer</option>
                       <option value="admin">Admin</option>
                     </select>
@@ -92,7 +98,9 @@ export default async function UsersPage() {
                       <form action={setUserRole} className="flex gap-2">
                         <input type="hidden" name="userId" value={u.id} />
                         <select name="role" defaultValue={u.role} className="input w-auto py-1.5 text-sm" aria-label={`Role for ${u.username}`}>
-                          <option value="employee">Employee</option>
+                          <option value="functional">Functional</option>
+                    <option value="technical">Technical</option>
+                    <option value="employee">Employee (functional cards)</option>
                           <option value="reviewer">Reviewer</option>
                           <option value="admin">Admin</option>
                         </select>

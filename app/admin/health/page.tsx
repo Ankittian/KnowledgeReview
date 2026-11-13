@@ -52,15 +52,15 @@ export default async function HealthPage({ searchParams }: { searchParams: Promi
                  count(*) FILTER (WHERE reviewers >= 3 AND improve_votes = 0) AS verified,
                  count(*) FILTER (WHERE improve_votes > 0) AS flagged,
                  coalesce(sum(open_feedback), 0) AS open_feedback
-          FROM v_card_health WHERE status = 'active' ${modFilter}`,
+          FROM card_health WHERE status = 'active' ${modFilter}`,
     ),
-    query<{ active7: number }>(db, sql`SELECT count(DISTINCT user_id)::int AS active7 FROM reviews WHERE created_at > now() - interval '7 days'`),
+    query<{ active7: number }>(db, sql`SELECT count(DISTINCT user_id)::int AS active7 FROM card_reviews WHERE created_at > now() - interval '7 days'`),
     query<{ module: string | null; cards: string; reviewed: string; verified: string; flagged: string }>(
       db,
       sql`SELECT module, count(*) AS cards, count(*) FILTER (WHERE reviewers > 0) AS reviewed,
                  count(*) FILTER (WHERE reviewers >= 3 AND improve_votes = 0) AS verified,
                  count(*) FILTER (WHERE improve_votes > 0) AS flagged
-          FROM v_card_health WHERE status = 'active' GROUP BY module ORDER BY count(*) DESC`,
+          FROM card_health WHERE status = 'active' GROUP BY module ORDER BY count(*) DESC`,
     ),
   ]);
   const n = (s: string | number | undefined) => Number(s ?? 0);
@@ -215,11 +215,10 @@ async function FlaggedTable({ module }: { module: string }) {
 
 async function RollupTable({ view, module }: { view: Exclude<View, "flagged">; module: string }) {
   const db = await getDb();
-  const source = view === "rules" ? sql`v_entity_health` : sql`v_rollup_health`;
   const types = { forms: sql`type IN ('form','usercontrol')`, processes: sql`type = 'process'`, rules: sql`type = 'rule'`, concepts: sql`type = 'concept'` }[view];
   const rows = await query<RollupRow>(
     db,
-    sql`SELECT * FROM ${source} WHERE ${types} AND verdicts > 0 ${module ? sql`AND module = ${module}` : sql``}
+    sql`SELECT * FROM kb_item_health WHERE ${types} AND verdicts > 0 ${module ? sql`AND module = ${module}` : sql``}
         ORDER BY needs_change_score DESC, improve_votes DESC, verdicts DESC LIMIT 300`,
   );
   if (!rows.length) return <Empty title="No verdicts yet">Rows appear once employees have reviewed related cards.</Empty>;

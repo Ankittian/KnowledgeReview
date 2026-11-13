@@ -1,7 +1,7 @@
 import "./_env";
 import { eq } from "drizzle-orm";
 import { createDb } from "@/db/client";
-import { users } from "@/db/schema";
+import { roleIdOf, users } from "@/db/schema";
 import { hashPassword } from "@/lib/auth/password";
 import { normalizeUsername, usernameSchema, passwordSchema } from "@/lib/validation";
 
@@ -23,10 +23,10 @@ const h = createDb();
 const passwordHash = await hashPassword(password);
 const [existing] = await h.db.select().from(users).where(eq(users.username, username));
 if (existing) {
-  await h.db.update(users).set({ passwordHash, role: "admin", status: "active" }).where(eq(users.id, existing.id));
+  await h.db.update(users).set({ passwordHash, roleId: roleIdOf("admin"), status: "active" }).where(eq(users.id, existing.id));
   console.log(`Admin '${username}' updated (password reset, role=admin, status=active).`);
 } else {
-  await h.db.insert(users).values({ username, passwordHash, displayName: "Administrator", role: "admin", status: "active", approvedAt: new Date() });
+  await h.db.insert(users).values({ username, passwordHash, displayName: "Administrator", roleId: roleIdOf("admin"), status: "active" });
   console.log(`Admin '${username}' created.`);
 }
 await h.close();
