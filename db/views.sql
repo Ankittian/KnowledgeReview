@@ -1,4 +1,4 @@
--- Reporting views. Re-created on every `npm run db:migrate` (drop + create, so column changes are safe).
+-- Reporting views. Re-created on every `npm run db:init` (drop + create, so column changes are safe).
 -- They hold no data: they only combine card_reviews, card_feedback and the KB tables into scores.
 -- All traceability to YAML (item type/key, yaml_file, field, linked forms/processes) lives here, server-side only.
 

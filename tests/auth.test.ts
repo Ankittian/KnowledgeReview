@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { SignJWT } from "jose";
-import { createDb, migrateDb, resetDatabase, type DbHandle } from "@/db/client";
+import { createDb, applySchema, resetDatabase, type DbHandle } from "@/db/client";
 import { loginSessions, refreshTokens, roleIdOf, users } from "@/db/schema";
 import { rotateRefreshToken } from "@/lib/auth/refresh";
 import { newRefreshToken, signAccessToken, verifyAccessToken } from "@/lib/auth/tokens";
@@ -15,7 +15,7 @@ beforeAll(async () => {
   if (!url) throw new Error("TEST_DATABASE_URL is not set (see .env.example).");
   h = createDb({ url });
   await resetDatabase(h);
-  await migrateDb(h);
+  await applySchema(h);
 });
 afterAll(async () => h?.close());
 

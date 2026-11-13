@@ -1,7 +1,7 @@
 /** Chat database integration tests (needs TEST_DATABASE_URL; the database is wiped). */
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
-import { createDb, migrateDb, resetDatabase, type DbHandle } from "@/db/client";
+import { createDb, applySchema, resetDatabase, type DbHandle } from "@/db/client";
 import { chatMessages, chatToolCalls, conversations, activityLog, roleIdOf, users } from "@/db/schema";
 import { getLiveRun, hasActiveRunForUser, releaseUser, reserveUser, setRunner, startAnswer, stopAnswer, subscribe, type LiveEvent } from "@/lib/chat/live";
 import { MockRunner, type RunRequest, type RunResult } from "@/lib/chat/runner";
@@ -50,7 +50,7 @@ beforeAll(async () => {
   if (!url) throw new Error("TEST_DATABASE_URL is not set.");
   h = createDb({ url });
   await resetDatabase(h);
-  await migrateDb(h);
+  await applySchema(h);
   alice = await mkUser("alice");
   bob = await mkUser("bob");
   admin = await mkUser("boss", "admin");

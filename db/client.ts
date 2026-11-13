@@ -2,7 +2,6 @@ import path from "node:path";
 import fs from "node:fs";
 import { sql, type SQL } from "drizzle-orm";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import * as schema from "./schema";
 
@@ -13,7 +12,7 @@ export interface DbHandle {
   close: () => Promise<void>;
 }
 
-const MIGRATIONS_DIR = path.join(process.cwd(), "db", "migrations");
+const SCHEMA_FILE = path.join(process.cwd(), "db", "schema.sql");
 const VIEWS_FILE = path.join(process.cwd(), "db", "views.sql");
 
 /**
@@ -38,21 +37,31 @@ export function createDb(opts: { url?: string } = {}): DbHandle {
   return { db: drizzle(client, { schema }), close: () => client.end() };
 }
 
-/** Apply drizzle migrations, then (re)create the reporting views. */
-export async function migrateDb(h: DbHandle): Promise<void> {
-  await migrate(h.db, { migrationsFolder: MIGRATIONS_DIR });
-  const views = fs.readFileSync(VIEWS_FILE, "utf8");
-  for (const stmt of splitSql(views)) await h.db.execute(sql.raw(stmt));
+/**
+ * Prepares a database: creates every table from db/schema.sql when the database is empty (all in one transaction),
+ * then (re)creates the reporting views from db/views.sql. Safe to run on every start: an existing database keeps its
+ * tables and data and only gets its views refreshed. Returns whether the tables were created by this call.
+ */
+export async function applySchema(h: DbHandle): Promise<{ created: boolean }> {
+  const [{ present }] = await query<{ present: boolean }>(h.db, sql`SELECT to_regclass('public.users') IS NOT NULL AS present`);
+  if (!present) {
+    const statements = splitSql(fs.readFileSync(SCHEMA_FILE, "utf8"));
+    await h.db.transaction(async (tx) => {
+      for (const stmt of statements) await tx.execute(sql.raw(stmt));
+    });
+  }
+  for (const stmt of splitSql(fs.readFileSync(VIEWS_FILE, "utf8"))) await h.db.execute(sql.raw(stmt));
+  return { created: !present };
 }
 
 /**
- * Wipe everything (the auth, kb, learning and public schemas and drizzle's migration table). Only for throw-away databases:
+ * Wipe everything (the auth, kb, learning and public schemas). Only for throw-away databases:
  * refuses unless the database name contains "test" or "e2e".
  */
 export async function resetDatabase(h: DbHandle): Promise<void> {
   const [{ name }] = await query<{ name: string }>(h.db, sql`SELECT current_database() AS name`);
   if (!/test|e2e/i.test(name)) throw new Error(`Refusing to reset database '${name}': its name must contain 'test' or 'e2e'.`);
-  await h.db.execute(sql.raw("DROP SCHEMA IF EXISTS learning CASCADE; DROP SCHEMA IF EXISTS kb CASCADE; DROP SCHEMA IF EXISTS auth CASCADE; DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public;"));
+  await h.db.execute(sql.raw("DROP SCHEMA IF EXISTS learning CASCADE; DROP SCHEMA IF EXISTS kb CASCADE; DROP SCHEMA IF EXISTS auth CASCADE; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"));
 }
 
 function splitSql(text: string): string[] {

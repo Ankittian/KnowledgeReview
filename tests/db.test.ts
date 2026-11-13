@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
-import { createDb, migrateDb, query, resetDatabase, type DbHandle } from "@/db/client";
+import { createDb, applySchema, query, resetDatabase, type DbHandle } from "@/db/client";
 import { activityLog, cardFeedback, cardReviews, cards, cardVersions, dailyDecks, deckCards, kbItems, roleIdOf, users } from "@/db/schema";
 import { buildCatalog } from "@/lib/cards/build";
 import { loadKnowledgeBase } from "@/lib/cards/load";
@@ -33,7 +33,7 @@ beforeAll(async () => {
   if (!url) throw new Error("TEST_DATABASE_URL is not set. Start Postgres (docker compose up -d) and set it in .env (see .env.example).");
   h = createDb({ url });
   await resetDatabase(h); // refuses unless the database name contains 'test' or 'e2e'
-  await migrateDb(h);
+  await applySchema(h);
 });
 afterAll(async () => h?.close());
 
