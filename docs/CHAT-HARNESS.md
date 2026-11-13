@@ -75,7 +75,7 @@ npm run chat:check            # proof of concept: KB question end to end + promp
 npm run dev                   # http://localhost:3000/chat
 ```
 
-EC2 (t4g.large recommended): see [DEPLOY-EC2.md](DEPLOY-EC2.md). One `docker compose --profile app up -d --build` creates the
+EC2 (t4g.large recommended): see [EC2-SETUP.md](EC2-SETUP.md). One `docker compose --profile app up -d --build` creates the
 tables, the first admin and the flashcards and starts the app on `APP_PORT`. Add `--profile tls` for nginx and HTTPS.
 
 ## 6. Measured in the proof of concept (this machine, `claude-opus-5-5`)

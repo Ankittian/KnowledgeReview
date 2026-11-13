@@ -20,7 +20,7 @@ Postgres runs in Docker (the same setup is used on EC2).
 npm install
 copy .env.example .env        # set POSTGRES_PASSWORD (and the same password inside the three *_DATABASE_URL lines) and ADMIN_PASSWORD
 npm run db:up                 # starts Postgres 16 in Docker and waits until it is healthy
-npm run db:setup              # migrate + build cards from kb/ + create the admin
+npm run db:setup              # create tables + build cards from kb/ + create the admin
 npm run dev                   # http://localhost:3000
 ```
 
@@ -58,7 +58,7 @@ other PCs on the same network.
 
 ## Production (EC2)
 
-Full guide: [docs/DEPLOY-EC2.md](docs/DEPLOY-EC2.md). In short: copy `.env.production.example` to `.env`, fill in the secrets,
+Full guide: [docs/EC2-SETUP.md](docs/EC2-SETUP.md). In short: copy `.env.production.example` to `.env`, fill in the secrets,
 then `docker compose --profile app up -d --build`. That starts Postgres, creates the tables, the first admin and the flashcards
 (`npm run deploy:init`), and serves the app on `APP_PORT`. Never open port 5432 in the security group.
 
