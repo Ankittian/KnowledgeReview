@@ -10,7 +10,7 @@ type ExportName = (typeof EXPORTS)[number];
 export async function GET(req: Request, { params }: { params: Promise<{ name: string }> }) {
   const session = await getSession();
   if (!session) return json({ error: "Not signed in" }, 401);
-  if (session.user.role !== "admin" && session.user.role !== "reviewer") return json({ error: "Forbidden" }, 403);
+  if (session.user.role !== "admin") return json({ error: "Forbidden" }, 403);
 
   const { name } = await params;
   if (!EXPORTS.includes(name as ExportName)) return json({ error: "Unknown export" }, 404);

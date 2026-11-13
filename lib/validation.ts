@@ -38,7 +38,9 @@ export const reviewSchema = z
   .object({
     clientEventId: z.string().min(8).max(64),
     versionId: z.number().int().positive(),
-    deckDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    /** daily (default): the answer belongs to today's deck. browse: answered while browsing, no deck. */
+    source: z.enum(["daily", "browse"]).optional().default("daily"),
+    deckDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
     deckId: z.number().int().positive().optional().nullable(),
     knewIt: z.boolean(),
     verdict: z.enum(VERDICTS),
@@ -57,7 +59,8 @@ export const reviewSchema = z
       .optional()
       .nullable(),
   })
-  .refine((r) => r.verdict !== "needs_improvement" || !!r.feedback, {
+  .refine((r) => r.source === "browse" || !!r.deckDate, { path: ["deckDate"], message: "Missing deck date." })
+  .refine((r) => r.verdict !== "needs_improvement" || !!r.feedback || r.source === "browse", {
     path: ["feedback"],
     message: "Choose what needs improving.",
   });

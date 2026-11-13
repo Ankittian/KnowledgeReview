@@ -97,4 +97,4 @@ export async function requireRole(allowed: Role[]): Promise<Session> {
   return { sessionId: s.sessionId, user: { ...s.user, role: liveRole } };
 }
 
-export const canReview = (role: Role) => role === "reviewer" || role === "admin";
+export const canReview = (role: Role) => role === "admin";

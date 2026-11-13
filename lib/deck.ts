@@ -121,7 +121,7 @@ export interface ClientCard {
   /** generated cards are statements to verify: shown whole, answered with Known / New / Incorrect, after a read-time lock */
   statement: boolean;
   level: Level | null;
-  /** what a valid answer is worth (Easy 1, Medium 3, Hard 5) */
+  /** what a correct answer is worth (Easy 1, Medium 2, Hard 3) */
   weight: number;
   /** seconds before the answer buttons unlock (words / 5, at least 4); 0 for non-statement cards */
   minRead: number;

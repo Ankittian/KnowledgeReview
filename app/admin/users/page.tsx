@@ -81,11 +81,9 @@ export default async function UsersPage() {
                 <div className="mt-4 flex flex-wrap gap-2 border-t pt-3">
                   <form action={approveUser} className="flex flex-1 gap-2">
                     <input type="hidden" name="userId" value={u.id} />
-                    <NativeSelect name="role" defaultValue="employee" aria-label="Role" className="w-32">
+                    <NativeSelect name="role" defaultValue="functional" aria-label="Role" className="w-32">
                       <NativeSelectOption value="functional">Functional</NativeSelectOption>
                       <NativeSelectOption value="technical">Technical</NativeSelectOption>
-                      <NativeSelectOption value="employee">Employee (functional cards)</NativeSelectOption>
-                      <NativeSelectOption value="reviewer">Reviewer</NativeSelectOption>
                       <NativeSelectOption value="admin">Admin</NativeSelectOption>
                     </NativeSelect>
                     <button className={cn(buttonVariants(), "flex-1 bg-success/10 text-success hover:bg-success/20")} data-testid="approve">
@@ -148,8 +146,6 @@ export default async function UsersPage() {
                         <NativeSelect name="role" defaultValue={u.role} size="sm" className="w-28" aria-label={`Role for ${u.username}`}>
                           <NativeSelectOption value="functional">Functional</NativeSelectOption>
                           <NativeSelectOption value="technical">Technical</NativeSelectOption>
-                          <NativeSelectOption value="employee">Employee (functional cards)</NativeSelectOption>
-                          <NativeSelectOption value="reviewer">Reviewer</NativeSelectOption>
                           <NativeSelectOption value="admin">Admin</NativeSelectOption>
                         </NativeSelect>
                         <button className={buttonVariants({ variant: "outline", size: "sm" })}>Save</button>

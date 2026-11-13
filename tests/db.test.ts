@@ -17,7 +17,7 @@ const rr = (db: DbHandle["db"], userId: string, input: Parameters<typeof recordR
 let h: DbHandle;
 const kb = loadKnowledgeBase("kb");
 
-async function mkUser(username: string, primaryModule = "MM", role: "employee" | "functional" | "technical" = "employee") {
+async function mkUser(username: string, primaryModule = "MM", role: "admin" | "functional" | "technical" = "functional") {
   const [u] = await h.db
     .insert(users)
     .values({ username, passwordHash: "x", displayName: username, primaryModule, roleId: roleIdOf(role), status: "active" })
@@ -268,7 +268,7 @@ describe("card sets and the read-time lock", () => {
     expect(fnDeck.cards.map((c) => c.v)).toEqual([ids.fn]);
     expect(techDeck.cards.map((c) => c.v)).toEqual([ids.tech]);
     expect(fnDeck.cards[0]).toMatchObject({ statement: true, level: "easy", weight: 1, minRead: 10 });
-    expect(techDeck.cards[0]).toMatchObject({ level: "hard", weight: 5, minRead: 40 });
+    expect(techDeck.cards[0]).toMatchObject({ level: "hard", weight: 3, minRead: 40 });
   });
 
   it("refuses an answer for a card outside the user's set or without an audience", async () => {

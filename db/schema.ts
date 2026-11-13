@@ -8,7 +8,6 @@ import {
   integer,
   jsonb,
   pgEnum,
-  pgSchema,
   pgTable,
   primaryKey,
   serial,
@@ -19,30 +18,19 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-/**
- * Three modules, one Postgres schema each. Every table holds a fact once; anything derivable by a join is not stored.
- *   auth      who can sign in, and what they did (users, roles, login sessions, activity log, settings)
- *   kb        the knowledge base and the flashcards built from it
- *   learning  what employees did with the cards (decks, schedule, answers, feedback)
- * The connection's search_path is `auth, kb, learning, public` (see db/client.ts), so raw SQL can use bare table names.
- */
-export const authSchema = pgSchema("auth");
-export const kbSchema = pgSchema("kb");
-export const learningSchema = pgSchema("learning");
-
 const ts = (name: string) => timestamp(name, { withTimezone: true });
 const createdAt = () => ts("created_at").notNull().defaultNow();
 
 // ================================================================ auth
 
-export const userStatus = authSchema.enum("user_status", ["pending", "active", "disabled"]);
+export const userStatus = pgEnum("user_status", ["pending", "active", "disabled"]);
 
-export const roles = authSchema.table("roles", {
+export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(), // employee | reviewer | admin
+  name: text("name").notNull().unique(), // admin | functional | technical
 });
 
-export const users = authSchema.table("users", {
+export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   username: text("username").notNull().unique(), // stored lower-case
   passwordHash: text("password_hash").notNull(),
@@ -52,13 +40,13 @@ export const users = authSchema.table("users", {
   roleId: integer("role_id")
     .notNull()
     .references(() => roles.id),
-  status: userStatus("status").notNull().default("pending"),
+  status: userStatus("status").notNull().default("active"),
   lastLoginAt: ts("last_login_at"),
   createdAt: createdAt(),
 });
 
 /** One row per sign-in (its id is the JWT `sid` claim). */
-export const loginSessions = authSchema.table(
+export const loginSessions = pgTable(
   "login_sessions",
   {
     id: text("id").primaryKey(), // sha256(token); the raw token only lives in the cookie
@@ -77,7 +65,7 @@ export const loginSessions = authSchema.table(
  * presented token as used and inserts a new one. Presenting a used token again (outside the short grace window)
  * means it was stolen, so the whole session is deleted. Only the sha256 of the token is stored.
  */
-export const refreshTokens = authSchema.table(
+export const refreshTokens = pgTable(
   "refresh_tokens",
   {
     id: text("id").primaryKey(), // sha256(token); the raw token only lives in the cookie
@@ -93,7 +81,7 @@ export const refreshTokens = authSchema.table(
 );
 
 /** Append-only log of everything that happened: sign-ins, cards shown, answers, admin actions. */
-export const activityLog = authSchema.table(
+export const activityLog = pgTable(
   "activity_log",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
@@ -110,7 +98,7 @@ export const activityLog = authSchema.table(
   (t) => [index("activity_log_user_idx").on(t.userId, t.createdAt), index("activity_log_action_idx").on(t.action, t.createdAt)],
 );
 
-export const appSettings = authSchema.table("app_settings", {
+export const appSettings = pgTable("app_settings", {
   key: text("key").primaryKey(),
   value: jsonb("value").notNull(),
   updatedAt: ts("updated_at").notNull().defaultNow(),
@@ -118,10 +106,10 @@ export const appSettings = authSchema.table("app_settings", {
 
 // ================================================================ kb
 
-export const kbItemType = kbSchema.enum("kb_item_type", ["module", "concept", "rule", "form", "usercontrol", "process"]);
+export const kbItemType = pgEnum("kb_item_type", ["module", "concept", "rule", "form", "usercontrol", "process"]);
 
 /** One row per YAML item. This is the unit that "needs change". */
-export const kbItems = kbSchema.table(
+export const kbItems = pgTable(
   "kb_items",
   {
     id: serial("id").primaryKey(),
@@ -133,16 +121,17 @@ export const kbItems = kbSchema.table(
     contentHash: text("content_hash").notNull(),
     meta: jsonb("meta").$type<Record<string, unknown>>().notNull().default({}),
     active: boolean("active").notNull().default(true),
+    lastSyncedAt: ts("last_synced_at"),
   },
   (t) => [unique("kb_items_type_key").on(t.type, t.key)],
 );
 
-export const cardStatus = kbSchema.enum("card_status", ["active", "retired", "draft"]);
+export const cardStatus = pgEnum("card_status", ["active", "retired", "draft"]);
 /** Who a generated card is written for. NULL = a legacy template card (kept for history, never served). */
-export const cardAudience = kbSchema.enum("card_audience", ["functional", "technical"]);
-export const cardLevel = kbSchema.enum("card_level", ["easy", "medium", "hard"]);
+export const cardAudience = pgEnum("card_audience", ["functional", "technical"]);
+export const cardLevel = pgEnum("card_level", ["easy", "medium", "hard"]);
 
-export const cards = kbSchema.table(
+export const cards = pgTable(
   "cards",
   {
     id: text("id").primaryKey(), // stable: {kind}:{source_key}[:{n}]
@@ -165,7 +154,7 @@ export const cards = kbSchema.table(
   ],
 );
 
-export const cardVersions = kbSchema.table(
+export const cardVersions = pgTable(
   "card_versions",
   {
     id: serial("id").primaryKey(),
@@ -184,7 +173,7 @@ export const cardVersions = kbSchema.table(
 );
 
 /** Card -> related YAML items (forms, processes, concepts, rules). Never exposed to employees. */
-export const cardRelatedItems = kbSchema.table(
+export const cardRelatedItems = pgTable(
   "card_related_items",
   {
     cardId: text("card_id")
@@ -200,12 +189,12 @@ export const cardRelatedItems = kbSchema.table(
 
 // ================================================================ learning
 
-export const verdict = learningSchema.enum("verdict", ["correct", "needs_improvement", "unsure"]);
-export const feedbackCategory = learningSchema.enum("feedback_category", ["incorrect", "incomplete", "outdated", "unclear", "other"]);
-export const feedbackStatus = learningSchema.enum("feedback_status", ["open", "accepted", "rejected", "applied", "stale"]);
+export const verdict = pgEnum("verdict", ["correct", "needs_improvement", "unsure"]);
+export const feedbackCategory = pgEnum("feedback_category", ["incorrect", "incomplete", "outdated", "unclear", "other"]);
+export const feedbackStatus = pgEnum("feedback_status", ["open", "accepted", "rejected", "applied", "stale"]);
 
 /** Leitner-box schedule: when a user should see a card again. */
-export const reviewSchedule = learningSchema.table(
+export const reviewSchedule = pgTable(
   "review_schedule",
   {
     userId: uuid("user_id")
@@ -226,7 +215,7 @@ export const reviewSchedule = learningSchema.table(
  * A random set of cards generated at sign-in (one per session per day, topped up within the same session when it is
  * finished while the daily limit still has room). All decks of a day share the admin's daily card limit.
  */
-export const dailyDecks = learningSchema.table(
+export const dailyDecks = pgTable(
   "daily_decks",
   {
     id: serial("id").primaryKey(),
@@ -242,7 +231,7 @@ export const dailyDecks = learningSchema.table(
 );
 
 /** The cards of a deck, in the order they are shown. */
-export const deckCards = learningSchema.table(
+export const deckCards = pgTable(
   "deck_cards",
   {
     deckId: integer("deck_id")
@@ -260,7 +249,7 @@ export const deckCards = learningSchema.table(
  * One scored answer. The card, KB item and source field are reached through `card_version_id`; the date through the deck.
  * Timings are the differences of the three timestamps.
  */
-export const cardReviews = learningSchema.table(
+export const cardReviews = pgTable(
   "card_reviews",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
@@ -270,9 +259,10 @@ export const cardReviews = learningSchema.table(
     cardVersionId: integer("card_version_id")
       .notNull()
       .references(() => cardVersions.id),
-    deckId: integer("deck_id")
-      .notNull()
-      .references(() => dailyDecks.id),
+    /** null for answers given while browsing (they are not part of a daily deck) */
+    deckId: integer("deck_id").references(() => dailyDecks.id),
+    /** daily = answered from today's deck; browse = answered while browsing (scores, but not in the daily deck) */
+    source: text("source").notNull().default("daily"),
     knewIt: boolean("knew_it").notNull(),
     verdict: verdict("verdict").notNull(),
     shownAt: ts("shown_at"),
@@ -289,7 +279,7 @@ export const cardReviews = learningSchema.table(
 );
 
 /** A user's suggestion to fix a card. The card, KB item and the text that was reviewed come from `card_version_id`. */
-export const cardFeedback = learningSchema.table(
+export const cardFeedback = pgTable(
   "card_feedback",
   {
     id: serial("id").primaryKey(),
@@ -314,7 +304,7 @@ export const cardFeedback = learningSchema.table(
 );
 
 /** `sql` fragment: the id of a role by name, for inserts/updates (roles are looked up, never hard-coded). */
-export const roleIdOf = (name: string) => sql<number>`(SELECT id FROM auth.roles WHERE name = ${name})`;
+export const roleIdOf = (name: string) => sql<number>`(SELECT id FROM roles WHERE name = ${name})`;
 
 // ---------------------------------------------------------------- knowledge assistant (chat)
 

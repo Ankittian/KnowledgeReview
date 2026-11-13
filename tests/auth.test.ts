@@ -27,7 +27,7 @@ beforeEach(() => {
   process.env.REFRESH_TOKEN_DAYS = "30";
 });
 
-const user: SessionUser = { id: "00000000-0000-0000-0000-000000000001", username: "u", displayName: "U", department: null, primaryModule: "MM", role: "employee" };
+const user: SessionUser = { id: "00000000-0000-0000-0000-000000000001", username: "u", displayName: "U", department: null, primaryModule: "MM", role: "functional" };
 
 describe("access token", () => {
   it("round-trips the claims", async () => {
@@ -45,7 +45,7 @@ describe("access token", () => {
   });
   it("rejects an expired token", async () => {
     const past = Math.floor(Date.now() / 1000) - 60;
-    const jwt = await new SignJWT({ sid: "s", role: "employee", username: "u" })
+    const jwt = await new SignJWT({ sid: "s", role: "functional", username: "u" })
       .setProtectedHeader({ alg: "HS256" })
       .setSubject(user.id)
       .setIssuedAt(past - 900)
@@ -73,7 +73,7 @@ describe("access token", () => {
 let n = 0;
 async function login(status: "active" | "disabled" = "active") {
   n += 1;
-  const [u] = await h.db.insert(users).values({ username: `rt-user-${n}`, passwordHash: "x", displayName: `RT ${n}`, status, roleId: roleIdOf("employee") }).returning();
+  const [u] = await h.db.insert(users).values({ username: `rt-user-${n}`, passwordHash: "x", displayName: `RT ${n}`, status, roleId: roleIdOf("functional") }).returning();
   const sid = `sid-rt-${n}`;
   const expiresAt = new Date(Date.now() + 30 * 86400_000);
   await h.db.insert(loginSessions).values({ id: sid, userId: u.id, expiresAt });

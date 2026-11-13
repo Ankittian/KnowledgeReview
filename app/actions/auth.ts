@@ -93,7 +93,7 @@ export async function signupAction(_prev: FormState, fd: FormData): Promise<Form
       displayName: d.displayName,
       department: d.department,
       primaryModule: d.primaryModule,
-      roleId: roleIdOf("employee"),
+      roleId: roleIdOf("functional"),
       status: "pending",
     })
     .onConflictDoNothing()

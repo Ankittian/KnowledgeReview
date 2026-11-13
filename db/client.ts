@@ -33,7 +33,7 @@ export function createDb(opts: { url?: string } = {}): DbHandle {
     prepare: false,
     max: Number(process.env.DB_POOL_MAX ?? 5),
     onnotice: () => {},
-    connection: { search_path: "auth,kb,learning,public" },
+    connection: { search_path: "public" },
   });
   return { db: drizzle(client, { schema }), close: () => client.end() };
 }
@@ -73,7 +73,7 @@ export async function query<T = Record<string, unknown>>(db: DB, q: SQL): Promis
 
 // The pool is cached on globalThis so dev hot-reloads don't open a new one each time. Bump CLIENT_VERSION whenever the
 // connection settings change (e.g. search_path), so a stale cached pool from before the change is replaced, not reused.
-const CLIENT_VERSION = 2;
+const CLIENT_VERSION = 3;
 const g = globalThis as unknown as { __kr_db?: DbHandle & { v?: number } };
 
 export function getDbHandle(): DbHandle {

@@ -3,7 +3,7 @@ import { AdminHeader, AdminNav } from "@/components/admin/AdminNav";
 import { requireRole } from "@/lib/auth/session";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user } = await requireRole(["admin", "reviewer"]);
+  const { user } = await requireRole(["admin"]);
   return (
     <AppShell user={user}>
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-8">

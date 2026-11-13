@@ -17,7 +17,7 @@ const uuid = z.uuid();
 export async function approveUser(fd: FormData) {
   const { user: actor } = await requireRole(["admin"]);
   const id = uuid.parse(fd.get("userId"));
-  const role = z.enum(["employee", "functional", "technical", "reviewer", "admin"]).catch("employee").parse(fd.get("role"));
+  const role = z.enum(["admin", "functional", "technical"]).catch("functional").parse(fd.get("role"));
   const db = await getDb();
   await db.update(users).set({ status: "active", roleId: roleIdOf(role) }).where(eq(users.id, id));
   await audit(db, actor.id, "user_approved", "user", id, { role });
@@ -39,7 +39,7 @@ export async function setUserStatus(fd: FormData) {
 export async function setUserRole(fd: FormData) {
   const { user: actor } = await requireRole(["admin"]);
   const id = uuid.parse(fd.get("userId"));
-  const role = z.enum(["employee", "functional", "technical", "reviewer", "admin"]).parse(fd.get("role"));
+  const role = z.enum(["admin", "functional", "technical"]).parse(fd.get("role"));
   if (id === actor.id) throw new Error("You can't change your own role.");
   const db = await getDb();
   await db.update(users).set({ roleId: roleIdOf(role) }).where(eq(users.id, id));
@@ -60,7 +60,7 @@ export async function setUserAnswerRole(fd: FormData) {
 }
 
 export async function resolveFeedback(fd: FormData) {
-  const { user: actor } = await requireRole(["admin", "reviewer"]);
+  const { user: actor } = await requireRole(["admin"]);
   const id = z.coerce.number().int().positive().parse(fd.get("feedbackId"));
   const status = z.enum(["open", "accepted", "rejected", "applied"]).parse(fd.get("status"));
   const note = z.string().max(2000).optional().parse((fd.get("note") as string) || undefined);

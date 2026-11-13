@@ -29,7 +29,7 @@ let alice: { id: string; username: string };
 let bob: { id: string; username: string };
 let admin: { id: string; username: string };
 
-async function mkUser(username: string, role: "employee" | "admin" = "employee") {
+async function mkUser(username: string, role: "functional" | "admin" = "functional") {
   const [u] = await h.db.insert(users).values({ username, passwordHash: "x", displayName: username, status: "active", roleId: roleIdOf(role) }).returning();
   return { id: u.id, username: u.username };
 }
