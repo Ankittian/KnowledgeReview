@@ -9,6 +9,7 @@ import {
   Settings2,
   ShieldCheck,
   Stethoscope,
+  Trophy,
   Users,
   UsersRound,
   type LucideIcon,
@@ -24,6 +25,7 @@ export interface NavItem {
 export const MAIN_NAV: NavItem[] = [
   { href: "/today", label: "Today", icon: Layers, description: "Review today’s flashcards" },
   { href: "/progress", label: "Progress", icon: BarChart3, description: "Your streak and knowledge by area" },
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy, description: "Points from correct answers" },
   { href: "/browse", label: "Browse", icon: Search, description: "Search and study every card" },
   { href: "/chat", label: "Assistant", icon: MessageSquare, description: "Ask questions about SpectrumERP" },
 ];

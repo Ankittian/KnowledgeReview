@@ -6,7 +6,7 @@ import { MobileTabBar } from "./NavLinks";
 import { TopBar } from "./TopBar";
 
 export async function AppShell({ user, children }: { user: SessionUser; children: React.ReactNode }) {
-  const isStaff = user.role === "admin" || user.role === "reviewer";
+  const isStaff = user.role === "admin";
   const isAdmin = user.role === "admin";
   const initials = user.displayName
     .split(/\s+/)
