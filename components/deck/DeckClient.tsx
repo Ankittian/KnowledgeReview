@@ -233,9 +233,14 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
       const k = e.key.toLowerCase();
       if (current?.statement) {
-        if (k === "1") answerStatement("known");
-        else if (k === "2") answerStatement("new");
-        else if (k === "3") answerStatement("incorrect");
+        if (phase === "front" && (k === " " || k === "enter")) {
+          e.preventDefault();
+          flip();
+        } else if (phase === "back") {
+          if (k === "1") answerStatement("known");
+          else if (k === "2") answerStatement("new");
+          else if (k === "3") answerStatement("incorrect");
+        }
         return;
       }
       if (phase === "front" && (k === " " || k === "enter")) {
@@ -331,7 +336,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
                 className="relative"
               >
                 {current.statement ? (
-                  <StatementCard card={current} position={dayDone + 1} total={dayTotal} remainingMs={remainingMs} />
+                  <StatementCard card={current} position={dayDone + 1} total={dayTotal} remainingMs={remainingMs} flipped={phase === "back"} onFlip={flip} />
                 ) : (
                   <Flashcard
                     card={current}
@@ -349,7 +354,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
 
           {/* actions */}
           <div className="mt-9">
-            {current.statement ? (
+            {current.statement && phase === "back" ? (
               <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} />
             ) : (
               <AnimatePresence mode="wait" initial={false}>
