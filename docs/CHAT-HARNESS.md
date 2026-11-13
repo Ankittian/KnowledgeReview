@@ -22,7 +22,7 @@ Browser ──HTTPS──> nginx (TLS, SSE unbuffered) ──> web: Next.js (UI 
 | Harness inside FastAPI or a sidecar | Inside the web process (`lib/chat/live.ts`), FIFO-limited to 3 concurrent answers |
 | nginx, react-static, fastapi, postgres, neo4j, mcp-server | `docker-compose.yml`: `postgres` (unchanged) + `web` and `nginx` under the `app` profile. Neo4j and the MCP server already run separately and are reached through `KG_MCP_URL` |
 
-Files: `Dockerfile` (multi-arch, runs as uid 10001, app files read-only), `deploy/nginx/nginx.conf`,
+Files: `Dockerfile` (multi-arch, runs as uid 10001, app files read-only), `infra/nginx/nginx.conf`,
 `docker-compose.yml`.
 
 ## 2. Claude harness (section 6)
@@ -70,7 +70,7 @@ user running the app. `CLAUDE_RUNNER=mock` gives canned answers without Claude (
 
 ```bash
 npm install
-npm run db:migrate            # adds conversations, chat_messages, chat_tool_calls, chat_feedback, user_answer_roles
+npm run db:migrate            # adds conversations, chat_messages, chat_tool_calls, chat_feedback, and users.answer_role
 npm run chat:check            # proof of concept: KB question end to end + prompt-injection attempt (no database needed)
 npm run dev                   # http://localhost:3000/chat
 ```
@@ -79,7 +79,7 @@ EC2 (t4g.large recommended):
 
 ```bash
 cp .env.example .env          # inside compose the web container reaches Postgres as host "postgres"; COOKIE_SECURE=true
-mkdir -p deploy/certs         # fullchain.pem + privkey.pem
+mkdir -p infra/certs         # fullchain.pem + privkey.pem
 docker compose --profile app up -d --build
 npm ci && npm run db:migrate   # from the checkout on the host (or CI), against the same DATABASE_URL
 ```
