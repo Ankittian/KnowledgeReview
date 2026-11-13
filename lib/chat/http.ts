@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { sessions, users } from "@/db/schema";
-import { getSession, type Session } from "@/lib/auth/session";
+import { loginSessions, roles, users } from "@/db/schema";
+import { getSession, type Role, type Session } from "@/lib/auth/session";
 import { isSameOrigin, json, requestMeta } from "@/lib/request";
 
 export interface ChatCaller {
@@ -21,14 +21,15 @@ export async function chatCaller(req: Request, opts: { mutating: boolean }): Pro
   if (!session) return json({ error: "Not signed in" }, 401);
   const db = await getDb();
   const [live] = await db
-    .select({ role: users.role, status: users.status })
-    .from(sessions)
-    .innerJoin(users, eq(users.id, sessions.userId))
-    .where(and(eq(sessions.id, session.sessionId), eq(users.id, session.user.id)));
+    .select({ role: roles.name, status: users.status })
+    .from(loginSessions)
+    .innerJoin(users, eq(users.id, loginSessions.userId))
+    .innerJoin(roles, eq(roles.id, users.roleId))
+    .where(and(eq(loginSessions.id, session.sessionId), eq(users.id, session.user.id)));
   if (!live || live.status !== "active") return json({ error: "Not signed in" }, 401);
   const meta = await requestMeta();
   return {
-    session: { ...session, user: { ...session.user, role: live.role } },
+    session: { ...session, user: { ...session.user, role: live.role as Role } },
     isAdmin: live.role === "admin",
     meta: { sessionId: session.sessionId, ip: meta.ip, userAgent: meta.userAgent },
   };

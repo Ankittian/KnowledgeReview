@@ -46,6 +46,8 @@ export const reviewSchema = z
     flippedAt: isoDate,
     answeredAt: isoDate,
     device: z.string().max(40).optional().nullable(),
+    /** time the card was actually on screen and attended to (hidden tab / idle time already removed) */
+    activeMs: z.number().int().min(0).max(3_600_000).optional().nullable(),
     feedback: z
       .object({
         category: z.enum(FEEDBACK_CATEGORIES),
@@ -65,6 +67,7 @@ export const CLIENT_EVENT_TYPES = [
   "card_shown",
   "card_flipped",
   "knew_answered",
+  "statement_answered",
   "feedback_opened",
   "feedback_cancelled",
   "deck_summary_viewed",

@@ -1,0 +1,63 @@
+{
+  "scope": "flow",
+  "key": "preventive-maintenance",
+  "title": "Preventive & Breakdown Maintenance (PM)",
+  "context": "Plant Maintenance › Preventive & Breakdown Maintenance (PM)",
+  "module": "PM",
+  "audience": "technical",
+  "cards": [
+    {
+      "level": "medium",
+      "topic_key": "document-lineage-and-key-propagation",
+      "title": "Entity lineage and foreign key propagation across maintenance tables",
+      "body": "The maintenance workflow links equipment master, work permit, order, and issue tables across database schemas.\nfPermitMaster records establish PermitId keys consumed by fEquipmentMaster and fMaintenanceOrder entities.\nfMaintenanceOrder headers store EquipmentId and reference source MaintenanceRequestId rows through foreign keys.\nDetail tables EAM.EAMOrderItemDetail store ItemId and RequiredQty for spare component planning and reservation.\nMaterial issues in Inventory.IMaterialIssue reference MaintenanceOrderId to close demand lines upon parts disbursement.\nWork order task rows in EAM.EAMOrderTaskDetail maintain foreign keys referencing masterdata.mTaskMaster.\nAudit fields capture OrderDate, CompletionDate, and DownTimeHours to calculate reliability metrics.\nThis relational key propagation ensures complete lineage reporting from permit configuration to spares consumption.",
+      "source_refs": [
+        "steps",
+        "concept:equipment-category",
+        "concept:material-issue"
+      ],
+      "word_count": 100,
+      "weight": 3,
+      "min_read_seconds": 20
+    },
+    {
+      "level": "medium",
+      "topic_key": "status-cascade-and-demand-clearing",
+      "title": "Status cascading and material demand closure across PM and inventory",
+      "body": "Maintenance order authorization triggers status updates across upstream requests and linked inventory tables.\nfMaintenanceRequest rows transition DocumentStatus from Open to In-Progress or Ordered in the database.\nAuthorizing the linked material issue decrements open spare requirements on the maintenance order detail rows.\nWhen all required tasks and material lines are satisfied, the order transitions to Completed status automatically.\nCompleting the order updates downtime logs and recalculates equipment availability metrics within EAM reporting tables.\nCancelling a maintenance order invokes balance restoration routines that release reserved stores inventory.\nStatus recalculations execute within atomic database transactions to ensure consistency between orders and stock.\nThis synchronization prevents orphan material requisitions and unfulfilled maintenance job allocations.",
+      "source_refs": [
+        "rule:material-receipt-note-source-status-cascade",
+        "rule:atomic-save"
+      ],
+      "word_count": 110,
+      "weight": 3,
+      "min_read_seconds": 22
+    },
+    {
+      "level": "medium",
+      "topic_key": "stored-procedure-architecture-in-eam",
+      "title": "Backend stored procedure architecture and transaction coordination",
+      "body": "Maintenance operations execute through specialized stored procedures operating within the EAM schema.\nWork order persistence invokes EAM.EAMOSave which orchestrates header and detail insertions in the database.\nTask line operations execute through EAM.EAMOrderTaskDetailSave within the same transaction scope.\nParts requisition routines interface with Inventory.IIndentRequisitionSave to stage stores demand lines.\nDatabase rollback triggers ensure order headers and requisition links commit synchronously without partial writes.\nLookup routines like EAM.EAMOFillValues populate user dropdowns and equipment filters efficiently.\nDelete handlers invoke EAM.EAMODelete which validates downstream reporting and issue references prior to row removal.\nThis modular stored procedure architecture ensures robust transaction processing and audit tracking.",
+      "source_refs": [
+        "method_notes",
+        "rule:atomic-save"
+      ],
+      "word_count": 100,
+      "weight": 3,
+      "min_read_seconds": 20
+    },
+    {
+      "level": "medium",
+      "topic_key": "authorization-matrix-and-lock-controls",
+      "title": "Multi-level authorization workflows and document state locking in PM",
+      "body": "Maintenance orders transition through Initial, Release, and Authorized lifecycle states during processing.\nAuthorization groups enforce user tier limits configured in masterdata.mAuthorizationGroup and user mapping tables.\nIntermediate sign-offs record audit entries in EAM.EAMOrderApprovalHistory without full authorization.\nOnly designated chief maintenance engineers can transition document status to Authorized in the database.\nAuthorized status triggers database triggers that make task lists and equipment references immutable.\nAmendments require formal revision entries in EAM.EAMOrderAmendment rather than direct updates to authorized orders.\nAudit triggers record prior row states to historical archive tables before status transitions execute.\nThis security architecture protects maintenance schedules and safety check lists from unauthorized alteration.",
+      "source_refs": [
+        "rule:authorized-document-lock",
+        "rule:material-receipt-note-multi-level-authorization"
+      ],
+      "word_count": 103,
+      "weight": 3,
+      "min_read_seconds": 21
+    }
+  ]
+}

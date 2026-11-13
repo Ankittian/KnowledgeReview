@@ -6,10 +6,25 @@ import { RotateCcw } from "lucide-react";
 import { startOutbox, trackEvent } from "@/lib/client/outbox";
 import type { ClientCard } from "@/lib/deck";
 import { Badge } from "@/components/ui/badge";
+import { LevelChip } from "@/components/deck/LevelChip";
 
 export function BrowseCard({ card }: { card: ClientCard }) {
   const [flipped, setFlipped] = useState(false);
   const reduce = useReducedMotion();
+  if (card.statement) {
+    return (
+      <article className="flex h-full min-h-52 flex-col rounded-xl bg-card p-4 text-left shadow-card ring-1 ring-foreground/[0.07]" data-testid="browse-statement">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant="secondary" className="max-w-full truncate" title={card.context}>
+            {card.context}
+          </Badge>
+          {card.level && <LevelChip level={card.level} weight={card.weight} />}
+        </div>
+        <h3 className="mt-3 text-[15px] leading-snug font-semibold">{card.front}</h3>
+        <p className="mt-2 text-sm leading-relaxed whitespace-pre-line text-muted-foreground">{card.back}</p>
+      </article>
+    );
+  }
   const face =
     "backface-hidden [grid-area:1/1] flex min-h-52 flex-col rounded-xl bg-card p-4 text-left shadow-card ring-1 ring-foreground/[0.07] transition-shadow group-hover:shadow-float group-hover:ring-foreground/[0.12]";
   return (

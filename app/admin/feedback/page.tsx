@@ -55,25 +55,25 @@ export default async function FeedbackPage({ searchParams }: { searchParams: Pro
   const db = await getDb();
   const where = [sql`true`];
   if (status !== "all") where.push(sql`f.status = ${status}`);
-  if (card) where.push(sql`f.card_id = ${card}`);
+  if (card) where.push(sql`c.id = ${card}`);
   const [rows, counts] = await Promise.all([
     query<Row>(
       db,
       sql`SELECT f.id, f.status, f.category, f.suggested_text, f.comment, f.created_at, f.resolution_note, f.applied_commit,
-                 u.username, u.display_name, f.card_id, f.source_field AS field,
+                 u.username, u.display_name, c.id AS card_id, c.source_field AS field,
                  e.type AS entity_type, e.key AS entity_key, e.name AS entity_name, e.yaml_file,
                  cv.front, cv.source_text AS reviewed_text, cv.version AS reviewed_version, cur.version AS current_version, r.knew_it
-          FROM feedback f
+          FROM card_feedback f
           JOIN users u ON u.id = f.user_id
-          JOIN kb_entities e ON e.id = f.entity_id
           JOIN card_versions cv ON cv.id = f.card_version_id
-          JOIN cards c ON c.id = f.card_id
+          JOIN cards c ON c.id = cv.card_id
+          JOIN kb_items e ON e.id = c.kb_item_id
           JOIN card_versions cur ON cur.id = c.current_version_id
-          LEFT JOIN reviews r ON r.id = f.review_id
+          LEFT JOIN card_reviews r ON r.id = f.review_id
           WHERE ${sql.join(where, sql` AND `)}
           ORDER BY f.created_at DESC LIMIT 200`,
     ),
-    query<{ status: string; n: number }>(db, sql`SELECT status::text, count(*)::int AS n FROM feedback GROUP BY 1`),
+    query<{ status: string; n: number }>(db, sql`SELECT status::text, count(*)::int AS n FROM card_feedback GROUP BY 1`),
   ]);
   const count = Object.fromEntries(counts.map((c) => [c.status, c.n]));
   count.all = counts.reduce((a, c) => a + c.n, 0);

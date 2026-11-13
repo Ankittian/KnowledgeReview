@@ -1,6 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { DB } from "@/db/client";
-import { cardLinks, cards, cardVersions, feedback, kbEntities } from "@/db/schema";
+import { cardFeedback, cardRelatedItems, cards, cardVersions, kbItems } from "@/db/schema";
 import { entityKey, type Catalog } from "@/lib/cards/build";
 
 export interface SyncReport {
@@ -18,7 +18,6 @@ function chunks<T>(arr: T[], n = CHUNK): T[][] {
   for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
   return out;
 }
-const sameArr = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
  * Upserts the catalog into the database. Idempotent: a second run with the same YAML changes nothing.
@@ -38,7 +37,7 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
 
   await db.transaction(async (tx) => {
     // ---- entities ---------------------------------------------------------------------------
-    const existing = await tx.select().from(kbEntities);
+    const existing = await tx.select().from(kbItems);
     const byKey = new Map(existing.map((e) => [`${e.type}:${e.key}`, e]));
     const wanted = new Set(catalog.entities.map(entityKey));
 
@@ -46,7 +45,7 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
     const insertedKeys = new Set(toInsert.map(entityKey));
     for (const part of chunks(toInsert)) {
       const rows = await tx
-        .insert(kbEntities)
+        .insert(kbItems)
         .values(part.map((e) => ({ type: e.type, key: e.key, name: e.name, module: e.module, yamlFile: e.yamlFile, contentHash: e.contentHash, meta: e.meta })))
         .returning();
       rows.forEach((r) => byKey.set(`${r.type}:${r.key}`, r));
@@ -61,13 +60,13 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
       if (!cur.active) report.entities.reactivated++;
       else report.entities.updated++;
       await tx
-        .update(kbEntities)
-        .set({ name: e.name, module: e.module, yamlFile: e.yamlFile, contentHash: e.contentHash, meta: e.meta, active: true, lastSyncedAt: new Date() })
-        .where(eq(kbEntities.id, cur.id));
+        .update(kbItems)
+        .set({ name: e.name, module: e.module, yamlFile: e.yamlFile, contentHash: e.contentHash, meta: e.meta, active: true })
+        .where(eq(kbItems.id, cur.id));
     }
     const gone = existing.filter((e) => e.active && !wanted.has(`${e.type}:${e.key}`));
     if (gone.length) {
-      await tx.update(kbEntities).set({ active: false }).where(inArray(kbEntities.id, gone.map((e) => e.id)));
+      await tx.update(kbItems).set({ active: false }).where(inArray(kbItems.id, gone.map((e) => e.id)));
       report.entities.deactivated = gone.length;
     }
     const entityId = (r: { type: string; key: string }) => byKey.get(`${r.type}:${r.key}`)!.id;
@@ -76,11 +75,10 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
     const curCards = await tx
       .select({
         id: cards.id,
-        entityId: cards.entityId,
+        kbItemId: cards.kbItemId,
+        audience: cards.audience,
         kind: cards.kind,
         sourceField: cards.sourceField,
-        module: cards.module,
-        tags: cards.tags,
         status: cards.status,
         versionId: cards.currentVersionId,
         version: cardVersions.version,
@@ -94,7 +92,7 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
     const newCards = catalog.cards.filter((c) => !cardById.has(c.id));
     for (const part of chunks(newCards)) {
       await tx.insert(cards).values(
-        part.map((c) => ({ id: c.id, entityId: entityId(c.entity), kind: c.kind, sourceField: c.sourceField, module: c.module, tags: c.tags })),
+        part.map((c) => ({ id: c.id, kbItemId: entityId(c.entity), kind: c.kind, sourceField: c.sourceField })),
       );
       const vers = await tx
         .insert(cardVersions)
@@ -120,50 +118,55 @@ export async function syncCatalog(db: DB, catalog: Catalog): Promise<SyncReport>
           .insert(cardVersions)
           .values({ cardId: c.id, version: (cur.version ?? 0) + 1, context: c.context, front: c.front, back: c.back, sourceText: c.sourceText, sourceHash: c.sourceHash })
           .returning({ id: cardVersions.id });
-        await tx.update(cards).set({ currentVersionId: v.id, updatedAt: new Date() }).where(eq(cards.id, c.id));
+        await tx.update(cards).set({ currentVersionId: v.id }).where(eq(cards.id, c.id));
         const stale = await tx
-          .update(feedback)
+          .update(cardFeedback)
           .set({ status: "stale", resolutionNote: "Source text changed in a knowledge-base sync; re-verify against the new version.", resolvedAt: new Date() })
-          .where(and(eq(feedback.cardId, c.id), eq(feedback.status, "open")))
-          .returning({ id: feedback.id });
+          .where(
+            and(
+              eq(cardFeedback.status, "open"),
+              inArray(cardFeedback.cardVersionId, tx.select({ id: cardVersions.id }).from(cardVersions).where(eq(cardVersions.cardId, c.id))),
+            ),
+          )
+          .returning({ id: cardFeedback.id });
         report.staleFeedback += stale.length;
         report.cards.newVersions++;
       }
-      const metaChanged =
-        cur.entityId !== eid || cur.kind !== c.kind || cur.sourceField !== c.sourceField || cur.module !== c.module || !sameArr(cur.tags, c.tags);
+      const metaChanged = cur.kbItemId !== eid || cur.kind !== c.kind || cur.sourceField !== c.sourceField;
       if (metaChanged || cur.status !== "active") {
         if (cur.status !== "active") report.cards.reactivated++;
         else report.cards.metaUpdated++;
         await tx
           .update(cards)
-          .set({ entityId: eid, kind: c.kind, sourceField: c.sourceField, module: c.module, tags: c.tags, status: "active", updatedAt: new Date() })
+          .set({ kbItemId: eid, kind: c.kind, sourceField: c.sourceField, status: "active" })
           .where(eq(cards.id, c.id));
       }
     }
-    const retire = curCards.filter((c) => c.status === "active" && !wantedCards.has(c.id)).map((c) => c.id);
+    // generated cards (audience set) belong to scripts/cards/load-cards.ts, not to this template sync
+    const retire = curCards.filter((c) => c.status === "active" && !c.audience && !wantedCards.has(c.id)).map((c) => c.id);
     for (const part of chunks(retire)) {
-      await tx.update(cards).set({ status: "retired", updatedAt: new Date() }).where(inArray(cards.id, part));
+      await tx.update(cards).set({ status: "retired" }).where(inArray(cards.id, part));
     }
     report.cards.retired = retire.length;
 
     // ---- links (backend-only traceability) ----------------------------------------------------
-    const curLinks = await tx.select().from(cardLinks);
+    const curLinks = await tx.select().from(cardRelatedItems);
     const lk = (cardId: string, eid: number, rel: string) => `${cardId}\u0000${eid}\u0000${rel}`;
-    const have = new Map(curLinks.map((l) => [lk(l.cardId, l.entityId, l.relation), l]));
-    const want = new Map<string, { cardId: string; entityId: number; relation: string }>();
+    const have = new Map(curLinks.map((l) => [lk(l.cardId, l.kbItemId, l.relation), l]));
+    const want = new Map<string, { cardId: string; kbItemId: number; relation: string }>();
     for (const c of catalog.cards)
       for (const l of c.links) {
-        const row = { cardId: c.id, entityId: entityId(l), relation: l.relation };
-        want.set(lk(row.cardId, row.entityId, row.relation), row);
+        const row = { cardId: c.id, kbItemId: entityId(l), relation: l.relation };
+        want.set(lk(row.cardId, row.kbItemId, row.relation), row);
       }
     const addLinks = [...want.entries()].filter(([k]) => !have.has(k)).map(([, v]) => v);
-    for (const part of chunks(addLinks, 1000)) await tx.insert(cardLinks).values(part);
+    for (const part of chunks(addLinks, 1000)) await tx.insert(cardRelatedItems).values(part);
     report.links.inserted = addLinks.length;
     const delLinks = [...have.entries()].filter(([k]) => !want.has(k)).map(([, v]) => v);
     for (const l of delLinks)
       await tx
-        .delete(cardLinks)
-        .where(and(eq(cardLinks.cardId, l.cardId), eq(cardLinks.entityId, l.entityId), eq(cardLinks.relation, l.relation)));
+        .delete(cardRelatedItems)
+        .where(and(eq(cardRelatedItems.cardId, l.cardId), eq(cardRelatedItems.kbItemId, l.kbItemId), eq(cardRelatedItems.relation, l.relation)));
     report.links.deleted = delLinks.length;
   });
 

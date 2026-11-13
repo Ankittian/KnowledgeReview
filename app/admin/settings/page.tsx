@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { desc, eq } from "drizzle-orm";
 import { Database, Download, FileWarning, Gauge, PackageOpen } from "lucide-react";
 import { getDb } from "@/db/client";
-import { auditLog } from "@/db/schema";
+import { activityLog } from "@/db/schema";
 import { saveDailyCardLimit } from "@/app/actions/admin";
 import { SyncButton } from "@/components/admin/SyncButton";
 import { Tag, surface } from "@/components/admin/bits";
@@ -49,7 +49,7 @@ export default async function SettingsPage() {
   const db = await getDb();
   const [dailyLimit, syncs] = await Promise.all([
     getDailyCardLimit(db),
-    db.select().from(auditLog).where(eq(auditLog.action, "kb_sync")).orderBy(desc(auditLog.createdAt)).limit(5),
+    db.select().from(activityLog).where(eq(activityLog.action, "kb_sync")).orderBy(desc(activityLog.createdAt)).limit(5),
   ]);
 
   type Finding = { type: string; key: string; yaml_file: string; field: string; issue: string; text: string };

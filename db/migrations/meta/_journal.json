@@ -26,8 +26,22 @@
     {
       "idx": 3,
       "version": "7",
-      "when": 1794547375611,
-      "tag": "0003_chat",
+      "when": 1794549055037,
+      "tag": "0003_modular_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794551815971,
+      "tag": "0004_generated_cards",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794560000000,
+      "tag": "0005_chat",
       "breakpoints": true
     }
   ]

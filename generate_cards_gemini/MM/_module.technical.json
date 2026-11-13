@@ -1,0 +1,89 @@
+{
+  "scope": "module",
+  "key": "MM",
+  "title": "Material Management",
+  "context": "Material Management",
+  "module": "MM",
+  "audience": "technical",
+  "cards": [
+    {
+      "level": "easy",
+      "topic_key": "technical-architecture-and-schemas",
+      "title": "Core schemas and entity architecture of Material Management",
+      "body": "The Material Management module operates across the Purchase and Inventory database schemas.\nPurchase transactions populate header tables such as PMPurchaseOrder and detail tables like PMIndentDetail.\nInventory storage and movement records write to IGRNMain, IItemMaster, and IStockPosting entries.",
+      "source_refs": [
+        "summary",
+        "description"
+      ],
+      "word_count": 37,
+      "weight": 1,
+      "min_read_seconds": 8
+    },
+    {
+      "level": "easy",
+      "topic_key": "centralized-master-dependencies",
+      "title": "Centralized master dependencies and shared lookups",
+      "body": "MM transaction forms depend on shared masters including masterdata.mItemMaster and masterdata.mAccountGroup.\nCurrency exchange rates are resolved from GlobalData.CurrencyMaster and applied during PO valuation.\nVendor locations map to Finance books through the shared GlobalData.VendorLocationSelect lookup routine.",
+      "source_refs": [
+        "concept:material-item",
+        "concept:vendor",
+        "concept:currency-exchange-rate"
+      ],
+      "word_count": 35,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "financial-ledger-integration",
+      "title": "Posting boundaries between inventory movements and General Ledger",
+      "body": "Inventory transactions generate financial vouchers using Account Determination Rules (ARD).\nMaterial receipts invoke Inventory.IGRNFinancePosting to create valued journal vouchers.\nFinancial integration verifies division mapping and accounting period lock flags prior to ledger commit.",
+      "source_refs": [
+        "rule:finance-posting-from-transactions",
+        "concept:account-determination-rule"
+      ],
+      "word_count": 33,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "document-lineage-and-references",
+      "title": "Document lineage tracking via reference headers and line IDs",
+      "body": "Transaction lineage flows from Indent to RFQ, Quotation, PO, Gate Entry, and GRN.\nEach child document stores the parent document type and yearly document number in RefDocType and RefDocNo.\nStatus cascades decrement balance quantities on parent detail lines during transaction authorization.",
+      "source_refs": [
+        "rule:document-numbering",
+        "process:procure-to-pay"
+      ],
+      "word_count": 41,
+      "weight": 1,
+      "min_read_seconds": 9
+    },
+    {
+      "level": "easy",
+      "topic_key": "extensible-custom-fields-framework",
+      "title": "Shared custom fields framework integration across MM forms",
+      "body": "MM transaction headers integrate the shared UserControl CustomField for extensible user attributes.\nField values load via masterdata.customfieldsloaddata and save through masterdata.customfieldssave.\nCustom attribute validation executes dynamically without modifying core transaction table schemas.",
+      "source_refs": [
+        "rule:custom-fields-capture",
+        "usercontrol:CustomField"
+      ],
+      "word_count": 32,
+      "weight": 1,
+      "min_read_seconds": 7
+    },
+    {
+      "level": "easy",
+      "topic_key": "concurrency-and-locking-controls",
+      "title": "Optimistic concurrency locking and audit trail mechanics",
+      "body": "All MM transaction records enforce optimistic locking using ModifiedDate and ModifiedBy timestamps.\nConcurrent modifications trigger reload warnings to prevent overwriting conflicting updates.\nAuthorized transactions lock key header fields and set document status flags to prevent deletion.",
+      "source_refs": [
+        "rule:authorized-document-lock",
+        "rule:atomic-save"
+      ],
+      "word_count": 36,
+      "weight": 1,
+      "min_read_seconds": 8
+    }
+  ]
+}

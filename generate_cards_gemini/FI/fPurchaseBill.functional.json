@@ -1,0 +1,96 @@
+{
+  "scope": "form",
+  "key": "fPurchaseBill",
+  "title": "Purchase Bill",
+  "context": "Finance › Payment Flow (Purchase Bill to Vendor Payment) › Purchase Bill",
+  "module": "FI",
+  "audience": "functional",
+  "cards": [
+    {
+      "level": "hard",
+      "topic_key": "place-in-payment-flow",
+      "title": "Where the Purchase Bill sits in the accounts payable workflow",
+      "body": "The Purchase Bill is step two in the supplier payment flow, following Document Receipt.\nIt transforms physical delivery records into recognized legal accounts payable liabilities in company ledgers.\nThe accounts officer uses this screen to match vendor invoices against verified warehouse receipts.\nIt takes delivery quantities from Material Receipt Notes and agreed prices from authorized purchase orders.\nThe next operational step is raising debit notes for discrepancies or generating payment requests for treasury.\nBooking the bill updates vendor balances and creates input tax credit records for statutory tax filing.\nEach warehouse receipt line can be billed only once, preventing duplicate invoice payments for identical goods.\nIf a document receipt was logged upon invoice arrival, the bill must reference that specific receipt document.\nAccurate invoice recording ensures supplier credit terms and cash outflows are managed properly across divisions.\nAuthorizing the bill establishes the definitive legal debt owed by the company to the vendor.\nWithout an authorized purchase bill, treasury personnel cannot schedule payments or release corporate funds.\nThis document serves as the primary basis for statutory tax audits and supplier balance reconciliations.",
+      "source_refs": [
+        "summary",
+        "purpose",
+        "process:payment-flow",
+        "used_by"
+      ],
+      "word_count": 181,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "mandatory-headers-and-vendor-validations",
+      "title": "Mandatory billing headers, supplier details, and date validations",
+      "body": "The system enforces comprehensive validation rules before a purchase bill can be saved in company accounts.\nThe user must select a valid source document, active vendor name, and verified location from master records.\nThe supplier bill number, bill date, and bill amount are mandatory commercial inputs on the document header.\nThe vendor bill date cannot be later than the current document date or in the future.\nIf the vendor bill date exceeds the document date, the system immediately halts the save operation.\nShipping details require valid Shipped From and Shipped To parties and verified operational locations.\nIf transport waybill details are recorded, the transport date cannot exceed the document date.\nDuplicate vendor bill numbers for the same supplier are blocked to stop duplicate payment claims.\nDivision mapping rules require the selected finance book to match the active operational division.\nMissing mandatory headers halt saving and highlight the exact field requiring user attention on screen.\nVehicle details and transport dates ensure full statutory compliance for logistics audits and tax filings.\nAccurate recording of supplier bill details prevents billing disputes during financial voucher passing.",
+      "source_refs": [
+        "fields",
+        "messages",
+        "validations",
+        "rule:mandatory-document-fields"
+      ],
+      "word_count": 182,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "three-way-matching-and-quantity-tolerances",
+      "title": "Three-way matching rules, accepted quantities, and rate validation",
+      "body": "Purchase bills enforce rigorous three-way matching against warehouse receipts and purchase orders.\nBilled quantities can be passed only on verified accepted quantities from the Material Receipt Note.\nPassing amounts cannot exceed the total invoice value stated on the vendor commercial document.\nIf the entered rate differs from the authorized purchase order rate, formal management approvals are required.\nFor capital equipment purchases, direct billing without prior receipts is strictly prohibited by system checks.\nCombining receipts sharing different transaction currencies is prevented by system validation routines.\nLine item quantities cannot be left blank, zero, or negative on any billing row.\nConversion factors between purchasing and store units must be positive and non-zero values.\nItems marked as inactive in master data cannot be selected for new purchase bill documents.\nThese matching rules ensure that payments are released only for physically verified and accepted goods.\nTolerance parameters protect the business against unexpected price escalations and unauthorized over-billing.\nEvery line item must reconcile with delivery quantities to ensure accurate inventory cost accounting.\nMatching rules protect company financial assets against duplicate billing and unapproved price hikes.\nPrice discrepancies require formal commercial change orders before the bill can be passed.\nThese controls guarantee that accounts payable disburses funds only for verified commitments.",
+      "source_refs": [
+        "validations",
+        "rule:receipt-tolerance",
+        "purpose"
+      ],
+      "word_count": 205,
+      "weight": 5,
+      "min_read_seconds": 41
+    },
+    {
+      "level": "hard",
+      "topic_key": "gst-determination-and-tax-rules",
+      "title": "GST tax rule assignment, state determination, and tax exemption rules",
+      "body": "Tax structures are evaluated automatically based on vendor location and company operational delivery site.\nInterstate purchases require integrated tax, while intrastate purchases apply central and state taxes.\nApplying central or state tax to an interstate purchase triggers an immediate validation refusal on save.\nApplying integrated tax to an intrastate purchase is similarly rejected by automated validation checks.\nSelecting explicit tax amounts and a generalized tax rule simultaneously is prohibited by system rules.\nIf tax exemption is selected, line items cannot carry positive goods and services tax rates.\nUnregistered vendors cannot bill taxable amounts unless reverse charge mechanisms apply under tax rules.\nEach line item must possess an active harmonized system code linked to the material item master.\nAccurate tax classification ensures the enterprise claims legitimate input tax credits on monthly returns.\nStatutory exemption certificates must be linked to line items when claiming concessional tax rates.\nThese fiscal controls protect the company from statutory penalties and ensure accurate tax submissions.\nAutomated tax calculation prevents arithmetic errors and simplifies statutory tax reconciliation.\nOperational managers review these transaction records periodically to verify adherence to organizational governance standards.\nEvery milestone produces an auditable record connecting original requests to final authorized financial commitments.",
+      "source_refs": [
+        "validations",
+        "rule:gst-tax-determination",
+        "fields"
+      ],
+      "word_count": 198,
+      "weight": 5,
+      "min_read_seconds": 40
+    },
+    {
+      "level": "hard",
+      "topic_key": "advance-adjustment-and-imprest-rules",
+      "title": "Vendor advance adjustments, imprest allocations, and balance limits",
+      "body": "Prepayments made to vendors must be reconciled against the incoming purchase bill before payment release.\nWhen company policy mandates advance adjustment, open advances must be cleared before completing the save.\nThe adjusting amount allocated against an advance cannot exceed the open advance balance of the prepayment.\nTotal advance adjustments cannot exceed the net payable commercial amount of the purchase bill.\nAdvance adjustment amounts cannot be entered as zero or negative values on any allocation row.\nImprest accounts can be selected to clear localized employee operational prepayments against the bill.\nEntered imprest clearance amounts cannot exceed the available balance on the selected imprest account.\nReconciling open advances prevents double disbursement and reduces outstanding vendor liability balances.\nUnadjusted advances generate confirmation warnings prior to completing the save operation in the system.\nCorrect reconciliation ensures the net payable amount reflects true remaining liabilities owed to the supplier.\nCleared advances update prepayment sub-ledgers and prevent unallocated advance balances from aging indefinitely.\nThis financial reconciliation protects company working capital from duplicate or premature disbursements.\nReconciled entries ensure vendor statements agree with internal accounts payable records.",
+      "source_refs": [
+        "validations",
+        "fields",
+        "purpose"
+      ],
+      "word_count": 180,
+      "weight": 5,
+      "min_read_seconds": 36
+    },
+    {
+      "level": "hard",
+      "topic_key": "authorization-locking-and-financial-posting",
+      "title": "Authorization controls, record locking, and financial ledger posting",
+      "body": "Purchase bills advance through three formal operational statuses: Initial, Release, and Authorized.\nSaving in Release status records the user identity and prepares the bill for final audit and review.\nFinal authorization generates financial vouchers that post directly to the General Ledger.\nInventory clearing accounts are debited and supplier payable control accounts are credited with the total liability.\nInput tax accounts are debited with eligible goods and services tax amounts to establish tax credits.\nOnce a bill is authorized, it is completely locked against editing, line modification, or deletion.\nIf the accounting period or finance book is closed, authorization is rejected by system controls.\nHeader and detail rows save atomically, ensuring partial updates never compromise financial data integrity.\nCorrecting an authorized bill requires formal credit notes or debit notes rather than direct record edits.\nLocked historical records preserve financial auditability and statutory compliance for external auditors.\nAuthorized bills become immediately available in treasury planning for payment scheduling and disbursement.\nThis state progression guarantees strict segregation of duties between accounting clerks and supervisors.\nFinance managers review general ledger account distributions before signing off final authorization.",
+      "source_refs": [
+        "validations",
+        "rule:authorized-document-lock",
+        "rule:finance-posting-from-transactions"
+      ],
+      "word_count": 183,
+      "weight": 5,
+      "min_read_seconds": 37
+    }
+  ]
+}

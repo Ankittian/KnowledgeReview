@@ -17,6 +17,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/lib/utils";
 import { Flashcard } from "./Flashcard";
 import { FeedbackSheet, type FeedbackValue } from "./FeedbackSheet";
+import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
+import { StatementActions, StatementCard, type StatementAnswer } from "./StatementCard";
 
 type Phase = "front" | "back";
 type Verdict = "correct" | "needs_improvement" | "unsure";
@@ -55,6 +57,10 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
   const [online, setOnline] = useState(true);
   const shownAt = useRef<string | null>(null);
   const flippedAt = useRef<string | null>(null);
+  // read-time lock (statement cards): attended time since the card was shown, without hidden-tab and idle time
+  const activeMs = useRef(0);
+  const lastActivity = useRef(0);
+  const [remainingMs, setRemainingMs] = useState(0);
   const startedRef = useRef(false);
   const summaryRef = useRef(false);
 
@@ -87,6 +93,9 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     if (!current) return;
     shownAt.current = new Date().toISOString();
     flippedAt.current = null;
+    activeMs.current = 0;
+    lastActivity.current = Date.now();
+    setRemainingMs(current.statement && READ_LOCK_ENABLED ? current.minRead * 1000 : 0);
     setPhase("front");
     setKnew(null);
     if (!startedRef.current && doneCount === 0)
@@ -95,6 +104,31 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     trackEvent("card_shown", current.v, { position: dayDone + 1, of: dayTotal, deck_id: deckId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.v]);
+
+  // the read-time clock: runs only while the tab is visible and the user is active (input in the last 60 s)
+  useEffect(() => {
+    if (!current?.statement) return;
+    const need = current.minRead * 1000;
+    const bump = () => {
+      lastActivity.current = Date.now();
+    };
+    const evs = ["pointermove", "pointerdown", "keydown", "scroll", "touchstart"] as const;
+    evs.forEach((e) => window.addEventListener(e, bump, { passive: true }));
+    let last = Date.now();
+    const t = setInterval(() => {
+      const now = Date.now();
+      const d = Math.min(now - last, 1000);
+      last = now;
+      if (document.visibilityState === "visible" && now - lastActivity.current <= 60_000) {
+        activeMs.current += d;
+        if (READ_LOCK_ENABLED) setRemainingMs(Math.max(0, need - activeMs.current));
+      }
+    }, 250);
+    return () => {
+      clearInterval(t);
+      evs.forEach((e) => window.removeEventListener(e, bump));
+    };
+  }, [current?.v, current?.statement, current?.minRead]);
 
   useEffect(() => {
     if (!current && cards.length && !summaryRef.current) {
@@ -142,6 +176,45 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     [current, knew, date, deckId],
   );
 
+  /** Statement cards: Known / New earn the card's weight; Incorrect needs a reason and goes to review. */
+  const submitStatement = useCallback(
+    (kind: StatementAnswer, fb?: FeedbackValue) => {
+      if (!current) return;
+      enqueue("/api/reviews", {
+        clientEventId: uid(),
+        versionId: current.v,
+        deckDate: date,
+        deckId,
+        knewIt: kind !== "new",
+        verdict: kind === "incorrect" ? "needs_improvement" : "correct",
+        shownAt: shownAt.current,
+        flippedAt: null,
+        answeredAt: new Date().toISOString(),
+        activeMs: Math.round(activeMs.current),
+        device: deviceInfo(),
+        feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
+      });
+      setStats((s) => ({ knew: s.knew + (kind === "new" ? 0 : 1), missed: s.missed + (kind === "new" ? 1 : 0), flagged: s.flagged + (kind === "incorrect" ? 1 : 0) }));
+      setExitDir(kind === "new" ? -1 : 1);
+      setAnswered((prev) => new Set(prev).add(current.v));
+    },
+    [current, date, deckId],
+  );
+
+  const answerStatement = useCallback(
+    (kind: StatementAnswer) => {
+      if (!current?.statement || remainingMs > 0) return; // locked until the read time has passed
+      trackEvent("statement_answered", current.v, { answer: kind, active_ms: Math.round(activeMs.current) });
+      if (kind === "incorrect") {
+        setSheetOpen(true);
+        trackEvent("feedback_opened", current.v);
+        return;
+      }
+      submitStatement(kind);
+    },
+    [current, remainingMs, submitStatement],
+  );
+
   const openSheet = useCallback(() => {
     if (!current || knew === null) return;
     setSheetOpen(true);
@@ -159,6 +232,12 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
       const t = e.target as HTMLElement;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
       const k = e.key.toLowerCase();
+      if (current?.statement) {
+        if (k === "1") answerStatement("known");
+        else if (k === "2") answerStatement("new");
+        else if (k === "3") answerStatement("incorrect");
+        return;
+      }
       if (phase === "front" && (k === " " || k === "enter")) {
         e.preventDefault();
         flip();
@@ -172,7 +251,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [phase, knew, sheetOpen, flip, answerKnew, submit, openSheet]);
+  }, [phase, knew, sheetOpen, flip, answerKnew, submit, openSheet, current, answerStatement]);
 
   const progress = dayTotal ? (dayDone / dayTotal) * 100 : 0;
 
@@ -251,92 +330,100 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="relative"
               >
-                <Flashcard
-                  card={current}
-                  flipped={phase === "back"}
-                  canSwipe={phase === "back"}
-                  onFlip={flip}
-                  onSwipe={answerKnew}
-                  position={dayDone + 1}
-                  total={dayTotal}
-                />
+                {current.statement ? (
+                  <StatementCard card={current} position={dayDone + 1} total={dayTotal} remainingMs={remainingMs} />
+                ) : (
+                  <Flashcard
+                    card={current}
+                    flipped={phase === "back"}
+                    canSwipe={phase === "back"}
+                    onFlip={flip}
+                    onSwipe={answerKnew}
+                    position={dayDone + 1}
+                    total={dayTotal}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
 
           {/* actions */}
           <div className="mt-9">
-            <AnimatePresence mode="wait" initial={false}>
-              {phase === "front" ? (
-                <motion.div key="reveal" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  <Button size="lg" className="h-12 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
-                    Reveal answer
-                    <Kbd className="hide-touch ml-1 bg-primary-foreground/15 text-primary-foreground">Space</Kbd>
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="answer"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="space-y-5"
-                >
-                  <section aria-labelledby="q-knew">
-                    <StepHeading id="q-knew" step={1} title="Did you know it?">
-                      <span className="hide-touch">
-                        <KbdGroup>
-                          <Kbd>←</Kbd>
-                          <Kbd>→</Kbd>
-                        </KbdGroup>
-                      </span>
-                      <span className="hide-mouse">or swipe the card</span>
-                    </StepHeading>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <ChoiceButton active={knew === false} tone="danger" onClick={() => answerKnew(false)} testId="knew-no">
-                        <X /> Not yet
-                      </ChoiceButton>
-                      <ChoiceButton active={knew === true} tone="success" onClick={() => answerKnew(true)} testId="knew-yes">
-                        <Check /> Knew it
-                      </ChoiceButton>
-                    </div>
-                  </section>
-                  <AnimatePresence>
-                    {knew !== null && (
-                      <motion.section
-                        aria-labelledby="q-verdict"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <StepHeading id="q-verdict" step={2} title="Is the card content correct?">
-                          <span className="hide-touch">
-                            <KbdGroup>
-                              <Kbd>C</Kbd>
-                              <Kbd>I</Kbd>
-                              <Kbd>U</Kbd>
-                            </KbdGroup>
-                          </span>
-                        </StepHeading>
-                        <div className="grid grid-cols-3 gap-2">
-                          <VerdictButton tone="success" onClick={() => submit("correct")} testId="verdict-correct" icon={<CheckCircle2 />}>
-                            Correct
-                          </VerdictButton>
-                          <VerdictButton tone="warning" onClick={openSheet} testId="verdict-improve" icon={<PencilLine />}>
-                            Needs fix
-                          </VerdictButton>
-                          <VerdictButton tone="neutral" onClick={() => submit("unsure")} testId="verdict-unsure" icon={<HelpCircle />}>
-                            Not sure
-                          </VerdictButton>
-                        </div>
-                      </motion.section>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {current.statement ? (
+              <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} />
+            ) : (
+              <AnimatePresence mode="wait" initial={false}>
+                {phase === "front" ? (
+                  <motion.div key="reveal" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
+                    <Button size="lg" className="h-12 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
+                      Reveal answer
+                      <Kbd className="hide-touch ml-1 bg-primary-foreground/15 text-primary-foreground">Space</Kbd>
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="answer"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-5"
+                  >
+                    <section aria-labelledby="q-knew">
+                      <StepHeading id="q-knew" step={1} title="Did you know it?">
+                        <span className="hide-touch">
+                          <KbdGroup>
+                            <Kbd>←</Kbd>
+                            <Kbd>→</Kbd>
+                          </KbdGroup>
+                        </span>
+                        <span className="hide-mouse">or swipe the card</span>
+                      </StepHeading>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <ChoiceButton active={knew === false} tone="danger" onClick={() => answerKnew(false)} testId="knew-no">
+                          <X /> Not yet
+                        </ChoiceButton>
+                        <ChoiceButton active={knew === true} tone="success" onClick={() => answerKnew(true)} testId="knew-yes">
+                          <Check /> Knew it
+                        </ChoiceButton>
+                      </div>
+                    </section>
+                    <AnimatePresence>
+                      {knew !== null && (
+                        <motion.section
+                          aria-labelledby="q-verdict"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <StepHeading id="q-verdict" step={2} title="Is the card content correct?">
+                            <span className="hide-touch">
+                              <KbdGroup>
+                                <Kbd>C</Kbd>
+                                <Kbd>I</Kbd>
+                                <Kbd>U</Kbd>
+                              </KbdGroup>
+                            </span>
+                          </StepHeading>
+                          <div className="grid grid-cols-3 gap-2">
+                            <VerdictButton tone="success" onClick={() => submit("correct")} testId="verdict-correct" icon={<CheckCircle2 />}>
+                              Correct
+                            </VerdictButton>
+                            <VerdictButton tone="warning" onClick={openSheet} testId="verdict-improve" icon={<PencilLine />}>
+                              Needs fix
+                            </VerdictButton>
+                            <VerdictButton tone="neutral" onClick={() => submit("unsure")} testId="verdict-unsure" icon={<HelpCircle />}>
+                              Not sure
+                            </VerdictButton>
+                          </div>
+                        </motion.section>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
           <FeedbackSheet
             open={sheetOpen}
@@ -344,7 +431,8 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
             onCancel={cancelSheet}
             onSubmit={(v) => {
               setSheetOpen(false);
-              submit("needs_improvement", v);
+              if (current.statement) submitStatement("incorrect", v);
+              else submit("needs_improvement", v);
               toast.success("Suggestion sent", { description: "Reviewers will see it in their triage queue." });
             }}
           />

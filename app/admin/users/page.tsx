@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { desc } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
-import { userAnswerRoles, users } from "@/db/schema";
+import { roles, userAnswerRoles, users } from "@/db/schema";
 import { approveUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
 import { DEFAULT_ANSWER_ROLE } from "@/lib/chat/config";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
@@ -36,7 +36,11 @@ function Initials({ name, className }: { name: string; className?: string }) {
 export default async function UsersPage() {
   const { user: me } = await requireRole(["admin"]);
   const db = await getDb();
-  const all = await db.select().from(users).orderBy(desc(users.createdAt));
+  const all = await db
+    .select({ ...getTableColumns(users), role: roles.name })
+    .from(users)
+    .innerJoin(roles, eq(roles.id, users.roleId))
+    .orderBy(desc(users.createdAt));
   const answerRoles = new Map((await db.select().from(userAnswerRoles)).map((r) => [r.userId, r.answerRole]));
   const pending = all.filter((u) => u.status === "pending");
   const others = all.filter((u) => u.status !== "pending");
@@ -78,7 +82,9 @@ export default async function UsersPage() {
                   <form action={approveUser} className="flex flex-1 gap-2">
                     <input type="hidden" name="userId" value={u.id} />
                     <NativeSelect name="role" defaultValue="employee" aria-label="Role" className="w-32">
-                      <NativeSelectOption value="employee">Employee</NativeSelectOption>
+                      <NativeSelectOption value="functional">Functional</NativeSelectOption>
+                      <NativeSelectOption value="technical">Technical</NativeSelectOption>
+                      <NativeSelectOption value="employee">Employee (functional cards)</NativeSelectOption>
                       <NativeSelectOption value="reviewer">Reviewer</NativeSelectOption>
                       <NativeSelectOption value="admin">Admin</NativeSelectOption>
                     </NativeSelect>
@@ -140,7 +146,9 @@ export default async function UsersPage() {
                       <form action={setUserRole} className="flex gap-1.5">
                         <input type="hidden" name="userId" value={u.id} />
                         <NativeSelect name="role" defaultValue={u.role} size="sm" className="w-28" aria-label={`Role for ${u.username}`}>
-                          <NativeSelectOption value="employee">Employee</NativeSelectOption>
+                          <NativeSelectOption value="functional">Functional</NativeSelectOption>
+                          <NativeSelectOption value="technical">Technical</NativeSelectOption>
+                          <NativeSelectOption value="employee">Employee (functional cards)</NativeSelectOption>
                           <NativeSelectOption value="reviewer">Reviewer</NativeSelectOption>
                           <NativeSelectOption value="admin">Admin</NativeSelectOption>
                         </NativeSelect>

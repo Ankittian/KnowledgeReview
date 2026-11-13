@@ -2,7 +2,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { createDb, migrateDb, resetDatabase, type DbHandle } from "@/db/client";
-import { chatMessages, chatToolCalls, conversations, interactionEvents, users } from "@/db/schema";
+import { chatMessages, chatToolCalls, conversations, activityLog, roleIdOf, users } from "@/db/schema";
 import { getLiveRun, hasActiveRunForUser, releaseUser, reserveUser, setRunner, startAnswer, stopAnswer, subscribe, type LiveEvent } from "@/lib/chat/live";
 import { MockRunner, type RunRequest, type RunResult } from "@/lib/chat/runner";
 import {
@@ -30,7 +30,7 @@ let bob: { id: string; username: string };
 let admin: { id: string; username: string };
 
 async function mkUser(username: string, role: "employee" | "admin" = "employee") {
-  const [u] = await h.db.insert(users).values({ username, passwordHash: "x", displayName: username, status: "active", role }).returning();
+  const [u] = await h.db.insert(users).values({ username, passwordHash: "x", displayName: username, status: "active", roleId: roleIdOf(role) }).returning();
   return { id: u.id, username: u.username };
 }
 
@@ -116,11 +116,11 @@ describe("live answers (REQ-CHAT-01, 02, 08, 09; REQ-HARN-04, 08)", () => {
       ["mcp__spectrum-kg__search", true],
       ["Bash", false],
     ]);
-    const denied = await h.db.select().from(interactionEvents).where(eq(interactionEvents.eventType, "chat_tool_denied"));
+    const denied = await h.db.select().from(activityLog).where(eq(activityLog.action, "chat_tool_denied"));
     expect(denied).toHaveLength(1);
-    expect(denied[0].payload).toMatchObject({ tool: "Bash", messageId: answerId });
-    const audit = await h.db.select().from(interactionEvents).where(eq(interactionEvents.eventType, "chat_answer"));
-    expect(audit.at(-1)?.payload).toMatchObject({ messageId: answerId, status: "ok", answer: "GRN records received goods.", role: "technical" });
+    expect(denied[0].details).toMatchObject({ tool: "Bash", messageId: answerId });
+    const audit = await h.db.select().from(activityLog).where(eq(activityLog.action, "chat_answer"));
+    expect(audit.at(-1)?.details).toMatchObject({ messageId: answerId, status: "ok", answer: "GRN records received goods.", role: "technical" });
   });
 
   it("follow-ups resume the stored Claude session; the role is applied on every turn", async () => {

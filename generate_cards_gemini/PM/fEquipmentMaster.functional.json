@@ -1,0 +1,95 @@
+{
+  "scope": "form",
+  "key": "fEquipmentMaster",
+  "title": "Equipment Master",
+  "context": "Plant Maintenance › Preventive & Breakdown Maintenance (PM) › Equipment Master",
+  "module": "PM",
+  "audience": "functional",
+  "cards": [
+    {
+      "level": "hard",
+      "topic_key": "place-in-maintenance-workflow",
+      "title": "Where the Equipment Master sits in the maintenance architecture",
+      "body": "The Equipment Master is step two in the preventive maintenance setup workflow within Plant Maintenance.\nIt follows Permit Master where safety templates and isolation rules are established for plant operations.\nMaintenance planners use this screen to register every piece of machinery, vehicle, and installed tool.\nIt establishes the definitive asset entity upon which all maintenance orders and service calls are built.\nThe next operational steps are raising maintenance requests and scheduling periodic overhauls.\nEquipment records link to physical factory locations, designated custodians, work centers, and operators.\nBill of materials sections define standard engineering spares required for routine overhauls.\nEvery maintenance request, work order, and breakdown log requires a valid equipment reference.\nAccurate equipment data ensures that machine histories, running hours, and repair costs remain auditable.\nThis screen provides the operational foundation for enterprise asset reliability management across sites.\nPhysical verification against this document ensures company equipment registers match physical floor assets.\nWithout this master definition, engineering teams cannot schedule preventive maintenance or track machine downtime.\nMaintenance histories captured here enable engineering managers to analyze equipment reliability over time.\nOperational managers review these transaction records periodically to verify adherence to organizational governance standards.",
+      "source_refs": [
+        "summary",
+        "purpose",
+        "process:preventive-maintenance",
+        "used_by"
+      ],
+      "word_count": 192,
+      "weight": 5,
+      "min_read_seconds": 39
+    },
+    {
+      "level": "hard",
+      "topic_key": "mandatory-attributes-and-ownership-types",
+      "title": "Mandatory equipment attributes, ownership classifications, and validations",
+      "body": "Creating an equipment record requires critical identification, classification, and ownership inputs.\nThe user must enter an equipment name, serial number, and select a valid ownership category from master options.\nOwnership classifications differentiate clearly between company-owned, hired, and customer equipment.\nSelecting valid equipment categories and equipment types is compulsory for all registered plant assets.\nIf the equipment name or serial number is left blank, saving is immediately prohibited by system checks.\nCustody details require a valid custodian name, contact number, and formal custody assignment date.\nThe year of manufacture date cannot be later than the equipment acquisition date recorded on the header.\nThe date of custody cannot precede the original acquisition date of the machinery under any circumstances.\nDuplicate equipment names or duplicate serial numbers within the company are stopped by validation routines.\nMissing mandatory headers halt saving and highlight the exact asset information requiring user entry.\nThese checks prevent incomplete or duplicate equipment records from contaminating asset registers.\nAccurate classification ensures that maintenance schedules and financial depreciation apply appropriate rules.\nMandatory custody details establish clear operational accountability for plant equipment safety.",
+      "source_refs": [
+        "validations",
+        "fields",
+        "purpose"
+      ],
+      "word_count": 181,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "location-tracking-and-custody-rules",
+      "title": "Physical location tracking, division alignment, and custodian responsibilities",
+      "body": "Equipment records track physical operating sites to support maintenance dispatching and inventory delivery.\nThe user specifies operating location, effective location date, work center, and street address details.\nThe operating location must match an active functional location configured in company masters.\nOperating division assignments must align with the operational location of the machinery on site.\nMoving equipment to another factory location requires a formal change of location entry in the system.\nAssigned custodians are responsible for machinery security, operator safety, and daily upkeep.\nIf the custodian contact number contains invalid characters, validation blocks the save operation.\nWhen vehicle equipment includes drivers, driver effective dates and licences are recorded for fleet management.\nAccurate location tracking ensures maintenance technicians are dispatched to the right site during emergencies.\nHistorical location logs preserve a complete audit trail of machine relocations across factory divisions.\nCorrect location mapping guarantees that maintenance costs charge to the proper operational cost center.\nThese controls prevent machinery from operating in unapproved or unmonitored factory areas.\nCustodian assignment ensures machinery is operated only by qualified and authorized personnel.\nOperational managers review these transaction records periodically to verify adherence to organizational governance standards.",
+      "source_refs": [
+        "fields",
+        "validations",
+        "concept:functional-location"
+      ],
+      "word_count": 190,
+      "weight": 5,
+      "min_read_seconds": 38
+    },
+    {
+      "level": "hard",
+      "topic_key": "bill-of-materials-and-spares-definition",
+      "title": "Equipment bill of materials, standard spares, and life span tracking",
+      "body": "The equipment record maintains a dedicated bill of materials for maintenance spares and assemblies.\nPlanners configure standard replacement parts, sub-assemblies, and consumable items for the asset.\nEach spare line specifies the item reference, technical grade, approved make, unit, and required quantity.\nItems marked for mandatory consumption entry require technicians to record serial numbers on replacement.\nLife span parameters establish the expected operating hours or days before component replacement falls due.\nWhen maintenance orders are generated, bill of materials components default automatically into job plans.\nSpares configured here must exist as active items within Material Management inventory masters.\nPredefined component structures accelerate emergency repair ordering and reduce machine downtime.\nAccurate spares mapping ensures storekeepers stock the exact engineering parts required for overhauls.\nTechnicians review bill of materials specifications before disassembling complex machinery assemblies.\nThis standardization prevents non-standard or incompatible components from being fitted to plant machinery.\nComponent life span tracking enables proactive replacement before in-service mechanical failure occurs.\nOperational managers review these transaction records periodically to verify adherence to organizational governance standards.\nEvery milestone produces an auditable record connecting original requests to final authorized financial commitments.",
+      "source_refs": [
+        "fields",
+        "functional_description",
+        "purpose"
+      ],
+      "word_count": 185,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "safety-permits-and-measurement-parameters",
+      "title": "Safety permit attachments, measurement parameters, and operating limits",
+      "body": "High-risk equipment records link directly to mandatory safety permits and check lists in the system.\nPlanners attach approved work permit templates defining electrical lockout and mechanical safety rules.\nMeasurement sections establish operating parameters such as temperature, pressure, and vibration limits.\nEach parameter defines normal operating values, alert thresholds, and daily maximum running limits.\nWhen daily meter readings exceed defined alert thresholds, the system flags maintenance alerts for review.\nSafety instructions attached to the equipment default into all future maintenance work orders.\nTechnicians cannot bypass safety permit requirements during hazardous overhaul operations on site.\nThese safety parameters protect operating personnel and prevent catastrophic equipment failures in the plant.\nHistorical measurement values provide predictive maintenance insights to prevent unexpected breakdowns.\nClear operating limits ensure operators shut down machinery before minor faults cause major damage.\nSafety compliance records remain permanently associated with the asset for regulatory safety audits.\nThis integration guarantees that machinery operates strictly within certified engineering safety envelopes.\nOperational managers review these transaction records periodically to verify adherence to organizational governance standards.\nEvery milestone produces an auditable record connecting original requests to final authorized financial commitments.",
+      "source_refs": [
+        "fields",
+        "functional_description",
+        "concept:work-permit"
+      ],
+      "word_count": 185,
+      "weight": 5,
+      "min_read_seconds": 37
+    },
+    {
+      "level": "hard",
+      "topic_key": "record-lifecycle-and-deletion-restrictions",
+      "title": "Equipment lifecycle states, deactivation rules, and deletion restrictions",
+      "body": "Equipment records remain active throughout the operational life of the machinery in the plant.\nAssets taken out of service can be marked inactive to prevent new maintenance orders from being raised.\nInactive equipment records remain fully available in historical searches for regulatory and audit compliance.\nAn equipment record cannot be deleted if active maintenance orders or requests reference it.\nIf meter readings or running hours have been logged against the asset, deletion is blocked by system checks.\nOpen service contracts or warranty records linked to the equipment also prohibit document deletion.\nAttempting to delete a referenced equipment record triggers an explicit system refusal message detailing dependencies.\nThese restrictions preserve equipment maintenance history and prevent orphan records in asset ledgers.\nUsers must decommission or retire equipment through formal disposal entries instead of deleting records.\nComplete historical maintenance logs remain permanently accessible for engineering review and residual valuation.\nDecommissioned records preserve parts replacement histories that inform future purchasing decisions.\nThis protection ensures that company asset registers remain auditable across entire equipment lifecycles.\nHistorical equipment data remains accessible for insurance claims and technical failure investigations.",
+      "source_refs": [
+        "actions",
+        "validations",
+        "rule:atomic-save"
+      ],
+      "word_count": 182,
+      "weight": 5,
+      "min_read_seconds": 37
+    }
+  ]
+}
