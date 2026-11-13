@@ -48,8 +48,8 @@ A card id is `gen:<key>:<audience>:<level>:<topic_key>`. Pushing the same card a
 ## 2. Before you push (once per environment)
 
 1. **Database running and `.env` set.** `DATABASE_URL` must point at the database the app uses (`npm run db:up` starts the Docker Postgres).
-2. **Migrations applied:** `npm run db:migrate`
-3. **Knowledge base loaded:** `npm run cards:sync`. This reads the YAML in `kb/` into `kb_items`. Without it the push still works, but `source_refs` cannot be resolved and you get no knowledge links.
+2. **Tables created:** `npm run db:init` (creates them on an empty database)
+3. **Knowledge base loaded:** `npm run cards:sync -- --entities-only`. This reads the YAML in `kb/` into `kb_items` (without the old template cards). Without it the push still works, but `source_refs` cannot be resolved and you get no knowledge links.
 
 ## 3. Push
 
@@ -116,8 +116,8 @@ Then open the app (Today, Browse) as a user whose answer style matches the audie
 | `<file>: invalid catalog` followed by a path | A field is missing or has a wrong value, for example `level` not `easy`, `medium` or `hard`. The first five problems are listed. |
 | `duplicate card id ...` | Two cards in the same group share `level` and `topic_key`. Make the `topic_key` unique. |
 | `DATABASE_URL is not set` | Set it in `.env`. |
-| `relation ... does not exist` or `column ... does not exist` | Migrations are missing. Run `npm run db:migrate`. |
-| `0 knowledge links` on a first push | `kb_items` is empty or has no matching keys. Run `npm run cards:sync`, then push again in append mode. Existing cards stay unchanged and the missing links are added. |
+| `relation ... does not exist` or `column ... does not exist` | The tables are missing or older than the code. On an empty database run `npm run db:init`. |
+| `0 knowledge links` on a first push | `kb_items` is empty or has no matching keys. Run `npm run cards:sync -- --entities-only`, then push again in append mode. Existing cards stay unchanged and the missing links are added. |
 | `--mode must be append or purge` | Typo in the option. `npm run cards:push -- --help` lists them. |
 
 ## 7. Where the code is

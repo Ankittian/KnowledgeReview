@@ -33,7 +33,7 @@ which `npm test` and `npm run e2e` wipe on every run.
 `/chat` lets employees ask questions about the SpectrumERP knowledge base. Claude answers through the Claude Agent SDK
 using the KB MCP server, in the user's answer style (Technical / Functional / Product, set by an admin under
 Admin → Users). Admins pick the style per chat and see every conversation under Admin → All chats.
-Set `KG_MCP_URL`, `KG_MCP_TOKEN` and Claude credentials in `.env`, run `npm run db:migrate`, then
+Set `KG_MCP_URL`, `KG_MCP_TOKEN` and Claude credentials in `.env`, run `npm run db:init`, then
 `npm run chat:check` to verify the setup. Design, security and deployment: [docs/CHAT-HARNESS.md](docs/CHAT-HARNESS.md).
 
 ## Access from other devices on the LAN
@@ -58,11 +58,9 @@ other PCs on the same network.
 
 ## Production (EC2)
 
-1. Install Docker on the instance, copy `.env.example` to `.env`, set strong `POSTGRES_PASSWORD`, matching `DATABASE_URL`,
-   `ADMIN_PASSWORD` and `COOKIE_SECURE=true` (HTTPS). Keep `.env` out of Git (`chmod 600`).
-2. `docker compose up -d --wait`, then `npm run db:migrate`, `npm run cards:sync`, `npm run seed:admin`.
-3. `npm run build && npm start` behind nginx with HTTPS. Never open port 5432 in the security group.
-4. Back up the database daily: `docker exec kr-postgres pg_dump -U kr_app knowledge_review | gzip > kr-$(date +%F).sql.gz`.
+Full guide: [docs/DEPLOY-EC2.md](docs/DEPLOY-EC2.md). In short: copy `.env.production.example` to `.env`, fill in the secrets,
+then `docker compose --profile app up -d --build`. That starts Postgres, creates the tables, the first admin and the flashcards
+(`npm run deploy:init`), and serves the app on `APP_PORT`. Never open port 5432 in the security group.
 
 ## Refreshing the knowledge base
 
@@ -164,15 +162,17 @@ Answers and events are written to `localStorage` first, then sent with retry and
 | Command | |
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js |
-| `npm run db:migrate` | apply migrations + (re)create views |
-| `npm run db:setup` | migrate + sync + seed admin |
+| `npm run db:init` | create the tables on an empty database (`db/schema.sql`) + (re)create views |
+| `npm run db:setup` | init + sync + seed admin |
+| `npm run deploy:init` | what Docker runs at start: init, admin if missing, KB items, flashcards (append) |
 | `npm run db:studio` | browse every table in the browser (Drizzle Studio on `DATABASE_URL`) |
 | `npm run db:query -- "SELECT ..."` | run one read-only SQL query and print the rows |
 | `npm run kb:import -- <dir>` | copy a `domain/` folder into `kb/` |
-| `npm run cards:sync` | build cards from `kb/` and upsert |
+| `npm run cards:sync` | build cards from `kb/` and upsert (`-- --entities-only`: KB items only) |
+| `npm run cards:push` | push `data/generated-cards/*.json` (append, or `-- --mode purge`); see docs/PUSH-FLASHCARDS.md |
 | `npm run seed:admin -- --username x --password y` | create or reset an admin |
 | `npm run report:needs-change` | write `reports/needs-change.{jsonl,md}` |
 | `npm run chat:check` | ask the KB one question through the Claude harness and try a prompt injection (no database) |
 | `npm test` | unit + DB integration tests (in-memory Postgres) |
 | `npm run build && npm run e2e` | Playwright: full flow on desktop + mobile, plus screenshots in `test-results/screens` |
-| `npm run db:generate` | new migration after editing `db/schema.ts` |
+| `npm run db:export-schema` | regenerate `db/schema.sql` after editing `db/schema.ts` |

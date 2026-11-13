@@ -70,21 +70,13 @@ user running the app. `CLAUDE_RUNNER=mock` gives canned answers without Claude (
 
 ```bash
 npm install
-npm run db:migrate            # adds conversations, chat_messages, chat_tool_calls, chat_feedback, and users.answer_role
+npm run db:init               # creates every table, including the chat tables and users.answer_role
 npm run chat:check            # proof of concept: KB question end to end + prompt-injection attempt (no database needed)
 npm run dev                   # http://localhost:3000/chat
 ```
 
-EC2 (t4g.large recommended):
-
-```bash
-cp .env.example .env          # inside compose the web container reaches Postgres as host "postgres"; COOKIE_SECURE=true
-mkdir -p infra/certs         # fullchain.pem + privkey.pem
-docker compose --profile app up -d --build
-npm ci && npm run db:migrate   # from the checkout on the host (or CI), against the same DATABASE_URL
-```
-
-Only ports 443 and 80 (redirect) are published; the web container is reachable only through nginx.
+EC2 (t4g.large recommended): see [DEPLOY-EC2.md](DEPLOY-EC2.md). One `docker compose --profile app up -d --build` creates the
+tables, the first admin and the flashcards and starts the app on `APP_PORT`. Add `--profile tls` for nginx and HTTPS.
 
 ## 6. Measured in the proof of concept (this machine, `claude-opus-5-5`)
 
