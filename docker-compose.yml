@@ -9,10 +9,16 @@
 # The full stack starts in this order: postgres (healthy) -> init (one-shot: tables, first admin, knowledge base,
 # flashcards) -> web (-> nginx with the tls profile). Everything is configured from .env; see .env.production.example.
 # Use another env file with KR_ENV_FILE=/path/to/file.
+#
+# PORTS (all set in .env, nothing is hard-coded here):
+#   APP_PORT       the web app: pages AND API (one Next.js process, so frontend and backend share this port)
+#   POSTGRES_PORT  Postgres on the host (the containers always reach it as postgres:5432 on the private network)
+#   HTTP_PORT / HTTPS_PORT  nginx on the host, tls profile only
+#   *_BIND         which host interface each port is published on (127.0.0.1 = this machine only)
 services:
   postgres:
     image: postgres:16
-    container_name: kr-postgres
+    container_name: ${POSTGRES_CONTAINER:-kr-postgres}
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-kr_app}
@@ -51,36 +57,40 @@ services:
   web:
     profiles: ["app"]
     build: .
-    container_name: kr-web
+    container_name: ${WEB_CONTAINER:-kr-web}
     restart: unless-stopped
     env_file: ${KR_ENV_FILE:-.env}
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-kr_app}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-knowledge_review}
       # false is required when the site is served over plain http, otherwise the browser drops the login cookie.
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      PORT: ${APP_PORT:-3000}
       CLAUDE_CONFIG_DIR: /home/app/.claude
       CLAUDE_HARNESS_DIR: /app/claude-harness
     volumes:
       - kr_claude:/home/app/.claude # Claude credentials + session transcripts (needed for resume)
     ports:
       # APP_PORT is where you open the app. With nginx (tls profile) set APP_BIND=127.0.0.1 so only nginx can reach it.
-      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3000}:3000"
+      # The app listens on APP_PORT inside the container too (PORT below), so the Dockerfile has no fixed port.
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3000}:${APP_PORT:-3000}"
     depends_on:
       init:
         condition: service_completed_successfully
 
   # Optional: TLS in front of the app. Needs infra/certs/fullchain.pem and privkey.pem, and COOKIE_SECURE=true.
+  # Inside the container nginx listens on 80/443; HTTP_PORT / HTTPS_PORT choose the host ports (default 8080/8443, since 80/443 are often taken).
   nginx:
     profiles: ["tls"]
     image: nginx:1.27-alpine
-    container_name: kr-nginx
+    container_name: ${NGINX_CONTAINER:-kr-nginx}
     restart: unless-stopped
-    ports:
-      # Host ports; defaults avoid 80/443 which are often taken. Browse to https://<host>:8443 (http on 8080 redirects there).
-      - "${HTTP_PORT:-8080}:80"
-      - "${HTTPS_PORT:-8443}:443"
     environment:
+      # Filled into the template below by the nginx image at start (only these variables are substituted).
+      APP_PORT: ${APP_PORT:-3000}
       HTTPS_PORT: ${HTTPS_PORT:-8443}
+    ports:
+      - "${NGINX_BIND:-0.0.0.0}:${HTTP_PORT:-8080}:80"
+      - "${NGINX_BIND:-0.0.0.0}:${HTTPS_PORT:-8443}:443"
     volumes:
       - ./infra/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./infra/certs:/etc/nginx/certs:ro

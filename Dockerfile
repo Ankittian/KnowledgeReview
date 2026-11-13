@@ -20,6 +20,8 @@ USER node
 CMD ["npm", "run", "deploy:init"]
 
 FROM node:24-bookworm-slim AS run
+# PORT is the one port the whole app (pages and API: Next.js serves both) listens on. docker-compose sets it from APP_PORT in
+# .env at run time; 3000 is only the default for a plain `docker run`.
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
 # ca-certificates: HTTPS to Anthropic and the KB MCP server.
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/* \
@@ -39,5 +41,6 @@ ENV CLAUDE_CONFIG_DIR=/home/app/.claude CLAUDE_HARNESS_DIR=/app/claude-harness
 RUN mkdir -p /home/app/.claude && chown app:app /home/app/.claude
 USER app
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD node -e "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node_modules/.bin/next", "start", "-H", "0.0.0.0", "-p", "3000"]
+# Both the health check and the start command read PORT, so changing APP_PORT in .env needs no image change.
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["sh", "-c", "exec node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
