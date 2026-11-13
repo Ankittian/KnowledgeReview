@@ -11,7 +11,7 @@ import { getDailyCardLimit } from "./settings";
 import { nextSrs } from "./srs";
 import type { eventsSchema, reviewSchema } from "./validation";
 
-export type ReviewInput = z.infer<typeof reviewSchema>;
+export type ReviewInput = z.input<typeof reviewSchema>;
 export type EventsInput = z.infer<typeof eventsSchema>;
 
 export interface Meta {
@@ -36,9 +36,12 @@ export async function recordReview(
   today: string,
   opts: { enforceReadTime?: boolean } = {},
 ): Promise<Result> {
+  if (input.source === "browse") return recordBrowseReview(db, userId, input, meta);
+  if (!input.deckDate) return { ok: false, status: 400, error: "Missing deck date." };
+  const deckDate: string = input.deckDate;
   const enforceReadTime = opts.enforceReadTime ?? READ_LOCK_ENABLED;
   const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
-  const allowed = audiencesFor((who?.role ?? "employee") as Role);
+  const allowed = audiencesFor((who?.role ?? "functional") as Role);
   const [ver] = await db
     .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, back: cardVersions.back, audience: cards.audience })
     .from(cardVersions)
@@ -48,7 +51,7 @@ export async function recordReview(
   if (!ver || !ver.audience || !allowed.includes(ver.audience)) return { ok: false, status: 404, error: "Unknown card." };
 
   // The answer must belong to one of the user's decks from today (or yesterday, for decks finished after midnight).
-  if (input.deckDate !== today && input.deckDate !== addDays(today, -1)) return { ok: false, status: 409, error: "This deck has expired." };
+  if (deckDate !== today && deckDate !== addDays(today, -1)) return { ok: false, status: 409, error: "This deck has expired." };
   const [deck] = await db
     .select({ id: dailyDecks.id })
     .from(dailyDecks)
@@ -56,7 +59,7 @@ export async function recordReview(
     .where(
       and(
         eq(dailyDecks.userId, userId),
-        eq(dailyDecks.deckDate, input.deckDate),
+        eq(dailyDecks.deckDate, deckDate),
         eq(deckCards.cardId, ver.cardId),
         input.deckId ? eq(dailyDecks.id, input.deckId) : undefined,
       ),
@@ -71,13 +74,13 @@ export async function recordReview(
     .select({ n: sql<number>`count(*)::int` })
     .from(cardReviews)
     .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
-    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, input.deckDate)));
+    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, deckDate)));
   const [already] = await db
     .select({ id: cardReviews.id })
     .from(cardReviews)
     .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
     .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
-    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, input.deckDate), eq(cardVersions.cardId, ver.cardId)));
+    .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, deckDate), eq(cardVersions.cardId, ver.cardId)));
   if (already) return { ok: true, duplicate: true, deckCompleted: false };
   if (answeredBefore >= dailyLimit) return { ok: false, status: 409, error: "Daily card limit reached." };
 
@@ -122,7 +125,7 @@ export async function recordReview(
       .select()
       .from(reviewSchedule)
       .where(and(eq(reviewSchedule.userId, userId), eq(reviewSchedule.cardId, ver.cardId)));
-    const next = nextSrs(prev ?? null, input.knewIt, input.deckDate);
+    const next = nextSrs(prev ?? null, input.knewIt, deckDate);
     await tx
       .insert(reviewSchedule)
       .values({ userId, cardId: ver.cardId, ...next })
@@ -136,7 +139,7 @@ export async function recordReview(
         userId,
         cardId: ver.cardId,
         type: "review_submitted",
-        payload: { review_id: reviewId, version_id: ver.versionId, knew_it: input.knewIt, verdict: input.verdict, deck_date: input.deckDate, deck_id: deck.id, active_ms: attendedMs, wall_ms: wallMs, min_read_ms: minReadMs },
+        payload: { review_id: reviewId, version_id: ver.versionId, knew_it: input.knewIt, verdict: input.verdict, deck_date: deckDate, deck_id: deck.id, active_ms: attendedMs, wall_ms: wallMs, min_read_ms: minReadMs },
         clientEventId: `srv:review:${input.clientEventId}`,
         occurredAt: answeredAt,
         ...meta,
@@ -178,7 +181,7 @@ export async function recordReview(
           eq(deckCards.deckId, deck.id),
           eq(cards.status, "active"),
           sql`NOT EXISTS (SELECT 1 FROM card_reviews r JOIN daily_decks d ON d.id = r.deck_id JOIN card_versions v ON v.id = r.card_version_id
-                          WHERE r.user_id = ${userId} AND d.deck_date = ${input.deckDate}::date AND v.card_id = ${cards.id})`,
+                          WHERE r.user_id = ${userId} AND d.deck_date = ${deckDate}::date AND v.card_id = ${cards.id})`,
         ),
       );
     const limitReached = answeredToday >= dailyLimit;
@@ -194,7 +197,7 @@ export async function recordReview(
         events.push({
           userId,
           type: "deck_completed",
-          payload: { deck_id: deck.id, deck_date: input.deckDate, answered_today: answeredToday, daily_limit: dailyLimit },
+          payload: { deck_id: deck.id, deck_date: deckDate, answered_today: answeredToday, daily_limit: dailyLimit },
           clientEventId: `srv:deck:${deck.id}`,
           ...meta,
         });
@@ -203,8 +206,8 @@ export async function recordReview(
       events.push({
         userId,
         type: "daily_limit_reached",
-        payload: { deck_date: input.deckDate, daily_limit: dailyLimit },
-        clientEventId: `srv:limit:${userId}:${input.deckDate}`,
+        payload: { deck_date: deckDate, daily_limit: dailyLimit },
+        clientEventId: `srv:limit:${userId}:${deckDate}`,
         ...meta,
       });
     await logEvents(tx as unknown as DB, events);
@@ -232,4 +235,60 @@ export async function recordClientEvents(db: DB, userId: string, input: EventsIn
       ...meta,
     })),
   );
+}
+
+/**
+ * An answer given while browsing. It scores like a daily answer (the card's level points for a correct answer), but
+ * only the first answer to a card counts, and it does not touch the daily deck, the daily limit or spaced repetition.
+ */
+async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, meta: Meta): Promise<Result> {
+  const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
+  const allowed = audiencesFor((who?.role ?? "functional") as Role);
+  const [ver] = await db
+    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, audience: cards.audience })
+    .from(cardVersions)
+    .innerJoin(cards, eq(cards.id, cardVersions.cardId))
+    .where(eq(cardVersions.id, input.versionId));
+  if (!ver || !ver.audience || !allowed.includes(ver.audience)) return { ok: false, status: 404, error: "Unknown card." };
+
+  const [prior] = await db
+    .select({ id: cardReviews.id })
+    .from(cardReviews)
+    .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
+    .where(and(eq(cardReviews.userId, userId), eq(cardVersions.cardId, ver.cardId)))
+    .limit(1);
+  if (prior) return { ok: true, duplicate: true, deckCompleted: false };
+
+  const answeredAt = toDate(input.answeredAt) ?? new Date();
+  return db.transaction(async (tx) => {
+    const inserted = await tx
+      .insert(cardReviews)
+      .values({
+        userId,
+        cardVersionId: ver.versionId,
+        deckId: null,
+        source: "browse",
+        knewIt: input.knewIt,
+        verdict: input.verdict,
+        shownAt: toDate(input.shownAt),
+        flippedAt: null,
+        answeredAt,
+        clientEventId: input.clientEventId,
+      })
+      .onConflictDoNothing()
+      .returning({ id: cardReviews.id });
+    if (!inserted.length) return { ok: true as const, duplicate: true, deckCompleted: false };
+    await logEvents(tx as unknown as DB, [
+      {
+        userId,
+        cardId: ver.cardId,
+        type: "review_submitted",
+        payload: { review_id: inserted[0].id, version_id: ver.versionId, knew_it: input.knewIt, verdict: input.verdict, source: "browse" },
+        clientEventId: `srv:review:${input.clientEventId}`,
+        occurredAt: answeredAt,
+        ...meta,
+      },
+    ]);
+    return { ok: true as const, duplicate: false, deckCompleted: false };
+  });
 }
