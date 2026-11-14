@@ -11,7 +11,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { requireUser } from "@/lib/auth/session";
-import { audienceIn, pickAudiences } from "@/lib/cards/audience";
+import { audienceIn, canSwitchSets, pickAudiences } from "@/lib/cards/audience";
 import { LEVELS, countWords, minReadSeconds, type Level } from "@/lib/cards/spec";
 import { getModuleNames } from "@/lib/deck";
 import { cn } from "@/lib/utils";
@@ -76,7 +76,7 @@ export default async function BrowsePage({
   ]);
   const pages = Math.max(1, Math.ceil(Number(n) / PAGE));
   const href = (p: number) =>
-    `/browse?${new URLSearchParams({ ...(q ? { q } : {}), ...(module ? { module } : {}), ...(formId ? { form: String(formId) } : {}), ...(level ? { level } : {}), ...(sp.audience && user.role === "admin" ? { audience: sp.audience } : {}), page: String(p) })}`;
+    `/browse?${new URLSearchParams({ ...(q ? { q } : {}), ...(module ? { module } : {}), ...(formId ? { form: String(formId) } : {}), ...(level ? { level } : {}), ...(sp.audience && canSwitchSets(user.role) ? { audience: sp.audience } : {}), page: String(p) })}`;
 
   return (
     <div className="mx-auto max-w-6xl space-y-5 px-4 pt-6 sm:px-6 sm:pt-8">
@@ -101,7 +101,7 @@ export default async function BrowsePage({
           <NativeSelectOption value="medium">Medium (2)</NativeSelectOption>
           <NativeSelectOption value="hard">Hard (3)</NativeSelectOption>
         </NativeSelect>
-        {user.role === "admin" && (
+        {canSwitchSets(user.role) && (
           <NativeSelect name="audience" defaultValue={sp.audience ?? ""} className="w-full sm:w-44 [&_select]:h-9" aria-label="Card set">
             <NativeSelectOption value="">Both sets</NativeSelectOption>
             <NativeSelectOption value="functional">Functional set</NativeSelectOption>

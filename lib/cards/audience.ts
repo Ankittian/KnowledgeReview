@@ -6,18 +6,20 @@ export const AUDIENCES: Audience[] = ["functional", "technical"];
 
 /**
  * Which card sets a user may receive. Decided from the signed-in role on the server, never from the client.
- * technical -> technical; admin -> both; everyone else (functional, employee, reviewer) -> functional (the safe default:
+ * admin and technical -> both; everyone else (functional, employee, reviewer) -> functional (the safe default:
  * a business user must never get a technical card).
  */
 export function audiencesFor(role: Role): Audience[] {
-  if (role === "admin") return ["functional", "technical"];
-  if (role === "technical") return ["technical"];
+  if (role === "admin" || role === "technical") return ["functional", "technical"];
   return ["functional"];
 }
 
-/** Admins may narrow the view to one set (?audience=functional|technical); everyone else always gets their own set. */
+/** Roles that may see both card sets and switch between them. */
+export const canSwitchSets = (role: Role): boolean => role === "admin" || role === "technical";
+
+/** Admin and technical users may narrow the view to one set (?audience=functional|technical); everyone else always gets their own set. */
 export function pickAudiences(role: Role, requested?: string | null): Audience[] {
-  if (role === "admin" && (requested === "functional" || requested === "technical")) return [requested];
+  if (canSwitchSets(role) && (requested === "functional" || requested === "technical")) return [requested];
   return audiencesFor(role);
 }
 
