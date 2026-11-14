@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { query, type DB } from "@/db/client";
-import { chatFeedback, chatMessages, chatToolCalls, conversations, users } from "@/db/schema";
+import { chatFeedback, chatMessages, chatToolCalls, conversations, roles, users } from "@/db/schema";
 import { DEFAULT_ANSWER_ROLE, type AnswerRole } from "./config";
 import type { ReplayTurn } from "./prompts";
 
@@ -29,10 +29,19 @@ export interface MessageView {
   feedback: { value: "up" | "down"; comment: string | null } | null;
 }
 
-/** General users answer in their admin-assigned role. Admins choose per conversation (REQ-ROLE-01, 04). */
+/** Answer style when the admin has not picked one: follow the account role (technical users get technical answers). */
+export function defaultAnswerRole(accountRole: string | null | undefined): AnswerRole {
+  return accountRole === "technical" ? "technical" : DEFAULT_ANSWER_ROLE;
+}
+
+/** General users answer in their admin-assigned style, else in their account role. Admins choose per conversation (REQ-ROLE-01, 04). */
 export async function getAnswerRole(db: DB, userId: string): Promise<AnswerRole> {
-  const [r] = await db.select({ role: users.answerRole }).from(users).where(eq(users.id, userId));
-  return r?.role ?? DEFAULT_ANSWER_ROLE;
+  const [r] = await db
+    .select({ style: users.answerRole, account: roles.name })
+    .from(users)
+    .innerJoin(roles, eq(roles.id, users.roleId))
+    .where(eq(users.id, userId));
+  return r?.style ?? defaultAnswerRole(r?.account);
 }
 
 /** Who changed it is recorded by the admin action's `user_answer_role_changed` audit event. */

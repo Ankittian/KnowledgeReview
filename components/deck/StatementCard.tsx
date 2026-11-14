@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Check, Lock, PencilLine, BookOpenCheck, MousePointerClick } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
@@ -24,7 +25,7 @@ export function StatementCard({
   position,
   total,
   remainingMs,
-  flipped,
+  flipped: revealed,
   onFlip,
 }: {
   card: ClientCard;
@@ -35,6 +36,11 @@ export function StatementCard({
   onFlip: () => void;
 }) {
   const reduce = useReducedMotion();
+  // After the reveal, clicking the card turns it back to the question and again to the description. Purely visual:
+  // the answer buttons and read timing stay driven by `revealed`.
+  const [showFront, setShowFront] = useState(false);
+  useEffect(() => setShowFront(false), [revealed, card.v]);
+  const flipped = revealed && !showFront;
   const lines = card.back.split(/\r?\n/).filter((l) => l.trim());
   const need = card.minRead * 1000;
   const done = need > 0 ? Math.min(1, 1 - remainingMs / need) : 1;
@@ -60,7 +66,7 @@ export function StatementCard({
         className="preserve-3d grid cursor-pointer"
         animate={reduce ? undefined : { rotateY: flipped ? 180 : 0 }}
         transition={{ type: "spring", stiffness: 240, damping: 26 }}
-        onClick={() => !flipped && onFlip()}
+        onClick={() => (revealed ? setShowFront((v) => !v) : onFlip())}
         role="button"
         tabIndex={-1}
         aria-label={flipped ? "Description side" : "Question side. Reveal the description"}

@@ -194,6 +194,27 @@ export async function getOrCreateDeck(
       });
     }
   }
+  // The admin raised the limit while this session's set still has open cards: add the difference to the same set,
+  // so a settings change applies on the next load instead of only after the set is finished.
+  if (deck && activeOpen > 0 && remaining > activeOpen) {
+    const need = remaining - activeOpen;
+    const inDeck = new Set(deckCardIds);
+    const seed = crypto.randomUUID();
+    const pools = await loadDeckPools(db, user.id, user.primaryModule, today, need + inDeck.size, seed, audiences);
+    const extra = composeDeck(pools, need + inDeck.size, seed)
+      .filter((id) => !answeredCards.has(id) && !inDeck.has(id))
+      .slice(0, need);
+    if (extra.length) {
+      await db.insert(deckCards).values(extra.map((cardId, i) => ({ deckId: deck.id, cardId, position: deckCardIds.length + i })));
+      deckCardIds = [...deckCardIds, ...extra];
+      await logEvent(db, {
+        userId: user.id,
+        sessionId,
+        type: "deck_topped_up",
+        payload: { deck_id: deck.id, added: extra.length, daily_limit: dailyLimit, answered_today: answeredToday },
+      });
+    }
+  }
   if (!deck) return { deckId: null, date: today, cards: [], answered: [], answeredToday, dailyLimit };
 
   const rows = await db

@@ -4,7 +4,7 @@ import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
 import { roles, users } from "@/db/schema";
 import { approveUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
-import { DEFAULT_ANSWER_ROLE } from "@/lib/chat/config";
+import { defaultAnswerRole } from "@/lib/chat/service";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
 import { SectionTitle } from "@/components/common/PageHeader";
@@ -159,7 +159,7 @@ export default async function UsersPage() {
                         <input type="hidden" name="userId" value={u.id} />
                         <NativeSelect
                           name="answerRole"
-                          defaultValue={u.answerRole ?? DEFAULT_ANSWER_ROLE}
+                          defaultValue={u.answerRole ?? defaultAnswerRole(u.role)}
                           size="sm"
                           className="w-28"
                           aria-label={`Answer style for ${u.username}`}

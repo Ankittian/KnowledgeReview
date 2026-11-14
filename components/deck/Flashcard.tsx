@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useTransform, type PanInfo } from "motion/react";
 import { Check, MousePointerClick, X } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
@@ -19,8 +20,12 @@ interface Props {
 const SWIPE_DISTANCE = 90;
 const SWIPE_VELOCITY = 600;
 
-export function Flashcard({ card, flipped, canSwipe, onFlip, onSwipe, position, total }: Props) {
+export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, position, total }: Props) {
   const reduce = useReducedMotion();
+  // After the reveal, clicking the card turns it back and forth; visual only (the answer flow follows `revealed`).
+  const [showFront, setShowFront] = useState(false);
+  useEffect(() => setShowFront(false), [revealed, card.v]);
+  const flipped = revealed && !showFront;
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 0, 220], [-10, 0, 10]);
   const knewOpacity = useTransform(x, [20, SWIPE_DISTANCE], [0, 1]);
@@ -77,7 +82,7 @@ export function Flashcard({ card, flipped, canSwipe, onFlip, onSwipe, position, 
           className="preserve-3d grid cursor-pointer"
           animate={reduce ? undefined : { rotateY: flipped ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 240, damping: 26 }}
-          onClick={() => !flipped && onFlip()}
+          onClick={() => (revealed ? setShowFront((v) => !v) : onFlip())}
           role="button"
           tabIndex={-1}
           aria-label={flipped ? "Answer side" : "Question side. Reveal the answer"}
