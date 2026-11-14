@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { ChevronLeft, ChevronRight, SearchX, Search } from "lucide-react";
 import { getDb, query } from "@/db/client";
 import { BrowseGrid } from "@/components/browse/BrowseCard";
+import { ModuleFormSelects } from "@/components/browse/ModuleFormSelects";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -30,15 +31,15 @@ export default async function BrowsePage({
   const level = (Object.keys(LEVELS) as Level[]).find((l) => l === sp.level) ?? "";
   const q = (sp.q ?? "").trim().slice(0, 100);
   const module = (sp.module ?? "").trim().slice(0, 10);
-  const formId = Number(sp.form) > 0 ? Number(sp.form) : null;
+  const rawFormId = Number(sp.form) > 0 ? Number(sp.form) : null;
   const page = Math.max(1, Number(sp.page) || 1);
   const db = await getDb();
   const moduleNames = await getModuleNames(db);
 
   // forms that have at least one card in this user's set: a card belongs to a form if it sits on the form or is related to it
-  const forms = await query<{ id: number; name: string; n: number }>(
+  const forms = await query<{ id: number; name: string; n: number; module: string | null }>(
     db,
-    sql`SELECT i.id, i.name, count(DISTINCT x.card_id)::int AS n
+    sql`SELECT i.id, i.name, i.module, count(DISTINCT x.card_id)::int AS n
         FROM kb_items i JOIN (
           SELECT c.id AS card_id, c.kb_item_id AS form_id FROM cards c
             WHERE c.status = 'active' AND ${audienceIn(sql`c.audience`, audiences)}
@@ -47,8 +48,11 @@ export default async function BrowsePage({
             WHERE c.status = 'active' AND ${audienceIn(sql`c.audience`, audiences)}
         ) x ON x.form_id = i.id
         WHERE i.type = 'form' AND i.active
-        GROUP BY i.id, i.name ORDER BY i.name`,
+        GROUP BY i.id, i.name, i.module ORDER BY i.name`,
   );
+
+  // a form only counts when it belongs to the chosen area (stale links / changed area)
+  const formId = rawFormId && forms.some((f) => f.id === rawFormId && (!module || f.module === module)) ? rawFormId : null;
 
   // only generated cards in the user's own set (legacy template cards have no audience and are never listed)
   const where = [sql`c.status = 'active'`, audienceIn(sql`c.audience`, audiences)];
@@ -85,22 +89,12 @@ export default async function BrowsePage({
           </InputGroupAddon>
           <InputGroupInput name="q" defaultValue={q} placeholder="Search questions and answers…" aria-label="Search cards" />
         </InputGroup>
-        <NativeSelect name="module" defaultValue={module} className="w-full sm:w-56 [&_select]:h-9" aria-label="Area">
-          <NativeSelectOption value="">All areas</NativeSelectOption>
-          {[...moduleNames].map(([code, name]) => (
-            <NativeSelectOption key={code} value={code}>
-              {name}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-        <NativeSelect name="form" defaultValue={formId ? String(formId) : ""} className="w-full sm:w-56 [&_select]:h-9" aria-label="Form">
-          <NativeSelectOption value="">All forms</NativeSelectOption>
-          {forms.map((f) => (
-            <NativeSelectOption key={f.id} value={String(f.id)}>
-              {f.name} ({f.n})
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
+        <ModuleFormSelects
+          modules={[...moduleNames].map(([code, name]) => ({ code, name }))}
+          forms={forms}
+          initialModule={module}
+          initialForm={formId ? String(formId) : ""}
+        />
         <NativeSelect name="level" defaultValue={level} className="w-full sm:w-40 [&_select]:h-9" aria-label="Level">
           <NativeSelectOption value="">All levels</NativeSelectOption>
           <NativeSelectOption value="easy">Easy (1)</NativeSelectOption>

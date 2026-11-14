@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth/session";
 export const metadata: Metadata = { title: "Sign in" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
-  if (await getSession()) redirect("/today");
+  if (await getSession()) redirect("/chat");
   const { next } = await searchParams;
   return (
     <div>

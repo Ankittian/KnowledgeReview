@@ -64,7 +64,7 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
   await logEvent(db, { userId: user.id, type: "login", sessionId, ip: meta.ip });
   const next = String(fd.get("next") ?? "");
-  redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/today");
+  redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/chat");
 }
 
 export async function signupAction(_prev: FormState, fd: FormData): Promise<FormState> {
