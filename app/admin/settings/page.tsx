@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { desc, eq } from "drizzle-orm";
-import { Database, Download, FileWarning, Gauge, PackageOpen } from "lucide-react";
+import { Download, Gauge, PackageOpen } from "lucide-react";
 import { getDb } from "@/db/client";
-import { activityLog } from "@/db/schema";
 import { saveDailyCardLimit } from "@/app/actions/admin";
-import { SyncButton } from "@/components/admin/SyncButton";
-import { Tag, surface } from "@/components/admin/bits";
+import { surface } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireRole } from "@/lib/auth/session";
-import { kbDir } from "@/lib/kb-sync";
 import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getDailyCardLimit } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 
@@ -47,13 +43,7 @@ function CardHead({ icon, title, children, tone = "default" }: { icon: React.Rea
 export default async function SettingsPage() {
   await requireRole(["admin"]);
   const db = await getDb();
-  const [dailyLimit, syncs] = await Promise.all([
-    getDailyCardLimit(db),
-    db.select().from(activityLog).where(eq(activityLog.action, "kb_sync")).orderBy(desc(activityLog.createdAt)).limit(5),
-  ]);
-
-  type Finding = { type: string; key: string; yaml_file: string; field: string; issue: string; text: string };
-  const quality = ((syncs[0]?.details as { quality?: Finding[] } | undefined)?.quality ?? []) as Finding[];
+  const dailyLimit = await getDailyCardLimit(db);
 
   return (
     <Stagger className="grid gap-4 lg:grid-cols-2">
@@ -75,67 +65,6 @@ export default async function SettingsPage() {
           </span>
         </form>
       </StaggerItem>
-
-      <StaggerItem className={cn(surface, "flex flex-col p-5")}>
-        <CardHead icon={<Database />} title="Knowledge base sync">
-          Rebuilds cards from the YAML in <span className="rounded bg-muted px-1 py-0.5 font-mono text-xs break-all text-foreground">{kbDir()}</span>. Changed text
-          creates a new card version; open feedback on changed cards is marked stale.
-        </CardHead>
-        <div className="mt-5 border-t pt-4">
-          <SyncButton />
-        </div>
-        {syncs.length > 0 && (
-          <ol className="mt-4 space-y-0 border-l pl-4 text-xs">
-            {syncs.map((s, i) => {
-              const d = s.details as { changed?: boolean; cards?: { inserted: number; newVersions: number; retired: number }; via?: string };
-              return (
-                <li key={s.id} className="relative pb-2.5 last:pb-0">
-                  <span
-                    className={cn(
-                      "absolute top-1 -left-[21px] size-2.5 rounded-full border-2 border-card",
-                      i === 0 ? "bg-primary" : d.changed ? "bg-muted-foreground/60" : "bg-border",
-                    )}
-                  />
-                  <p className="text-muted-foreground">
-                    <span className="font-medium text-foreground tabular-nums">{new Date(s.createdAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</span> ·{" "}
-                    {d.via} ·{" "}
-                    {d.changed ? `${d.cards?.inserted ?? 0} new, ${d.cards?.newVersions ?? 0} updated, ${d.cards?.retired ?? 0} retired` : "no changes"}
-                  </p>
-                </li>
-              );
-            })}
-          </ol>
-        )}
-      </StaggerItem>
-
-      {quality.length > 0 && (
-        <StaggerItem className={cn(surface, "p-5 lg:col-span-2")}>
-          <CardHead
-            icon={<FileWarning />}
-            tone="warning"
-            title={
-              <span className="inline-flex items-center gap-2">
-                Data-quality findings in the YAML <Tag tone="warning">{quality.length}</Tag>
-              </span>
-            }
-          >
-            Found automatically during the last sync. The cards are still issued so employees can suggest the missing text.
-          </CardHead>
-          <ul className="mt-4 divide-y border-t text-sm">
-            {quality.map((q, i) => (
-              <li key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-3">
-                <Tag tone={q.issue === "truncated" ? "destructive" : "warning"} className="shrink-0">
-                  {q.issue === "truncated" ? "text cut off" : "quote artifact"}
-                </Tag>
-                <span className="font-mono text-xs break-all text-muted-foreground">
-                  {q.yaml_file} → {q.key} → {q.field}
-                </span>
-                <span className="text-xs sm:ml-auto sm:max-w-[40%] sm:truncate">{q.text}</span>
-              </li>
-            ))}
-          </ul>
-        </StaggerItem>
-      )}
 
       <StaggerItem className={cn(surface, "p-5 lg:col-span-2")}>
         <CardHead icon={<PackageOpen />} title="Exports">

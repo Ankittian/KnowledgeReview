@@ -7,7 +7,6 @@ import { getDb } from "@/db/client";
 import { cardFeedback, roleIdOf, users } from "@/db/schema";
 import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
-import { runKbSync } from "@/lib/kb-sync";
 import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, setDailyCardLimit } from "@/lib/settings";
 import { ANSWER_ROLES } from "@/lib/chat/config";
 import { setAnswerRole } from "@/lib/chat/service";
@@ -92,25 +91,4 @@ export async function saveDailyCardLimit(fd: FormData) {
   await setDailyCardLimit(db, limit);
   await audit(db, actor.id, "setting_changed", "setting", "daily_card_limit", { value: limit });
   revalidatePath("/admin/settings");
-}
-
-export interface SyncState {
-  message?: string;
-  error?: string;
-}
-
-export async function syncKnowledgeBase(_prev: SyncState): Promise<SyncState> {
-  const { user: actor } = await requireRole(["admin"]);
-  try {
-    const { report, warnings, quality } = await runKbSync(await getDb(), { actor: actor.id, via: "admin" });
-    revalidatePath("/admin", "layout");
-    const c = report.cards;
-    return {
-      message: report.changed
-        ? `Synced: ${c.inserted} new cards, ${c.newVersions} updated, ${c.retired} retired, ${report.staleFeedback} feedback marked stale${warnings.length ? `, ${warnings.length} warnings` : ""}.`
-        : `Already in sync (${report.totalCards} cards).${quality.length ? ` ${quality.length} data-quality findings listed below.` : ""}`,
-    };
-  } catch (e) {
-    return { error: e instanceof Error ? e.message : String(e) };
-  }
 }
