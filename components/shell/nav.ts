@@ -51,6 +51,7 @@ export function adminItems(isAdmin: boolean) {
 
 /** Title for the current path, used by the top-bar breadcrumb. */
 export function sectionFor(path: string): { group: string | null; label: string } {
+  if (isActive(path, "/account")) return { group: null, label: "Account" };
   const a = ADMIN_NAV.find((i) => isActive(path, i.href));
   if (a) return { group: "Admin", label: a.label };
   const m = MAIN_NAV.find((i) => isActive(path, i.href));

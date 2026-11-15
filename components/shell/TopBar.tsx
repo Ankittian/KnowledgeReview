@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { KeyRound, LogOut } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -40,6 +40,12 @@ export function TopBar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolea
       <div className="ml-auto flex items-center gap-1">
         <CommandMenu isStaff={isStaff} isAdmin={isAdmin} />
         <ThemeToggle />
+        <Tooltip>
+          <TooltipTrigger render={<Link href="/account" aria-label="Account and password" className={buttonVariants({ variant: "ghost", size: "icon" })} />}>
+            <KeyRound />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Account &amp; password</TooltipContent>
+        </Tooltip>
         <form action={logoutAction}>
           <Tooltip>
             <TooltipTrigger render={<Button type="submit" variant="ghost" size="icon" aria-label="Sign out" />}>
