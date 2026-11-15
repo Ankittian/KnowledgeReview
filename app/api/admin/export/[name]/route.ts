@@ -1,5 +1,5 @@
 import { getDb } from "@/db/client";
-import { getSession } from "@/lib/auth/session";
+import { chatCaller } from "@/lib/chat/http";
 import { audit } from "@/lib/events";
 import { json } from "@/lib/request";
 import { loadEventsExport, loadFeedbackExport, loadKnowledgeExport, loadNeedsChange, loadReviewsExport, needsChangeMarkdown, toCsv, toJsonl } from "@/lib/reports";
@@ -8,9 +8,11 @@ const EXPORTS = ["needs-change", "feedback", "reviews", "knowledge", "events"] a
 type ExportName = (typeof EXPORTS)[number];
 
 export async function GET(req: Request, { params }: { params: Promise<{ name: string }> }) {
-  const session = await getSession();
-  if (!session) return json({ error: "Not signed in" }, 401);
-  if (session.user.role !== "admin") return json({ error: "Forbidden" }, 403);
+  // Live check against the database (session exists, user active, current role) - not just the JWT claims.
+  const caller = await chatCaller(req, { mutating: false });
+  if (caller instanceof Response) return caller;
+  if (!caller.isAdmin) return json({ error: "Forbidden" }, 403);
+  const session = caller.session;
 
   const { name } = await params;
   if (!EXPORTS.includes(name as ExportName)) return json({ error: "Unknown export" }, 404);
