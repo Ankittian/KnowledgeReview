@@ -11,6 +11,7 @@ import type { ClientCard } from "@/lib/deck";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LevelChip } from "@/components/deck/LevelChip";
+import { FeedbackSheet, type FeedbackValue } from "@/components/deck/FeedbackSheet";
 import { StatementActions, StatementCard, type StatementAnswer } from "@/components/deck/StatementCard";
 
 export type BrowseItem = ClientCard & { viewed: boolean };
@@ -81,7 +82,7 @@ function BrowseModal({
 
   useEffect(() => {
     if (!card) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !document.querySelector('[data-slot="dialog-content"]') && onClose();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
@@ -185,7 +186,14 @@ export function BrowseExpanded({
     setFlipped(true);
   };
 
-  const answer = (kind: StatementAnswer) => {
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const answer = (kind: StatementAnswer, fb?: FeedbackValue) => {
+    if (kind === "incorrect" && !fb) {
+      trackEvent("feedback_opened", card.v);
+      setSheetOpen(true);
+      return;
+    }
     startOutbox();
     enqueue("/api/reviews", {
       clientEventId: uid(),
@@ -199,9 +207,11 @@ export function BrowseExpanded({
       flippedAt: null,
       answeredAt: new Date().toISOString(),
       device: deviceInfo(),
-      feedback: null,
+      feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
     });
-    if (kind !== "incorrect" && card.weight > 0) toast.success(`+${card.weight} point${card.weight === 1 ? "" : "s"}`, { description: card.context });
+    if (fb) {
+      // the sheet's own "Suggestion sent" toast covers this
+    } else if (kind !== "incorrect" && card.weight > 0) toast.success(`+${card.weight} point${card.weight === 1 ? "" : "s"}`, { description: card.context });
     else toast("Answer saved", { description: card.context });
     onAnswered();
   };
@@ -231,9 +241,19 @@ export function BrowseExpanded({
             You’ve already answered this card. Its points are counted.
           </p>
         ) : (
-          <StatementActions locked={false} remainingMs={0} onAnswer={answer} />
+          <StatementActions locked={false} remainingMs={0} onAnswer={(k) => answer(k)} />
         )}
       </div>
+      <FeedbackSheet
+        open={sheetOpen}
+        originalText={card.back}
+        onCancel={() => setSheetOpen(false)}
+        onSubmit={(v) => {
+          setSheetOpen(false);
+          answer("incorrect", v);
+          toast.success("Suggestion sent", { description: "Reviewers will see it in their triage queue." });
+        }}
+      />
       </motion.div>
     </motion.div>
   );
