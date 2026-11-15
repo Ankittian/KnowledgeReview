@@ -3,7 +3,8 @@ import { desc, eq, getTableColumns } from "drizzle-orm";
 import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
 import { roles, users } from "@/db/schema";
-import { approveUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
+import { DeleteUserButton } from "@/components/admin/DeleteUserButton";
+import { approveUser, deleteUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
 import { defaultAnswerRole } from "@/lib/chat/service";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
@@ -182,16 +183,19 @@ export default async function UsersPage() {
                   <TableCell className={cn(tcell, "align-middle text-xs text-muted-foreground")}>{fmt(u.lastLoginAt)}</TableCell>
                   <TableCell className={cn(tcell, "align-middle text-right")}>
                     {u.id !== me.id && (
-                      <form action={setUserStatus}>
-                        <input type="hidden" name="userId" value={u.id} />
-                        <button
-                          name="status"
-                          value={u.status === "active" ? "disabled" : "active"}
-                          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), u.status === "active" ? "text-destructive hover:bg-destructive/10 hover:text-destructive" : "text-success hover:bg-success/10 hover:text-success")}
-                        >
-                          {u.status === "active" ? "Disable" : "Enable"}
-                        </button>
-                      </form>
+                      <div className="flex justify-end gap-1">
+                        <form action={setUserStatus}>
+                          <input type="hidden" name="userId" value={u.id} />
+                          <button
+                            name="status"
+                            value={u.status === "active" ? "disabled" : "active"}
+                            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), u.status === "active" ? "text-destructive hover:bg-destructive/10 hover:text-destructive" : "text-success hover:bg-success/10 hover:text-success")}
+                          >
+                            {u.status === "active" ? "Disable" : "Enable"}
+                          </button>
+                        </form>
+                        <DeleteUserButton action={deleteUser} userId={u.id} name={u.displayName} username={u.username} />
+                      </div>
                     )}
                   </TableCell>
                 </TableRow>
