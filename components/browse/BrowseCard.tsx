@@ -45,7 +45,7 @@ export function BrowseGrid({ cards }: { cards: BrowseItem[] }) {
 
   return (
     <>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <li key={c.v}>
             <BrowseCardPreview card={c} viewed={seen.has(c.v)} hidden={c.v === openId} onOpen={() => setOpenId(c.v)} />
@@ -138,7 +138,7 @@ export function BrowseCardPreview({
         data-viewed={viewed}
       >
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-          <Badge variant="secondary" className="max-w-[70%] truncate" title={card.context}>
+          <Badge variant="secondary" className="min-w-0 max-w-[70%] truncate" title={card.context}>
             <span className="truncate">{card.context}</span>
           </Badge>
           {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
