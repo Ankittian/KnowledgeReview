@@ -16,7 +16,7 @@ import { CHAT_ERROR_TEXT, type ChatErrorCode } from "@/lib/chat/errors";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { Markdown } from "./Markdown";
+import { CopyButton, Markdown } from "./Markdown";
 
 /* ---- types (minimal subset of ChatApp) ---------------------------------- */
 type AnswerRole = "technical" | "functional" | "product";
@@ -270,8 +270,15 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                   {messages.map((m) =>
                     m.sender === "user" ? (
                       <li key={m.id} className="flex justify-end">
-                        <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-secondary px-3.5 py-2 text-sm text-secondary-foreground ring-1 ring-foreground/[0.05] whitespace-pre-wrap">
-                          {m.content}
+                        <div className="group/user flex max-w-[85%] flex-col items-end gap-0.5">
+                          <div className="rounded-2xl rounded-br-sm bg-secondary px-3.5 py-2 text-sm text-secondary-foreground ring-1 ring-foreground/[0.05] whitespace-pre-wrap">
+                            {m.content}
+                          </div>
+                          <CopyButton
+                            text={m.content}
+                            label="Copy prompt"
+                            className="opacity-100 transition-opacity md:opacity-0 md:group-hover/user:opacity-100 md:focus-visible:opacity-100"
+                          />
                         </div>
                       </li>
                     ) : (
@@ -300,6 +307,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                               </span>
                             </p>
                           )}
+                          {m.status !== "streaming" && m.content && <CopyButton text={m.content} label="Copy answer" className="-ml-2 mt-1" />}
                           {m.status === "error" && (
                             <div className="mt-1.5 flex flex-wrap items-center gap-2 rounded-lg border border-warning/30 bg-warning/[0.08] px-3 py-2 text-xs text-warning">
                               <TriangleAlert className="size-3.5 shrink-0" />

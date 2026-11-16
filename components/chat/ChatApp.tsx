@@ -500,8 +500,15 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ type: "spring", stiffness: 400, damping: 32 }}
                   >
-                    <div className="max-w-[85%] rounded-2xl rounded-br-md bg-secondary px-4 py-2.5 text-[15px] whitespace-pre-wrap text-secondary-foreground ring-1 ring-foreground/[0.05]">
-                      {m.content}
+                    <div className="group/user flex max-w-[85%] flex-col items-end gap-0.5">
+                      <div className="rounded-2xl rounded-br-md bg-secondary px-4 py-2.5 text-[15px] whitespace-pre-wrap text-secondary-foreground ring-1 ring-foreground/[0.05]">
+                        {m.content}
+                      </div>
+                      <CopyButton
+                        text={m.content}
+                        label="Copy prompt"
+                        className="opacity-100 transition-opacity md:opacity-0 md:group-hover/user:opacity-100 md:focus-visible:opacity-100"
+                      />
                     </div>
                   </motion.li>
                 ) : (
