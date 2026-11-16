@@ -12,6 +12,7 @@ import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LevelChip } from "@/components/deck/LevelChip";
+import { FeedbackSheet, type FeedbackValue } from "@/components/deck/FeedbackSheet";
 import { StatementActions, StatementCard, type StatementAnswer } from "@/components/deck/StatementCard";
 
 export type BrowseItem = ClientCard & { viewed: boolean };
@@ -45,7 +46,7 @@ export function BrowseGrid({ cards }: { cards: BrowseItem[] }) {
 
   return (
     <>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => (
           <li key={c.v}>
             <BrowseCardPreview card={c} viewed={seen.has(c.v)} hidden={c.v === openId} onOpen={() => setOpenId(c.v)} />
@@ -82,7 +83,7 @@ function BrowseModal({
 
   useEffect(() => {
     if (!card) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !document.querySelector('[data-slot="dialog-content"]') && onClose();
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
@@ -138,7 +139,7 @@ export function BrowseCardPreview({
         data-viewed={viewed}
       >
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-          <Badge variant="secondary" className="max-w-[70%] truncate" title={card.context}>
+          <Badge variant="secondary" className="min-w-0 max-w-[70%] truncate" title={card.context}>
             <span className="truncate">{card.context}</span>
           </Badge>
           {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
@@ -213,7 +214,14 @@ export function BrowseExpanded({
     setFlipped(true);
   };
 
-  const answer = (kind: StatementAnswer) => {
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const answer = (kind: StatementAnswer, fb?: FeedbackValue) => {
+    if (kind === "incorrect" && !fb) {
+      trackEvent("feedback_opened", card.v);
+      setSheetOpen(true);
+      return;
+    }
     startOutbox();
     enqueue("/api/reviews", {
       clientEventId: uid(),
@@ -228,9 +236,11 @@ export function BrowseExpanded({
       flippedAt: null,
       answeredAt: new Date().toISOString(),
       device: deviceInfo(),
-      feedback: null,
+      feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
     });
-    if (kind !== "incorrect" && card.weight > 0) toast.success(`+${card.weight} point${card.weight === 1 ? "" : "s"}`, { description: card.context });
+    if (fb) {
+      // the sheet's own "Suggestion sent" toast covers this
+    } else if (kind !== "incorrect" && card.weight > 0) toast.success(`+${card.weight} point${card.weight === 1 ? "" : "s"}`, { description: card.context });
     else toast("Answer saved", { description: card.context });
     onAnswered();
   };
@@ -260,9 +270,19 @@ export function BrowseExpanded({
             You’ve already answered this card. Its points are counted.
           </p>
         ) : (
-          <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answer} />
+          <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={(k) => answer(k)} />
         )}
       </div>
+      <FeedbackSheet
+        open={sheetOpen}
+        originalText={card.back}
+        onCancel={() => setSheetOpen(false)}
+        onSubmit={(v) => {
+          setSheetOpen(false);
+          answer("incorrect", v);
+          toast.success("Suggestion sent", { description: "Reviewers will see it in their triage queue." });
+        }}
+      />
       </motion.div>
     </motion.div>
   );

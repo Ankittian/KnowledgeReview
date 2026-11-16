@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CircleHelp, LogOut } from "lucide-react";
+import { CircleHelp, KeyRound, LogOut } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -48,6 +48,12 @@ export function TopBar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolea
             <CircleHelp />
           </TooltipTrigger>
           <TooltipContent side="bottom">Take the tour</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger render={<Link href="/account" aria-label="Account and password" className={buttonVariants({ variant: "ghost", size: "icon" })} />}>
+            <KeyRound />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Account &amp; password</TooltipContent>
         </Tooltip>
         <form action={logoutAction}>
           <Tooltip>

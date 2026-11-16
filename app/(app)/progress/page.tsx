@@ -202,7 +202,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
       {revisit.length > 0 && (
         <section>
           <SectionTitle title="Worth revisiting" description="Cards you didn’t know yet. They come back in your deck automatically." />
-          <Stagger as="ul" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger as="ul" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {revisit.map((c) => (
               <StaggerItem as="li" key={c.v}>
                 <RevisitCard context={c.context} front={c.front} back={c.back} />

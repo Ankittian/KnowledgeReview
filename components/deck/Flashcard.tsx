@@ -42,7 +42,7 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
 
   const Meta = () => (
     <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-      <Badge variant="secondary" className="max-w-[70%] truncate font-normal text-muted-foreground">
+      <Badge variant="secondary" className="min-w-0 max-w-[70%] truncate font-normal text-muted-foreground">
         <span className="truncate">{card.context}</span>
       </Badge>
       {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
@@ -80,7 +80,7 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
       )}
       <div className="perspective">
         <motion.div
-          className="preserve-3d grid cursor-pointer"
+          className="preserve-3d grid cursor-pointer grid-cols-[minmax(0,1fr)]"
           animate={reduce ? undefined : { rotateY: flipped ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 240, damping: 26 }}
           onClick={() => (revealed ? setShowFront((v) => !v) : onFlip())}

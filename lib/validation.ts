@@ -24,6 +24,15 @@ export const signupSchema = z
   })
   .refine((d) => d.password === d.confirmPassword, { path: ["confirmPassword"], message: "Passwords do not match." });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Enter your current password.").max(128),
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, { path: ["confirmPassword"], message: "Passwords do not match." })
+  .refine((d) => d.newPassword !== d.currentPassword, { path: ["newPassword"], message: "Choose a password you haven't used here before." });
+
 export const loginSchema = z.object({
   username: z.string().transform(normalizeUsername).pipe(z.string().min(1, "Enter your username.").max(64)),
   password: z.string().min(1, "Enter your password.").max(128),

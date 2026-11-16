@@ -4,16 +4,18 @@ import { redirect } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
 import { getDb, query } from "@/db/client";
 import { roleIdOf, users } from "@/db/schema";
+import { safeNext } from "@/lib/auth/safe-next";
 import { dummyHash, hashPassword, verifyPassword } from "@/lib/auth/password";
-import { createSession, destroySession, getSession } from "@/lib/auth/session";
+import { createSession, destroySession, getSession, requireUser, revokeOtherSessions } from "@/lib/auth/session";
 import { logEvent } from "@/lib/events";
 import { requestMeta } from "@/lib/request";
-import { loginSchema, signupSchema } from "@/lib/validation";
+import { changePasswordSchema, loginSchema, signupSchema } from "@/lib/validation";
 
 export interface FormState {
   error?: string;
   fieldErrors?: Record<string, string>;
   values?: Record<string, string>;
+  success?: string;
 }
 
 const MAX_FAILS_PER_USER = 8;
@@ -63,8 +65,7 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   const sessionId = await createSession(user.id);
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
   await logEvent(db, { userId: user.id, type: "login", sessionId, ip: meta.ip });
-  const next = String(fd.get("next") ?? "");
-  redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/chat");
+  redirect(safeNext(fd.get("next")));
 }
 
 export async function signupAction(_prev: FormState, fd: FormData): Promise<FormState> {
@@ -101,6 +102,36 @@ export async function signupAction(_prev: FormState, fd: FormData): Promise<Form
   if (!u) return { fieldErrors: { username: "That username is taken." }, values };
   await logEvent(db, { userId: u.id, type: "signup", payload: { username: d.username }, ip: meta.ip });
   redirect("/pending?new=1");
+}
+
+/** A signed-in user changes their own password. Other devices are signed out; this one stays signed in. */
+export async function changePasswordAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  const { user: me, sessionId } = await requireUser();
+  const parsed = changePasswordSchema.safeParse(pick(fd, ["currentPassword", "newPassword", "confirmPassword"]));
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const i of parsed.error.issues) fieldErrors[String(i.path[0])] ??= i.message;
+    return { fieldErrors };
+  }
+  const { currentPassword, newPassword } = parsed.data;
+  const meta = await requestMeta();
+  const db = await getDb();
+
+  // Same throttle idea as sign-in: a stolen session must not be able to guess the current password.
+  if ((await recentCount("password_change_failed", 15, { username: me.username })) >= MAX_FAILS_PER_USER) {
+    return { error: "Too many failed attempts. Try again in 15 minutes." };
+  }
+  const [user] = await db.select().from(users).where(eq(users.id, me.id));
+  if (!user || user.status !== "active") return { error: "Your account is not active." };
+  if (!(await verifyPassword(user.passwordHash, currentPassword))) {
+    await logEvent(db, { userId: me.id, type: "password_change_failed", payload: { username: me.username }, sessionId, ip: meta.ip });
+    return { fieldErrors: { currentPassword: "That is not your current password." } };
+  }
+
+  await db.update(users).set({ passwordHash: await hashPassword(newPassword) }).where(eq(users.id, me.id));
+  await revokeOtherSessions(me.id, sessionId);
+  await logEvent(db, { userId: me.id, type: "password_changed", sessionId, ip: meta.ip });
+  return { success: "Password updated. You were signed out on your other devices." };
 }
 
 export async function logoutAction(): Promise<void> {

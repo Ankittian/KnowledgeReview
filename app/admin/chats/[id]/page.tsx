@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { APP_TZ } from "@/lib/dates";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Bot, ChevronRight, Clock, ShieldAlert, ThumbsDown, ThumbsUp, User, Wrench } from "lucide-react";
@@ -14,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Chat transcript" };
 
-const fmt = (d: Date | null) => (d ? new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "medium" }) : "–");
+const fmt = (d: Date | null) => (d ? new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "medium", timeZone: APP_TZ }) : "–");
 
 /** Read-only transcript for admins, with tool calls (denied ones included), tokens and timings. */
 export default async function AdminChatPage({ params }: { params: Promise<{ id: string }> }) {

@@ -47,7 +47,7 @@ export function StatementCard({
 
   const Meta = ({ timer = false }: { timer?: boolean }) => (
     <div className="flex flex-wrap items-center gap-1.5">
-      <Badge variant="secondary" className="max-w-full truncate" title={card.context}>
+      <Badge variant="secondary" className="min-w-0 max-w-full truncate" title={card.context}>
         {card.context}
       </Badge>
       {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
@@ -69,7 +69,7 @@ export function StatementCard({
   return (
     <div className="perspective" data-testid="flashcard" data-statement="true">
       <motion.div
-        className="preserve-3d grid cursor-pointer"
+        className="preserve-3d grid cursor-pointer grid-cols-[minmax(0,1fr)]"
         animate={reduce ? undefined : { rotateY: flipped ? 180 : 0 }}
         transition={{ type: "spring", stiffness: 240, damping: 26 }}
         onClick={() => (revealed ? setShowFront((v) => !v) : onFlip())}

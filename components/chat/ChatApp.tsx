@@ -375,7 +375,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
   );
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem-6rem)] bg-background md:-mb-10 md:h-[calc(100dvh-3.5rem)]">
+    <div className="flex min-h-0 flex-1 bg-background md:-mb-10 md:h-[calc(100dvh-3.5rem)] md:flex-none">
       {/* chat list: collapsible panel on desktop, sheet on phones */}
       <aside
         className={cn(

@@ -24,7 +24,7 @@ export default async function ChatPage() {
 
   return (
     <div className="flex gap-4 pr-4">
-      <div className="min-w-0 flex-1">
+      <div className="flex h-[calc(100dvh-3.5rem-6rem)] min-w-0 flex-1 flex-col md:block md:h-auto">
         <FlashcardBanner remaining={remaining} total={deck.cards.length} streak={streak} />
         <ChatApp key="new" {...data} />
       </div>

@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { and, eq, lt, or, sql } from "drizzle-orm";
+import { and, eq, lt, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { loginSessions, refreshTokens, roles, users } from "@/db/schema";
 import { accessCookie, ACCESS_COOKIE, authConfig, clearedCookie, newRefreshToken, REFRESH_COOKIE, refreshCookie, sha256, signAccessToken, verifyAccessToken } from "./tokens";
@@ -70,6 +70,12 @@ export async function destroySession(): Promise<void> {
 export async function revokeUserSessions(userId: string): Promise<void> {
   const db = await getDb();
   await db.delete(loginSessions).where(eq(loginSessions.userId, userId)); // cascades to refresh_tokens
+}
+
+/** Signs the user out everywhere except the login session `keepSessionId` (used after a password change). */
+export async function revokeOtherSessions(userId: string, keepSessionId: string): Promise<void> {
+  const db = await getDb();
+  await db.delete(loginSessions).where(and(eq(loginSessions.userId, userId), ne(loginSessions.id, keepSessionId)));
 }
 
 export async function requireUser(): Promise<Session> {

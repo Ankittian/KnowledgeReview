@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { APP_TZ } from "@/lib/dates";
 import Link from "next/link";
 import { asc } from "drizzle-orm";
 import { Coins, Cpu, MessagesSquare, MessageCircleQuestion, SlidersHorizontal, ThumbsDown, ThumbsUp } from "lucide-react";
@@ -20,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "All chats" };
 
-const fmt = (d: Date | string) => new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+const fmt = (d: Date | string) => new Date(d).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: APP_TZ });
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
 
 /** Admins see every conversation, filterable by user, role, date and feedback (REQ-CHAT-06, REQ-ROLE-05). */

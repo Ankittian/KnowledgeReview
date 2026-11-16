@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cardFeedback, roleIdOf, users } from "@/db/schema";
@@ -41,9 +41,37 @@ export async function setUserRole(fd: FormData) {
   const role = z.enum(["admin", "functional", "technical"]).parse(fd.get("role"));
   if (id === actor.id) throw new Error("You can't change your own role.");
   const db = await getDb();
-  await db.update(users).set({ roleId: roleIdOf(role), answerRole: null }) // answer style follows the new role again.where(eq(users.id, id));
+  await db.update(users).set({ roleId: roleIdOf(role), answerRole: null }).where(eq(users.id, id)); // answer style follows the new role again
   await revokeUserSessions(id); // new permissions on next sign-in
   await audit(db, actor.id, "user_role_changed", "user", id, { role });
+  revalidatePath("/admin/users");
+}
+
+/**
+ * Permanently deletes a user and everything they own: flashcard progress, reviews, feedback and assistant chats.
+ * The activity log is kept (it has no foreign key) so the audit trail survives. Admins cannot delete themselves.
+ */
+export async function deleteUser(fd: FormData) {
+  const { user: actor } = await requireRole(["admin"]);
+  const id = uuid.parse(fd.get("userId"));
+  if (id === actor.id) throw new Error("You can't delete your own account.");
+  const db = await getDb();
+  const [target] = await db.select({ username: users.username, displayName: users.displayName }).from(users).where(eq(users.id, id));
+  if (!target) return;
+
+  await revokeUserSessions(id);
+  await db.transaction(async (tx) => {
+    const convos = sql`(SELECT id FROM conversations WHERE user_id = ${id})`;
+    const msgs = sql`(SELECT id FROM chat_messages WHERE conversation_id IN ${convos})`;
+    await tx.execute(sql`DELETE FROM chat_feedback WHERE user_id = ${id} OR message_id IN ${msgs}`);
+    await tx.execute(sql`DELETE FROM chat_tool_calls WHERE message_id IN ${msgs}`);
+    await tx.execute(sql`DELETE FROM chat_messages WHERE conversation_id IN ${convos}`);
+    await tx.execute(sql`DELETE FROM conversations WHERE user_id = ${id}`);
+    await tx.execute(sql`DELETE FROM card_feedback WHERE user_id = ${id}`); // before card_reviews: it points at them
+    await tx.execute(sql`DELETE FROM card_reviews WHERE user_id = ${id}`);
+    await tx.delete(users).where(eq(users.id, id)); // cascades: decks, review schedule, sessions
+  });
+  await audit(db, actor.id, "user_deleted", "user", id, { username: target.username, displayName: target.displayName });
   revalidatePath("/admin/users");
 }
 
