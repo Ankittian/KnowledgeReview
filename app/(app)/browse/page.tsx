@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { ChevronLeft, ChevronRight, SearchX, Search } from "lucide-react";
 import { getDb, query } from "@/db/client";
 import { BrowseGrid } from "@/components/browse/BrowseCard";
+import { KindToggle } from "@/components/browse/KindToggle";
 import { ModuleFormSelects } from "@/components/browse/ModuleFormSelects";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { requireUser } from "@/lib/auth/session";
 import { audienceIn, pickAudiences } from "@/lib/cards/audience";
+import { loadBrowseForms, loadKindCounts, parseBrowseKind } from "@/lib/browse-topics";
 import { LEVELS, countWords, minReadSeconds, type Level } from "@/lib/cards/spec";
 import { getModuleNames } from "@/lib/deck";
 import { cn } from "@/lib/utils";
@@ -23,7 +25,7 @@ const PAGE = 24;
 export default async function BrowsePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; module?: string; page?: string; level?: string; audience?: string; form?: string }>;
+  searchParams: Promise<{ q?: string; module?: string; page?: string; level?: string; audience?: string; form?: string; kind?: string }>;
 }) {
   const { user } = await requireUser();
   const sp = await searchParams;
@@ -32,32 +34,26 @@ export default async function BrowsePage({
   const q = (sp.q ?? "").trim().slice(0, 100);
   const module = (sp.module ?? "").trim().slice(0, 10);
   const rawFormId = Number(sp.form) > 0 ? Number(sp.form) : null;
+  // Form questions | Common questions. An old link that names a form but no kind means Form questions.
+  const kind = parseBrowseKind(sp.kind) || (rawFormId ? "form" : "");
   const page = Math.max(1, Number(sp.page) || 1);
   const db = await getDb();
   const moduleNames = await getModuleNames(db);
 
-  // forms that have at least one card in this user's set: a card belongs to a form if it sits on the form or is related to it
-  const forms = await query<{ id: number; name: string; n: number; module: string | null }>(
-    db,
-    sql`SELECT i.id, i.name, i.module, count(DISTINCT x.card_id)::int AS n
-        FROM kb_items i JOIN (
-          SELECT c.id AS card_id, c.kb_item_id AS form_id FROM cards c
-            WHERE c.status = 'active' AND ${audienceIn(sql`c.audience`, audiences)}
-          UNION ALL
-          SELECT r.card_id, r.kb_item_id AS form_id FROM card_related_items r JOIN cards c ON c.id = r.card_id
-            WHERE c.status = 'active' AND ${audienceIn(sql`c.audience`, audiences)}
-        ) x ON x.form_id = i.id
-        WHERE i.type = 'form' AND i.active
-        GROUP BY i.id, i.name, i.module ORDER BY i.name`,
-  );
+  // forms that have at least one form card in this user's set, and how many cards of each kind there are
+  const [forms, counts] = await Promise.all([loadBrowseForms(db, audiences), loadKindCounts(db, audiences, module)]);
 
-  // a form only counts when it belongs to the chosen area (stale links / changed area)
-  const formId = rawFormId && forms.some((f) => f.id === rawFormId && (!module || f.module === module)) ? rawFormId : null;
+  // a form only counts under Form questions and when it belongs to the chosen area (stale links / changed area)
+  const formId =
+    kind === "form" && rawFormId && forms.some((f) => f.id === rawFormId && (!module || f.module === module)) ? rawFormId : null;
 
   // only generated cards in the user's own set (legacy template cards have no audience and are never listed)
   const where = [sql`c.status = 'active'`, audienceIn(sql`c.audience`, audiences)];
   if (level) where.push(sql`c.level::text = ${level}`);
   if (module) where.push(sql`i.module = ${module}`);
+  // i is the item a card sits on: a form for form cards, a flow or module for common cards
+  if (kind === "form") where.push(sql`i.type = 'form'`);
+  if (kind === "common") where.push(sql`i.type <> 'form'`);
   if (formId) where.push(sql`(c.kb_item_id = ${formId} OR c.id IN (SELECT card_id FROM card_related_items WHERE kb_item_id = ${formId}))`);
   if (q) {
     const like = `%${q.replace(/[\\%_]/g, (m) => `\\${m}`)}%`;
@@ -76,41 +72,45 @@ export default async function BrowsePage({
   ]);
   const pages = Math.max(1, Math.ceil(Number(n) / PAGE));
   const href = (p: number) =>
-    `/browse?${new URLSearchParams({ ...(q ? { q } : {}), ...(module ? { module } : {}), ...(formId ? { form: String(formId) } : {}), ...(level ? { level } : {}), ...(sp.audience && user.role === "admin" ? { audience: sp.audience } : {}), page: String(p) })}`;
+    `/browse?${new URLSearchParams({ ...(q ? { q } : {}), ...(module ? { module } : {}), ...(kind ? { kind } : {}), ...(formId ? { form: String(formId) } : {}), ...(level ? { level } : {}), ...(sp.audience && user.role === "admin" ? { audience: sp.audience } : {}), page: String(p) })}`;
 
   return (
     <div className="mx-auto max-w-6xl space-y-5 px-4 pt-6 sm:px-6 sm:pt-8">
       <PageHeader title="Browse cards" description="Answer a card to earn its points on the leaderboard. Each card scores once." />
 
-      <form className="flex flex-col gap-2 rounded-xl bg-card p-2 shadow-card ring-1 ring-foreground/[0.07] sm:flex-row" role="search">
-        <InputGroup className="h-9 flex-1 border-transparent shadow-none dark:bg-transparent">
-          <InputGroupAddon>
-            <Search />
-          </InputGroupAddon>
-          <InputGroupInput name="q" defaultValue={q} placeholder="Search questions and answers…" aria-label="Search cards" />
-        </InputGroup>
-        <ModuleFormSelects
-          modules={[...moduleNames].map(([code, name]) => ({ code, name }))}
-          forms={forms}
-          initialModule={module}
-          initialForm={formId ? String(formId) : ""}
-        />
-        <NativeSelect name="level" defaultValue={level} className="w-full sm:w-40 [&_select]:h-9" aria-label="Level">
-          <NativeSelectOption value="">All levels</NativeSelectOption>
-          <NativeSelectOption value="easy">Easy (1)</NativeSelectOption>
-          <NativeSelectOption value="medium">Medium (2)</NativeSelectOption>
-          <NativeSelectOption value="hard">Hard (3)</NativeSelectOption>
-        </NativeSelect>
-        {user.role === "admin" && (
-          <NativeSelect name="audience" defaultValue={sp.audience ?? ""} className="w-full sm:w-44 [&_select]:h-9" aria-label="Card set">
-            <NativeSelectOption value="">Both sets</NativeSelectOption>
-            <NativeSelectOption value="functional">Functional set</NativeSelectOption>
-            <NativeSelectOption value="technical">Technical set</NativeSelectOption>
+      <form className="flex flex-col gap-2 rounded-xl bg-card p-2 shadow-card ring-1 ring-foreground/[0.07]" role="search">
+        <KindToggle kind={kind} counts={counts} />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <InputGroup className="h-9 flex-1 border-transparent shadow-none dark:bg-transparent">
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupInput name="q" defaultValue={q} placeholder="Search questions and answers…" aria-label="Search cards" />
+          </InputGroup>
+          <ModuleFormSelects
+            modules={[...moduleNames].map(([code, name]) => ({ code, name }))}
+            forms={forms}
+            initialModule={module}
+            initialForm={formId ? String(formId) : ""}
+            showForms={kind === "form"}
+          />
+          <NativeSelect name="level" defaultValue={level} className="w-full sm:w-40 [&_select]:h-9" aria-label="Level">
+            <NativeSelectOption value="">All levels</NativeSelectOption>
+            <NativeSelectOption value="easy">Easy (1)</NativeSelectOption>
+            <NativeSelectOption value="medium">Medium (2)</NativeSelectOption>
+            <NativeSelectOption value="hard">Hard (3)</NativeSelectOption>
           </NativeSelect>
-        )}
-        <Button type="submit" className="h-9 px-4">
-          Search
-        </Button>
+          {user.role === "admin" && (
+            <NativeSelect name="audience" defaultValue={sp.audience ?? ""} className="w-full sm:w-44 [&_select]:h-9" aria-label="Card set">
+              <NativeSelectOption value="">Both sets</NativeSelectOption>
+              <NativeSelectOption value="functional">Functional set</NativeSelectOption>
+              <NativeSelectOption value="technical">Technical set</NativeSelectOption>
+            </NativeSelect>
+          )}
+          <Button type="submit" className="h-9 px-4">
+            Search
+          </Button>
+        </div>
       </form>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -139,7 +139,7 @@ export default async function BrowsePage({
             <EmptyTitle>No cards found</EmptyTitle>
             <EmptyDescription>Try a different search term or pick another area.</EmptyDescription>
           </EmptyHeader>
-          {(q || module || formId) && (
+          {(q || module || kind || formId) && (
             <Link href="/browse" className={buttonVariants({ variant: "outline", size: "sm" })}>
               Clear filters
             </Link>
@@ -147,13 +147,13 @@ export default async function BrowsePage({
         </Empty>
       ) : (
         <BrowseGrid
-          key={`${q}|${module}|${formId ?? ""}|${level}|${sp.audience ?? ""}|${page}`}
+          key={`${q}|${module}|${kind}|${formId ?? ""}|${level}|${sp.audience ?? ""}|${page}`}
           cards={rows.map((c) => ({
             ...c,
             module: c.module ? (moduleNames.get(c.module) ?? c.module) : null,
             statement: true,
             weight: c.level ? LEVELS[c.level].weight : 0,
-            minRead: minReadSeconds(countWords(c.back)),
+            minRead: minReadSeconds(countWords(c.back), c.level),
             viewed: c.viewed,
           }))}
         />

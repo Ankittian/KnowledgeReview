@@ -3,23 +3,33 @@
 import { useState } from "react";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 
-export type FormOption = { id: number; name: string; n: number; module: string | null };
+export type FormOption = {
+  id: number;
+  name: string;
+  n: number;
+  module: string | null;
+};
 
 /**
  * The Area (module) and Form dropdowns of the Browse search. Picking an area immediately narrows the Form list
  * to that area's forms, and clears a picked form that belongs to another area. Both are plain named selects,
  * so the surrounding GET form still submits `module` and `form` as before.
+ *
+ * `showForms` is true only under "Form questions": the Form dropdown is not shown (and no `form` is submitted) for
+ * "Common questions" or when no kind is chosen.
  */
 export function ModuleFormSelects({
   modules,
   forms,
   initialModule,
   initialForm,
+  showForms,
 }: {
   modules: { code: string; name: string }[];
   forms: FormOption[];
   initialModule: string;
   initialForm: string;
+  showForms: boolean;
 }) {
   const [module, setModule] = useState(initialModule);
   const [form, setForm] = useState(initialForm);
@@ -46,14 +56,22 @@ export function ModuleFormSelects({
           </NativeSelectOption>
         ))}
       </NativeSelect>
-      <NativeSelect name="form" value={formValue} onChange={(e) => setForm(e.target.value)} className="w-full sm:w-56 [&_select]:h-9" aria-label="Form">
-        <NativeSelectOption value="">{module ? "All forms in this area" : "All forms"}</NativeSelectOption>
-        {visible.map((f) => (
-          <NativeSelectOption key={f.id} value={String(f.id)}>
-            {f.name} ({f.n})
-          </NativeSelectOption>
-        ))}
-      </NativeSelect>
+      {showForms && (
+        <NativeSelect
+          name="form"
+          value={formValue}
+          onChange={(e) => setForm(e.target.value)}
+          className="w-full sm:w-56 [&_select]:h-9"
+          aria-label="Form"
+        >
+          <NativeSelectOption value="">{module ? "All forms in this area" : "All forms"}</NativeSelectOption>
+          {visible.map((f) => (
+            <NativeSelectOption key={f.id} value={String(f.id)}>
+              {f.name} ({f.n})
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      )}
     </>
   );
 }

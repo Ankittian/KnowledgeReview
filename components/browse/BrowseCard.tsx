@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ArrowDown, CheckCircle2, X } from "lucide-react";
 import { deviceInfo, enqueue, startOutbox, trackEvent, uid } from "@/lib/client/outbox";
 import type { ClientCard } from "@/lib/deck";
+import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LevelChip } from "@/components/deck/LevelChip";
@@ -177,6 +178,33 @@ export function BrowseExpanded({
 }) {
   const [flipped, setFlipped] = useState(false);
   const shownAt = useRef(new Date().toISOString());
+  const activeMs = useRef(0);
+  const lastActivity = useRef(Date.now());
+  const [remainingMs, setRemainingMs] = useState(READ_LOCK_ENABLED ? card.minRead * 1000 : 0);
+
+  // the read-time clock, as in the daily deck: runs only while the tab is visible and the user is active
+  useEffect(() => {
+    const need = card.minRead * 1000;
+    const bump = () => {
+      lastActivity.current = Date.now();
+    };
+    const evs = ["pointermove", "pointerdown", "keydown", "scroll", "touchstart"] as const;
+    evs.forEach((e) => window.addEventListener(e, bump, { passive: true }));
+    let last = Date.now();
+    const t = setInterval(() => {
+      const now = Date.now();
+      const d = Math.min(now - last, 1000);
+      last = now;
+      if (document.visibilityState === "visible" && now - lastActivity.current <= 60_000) {
+        activeMs.current += d;
+        if (READ_LOCK_ENABLED) setRemainingMs(Math.max(0, need - activeMs.current));
+      }
+    }, 250);
+    return () => {
+      clearInterval(t);
+      evs.forEach((e) => window.removeEventListener(e, bump));
+    };
+  }, [card.v, card.minRead]);
 
   const flip = () => {
     if (flipped) return;
@@ -196,6 +224,7 @@ export function BrowseExpanded({
       knewIt: kind !== "new",
       verdict: kind === "incorrect" ? "needs_improvement" : "correct",
       shownAt: shownAt.current,
+      activeMs: Math.round(activeMs.current),
       flippedAt: null,
       answeredAt: new Date().toISOString(),
       device: deviceInfo(),
@@ -219,7 +248,7 @@ export function BrowseExpanded({
             <X /> Close
           </Button>
         </div>
-      <StatementCard card={card} remainingMs={0} flipped={flipped} onFlip={flip} />
+      <StatementCard card={card} remainingMs={remainingMs} flipped={flipped} onFlip={flip} />
 
       <div className="mt-9">
         {!flipped ? (
@@ -231,7 +260,7 @@ export function BrowseExpanded({
             You’ve already answered this card. Its points are counted.
           </p>
         ) : (
-          <StatementActions locked={false} remainingMs={0} onAnswer={answer} />
+          <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answer} />
         )}
       </div>
       </motion.div>
