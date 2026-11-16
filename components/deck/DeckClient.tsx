@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { ArrowRight, BarChart3, Check, CheckCircle2, CloudOff, Flame, HelpCircle, Inbox, PencilLine, Search, X } from "lucide-react";
+import { ArrowRight, BarChart3, Check, CheckCircle2, CloudOff, Flame, HelpCircle, Inbox, PencilLine, Search, SkipForward, X } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
 import { deviceInfo, enqueue, onPendingChange, startOutbox, trackEvent, uid } from "@/lib/client/outbox";
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
@@ -38,7 +38,14 @@ interface Props {
 
 export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAnswered, answeredTodayTotal, dailyLimit, streak, answeredToday }: Props) {
   const [answered, setAnswered] = useState(() => new Set(initialAnswered));
-  const queue = useMemo(() => cards.filter((c) => !answered.has(c.v)), [cards, answered]);
+  // skipped cards (version ids, oldest skip first) go to the back of today's queue; nothing is recorded for them
+  const [skipped, setSkipped] = useState<number[]>([]);
+  const queue = useMemo(() => {
+    const open = cards.filter((c) => !answered.has(c.v));
+    const fresh = open.filter((c) => !skipped.includes(c.v));
+    const later = skipped.map((v) => open.find((c) => c.v === v)).filter((c): c is ClientCard => !!c);
+    return [...fresh, ...later];
+  }, [cards, answered, skipped]);
   const current = queue[0] as ClientCard | undefined;
   const doneCount = cards.length - queue.length;
   // progress counts the whole day: answers from earlier sign-ins + this sign-in's random set
@@ -215,6 +222,15 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     [current, remainingMs, submitStatement],
   );
 
+  /** Skip for now: the card moves to the back of the queue and no answer or score is saved. */
+  const canSkip = !!current && queue.length > 1 && knew === null && !sheetOpen;
+  const skip = useCallback(() => {
+    if (!current || queue.length < 2) return;
+    trackEvent("card_skipped", current.v, { phase, position: dayDone + 1, of: dayTotal, deck_id: deckId });
+    setExitDir(-1);
+    setSkipped((prev) => [...prev.filter((v) => v !== current.v), current.v]);
+  }, [current, queue.length, phase, dayDone, dayTotal, deckId]);
+
   const openSheet = useCallback(() => {
     if (!current || knew === null) return;
     setSheetOpen(true);
@@ -232,6 +248,11 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
       const t = e.target as HTMLElement;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
       const k = e.key.toLowerCase();
+      if (k === "s" && canSkip) {
+        e.preventDefault();
+        skip();
+        return;
+      }
       if (current?.statement) {
         if (phase === "front" && (k === " " || k === "enter")) {
           e.preventDefault();
@@ -256,7 +277,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [phase, knew, sheetOpen, flip, answerKnew, submit, openSheet, current, answerStatement]);
+  }, [phase, knew, sheetOpen, flip, answerKnew, submit, openSheet, current, answerStatement, canSkip, skip]);
 
   const progress = dayTotal ? (dayDone / dayTotal) * 100 : 0;
 
@@ -428,6 +449,12 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
                   </motion.div>
                 )}
               </AnimatePresence>
+            )}
+            {canSkip && (
+              <Button variant="ghost" size="sm" className="mx-auto mt-4 flex text-muted-foreground" onClick={skip} data-testid="skip-card">
+                <SkipForward /> Skip for now
+                <Kbd className="hide-touch ml-1">S</Kbd>
+              </Button>
             )}
           </div>
           <FeedbackSheet

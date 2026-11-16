@@ -78,6 +78,7 @@ export const CLIENT_EVENT_TYPES = [
   "deck_started",
   "card_shown",
   "card_flipped",
+  "card_skipped",
   "knew_answered",
   "statement_answered",
   "feedback_opened",
