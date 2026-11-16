@@ -1,6 +1,7 @@
-import { desc, eq, inArray } from "drizzle-orm";
-import { cardRelatedItems, cards, cardVersions } from "@/db/schema";
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { cardRelatedItems, cards, cardVersions, kbItems } from "@/db/schema";
 import { cardIdOf, type CardGroup, type CardItem, type Catalog } from "./catalog";
+import type { TitledCard } from "./dedupe";
 import { sha, type KbIndex } from "./kb-items";
 import { chunk } from "./purge";
 import type { Tx } from "./types";
@@ -32,6 +33,21 @@ export async function loadExistingCards(tx: Tx, ids: string[]): Promise<Map<stri
   return out;
 }
 
+/** The text of a card version that decides whether a re-push is a change: its label, title and body. */
+export const cardHash = (group: CardGroup, card: CardItem) => sha([group.context ?? group.title ?? group.key, card.title, card.body].join("\n␞\n"));
+
+/** Titles (first line of the front) of the active cards of these KB items for one audience: what a new card is compared with. */
+export async function loadExistingTitles(tx: Tx, kbItemIds: number[], audience: Catalog["audience"]): Promise<TitledCard[]> {
+  if (kbItemIds.length === 0) return [];
+  const rows = await tx
+    .select({ id: cards.id, level: cards.level, item: kbItems.key, front: cardVersions.front })
+    .from(cards)
+    .innerJoin(kbItems, eq(kbItems.id, cards.kbItemId))
+    .innerJoin(cardVersions, eq(cardVersions.id, cards.currentVersionId))
+    .where(and(inArray(cards.kbItemId, kbItemIds), eq(cards.status, "active"), eq(cards.audience, audience)));
+  return rows.map((r) => ({ id: r.id, level: r.level ?? "", item: r.item, title: r.front.split("\n")[0] }));
+}
+
 export type CardOutcome = "inserted" | "new_version" | "unchanged";
 
 /**
@@ -48,7 +64,7 @@ export async function writeCard(
 ): Promise<{ id: string; outcome: CardOutcome }> {
   const id = cardIdOf(catalog, group, card);
   const context = group.context ?? group.title ?? group.key;
-  const hash = sha([context, card.title, card.body].join("\n␞\n"));
+  const hash = cardHash(group, card);
   const versionValues = { cardId: id, context, front: card.title, back: card.body, sourceText: card.body, sourceHash: hash };
 
   let known = existing.get(id);
@@ -78,12 +94,19 @@ export async function writeCard(
   return { id, outcome };
 }
 
-/** `source` links from a card to the KB items its `source_refs` name. Returns how many links were new. */
-export async function linkSources(tx: Tx, idx: KbIndex, cardId: string, card: CardItem): Promise<number> {
+/**
+ * `source` links from a card to the KB items its `source_refs` name. Returns how many links were new and which refs
+ * did not resolve to any KB item (a typo or an item that is not loaded loses its link, so the push reports them).
+ */
+export async function linkSources(tx: Tx, idx: KbIndex, cardId: string, card: CardItem): Promise<{ created: number; unresolved: string[] }> {
   let created = 0;
+  const unresolved: string[] = [];
   for (const ref of card.source_refs ?? []) {
     const kbItemId = idx.resolveRef(ref);
-    if (kbItemId === undefined) continue;
+    if (kbItemId === undefined) {
+      unresolved.push(ref);
+      continue;
+    }
     const rows = await tx
       .insert(cardRelatedItems)
       .values({ cardId, kbItemId, relation: "source" })
@@ -91,5 +114,5 @@ export async function linkSources(tx: Tx, idx: KbIndex, cardId: string, card: Ca
       .returning({ kbItemId: cardRelatedItems.kbItemId });
     created += rows.length;
   }
-  return created;
+  return { created, unresolved };
 }

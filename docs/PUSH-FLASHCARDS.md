@@ -4,7 +4,7 @@ How to load the JSON catalogs in `data/generated-cards/` into the database. One 
 
 ## 1. What goes in
 
-One JSON file per **module and audience**, in `data/generated-cards/`, for example `MM.functional.json` or `PM.functional.json`. The script reads every `*.json` in that folder, or only the files you name.
+One JSON file per **module and audience**, in `data/generated-cards/`, for example `MM.forms-common.functional.json`. The script reads every `*.json` in that folder, or only the files you name.
 
 ```json
 {
@@ -63,8 +63,8 @@ Then push for real:
 
 ```bash
 npm run cards:push                              # every file in data/generated-cards/
-npm run cards:push -- MM.functional.json        # one file (relative to the project root)
-npm run cards:push -- data/generated-cards/MM.functional.json data/generated-cards/PM.functional.json
+npm run cards:push -- data/generated-cards/MM.forms-common.functional.json   # one file (relative to the project root)
+npm run cards:push -- data/generated-cards/<file1>.json data/generated-cards/<file2>.json
 ```
 
 ### Append or purge
@@ -81,10 +81,45 @@ npm run cards:push -- data/generated-cards/MM.functional.json data/generated-car
 
 Each file is pushed in a single transaction: if anything fails, that file leaves the database exactly as it was.
 
+### Checks the push makes before it writes anything
+
+A card's id only catches an exact repeat. So every push also checks the cards in the file:
+
+| Check | What it finds | Real push | `--dry-run` |
+|---|---|---|---|
+| **Repeated topic** | A new card whose title shares about 60 percent of its key words with a stored card of the **same item** (any level), or with another new card in the file. Filler words, plurals and British/American spelling are ignored. | **Refused**, nothing is saved | Reported |
+| **Revised card** | A card that already exists (same id) with different text. It would get a new version. | Reported (refused with `--no-revisions`) | Reported |
+| **Unresolved source_refs** | A `source_refs` entry that matches no knowledge-base item, so the card has no link to it. | Reported, the card is still saved | Reported |
+
+Options:
+
+```bash
+npm run cards:push -- --allow-duplicates        # report repeated topics but push anyway
+npm run cards:push -- --similarity 0.7          # how close two titles must be (0 to 1, default 0.6)
+npm run cards:push -- --no-duplicate-check      # skip the title comparison
+npm run cards:push -- --no-revisions            # refuse if any card would be replaced by a new version
+```
+
+### The ledger: what is already taught
+
+The generation prompt (`docs/prompts/prompt5.txt`) needs the titles already in the database so it does not repeat them. Export them (titles only, never bodies):
+
+```bash
+npm run cards:ledger -- --module MM                          # every functional card of the module
+npm run cards:ledger -- --module MM --items fGRN,fGateEntry  # only the items of this run
+npm run cards:ledger -- --module MM --audience technical --out ledger.txt
+```
+
+Each line is `<item key> | <level> | <topic_key> | <title>`. Paste it into `{{EXISTING_CARDS}}`.
+
+### Common (cross-form) cards
+
+A card that is not about one form goes under a `flow` item (or a `module` item). The push creates that item on first use (type `process`, marked generated, with the catalog's module). Item lookup is by type **and** key, so a flow is never attached to a form that has the same key. On the Browse screen two buttons sit above the filters: **Form questions** (cards that sit on a form) and **Common questions** (cards that sit on a flow or a module). The Form dropdown is shown only under Form questions; Common questions has no dropdown. Clicking the active button turns it off and shows all cards. Each button shows its card count and is disabled when there are none. Under Form questions a form's count and list include only form cards, so common cards that cite the form in `source_refs` are found under Common questions instead.
+
 ## 4. Read the output
 
 ```
-Processing: data/generated-cards\MM.functional.json
+Processing: data/generated-cards\MM.forms-common.functional.json
 Module: MM | Audience: functional | Total Cards: 264
 MM: 3 new, 5 updated (new version), 256 unchanged, 12 knowledge links.
 ```

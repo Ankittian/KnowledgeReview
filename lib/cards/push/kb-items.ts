@@ -8,6 +8,8 @@ export const sha = (s: string) => crypto.createHash("sha256").update(s).digest("
 /** In-memory index of kb_items, loaded once per catalog so card and link lookups do not each hit the database. */
 export class KbIndex {
   private byKey = new Map<string, number>();
+  private byTypeKey = new Map<string, number>();
+  private idsByKey = new Map<string, number[]>();
   private byYamlFile = new Map<string, number>();
   private byRuleKey = new Map<string, number>();
 
@@ -21,12 +23,27 @@ export class KbIndex {
   /** First row wins on duplicate keys, so lookups stay deterministic. */
   add(r: { id: number; type: string; key: string; yamlFile: string }) {
     if (!this.byKey.has(r.key)) this.byKey.set(r.key, r.id);
+    if (!this.byTypeKey.has(`${r.type}:${r.key}`)) this.byTypeKey.set(`${r.type}:${r.key}`, r.id);
+    this.idsByKey.set(r.key, [...(this.idsByKey.get(r.key) ?? []), r.id]);
     if (!this.byYamlFile.has(r.yamlFile)) this.byYamlFile.set(r.yamlFile, r.id);
     if (r.type === "rule" && !this.byRuleKey.has(r.key)) this.byRuleKey.set(r.key, r.id);
   }
 
   findByKey(key: string): number | undefined {
     return this.byKey.get(key);
+  }
+
+  /**
+   * The kb_item a card group belongs to. The group's scope fixes the item type (form, process or module), so the lookup
+   * is by type AND key: a flow whose key happens to equal a form key must not attach to that form. When no item of that
+   * type exists, a key that belongs to exactly one item (of any type) is still accepted, so older catalogs keep working;
+   * an ambiguous key is not guessed, the item is created instead.
+   */
+  findForGroup(scope: CardGroup["scope"], key: string): number | undefined {
+    const exact = this.byTypeKey.get(`${TYPE_BY_SCOPE[scope]}:${key}`);
+    if (exact !== undefined) return exact;
+    const ids = this.idsByKey.get(key);
+    return ids && ids.length === 1 ? ids[0] : undefined;
   }
 
   /** A `source_refs` entry points at a KB item by yaml file, by `rule:<key>` or by plain key (in that order). */
@@ -43,13 +60,28 @@ export class KbIndex {
 
 const TYPE_BY_SCOPE = { flow: "process", module: "module", form: "form" } as const;
 
+/**
+ * The yaml_file recorded for an item this push creates. A form takes the file of its first source; a flow or a module
+ * never does, because its sources are the forms it was compared across and the item must not claim one of their files.
+ */
+function yamlFileFor(group: CardGroup): string {
+  if (group.scope === "form") return group.cards[0]?.source_refs?.[0] ?? `forms/${group.key}.yaml`;
+  if (group.scope === "module") return `modules/${group.key}.yaml`;
+  return `processes/${group.key}.yaml`;
+}
+
+/** The kb_item a card group belongs to, without creating it: undefined when it does not exist yet. */
+export function findKbItem(idx: KbIndex, group: CardGroup): number | undefined {
+  return idx.findForGroup(group.scope, group.key);
+}
+
 /** The kb_item a card group belongs to; created (marked `generated`) when the KB sync has not loaded it. */
 export async function ensureKbItem(tx: Tx, idx: KbIndex, catalog: Catalog, group: CardGroup): Promise<{ id: number; created: boolean }> {
-  const existing = idx.findByKey(group.key);
+  const existing = idx.findForGroup(group.scope, group.key);
   if (existing !== undefined) return { id: existing, created: false };
 
   const type = TYPE_BY_SCOPE[group.scope];
-  const yamlFile = group.cards[0]?.source_refs?.[0] ?? `processes/${group.key}.yaml`;
+  const yamlFile = yamlFileFor(group);
   const [row] = await tx
     .insert(kbItems)
     .values({

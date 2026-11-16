@@ -3,7 +3,7 @@ import path from "node:path";
 import { z } from "zod";
 
 /**
- * Input of the card push: one JSON catalog per module and audience, e.g. data/generated-cards/MM.functional.json.
+ * Input of the card push: one JSON catalog per module and audience, e.g. data/generated-cards/MM.forms-common.functional.json.
  *
  *   { module, audience, items: [ { scope, key, title, context, cards: [ { level, topic_key, title, body, source_refs } ] } ] }
  */
