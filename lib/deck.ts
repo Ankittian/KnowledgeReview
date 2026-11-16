@@ -123,7 +123,7 @@ export interface ClientCard {
   level: Level | null;
   /** what a correct answer is worth (Easy 1, Medium 2, Hard 3) */
   weight: number;
-  /** seconds before the answer buttons unlock (words / 5, at least 4); 0 for non-statement cards */
+  /** seconds before the answer buttons unlock (by level: 10 / 15-18 / 20-22) */
   minRead: number;
 }
 
@@ -244,7 +244,7 @@ export async function getOrCreateDeck(
       statement: true,
       level: r.level,
       weight: r.level ? LEVELS[r.level].weight : 0,
-      minRead: minReadSeconds(countWords(r.back)),
+      minRead: minReadSeconds(countWords(r.back), r.level),
     });
     if (isAnswered) answered.push(r.v);
   }

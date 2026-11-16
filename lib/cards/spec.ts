@@ -27,14 +27,26 @@ export const SCOPE_CEILING: Record<Scope, number> = { module: 8, flow: 6, form: 
 
 /**
  * Master switch for the read-time lock (countdown, disabled answer buttons, server refusal of early answers).
- * OFF for now: cards can be answered at once. Time on the card is still recorded. Set to true to enforce it again.
+ * ON: the answer options unlock only after the card's read time. Set to false to allow answering at once.
  */
-export const READ_LOCK_ENABLED = false;
+export const READ_LOCK_ENABLED = true;
 
-/** A card cannot be answered before this many seconds have passed since it was shown (words ÷ 5 per second, min 4). */
+/**
+ * Seconds before the answer options unlock, by level: easy 10, medium 15-18, hard 20-22.
+ * Within a range, a longer card (more words, relative to its level's word range) waits longer.
+ */
+export const READ_SECONDS: Record<Level, [number, number]> = { easy: [10, 10], medium: [15, 18], hard: [20, 22] };
+
+/** Fallback for a card with no level: words ÷ 5 per second, min 4. */
 export const READ_WORDS_PER_SECOND = 5;
 export const READ_MIN_SECONDS = 4;
-export const minReadSeconds = (wordCount: number) => Math.max(READ_MIN_SECONDS, Math.ceil(wordCount / READ_WORDS_PER_SECOND));
+export const minReadSeconds = (wordCount: number, level?: Level | null) => {
+  if (!level) return Math.max(READ_MIN_SECONDS, Math.ceil(wordCount / READ_WORDS_PER_SECOND));
+  const [lo, hi] = READ_SECONDS[level];
+  const [wMin, wMax] = LEVELS[level].words;
+  const t = Math.min(1, Math.max(0, (wordCount - wMin) / (wMax - wMin)));
+  return Math.round(lo + t * (hi - lo));
+};
 
 export const countWords = (s: string) => (s.trim().match(/\S+/g) ?? []).length;
 export const countLines = (s: string) => s.split(/\r?\n/).filter((l) => l.trim()).length;

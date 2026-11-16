@@ -268,7 +268,9 @@ describe("card sets and the read-time lock", () => {
     expect(fnDeck.cards.map((c) => c.v)).toEqual([ids.fn]);
     expect(techDeck.cards.map((c) => c.v)).toEqual([ids.tech]);
     expect(fnDeck.cards[0]).toMatchObject({ statement: true, level: "easy", weight: 1, minRead: 10 });
-    expect(techDeck.cards[0]).toMatchObject({ level: "hard", weight: 3, minRead: 40 });
+    expect(techDeck.cards[0]).toMatchObject({ level: "hard", weight: 3 });
+    expect(techDeck.cards[0].minRead).toBeGreaterThanOrEqual(20);
+    expect(techDeck.cards[0].minRead).toBeLessThanOrEqual(22);
   });
 
   it("refuses an answer for a card outside the user's set or without an audience", async () => {
@@ -289,7 +291,7 @@ describe("card sets and the read-time lock", () => {
     const at = (msAgo: number) => new Date(now - msAgo).toISOString();
     const base = { versionId: v, deckDate: TODAY, deckId: deck.deckId, knewIt: true, verdict: "correct" as const };
     const send = (n: string, extra: Record<string, unknown>) =>
-      recordReview(h.db, fnUser.id, { clientEventId: `lock-${n}-xxxxx`, ...base, ...extra } as Parameters<typeof recordReview>[2], {}, TODAY, { enforceReadTime: true }); // the lock itself is switched off globally (READ_LOCK_ENABLED); tested here explicitly
+      recordReview(h.db, fnUser.id, { clientEventId: `lock-${n}-xxxxx`, ...base, ...extra } as Parameters<typeof recordReview>[2], {}, TODAY, { enforceReadTime: true }); 
 
     // answered 2 s after it was shown: too early
     expect(await send("a", { shownAt: at(2_000), answeredAt: at(0) })).toMatchObject({ ok: false, status: 409 });

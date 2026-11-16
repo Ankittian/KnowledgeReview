@@ -36,14 +36,14 @@ export async function recordReview(
   today: string,
   opts: { enforceReadTime?: boolean } = {},
 ): Promise<Result> {
-  if (input.source === "browse") return recordBrowseReview(db, userId, input, meta);
+  if (input.source === "browse") return recordBrowseReview(db, userId, input, meta, opts.enforceReadTime ?? READ_LOCK_ENABLED);
   if (!input.deckDate) return { ok: false, status: 400, error: "Missing deck date." };
   const deckDate: string = input.deckDate;
   const enforceReadTime = opts.enforceReadTime ?? READ_LOCK_ENABLED;
   const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
   const allowed = audiencesFor((who?.role ?? "functional") as Role);
   const [ver] = await db
-    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, back: cardVersions.back, audience: cards.audience })
+    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, back: cardVersions.back, audience: cards.audience, level: cards.level })
     .from(cardVersions)
     .innerJoin(cards, eq(cards.id, cardVersions.cardId))
     .where(eq(cardVersions.id, input.versionId));
@@ -87,10 +87,22 @@ export async function recordReview(
   const shownAt = toDate(input.shownAt);
   const flippedAt = toDate(input.flippedAt);
   const answeredAt = toDate(input.answeredAt) ?? new Date();
+  // Same read-time lock as the daily deck: attended time is capped by the wall clock between shown and answered.
+  if (enforceReadTime) {
+    const shownAt = toDate(input.shownAt);
+    const minReadMs = minReadSeconds(countWords(ver.back), ver.level) * 1000;
+    const wallMs = shownAt ? answeredAt.getTime() - shownAt.getTime() : 0;
+    const attendedMs = input.activeMs == null ? wallMs : Math.min(input.activeMs, wallMs);
+    if (answeredAt.getTime() > Date.now() + 60_000) return { ok: false, status: 400, error: "Invalid answer time." };
+    if (attendedMs < minReadMs - 750) {
+      const wait = Math.max(1, Math.ceil((minReadMs - attendedMs) / 1000));
+      return { ok: false, status: 409, error: `Read the card first: ${wait} more second${wait === 1 ? "" : "s"} before you can answer.` };
+    }
+  }
 
-  // Read-time lock: an answer is only valid after the card's designated read time (words / 5 s, min 4 s) of attended time.
+  // Read-time lock: an answer is only valid after the card's designated read time (10 s easy, 15-18 s medium, 20-22 s hard) of attended time.
   // The browser can only report time to subtract (hidden/idle), never to add: attended time is capped by the wall clock between shown and answered.
-  const minReadMs = minReadSeconds(countWords(ver.back)) * 1000;
+  const minReadMs = minReadSeconds(countWords(ver.back), ver.level) * 1000;
   const wallMs = shownAt ? answeredAt.getTime() - shownAt.getTime() : 0;
   const attendedMs = input.activeMs == null ? wallMs : Math.min(input.activeMs, wallMs);
   if (enforceReadTime) {
@@ -241,11 +253,11 @@ export async function recordClientEvents(db: DB, userId: string, input: EventsIn
  * An answer given while browsing. It scores like a daily answer (the card's level points for a correct answer), but
  * only the first answer to a card counts, and it does not touch the daily deck, the daily limit or spaced repetition.
  */
-async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, meta: Meta): Promise<Result> {
+async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, meta: Meta, enforceReadTime: boolean): Promise<Result> {
   const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
   const allowed = audiencesFor((who?.role ?? "functional") as Role);
   const [ver] = await db
-    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, audience: cards.audience })
+    .select({ versionId: cardVersions.id, cardId: cardVersions.cardId, back: cardVersions.back, audience: cards.audience, level: cards.level })
     .from(cardVersions)
     .innerJoin(cards, eq(cards.id, cardVersions.cardId))
     .where(eq(cardVersions.id, input.versionId));
