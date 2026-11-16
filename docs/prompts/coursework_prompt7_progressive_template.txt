@@ -1,0 +1,141 @@
+PROGRESSIVE COURSEWORK TEMPLATE (form-agnostic, easy first, deep later)
+Replace the {{PLACEHOLDERS}}, then run. This version keeps everything from template 6 (dynamic module count, headings and length, Blueprint before content, evidence rules) and adds one organising principle: the course climbs in difficulty. A new employee must be able to read the first modules with zero prior knowledge and finish them able to do the simplest real task. Depth arrives only after the learner has the vocabulary and the picture.
+
+=====================================================================
+PART 0. INPUTS (fill these in)
+=====================================================================
+Role: Senior {{DOMAIN}} Functional Consultant, Product Trainer and Learning Content Architect.
+Product: {{PRODUCT}} ({{PLATFORM / STACK}}). Learners: {{AUDIENCE}}. Assume they know the business in general but NOT this product and NOT its jargon.
+Subject: {{FORM / FEATURE NAME}} (id {{FORM_ID}}, module {{MODULE_CODE}}).
+Sources (the only evidence): {{LIST OF FILES}}.
+Output: ONE self-contained HTML file {{FILENAME}} in {{FOLDER}}: sticky sidebar grouped by level, light and dark mode, collapsible answers, tables, simple flow diagrams, progress checkboxes, print-friendly.
+Learning goal (one sentence): {{WHAT A GRADUATE CAN DO}}.
+Optional hints: {{TOPICS THAT MUST BE COVERED, LENGTH LIMITS, OR "none"}}.
+
+=====================================================================
+PART 1. THE DIFFICULTY LADDER (mandatory structure)
+=====================================================================
+Every module belongs to exactly one level. Levels run in order; no module may rely on a term or idea that is introduced in a later level. The sidebar shows the level names as group headings.
+
+LEVEL 1. FOUNDATION: "What is this and why does it exist?"  (Light modules, 300 to 700 words each)
+  Allowed content: plain definition, purpose, where it sits in the business flow, who uses it, a glossary, the screen at a glance (names of tabs and main fields only), a first end-to-end happy path.
+  Forbidden: edge cases, company settings, rule tables, exceptions, internal IDs, tolerance or branching logic.
+  Must include, in this order:
+    1.1 One-paragraph definition in plain words (what it is, what comes out of it), then a one-line "in one sentence" version.
+    1.2 Where it fits: a simple flow of the documents before and after it, one line each saying what passes between them.
+    1.3 Glossary: every term a newcomer will meet in Levels 1 and 2 (product jargon, abbreviations, status names, field labels with odd spellings kept exactly). One line each, alphabetical, with a "first used in module N" pointer.
+    1.4 Screen at a glance: a labelled map of tabs and the 8 to 12 fields that matter on day one. Say what to ignore for now.
+    1.5 Your first transaction: the simplest successful path in 8 to 12 numbered steps (Do / Screen shows), using the Story bible, no exceptions, no errors. End with "You have now done a full cycle."
+
+LEVEL 2. CORE SKILLS: "How do I do the normal work?"  (Standard modules, 600 to 1,500 words)
+  One module per normal path or job: for example each source type, entering the paperwork fields, entering quantities, tracking items, saving and approving. Each module teaches one skill, uses Do / Screen shows steps, and adds only the rules the learner will actually trip on. Newly needed terms are defined on first use and added to the glossary.
+  Include a column-by-column table for every main grid (name, meaning, editable or read-only, where the value comes from). If the sources do not list the columns, say so in the Blueprint and mark the table [Not confirmed].
+
+LEVEL 3. HOW IT BEHAVES: "Why did it do that?"  (Standard to Heavy, 800 to 2,500 words)
+  Calculations with worked arithmetic, lifecycle and statuses, what the screen does behind the scenes, what other documents change, company-setting differences (a table: setting, what changes, how to find out whether it is on).
+
+LEVEL 4. EXCEPTIONS AND RULES: "What if something is different or goes wrong?"  (Heavy)
+  The validation and message reference (one message per row, grouped by area, with cause and fix), branching paths, rare sources, corrections after approval, reversals.
+
+LEVEL 5. MASTERY: "Can I handle real cases and teach others?"  (Heavy)
+  Scenario set (cases mixing several earlier ideas, with numbers), troubleshooting by symptom, decision trees, then the Assessment and the Appendix.
+
+Ladder rules:
+ - The Blueprint lists each module's level and the exact earlier modules it depends on. A dependency pointing forward is a defect; reorder or split.
+ - Level 1 must be finishable in one sitting (about 30 minutes) and must leave the learner able to repeat the first transaction unaided.
+ - Each higher level opens with a two-line "You should already know" box naming the earlier modules. Do not re-teach; link.
+ - Depth is added by layering: a topic introduced simply in Level 2 may be revisited in Level 3 or 4 only to add what is new, never to restate. Say each thing once at the level where the learner first needs it in full.
+ - Decide the number of modules per level from the evidence. A level may have one module or six. Never pad a level.
+
+=====================================================================
+PART 2. STEP ONE: BUILD THE MODULE BLUEPRINT (stop here for review)
+=====================================================================
+Read the sources first. Output a Blueprint table, one row per module, grouped by level, and wait for approval unless told to continue. Write no lesson content in this step.
+For each module state:
+ 1. Level, title, and position (what it needs from earlier modules; list the dependencies by module number).
+ 2. 2 to 4 outcomes, "After this the learner can ...".
+ 3. Evidence: source entries behind it. Say now if evidence is thin.
+ 4. Type: Concept | Glossary | Screen tour | Procedure | Calculation | Rules and messages | Scenario set | Lifecycle | Dependency and data | Troubleshooting | Assessment | Reference.
+ 5. Format plan: headings, devices, what it omits.
+ 6. Length plan with reason (Part 5 bands).
+ 7. Example plan: which Story bible example, or "none, because ...".
+Blueprint rules:
+ - Include a Story bible: the fixed company, parties, items, quantities, prices and dates that every example reuses. Label it illustrative, not from the sources. Start with one simple item and one party for Level 1; add richer items (serial, batch, multi-rate, foreign currency and so on) only as the ladder reaches them.
+ - End with a coverage check: every field, tab, action, rule group, message group and status in the sources maps to a module, or is listed as "intentionally not taught" with a reason.
+ - Add a "difficulty check": for each module, list the new terms it introduces; confirm each was defined earlier or is defined in that module.
+
+=====================================================================
+PART 3. HEADINGS AND TEACHING DEVICES (chosen per module)
+=====================================================================
+Headings are chosen per module and named as the question they answer. Menu: Why this matters | What you will be able to do | Terms you need | How it works | What the screen shows | Step by step | Worked example | What happens behind the screen | The rules | Cases and variations | If something goes wrong | Mistakes to avoid | Key takeaways | Check yourself and Answers. Use a heading only when it carries real content; do not reuse the same set everywhere.
+Devices, used when the content calls for them:
+ - Plain-language sentence before every table saying what to take from it.
+ - Numbered Do / Screen shows walk-through for every procedure (mandatory for Procedure modules).
+ - Worked arithmetic for anything with quantity, money, dates or status change, drawn from the Story bible.
+ - Flow diagram (10 steps or fewer), comparison table, decision tree.
+ - Callouts: "Not supported", "[Not confirmed]", "[Inferred]".
+ - Collapsible answers for every question.
+ - Level badge and a "Done" checkbox on every module (remembered in the browser if storage is available, page works without it).
+ - A "Try it" mini exercise at the end of every Level 2 module: a small situation with numbers where the learner fills in the form values, with a collapsible model answer. Hands-on, not recall.
+Question style: Level 1 and 2 questions test doing ("what do you click, what will you see"); Level 3 and 4 test reasoning ("why was this refused, what changes"); Level 5 tests judgment on mixed cases. Do not set a question whose answer is only a quoted message.
+
+=====================================================================
+PART 4. WHAT EVERY COURSE MUST ALSO CONTAIN
+=====================================================================
+These were found missing in earlier builds. Include them unless the sources truly have nothing, in which case state that in the Blueprint.
+ - Glossary (Level 1) and a printable field quick reference (name, mandatory or optional, limit, default, source) near the end.
+ - Column table for each main grid.
+ - Roles: who prepares, releases, approves and authorizes (tag [Inferred] if the sources only infer it).
+ - Company-settings table: each setting named in the sources, what it changes, and a way for the learner to find out whether it applies to them. Where unknown, say "ask your administrator" and tag [Not confirmed].
+ - Finding existing records: search, open, navigation.
+ - Reports and printouts: what each contains and when to use it.
+ - Correction guide: how to fix a mistake at each status (before save, after save, after approval, after downstream use).
+ - Consequences for other teams: what the next departments see afterwards.
+ - Visual aids: where screenshots would help, insert a clearly marked placeholder box ("Screenshot needed: <screen, state>") rather than inventing a picture; draw simple HTML/CSS or SVG diagrams for flows and for the screen map.
+ - A page footer with the build date, the source list and the note that the Story bible is illustrative.
+
+=====================================================================
+PART 5. LENGTH (dynamic, with level floors)
+=====================================================================
+Bands: Light 300 to 800 words (5 to 10 min), Standard 800 to 1,800 (10 to 20 min), Heavy 1,800 to 3,000 (20 to 30 min, hard ceiling 3,000; split instead of exceeding).
+ - Levels 1 and 2 stay Light to Standard. Do not make a newcomer read a Heavy module before Level 3.
+ - A module the Blueprint marks Heavy must actually reach 1,800 words unless the evidence is thin; if it falls short, say so in the build report with the reason instead of presenting it as Heavy.
+ - Paragraphs at most 4 sentences. Define every term at first use. Keep the product's own screen spellings exactly, even misspelt ones.
+ - Report the real word count of every module.
+
+=====================================================================
+PART 6. EVIDENCE RULES (always on)
+=====================================================================
+ - Never invent functionality, fields, validations, statuses, messages or technical objects. Verified behaviour carries no tag.
+ - "Not supported" for unsupported behaviour; "[Not confirmed]" where evidence is missing; "[Inferred]" where reasoned but not evidenced.
+ - Internal IDs (rule and message numbers, procedure or method names, table names), defect talk and migration commentary go only in the Appendix, never in lessons.
+ - Every quoted message and every rule must trace to a source entry. If a source text is cut off, say so; do not complete it from imagination.
+ - Verify any surprising claim (for example that something is allowed which people usually expect to be locked) against the source wording, quote the condition exactly, and list it under "verify in the live product" in the Appendix.
+ - Use the Story bible consistently; mark invented example data as illustrative.
+
+=====================================================================
+PART 7. STEP TWO: GENERATE
+=====================================================================
+After the Blueprint is approved:
+ 1. Write Level 1 first and read it back as a complete beginner: could someone with no product knowledge follow it? Fix before continuing.
+ 2. Write Levels 2 to 5 in batches of 3 to 4 modules, following each blueprint row.
+ 3. Write the field quick reference, the Assessment (questions per module sized to risk, none repeating in-module checks) and the Appendix (sources, rule IDs per module, objects, company settings, quirks and shortcuts, open questions by module, every unverified statement).
+ 4. Assemble one HTML file. Sidebar entries and level groups are generated from the Blueprint.
+ 5. Quality checks:
+      - HTML well-formed; every sidebar entry has a section and vice versa.
+      - No module uses a term before it is defined (run the difficulty check from the Blueprint against the final text).
+      - No forward dependencies; every higher level has its "You should already know" box.
+      - Each module matches its blueprint (level, type, headings, length) or the deviation is reported.
+      - No lesson restates a rule table, definition or flow already given.
+      - No internal IDs leaked into lessons; every quoted message exists in the sources.
+      - Coverage check closed.
+ 6. Final report: modules by level with real word counts, deviations from the blueprint, items marked [Not confirmed] or [Inferred], and the list of statements to verify in the live product.
+
+=====================================================================
+PART 8. HOW TO REUSE
+=====================================================================
+ - New form: change Part 0 only.
+ - Absolute beginners: add to hints "Level 1 only, plus the first transaction".
+ - Experienced users: add "skip Level 1 glossary beyond new terms; start at Level 2".
+ - Re-run one module: "regenerate module N from its blueprint row" (edit the row first if needed).
+ - Expand depth: "raise module N to Heavy" and name the evidence to use.

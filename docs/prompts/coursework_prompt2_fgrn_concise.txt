@@ -1,0 +1,77 @@
+Role and Objective
+Act as a Senior ERP Functional Consultant, ERP Product Trainer and Learning Content Architect with deep experience in manufacturing ERP, procurement, inventory and warehouse processes.
+
+Product: Spectrumerp (Force Intellect). Windows desktop ERP, .NET Framework 2.0, SQL Server, Infragistics UI. The ERP is being migrated to a web architecture. The functional and technical teams are new to the product.
+
+Sources available: the functional document for the form, the MCP server, and the Neo4j knowledge graph (forms, tables, columns, stored procedures).
+
+Your Task
+Generate a micro-learning program for:
+Form Name: GRN (Goods Receipt Note / Material Receipt Note, form fGRN)
+
+Use the functional document and MCP/Neo4j as primary sources. Never invent functionality, fields, validations, statuses or stored procedures.
+
+CONCISENESS RULES (most important)
+The earlier version of this program was too long and too descriptive. Learners are busy specialists. Depth must come from precision, not volume.
+1. Each session: about 1,500 words (hard ceiling 1,800), readable in 15 minutes.
+2. Say each thing once. Never restate the objective, a table, or a rule in another section.
+3. Prefer a compact table or short bullets to paragraphs. Maximum 5 columns in any table. Paragraphs of at most 3 sentences.
+4. Teach the business "why" in one or two sentences, not an essay.
+5. Cover only the business-relevant rules and fields. Do not list every field, every message, or button-by-button steps.
+6. Examples: ONE realistic manufacturing example per session, short and numeric. No invented company backstories.
+7. No code line numbers, no stored procedure names, no BR-xx/MSG-xx numbers, no known-defect discussion and no migration commentary inside the sessions. These go ONLY in the appendix (see Appendix File). Quote the on-screen message text only when the user needs it to recognise the problem.
+8. Evidence marking inside sessions is minimal: write nothing for verified behaviour. Mark only the exceptions: [Inferred] or [Not confirmed]. Never claim an integration or rule without evidence.
+
+Learning Program Structure (cover only what actually exists in the implementation)
+Module 1 Business Foundation: what GRN is, why it exists, where it fits in procure-to-pay, PO vs GRN vs Purchase Invoice vs stock receipt, key terms.
+Module 2 GRN Form Understanding: purpose, users, document types and sources, header fields that matter and how they depend on each other, item-line quantity model.
+Module 3 GRN Creation: creation by each real source (PO, gate entry, other paths), supplier/item/quantity/warehouse selection, tracking details (batch, serial, expiry, etc.), save and approval, result of a successful save.
+Module 4 Business Rules and Validations: only rules with evidence. For each rule give: the rule, why it exists, when it fires, what the user sees, what the user does. Group related rules in one table instead of one block per rule.
+Module 5 Business Scenarios: full, partial, excess, short, damaged/rejected, multi-item, multiple GRNs per PO, no-PO receipt, correction, reversal/deletion, where supported. For each give: situation, what the user does, what the system does, downstream impact. Mark any scenario the product does not support as "Not supported".
+Module 6 Lifecycle and Status: only real statuses and transitions, what each means, what is allowed at each stage.
+Module 7 Dependencies: what GRN receives from upstream and passes downstream (PO, Supplier, Item, Warehouse, Inventory, Quality Inspection, Purchase Invoice, Accounts Payable, Stock Ledger), only with evidence.
+Module 8 Technical Understanding for Functional Learners: main tables, header-detail structure, key columns and procedures explained by the business information they hold. Never a raw table dump.
+Module 9 Troubleshooting: the most common problems (PO not listed, item missing, quantity refused, duplicate, warehouse not selectable, not posted, stock not updated, not available for invoice). Per problem: likely causes, what to check, fix. Use a table.
+Module 10 Assessment: see Assessment Rules.
+
+Merge small topics. Target 10 to 14 sessions in total, not more. Do not split one business process into tiny sessions, and do not pad a thin topic to fill a session.
+
+Mandatory Session Format (use these headings, in this order)
+Session header line: Session number, Title, Duration (about 15 minutes).
+1. Why This Matters: learning objective and business context together, maximum 4 sentences.
+2. Explanation: the core concept and the dependencies between fields and steps.
+3. Manufacturing Example: one short numeric example.
+4. Actual Spectrumerp Behavior: what the screen and system really do. Use the real screen terminology.
+5. Business Rules: a compact table (Rule | Why | When it fires | What user sees/does). Include only rules relevant to this session.
+6. Process Flow: a short numbered list or a small diagram, maximum 8 steps.
+7. Common Mistakes: maximum 4 bullets.
+8. Remember: maximum 5 bullets, each a new takeaway, not a repeat of the objective.
+9. Knowledge Check: 4 short questions (mix of concept and scenario).
+10. Answers: one or two lines each.
+
+If a section has nothing meaningful for that session (for example Process Flow in a pure terminology session), omit it rather than writing filler.
+
+Content Quality Rules
+- Teach the business concept before the technical implementation. Explain WHY, not just HOW.
+- Simple language a new ERP employee understands. Retain Spectrumerp terminology.
+- Distinguish verified, inferred and unknown behaviour, using the minimal marking above.
+
+Assessment Rules (Module 10)
+- Provide one assessment file after all sessions.
+- Per module: 5 conceptual, 3 scenario and 2 knowledge-check questions.
+- Questions are one or two lines. Answers are in a separate section, each in at most two lines. No question repeats one already used in a session's Knowledge Check.
+
+Appendix File (engineer and SME reference)
+Create ONE separate appendix file for the form, not part of any session. It holds everything removed from the sessions:
+- Source list (functional document, graph entities, DB export).
+- Business rule table with BR-xx IDs, MSG-xx message numbers and code/stored-procedure citations, mapped to the session that teaches each rule.
+- Tables, key columns and stored procedures per session, with citations.
+- Known defects and implementation quirks relevant to migration.
+- Open questions that need confirmation from an experienced Spectrumerp consultant, each tagged with the session it affects.
+The appendix may be as long as needed. Keep it a reference, not prose.
+
+Final Output
+First provide: total number of sessions, a one-line objective per session, and the recommended sequence (maximum one page).
+Then generate the sessions in batches of 3 to 5, with consistent numbering and no repetition. Then the assessment file, then the appendix file.
+
+The goal: a new employee who completes this program understands the business purpose, real functionality, end-to-end process, key scenarios and dependencies of GRN in Spectrumerp, in a fraction of the reading time of the earlier version.

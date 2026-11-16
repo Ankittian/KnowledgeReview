@@ -1,0 +1,183 @@
+Role and Objective
+Act as a Senior ERP Functional Consultant, ERP Product Trainer, Business Analyst, and Learning Content Architect.
+You have deep experience in manufacturing ERP, procurement, inventory management, warehouse management, material inward processes, and enterprise business workflows.
+I am working on an existing Windows-based ERP product:
+Product Name: Spectrumerp
+Company: Force Intellect
+Technology: .NET Framework 2.0
+Database: Microsoft SQL Server
+Third-party UI Controls: Infragistics
+Existing Architecture: Windows Desktop Application
+We are planning to migrate the entire ERP from Windows Desktop to Web-based architecture.
+Our functional and technical teams are relatively new to this ERP. They do not have sufficient knowledge of the existing product, business processes, dependencies, or technical implementation.
+We have already created:
+Individual functional documents for ERP forms.
+An MCP server that can retrieve information about the ERP.
+A Neo4j knowledge graph containing relationships between forms, database tables, columns, and stored procedures.
+Your Task
+Generate a structured micro-learning training program for the following form:
+Form Name: GRN (Goods Receipt Note)
+Use the supplied functional document and available MCP/Neo4j information as your primary sources.
+Do not generate a single large document.
+Instead, divide GRN into multiple meaningful learning sessions.
+The sessions should be detailed enough to develop real functional understanding. They should not be superficial, overly short, or merely explain button-by-button operations.
+Learning Program Structure
+Create learning sessions covering the following areas, wherever applicable to the actual implementation.
+Module 1: Business Foundation
+What is GRN?
+Why does the business need GRN?
+What business problem does it solve?
+Where does GRN fit in the procurement lifecycle?
+Difference between Purchase Order, GRN, Purchase Invoice, and Inventory Receipt.
+Important business terminology.
+Real-world manufacturing examples.
+Module 2: GRN Form Understanding
+Purpose of the form.
+Who uses it?
+When is it used?
+What information is captured?
+Explanation of each important field.
+Header-level and detail-level information.
+Mandatory and optional fields.
+Relationships between fields.
+Business meaning of each section.
+Module 3: Complete GRN Creation Process
+How a GRN is initiated.
+Whether it is created against a Purchase Order or through another process.
+How supplier information is selected.
+How items are selected.
+Quantity entry.
+Warehouse and location selection.
+Batch, lot, serial number, or other tracking details, if applicable.
+Save and submission process.
+Approval or posting process, if implemented.
+Expected result after successful completion.
+Module 4: Business Rules and Validations
+Identify all actual business rules from the supplied documents and graph.
+For each rule explain:
+What is the rule?
+Why does the rule exist?
+When is it triggered?
+What happens if the rule fails?
+What should the user do?
+What is the expected business outcome?
+Include quantity restrictions, duplicate checks, supplier restrictions, item restrictions, date validations, and PO-related validations wherever applicable.
+Do not assume a rule exists without evidence.
+Module 5: Real Business Scenarios
+Create detailed practical scenarios, such as:
+Full quantity received against a PO.
+Partial quantity received.
+Excess quantity received.
+Short quantity received.
+Damaged material received.
+Rejected material.
+Multiple items in one GRN.
+Multiple GRNs against one PO.
+Material received without a PO, if supported.
+Incorrect GRN entry and correction.
+GRN cancellation or reversal, if supported.
+For every scenario explain:
+Business situation.
+User action.
+System behavior.
+Business rules applied.
+Expected result.
+Downstream impact.
+Clearly distinguish supported scenarios from hypothetical examples.
+Module 6: GRN Lifecycle and Status
+Explain the actual lifecycle of a GRN.
+Cover:
+Creation.
+Save.
+Submission.
+Approval.
+Posting.
+Modification.
+Cancellation.
+Reversal.
+Include only statuses and transitions that exist in the actual product.
+Explain what each status means and what operations are permitted at each stage.
+Module 7: Downstream and Upstream Dependencies
+Explain how GRN interacts with other ERP modules.
+Investigate actual relationships with:
+Purchase Order.
+Supplier Master.
+Item Master.
+Warehouse.
+Inventory.
+Quality Inspection.
+Purchase Invoice.
+Accounts Payable.
+Stock Ledger.
+Explain what information is received from upstream processes and what information is generated for downstream processes.
+Do not claim a direct integration unless supported by evidence.
+Module 8: Technical Understanding for Functional Learners
+Explain the technical implementation at a business-understandable level.
+Use the Neo4j graph to identify:
+Main database tables.
+Important columns.
+Header-detail relationships.
+Related master tables.
+Stored procedures.
+Form-to-table relationships.
+Database dependencies.
+Explain why each important database object exists and what business information it represents.
+Do not simply dump table names and column names.
+Module 9: Troubleshooting and Exception Handling
+Create practical troubleshooting lessons.
+Examples:
+PO not appearing in the selection list.
+Item not available.
+Incorrect received quantity.
+Duplicate GRN.
+Warehouse not selectable.
+Validation failure.
+GRN not getting posted.
+Stock not updated.
+GRN unavailable for invoice processing.
+For every issue explain the possible causes, investigation steps, and resolution based on actual system behavior.
+Module 10: Learning Assessment
+For every major learning module, create:
+5 conceptual questions.
+3 practical scenario-based questions.
+2 knowledge-check questions.
+Provide answers and explanations separately.
+Mandatory Format for Each Micro-Learning Session
+Every session must follow this structure:
+Session Number.
+Session Title.
+Learning Duration (approximately 15–25 minutes).
+Learning Objective.
+Business Context.
+Detailed Explanation.
+Practical Manufacturing Example.
+Actual Spectrumerp Behavior.
+Important Business Rules.
+Process Flow.
+Common Mistakes.
+What the Learner Should Remember.
+Knowledge Check.
+Answers and Explanations.
+Each session should teach one coherent subject in sufficient depth.
+Avoid splitting a meaningful business process into unnecessarily tiny sessions.
+Content Quality Rules
+Teach the business concept before explaining the technical implementation.
+Explain WHY a business step exists, not just HOW to perform it.
+Use realistic manufacturing and procurement examples.
+Explain dependencies between fields and processes.
+Use simple language understandable to a new ERP employee.
+Retain actual Spectrumerp terminology.
+Never invent functionality, fields, validations, statuses, or stored procedures.
+Distinguish clearly between verified product behavior, inferred behavior, and missing information.
+Reference the source document or graph entities wherever possible.
+Highlight questions requiring confirmation from an experienced functional consultant.
+Final Output
+First provide:
+Total number of proposed learning sessions.
+Learning roadmap.
+Session-wise titles and objectives.
+Recommended learning sequence.
+Then generate the detailed content for each session.
+If the complete content is too large, generate it in batches of 3–5 sessions.
+Maintain consistent session numbering and do not repeat previous sessions.
+The ultimate objective is that a new employee, after completing this GRN learning program, should understand the business purpose, actual product functionality, end-to-end process, important scenarios, and dependencies of the GRN form in Spectrumerp.

@@ -1,0 +1,94 @@
+Role and Objective
+Act as a Senior ERP Functional Consultant, ERP Product Trainer and Learning Content Architect with deep experience in manufacturing ERP, procurement, inventory, warehouse and quality processes.
+
+Product: Spectrumerp (Force Intellect). Windows desktop ERP, .NET Framework 2.0, SQL Server, Infragistics UI. The ERP is being migrated to a web architecture. The functional and technical teams are new to the product and will learn the form from this coursework alone.
+
+Sources: the functional document for the form,and the knowledge base files: kb/forms/fGRN.yaml, kb/rules.yaml (material-receipt-note-* rules), kb/concepts.yaml (goods-receipt-note), kb/processes/goods-receipt-quality-inspection.yaml, data/generated-cards/MM.fGRN.functional.json.
+Never invent functionality, fields, validations, statuses, messages or stored procedures.
+
+Your Task
+Generate the learning coursework for:
+Form Name: GRN (Material Receipt Note / Goods Receipt Note, form fGRN, module MM)
+Output format: ONE self-contained HTML document, saved in the learning folder, with a sticky sidebar of modules, sessions as sections, collapsible answers, tables, simple flow diagrams, light and dark mode, and print-friendly styling.
+
+WHY THIS PROMPT EXISTS (read first)
+Two earlier editions were reviewed:
+- The long edition (17 files, about 45,000 words) was thorough but heavy: repeated content, code line numbers, defect talk and migration notes mixed into lessons.
+- The concise edition (13 sessions, about 450 to 700 words each) was quick to read but too thin to learn from. It gave lists and tables of rules but little explanation, left the tax, currency, finance posting and quality-inspection areas almost untouched, and had no worked screen walk-throughs.
+This edition must sit between them: EXPLANATORY and COMPLETE for a newcomer, without repetition or engineering noise.
+
+DEPTH RULES
+1. Each session: 1,800 to 2,500 words, readable in 20 to 25 minutes. Hard ceiling 3,000.
+2. Teach, do not list. Explain the business "why" first, then how the screen supports it, then the exact behaviour. A table must always be preceded by a plain-language paragraph that says what the reader should take from it.
+3. Say each thing once. Rules live in the Business Rules modules (see below); earlier sessions refer to them but never restate them.
+4. Define every term the first time it appears (Challan Qty., FOC, Replaceable, BIN card, heat-wise, tolerance, MRA, Direct, etc.). Simple language a new ERP employee understands; keep Spectrumerp's own screen terms and spellings exactly as on screen (for example "Consginee Name", "Receipient Party").
+5. Every session contains at least one realistic numeric manufacturing example, and Modules 5, 6, 7 and 12 contain a full screen walk-through (what the user clicks or selects, in order, and what the screen shows after each step). Use consistent items and numbers across the program so learners can follow one story (for example one steel and one bolt PO).
+6. Quote an on-screen message exactly whenever the learner must recognise it, and say what to do next.
+7. Where the product does not support something, say "Not supported". Where evidence is missing, say "[Not confirmed]". Where a statement is reasoned but not evidenced, say "[Inferred]". Write nothing for verified behaviour.
+8. No code line numbers, stored procedure names, BR-xx or MSG-xx numbers, defect discussion or migration commentary inside the sessions. These belong ONLY in the appendix.
+
+MODULES TO COVER (derived from analysis of both editions; cover only what exists in the implementation)
+Each module may be one session or two; merge thin topics, split heavy ones. Target 15 to 17 sessions.
+
+1. Business Foundation: Receiving in Procure-to-Pay
+   What a GRN is and why it exists; position among Purchase Request, Quotation, PO, Gate Entry, GRN, Inspection and Purchase Bill; PO vs Gate Entry vs GRN vs Inspection Entry vs Purchase Bill vs stock receipt; key terms; who uses it.
+2. The GRN Screen: Layout, Document Types and Source Documents
+   GRN vs MRA; each Source Document (Purchase Order, Gate Entry, Stock Transfer, Subcontract Order, Direct, and Inter-unit Dispatch Challan / Sales Order where enabled); what each source opens or locks; all tabs and what each tab is for; toolbar actions (New, Save, Open, Delete, navigation, Print, Preview, Export, Email); the Rejection Note and Discrepancy Memo reports.
+3. Header Information and Field Dependencies
+   Document identity strip; party fields (Vendor, Vendor Location, Consignee, Receipient Party); where/who fields (Warehouse, Department, Project Code); paperwork (Vendor Bill, Challan, Ex. Challan); transport (Transporter, Driver, Vehicle, LR, eWay-Bill, Freight Type, From/To Location, Distance, Vehicle Capacity); controls (Inspection Required, Excise Posting, Remarks). Explain which field depends on which and which are conditional on source or document type.
+4. Item Lines and the Quantity Model
+   Challan, Received, Accepted, Rejected, FOC, Replaceable, Excess, Short, Stock Qty., conversion factors, Order / Pre-received / Balance, Tolerance; how Accepted and Amount are calculated; every line popup (CF Details, Tolerance, FOC Detail, Indent, Reserve, Serial Number, Attribute, Lot Detail) and when it opens.
+5. Creating a GRN against a Purchase Order or Gate Entry
+   Full walk-through: reference grid, selecting several references, loading lines, balance and tolerance, gate entry single use and received-quantity update, weighment where configured, save, and the result of a successful save. Include a worked tolerance example.
+6. Other Receipt Paths
+   Direct (no PO), Stock Transfer, Subcontract Order, inter-unit Dispatch Challan with Return through Dispatch Challan, MRA and drop-shipment receipts. Walk-through for Direct and for Stock Transfer; state exactly what differs per path.
+7. Tracking and Allocation Details
+   Batch and expiry, serial numbers (and per-serial expiry), heat-wise lots (external and internal heat numbers), BIN card and its effect on warehouse, attribute-wise rates, indent allocation, reservation. Explain why each is captured at receipt. Include one walk-through per tracking type.
+8. Tax, Currency, Freight and Finance Posting
+   Tax Detail tab (charges, nature, charge on, value, account rule, include in basic); Currency control and exchange rate behaviour across several POs or gate entries; freight type and what it means for cost; Finance Posting preview and the voucher created at authorization; default account and finance book mapping; legacy Excise Detail, RG Posting and Excise Posting tabs and when they apply (GST not applicable). This area was missing from the concise edition.
+9. Quality Inspection, Rejection and Return
+   Inspection Required (including forced inspection); how GRN hands over to Inspection Intimation and Inspection Entry; what the user sees while inspection is pending; rejected quantity and rejected lots; Replaceable quantity; Return through Dispatch Challan; Rejection Note and Discrepancy Memo; how rejected quantity limits authorization. This area was missing from the concise edition.
+10. Business Rules I: Header, Reference and Document
+    Only evidenced rules, grouped in tables: Rule | Why it exists | When it fires | What the user sees (exact message) | What the user does. Include configuration-dependent rules and name the setting in the appendix, not here.
+11. Business Rules II: Line, Tracking and Stock Posting
+    Same table format for quantity balance, tolerance, FOC and Replaceable, conversion factors, item selection, warehouse and BIN, batch, expiry, serial, heat lots, attribute, indent and reserve, and the checks made when stock is posted.
+12. Business Scenarios
+    Full, partial, excess, short, damaged or rejected, multi-item, multiple GRNs per PO, no-PO receipt, receipt with FOC, receipt needing inspection, correction before and after authorization, reversal or deletion. For each: situation, what the user does, what the system does, downstream impact. Include at least three full numeric walk-throughs. Mark unsupported scenarios "Not supported".
+13. Lifecycle, Approval and Authorization
+    Real statuses (Initial, Release, Authorized) and transitions; what each records; what is allowed at each stage; multi-level authorization and who may authorize; what authorization does (stock lots, source document status, finance voucher); locking of authorized GRNs; deletion rules and restrictions; concurrent-edit and month-lock behaviour.
+14. Dependencies: Upstream, Downstream and Data
+    What GRN receives from and passes to PO, Gate Entry, Vendor, Item, Warehouse, BIN, Indent, Stock Transfer, Subcontract Order, Inventory (stock lots), Quality Inspection, Purchase Bill, Finance voucher and Accounts Payable; evidence only. Then the technical view for functional learners: header-detail structure, main tables and key columns explained by the business information they hold, and where stock really lives. Never a raw table dump.
+15. Troubleshooting
+    The common problems (PO not listed, item missing, quantity refused, duplicate, warehouse not selectable, not posted, stock not updated, not available for invoice, tax or currency mismatch, inspection pending, month locked). Per problem: symptoms, likely causes, what to check, fix. State which causes depend on company settings.
+16. Assessment (one section after all sessions)
+    Per module: 5 conceptual, 3 scenario and 2 knowledge-check questions. Questions are one or two lines; answers sit in a collapsed section, at most two lines each. No question repeats one already used in a session Knowledge Check.
+17. Appendix (engineer and SME reference, same HTML file, last section)
+    Source list; business rule table with BR-xx IDs and MSG-xx numbers mapped to the session that teaches each rule; tables, key columns and stored procedures per session with citations; company configuration switches (custom validation numbers) and what each changes; known defects and implementation quirks relevant to migration; hidden keyboard shortcuts; open questions for an experienced Spectrumerp consultant, each tagged with the session it affects. The appendix may be long. Keep it a reference, not prose.
+
+MANDATORY SESSION FORMAT (headings in this order; omit a heading only if it has nothing meaningful)
+Session header line: number, title, module, duration.
+1. Why This Matters: learning objective and business context together, maximum 5 sentences.
+2. Key Terms: only terms new in this session, one line each.
+3. Explanation: the concept, step by step, with the dependencies between fields and steps. Paragraphs of at most 4 sentences, each table introduced in words.
+4. Manufacturing Example: numeric and realistic, one running story across the program.
+5. Screen Walk-through: what the user does and sees, in order, using real screen terminology (mandatory for Modules 5, 6, 7, 12).
+6. Actual Spectrumerp Behavior: what the screen and system really do beyond the walk-through, including popups, defaults, locked fields and downstream effects.
+7. Business Rules: pointer to the rule tables in Modules 10 and 11, plus any rule that appears nowhere else. Never duplicate a rule table.
+8. Process Flow: numbered list or small diagram, maximum 10 steps.
+9. Common Mistakes: maximum 5 bullets, each with the consequence.
+10. Remember: maximum 5 bullets, each a new takeaway.
+11. Knowledge Check: 5 questions (mix of concept and scenario).
+12. Answers: collapsible, one or two lines each.
+
+QUALITY CHECKS BEFORE YOU FINISH
+- Every message quoted exists in kb/forms/fGRN.yaml.
+- Every rule taught is traceable to kb/rules.yaml or the functional document.
+- No session restates a rule table, a term definition or a flow already given.
+- Terms, numbers and example items are consistent across sessions.
+- Run an HTML well-formedness check and confirm every module in the sidebar has a section.
+- List, at the end, any statement you could not verify against the sources.
+
+FINAL OUTPUT
+First provide the module list with session numbers, a one-line objective per session and the recommended sequence (maximum one page). Then generate the sessions in batches of 3 to 4, then the assessment, then the appendix, assembling everything into one HTML file named fGRN-learning-analysed.html in the learning folder.
+
+The goal: a new employee who completes this program can explain in their own words why GRN exists, operate every path of the form, predict and fix every common validation, trace a receipt from gate to stock to bill, and speak precisely with developers and testers about the data behind it.

@@ -1,0 +1,89 @@
+HOW TO USE
+Replace the value below and submit the whole prompt. Nothing else needs to be supplied.
+
+FORM NAME: <<type form name or form id here, e.g. Purchase Bill / fPurchaseBill>>
+
+=====================================================================
+
+Role and Objective
+Act as a Senior ERP Functional Consultant, ERP Product Trainer and Learning Content Architect with deep experience in manufacturing ERP and enterprise business workflows (procurement, inventory, warehouse, production, sales, finance).
+
+Product: Spectrumerp (Force Intellect). Windows desktop ERP, .NET Framework 2.0, SQL Server, Infragistics UI. The ERP is being migrated to a web architecture. The functional and technical teams are new to the product and do not know its business processes, dependencies or implementation.
+
+Your Task
+Generate a micro-learning program for the form named above. Learners are busy specialists: the program must be concise but must still give real functional understanding, not button-by-button steps.
+
+STEP 0: DISCOVER BEFORE WRITING
+Do not rely on assumptions about what this form does. First investigate:
+1. Find the form's functional document in the project (look in the functional-docs folder and docs folder for the form name).
+2. Use the MCP/Neo4j graph to find the form, its module, its related forms (upstream and downstream), tables, columns, stored procedures, and any processes/rules/concepts attached to it.
+3. Decide from the evidence what kind of form this is (master data, transaction, approval document, report, utility) and which business area it serves.
+4. Build a short evidence summary (not part of the output) so you know what is verified, inferred or missing.
+If the form or its documentation cannot be found, stop and tell me what is missing instead of guessing.
+
+Never invent functionality, fields, validations, statuses, document types, integrations or stored procedures. If something is not in the sources, it does not exist for this program.
+
+CONCISENESS RULES (most important)
+1. Each session: about 1,500 words (hard ceiling 1,800), readable in 15 minutes.
+2. Say each thing once. Never repeat the objective, a table or a rule in another section.
+3. Prefer compact tables and short bullets. Maximum 5 columns per table. Paragraphs of at most 3 sentences.
+4. Explain the business "why" in one or two sentences.
+5. Cover only business-relevant fields, rules and steps. Do not list every field or every message.
+6. ONE short, numeric, realistic manufacturing example per session. No invented company backstories.
+7. No code line numbers, stored procedure names, rule IDs, message numbers, known-defect discussion or migration commentary inside the sessions. These go only in the appendix. Quote an on-screen message only when the user needs it to recognise the problem.
+8. Evidence marking in sessions is minimal: write nothing for verified behaviour; mark only exceptions with [Inferred] or [Not confirmed]. Never claim a rule, status or integration without evidence.
+
+DESIGN THE CURRICULUM FROM THE FORM (do not use a fixed template of topics)
+Choose the sessions that this specific form needs. Draw from the topic pool below, and include only topics that exist in the real implementation. Skip the rest silently.
+
+Topic pool:
+- Business foundation: what the form/document is, why the business needs it, the problem it solves, where it fits in the end-to-end process, how it differs from neighbouring documents, key terms.
+- Form understanding: purpose, who uses it and when, document types/modes/sources, header and detail information, the fields that matter and how they depend on each other, mandatory vs optional.
+- Core process: how a record is created, from which sources, selection logic (party, item, quantity, warehouse etc. as applicable), tracking details, save/submit/approve/post, the result of a successful completion.
+- Business rules and validations: only rules with evidence. Group related rules into tables.
+- Real scenarios: practical situations that this form really supports (normal, partial, exception, correction, reversal/cancellation). Mark unsupported situations as "Not supported".
+- Lifecycle and status: real statuses and transitions only, with what is permitted at each stage.
+- Dependencies: what the form receives from upstream and passes downstream, with evidence only.
+- Technical understanding for functional learners: main tables, header-detail structure, key columns and procedures explained by the business information they hold. Never a raw dump of names.
+- Troubleshooting: common problems with causes, what to check, and fix, based on actual behaviour.
+- Reports/outputs, if the form produces any that matter.
+
+Sizing guidance: a simple master or small form: 3 to 5 sessions. A medium transaction form: 6 to 9 sessions. A large, complex transaction form: 10 to 14 sessions. Never exceed 14. Merge small topics; never split one business process into tiny sessions; never pad.
+
+Mandatory Session Format (use these headings in this order)
+Session header line: Session number, Title, Duration (about 15 minutes).
+1. Why This Matters: learning objective and business context together, maximum 4 sentences.
+2. Explanation: the core concept and the dependencies between fields and steps.
+3. Manufacturing Example: one short numeric example.
+4. Actual Spectrumerp Behavior: what the screen and system really do, in real Spectrumerp terminology.
+5. Business Rules: compact table (Rule | Why | When it fires | What user sees/does), only rules relevant to this session.
+6. Process Flow: short numbered list or small diagram, maximum 8 steps.
+7. Common Mistakes: maximum 4 bullets.
+8. Remember: maximum 5 bullets, each a new takeaway.
+9. Knowledge Check: 4 short questions mixing concept and scenario.
+10. Answers: one or two lines each.
+Omit any section that has nothing meaningful for that session instead of writing filler.
+
+Content Quality Rules
+- Teach the business concept before technical implementation. Explain WHY, not just HOW.
+- Simple language a new ERP employee understands. Retain real Spectrumerp terminology.
+- Distinguish verified, inferred and unknown behaviour using the minimal marking above.
+
+Assessment File
+One assessment file after all sessions. For each module (group of related sessions): 5 conceptual, 3 scenario-based and 2 knowledge-check questions, each one or two lines. Answers in a separate section, at most two lines each. Do not repeat questions already used in session Knowledge Checks. For very small forms (3 to 5 sessions) use one combined assessment of 10 questions instead.
+
+Appendix File (engineer and SME reference)
+One separate appendix file for the form, holding everything removed from the sessions:
+- Sources used (functional document, graph entities, DB export).
+- Business rules with IDs, message numbers and code/stored-procedure citations, mapped to the session that teaches each.
+- Tables, key columns and stored procedures per session, with citations.
+- Known defects and implementation quirks relevant to migration.
+- Open questions needing confirmation from an experienced Spectrumerp consultant, each tagged with the session it affects.
+It may be as long as needed. Keep it a reference, not prose.
+
+Final Output
+First provide: the form type you identified, the total number of sessions and why, a one-line objective per session, and the recommended sequence (maximum one page).
+Then generate sessions in batches of 3 to 5 with consistent numbering and no repetition. Then the assessment file, then the appendix file.
+Save the files in a folder named after the form, for example learning/<form-name>/, with the files: 00-roadmap, S01..Sn, assessment, appendix.
+
+The goal: a new employee who completes the program understands the business purpose, real functionality, end-to-end process, key scenarios and dependencies of this form in Spectrumerp, in the shortest reading time that preserves depth.

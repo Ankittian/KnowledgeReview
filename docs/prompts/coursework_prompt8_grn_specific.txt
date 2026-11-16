@@ -1,0 +1,111 @@
+GRN COURSEWORK PROMPT (form-specific, 10-minute read)
+Distilled from coursework_prompt1.txt (scope: 10 areas, business first, no invention) and learning/old.html (17 sessions, evidence labels, real GRN findings). Easy first, depth later. Paste as is and run.
+
+=====================================================================
+1. ROLE AND INPUTS
+=====================================================================
+Role: Senior ERP Functional Consultant and Learning Content Architect.
+Product: Spectrumerp (Force Intellect), Windows desktop, .NET 2.0, SQL Server, Infragistics. Learners: new functional and technical staff preparing a web migration. They know business in general, NOT this ERP.
+Subject: form fGRN, "Material Receipt Note (GRN)", module MM. Document types GRN and MRA.
+Sources (only evidence): kb/forms/fGRN.yaml; data/generated-cards/MM.fGRN.functional.json; the "Material Receipt Note (GRN)" entries in kb/rules.yaml; processes goods-receipt-quality-inspection and procure-to-pay; Functional_Doc_fGRN.md (BR-01..47, MSG-01..110) if available; the spectrum_kg graph (form to method to stored procedure to table) if available.
+Output: ONE self-contained HTML file, learning/courseworkGRN_8.html. Sidebar grouped by level, light and dark mode, collapsible answers, tables, simple flow diagrams, "Done" checkboxes, print-friendly.
+Goal: a graduate can take a delivery through a GRN unaided, explain why the screen refuses what it refuses, fix common problems, and knows what the GRN touches in the database.
+
+=====================================================================
+2. THE LADDER AND MODULES (fixed; 20 modules, about 4 hours)
+=====================================================================
+Each module: level badge, 2 to 4 outcomes at the top, one "Check yourself" with collapsible answers. Later levels open with a two-line "You should already know" box. No forward dependencies. Say each thing once, where first needed.
+
+LEVEL 1 FOUNDATION: "What is this and why?" (Light, 300 to 700 words)
+ M1 What a GRN is and why it exists
+    After this: explain a GRN in plain words; name the 3 results of an authorized receipt (stock, order closure, valued inward entry for finance); list the problems it solves (proof of receipt, stock accuracy, bill matching, vendor accountability).
+ M2 Where it sits in Procure-to-Pay
+    After this: place the GRN between purchase request, PO, gate entry, inspection and purchase bill; tell PO, GRN, purchase bill and the stock lot apart; say why receipt and billing are separate (GR suspense idea, only as far as sources support).
+ M3 Glossary (about 40 terms, alphabetical, screen spellings kept: "Consginee", "Receipient", "Tolerence")
+    After this: read any later module without stopping for vocabulary.
+ M4 The screen at a glance
+    After this: name the tabs and the 10 day-one fields; know what to ignore; explain GRN versus MRA in one line.
+ M5 Your first receipt (one item, one PO, no exceptions, 8 to 12 Do / Screen shows steps)
+    After this: complete one full cycle, "You have now done a full cycle."
+
+LEVEL 2 CORE SKILLS: "How do I do the normal work?" (Standard, 600 to 1,500 words; each ends with a "Try it" with numbers and a model answer)
+ M6 Header: type, source, vendor and references
+    After this: choose type, source, vendor, location; explain why the Reference Number label changes; use the Reference grid; say which fields each source lets you edit.
+ M7 Header: supplier paperwork and transport
+    After this: fill bill, challan, LR, e-way bill, freight, transporter correctly; state the date rule (never after Document Date) and the "number needs its date" pairing; separate "marked compulsory" from "actually required" (verify against the rules).
+ M8 Item lines and the quantity family
+    After this: read a line (Order, Pre-received, Balance, Challan, Received, Accepted, Rejected, FOC, Excess, Short, Replaceable); apply Accepted = Received - Rejected - FOC; use the column table for the Item Detail grid; use the CF and FOC popups.
+ M9 Creating a GRN: PO route and gate entry route
+    After this: build a receipt against a PO or a gate entry from reference to save; state what Save does and the result of a successful save.
+ M10 Tracking and allocation details
+    After this: use the popups for indent, reserve, warehouse and BIN, serial, batch, expiry, heat lots, attributes; explain why each exists.
+ M11 Save, find, print
+    After this: save, open, navigate, print, preview, email; use Rejection Note and Discrepancy Memo previews; list what the other tabs show.
+
+LEVEL 3 HOW IT BEHAVES: "Why did it do that?" (Standard to Heavy, 800 to 2,500 words)
+ M12 Lifecycle, approval and stock posting
+    After this: explain Initial, Release, Authorized and what each records; explain why stock rises only at authorization; describe multi-level approval; list what is allowed at each status (edit, delete) and what authorization checks (inspection, weighment, locked stock month, finance voucher). Cover why there is no Cancel status if the sources confirm it.
+ M13 Calculations and tolerance
+    After this: do quantity balance, tolerance (5,000 kg order, 3%, 4,800 received, 400 delivered), weighted average for multi-rate, pass-on rate for raw material; say when no purchase bill is needed.
+ M14 Upstream and downstream effects, and company settings
+    After this: list what the GRN takes from PO, gate entry, vendor, item, warehouse, indent, and what it gives to inspection, stock lots, finance, purchase bill, freight invoice, purchase return and source-document status; use the settings table (setting, what changes, how to find out; "ask your administrator" and [Not confirmed] where unknown).
+
+LEVEL 4 EXCEPTIONS AND RULES: "What if something is different or goes wrong?" (Heavy, split if over 3,000 words)
+ M15 Rules and messages, by area, plus other receipt paths
+    After this: for each rule state the rule, why it exists, when it fires, the exact message, the user's fix; handle Direct, stock transfer, subcontract order, MRA, return through dispatch challan; know which source paths are inactive in the shipped list (verify). Group messages: header and references, paperwork and transport, quantities and lines, tracking, approval and posting, delete.
+ M16 Corrections, reversals and deletion
+    After this: correct a mistake at each status (before save, saved, authorized, used downstream); explain what deletion reverses and when it is refused (stock issued, locked month, repair entry).
+
+LEVEL 5 MASTERY: "Can I handle real cases and teach others?" (Heavy)
+ M17 Scenario workshop
+    Two parts, numbers throughout. Quantity: full, partial, excess, short, multiple items, multiple GRNs per PO. Quality and correction: damaged, rejected, replaceable, return through dispatch challan, no PO, wrong entry corrected, reversal. For each: situation, user action, system behaviour, rules applied, result, downstream impact. Label each "supported" or "hypothetical".
+ M18 Troubleshooting by symptom
+    Decision trees: PO or gate entry not listed; item not available; quantity refused; duplicate; warehouse not selectable; will not authorize; stock not updated; not available for billing; cannot delete. Each: causes, checks in order, fix.
+ M19 Technical view for functional learners (graph and database)
+    After this: explain the header and detail table family, lot tables (where stock really lives), the stored-procedure chain on save and authorize, why the save is one transaction, and how to read the graph safely (graph gaps are not proof of absence). Tables and procedures appear ONLY here and in the Appendix; explain what each represents, no name dumps.
+ M20 Assessment
+    Per level: 5 conceptual, 3 scenario, 2 knowledge-check questions; collapsible answers with reasons; no question whose answer is only a quoted message; none repeat in-module checks.
+ Then: printable field quick reference (name, mandatory or optional, limit, default, source) and Appendix.
+(Mapping from the old 17-session programme in old.html: S1-2 to M1-2, S3-4 to M4 and M6-7, S5 to M8, S6 to M9, S7 and S9-10 to M15, S8 to M10, S11-12 to M17, S13 to M12, S14 to M14, S15 to M19, S16 to M18, S17 to M20.)
+
+=====================================================================
+3. EVERY MODULE: FORMAT
+=====================================================================
+Headings chosen per module and phrased as questions (Why this matters | How it works | Step by step | Worked example | The rules | If something goes wrong | Mistakes to avoid | Key takeaways | Check yourself). Use only what carries content.
+ - Procedures: numbered "Do / Screen shows".
+ - Anything with quantity or money: worked arithmetic from the Story bible.
+ - A plain sentence before every table saying what to take from it. Paragraphs at most 4 sentences. Define each term at first use.
+ - Flow diagrams of 10 steps or fewer; screenshot placeholder boxes ("Screenshot needed: ...") instead of invented pictures.
+ - Each module teaches WHY a step exists before HOW.
+Length: Light 300 to 800, Standard 800 to 1,800, Heavy 1,800 to 3,000 words. Levels 1 and 2 never Heavy. Do not pad; a Heavy module that comes out shorter is reported as shorter, with the reason.
+
+=====================================================================
+4. STORY BIBLE (illustrative; label it so)
+=====================================================================
+Sunrise Fabrics Ltd, storekeeper Asha, vendor Meera Textiles (Surat). Level 1 to 2: Cotton Yarn 20s, PO-101, 1,000 kg at 50, delivered 12 Nov 2026, bill and challan dated 11 Nov. Added only when the ladder reaches them: serial item (Hand Drill), multi-rate (Woven Fabric, rate 100), heat-wise (Steel Rod), tolerance order (5,000 kg Cotton Waste), inspected delivery (1,000 units, 40 rejected), inter-unit transfer, foreign currency.
+
+=====================================================================
+5. EVIDENCE RULES (always on)
+=====================================================================
+ - Never invent fields, validations, statuses, messages, procedures or tables.
+ - Tag only what is not plainly verified: [Inferred] (reasoned) and [Not confirmed] (sources silent). "Not supported" for what the product does not do.
+ - Functional document and graph functional layer share one origin; agreement between them is one source, not two. Stored-procedure and table edges are an independent check.
+ - Quote messages exactly, including misspellings and truncation; never complete a cut-off message.
+ - Internal IDs (BR and MSG numbers, custom-validation numbers, procedures, tables) only in M19 and the Appendix. Lessons say "a company setting".
+ - Surprising claims (for example an Authorized receipt can be deleted, or Release posts nothing) are checked against the source wording, quoted with the condition, and listed under "verify in the live product".
+ - Known GRN points to confirm from the sources before teaching them: the header checks stop at the first failure; there is no Cancel status; some source paths (inter-unit dispatch challan, sales order) may be inactive in the shipped list; which header fields are "marked compulsory" on screen but not enforced.
+
+=====================================================================
+6. ALSO INCLUDE
+=====================================================================
+Roles (preparer, releaser, approver, authorizer; tag [Inferred] if only inferred); finding records; reports and printouts; correction guide by status; consequences for other teams; company-settings table; page footer with build date, sources and the note that the Story bible is illustrative. Appendix: sources, rule groups per module, objects, settings, quirks, open questions by module, every unverified statement for an experienced consultant.
+
+=====================================================================
+7. PROCESS AND OUTPUT
+=====================================================================
+ 1. Read sources. Print a one-page Blueprint (module, level, depends on, outcomes, evidence, length band) and a coverage check (every tab, popup, action, rule group, status mapped to a module or marked "intentionally not taught"). Continue without waiting unless told to stop.
+ 2. Write Level 1 and read it back as a total beginner. Then Levels 2 to 5 in batches of 3 to 4 modules.
+ 3. Assemble the HTML. Check: well-formed; sidebar matches sections; no term used before defined; no forward dependency; no restated rule or definition; no internal IDs in lessons; every quoted message is in the sources; coverage closed.
+ 4. Report: modules by level with real word counts, deviations from this prompt, tagged items, and the verify-in-the-live-product list.
+
+REUSE: another form means changing Section 1, the Story bible and the module list only. "Level 1 only" for beginners. "Start at Level 2" for experienced staff. "Regenerate module N" to redo one module.

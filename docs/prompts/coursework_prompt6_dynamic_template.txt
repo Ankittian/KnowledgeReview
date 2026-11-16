@@ -1,0 +1,121 @@
+DYNAMIC COURSEWORK TEMPLATE (form-agnostic)
+Replace the {{PLACEHOLDERS}}, then run. Nothing below fixes the number of modules, the headings, or the length. The agent decides all three per module from the evidence, and records the decision in a Module Blueprint that you can review before any content is written.
+
+=====================================================================
+PART 0. INPUTS (fill these in)
+=====================================================================
+Role: Senior {{DOMAIN}} Functional Consultant, Product Trainer and Learning Content Architect.
+Product: {{PRODUCT}} ({{PLATFORM / STACK}}). Learners: {{AUDIENCE, e.g. functional + technical team new to the product}}.
+Subject: {{FORM / FEATURE NAME}} (id {{FORM_ID}}, module {{MODULE_CODE}}).
+Sources (the only evidence): {{LIST OF FILES, e.g. kb/forms/X.yaml, kb/rules.yaml entries for X, kb/concepts.yaml, kb/processes/*.yaml, functional-document cards}}.
+Output: ONE self-contained HTML file {{FILENAME}} in {{FOLDER}}: sticky sidebar, light and dark mode, collapsible answers, tables, simple flow diagrams, print-friendly.
+Learning goal (one sentence): {{WHAT A GRADUATE CAN DO, e.g. operate every path, predict and fix every validation, trace the data}}.
+Optional hints: {{TOPICS THE OWNER KNOWS MUST BE COVERED, OR LENGTH LIMITS, OR "none"}}.
+
+=====================================================================
+PART 1. STEP ONE: BUILD THE MODULE BLUEPRINT (stop here for review)
+=====================================================================
+Read the sources first. Then output a Module Blueprint table, one row per module, and wait for approval unless told to continue. Do not write any lesson content in this step.
+
+For each module the Blueprint states:
+ 1. Title and position in the sequence (and why it sits there: what it needs from earlier modules).
+ 2. What it teaches: 2 to 4 learner outcomes, written as "After this the learner can ...".
+ 3. Evidence: which source entries support it (fields, rules, messages, processes). If evidence is thin, say so now.
+ 4. Module type (pick the closest; mix freely):
+      Concept (why and what) | Screen tour (layout, fields) | Procedure (do it step by step) | Calculation (formulas, quantities, money) | Rules and messages (validation reference) | Scenario set (cases worked end to end) | Lifecycle (statuses, transitions) | Dependency and data (upstream, downstream, tables) | Troubleshooting (symptom, cause, fix) | Assessment | Reference.
+ 5. Format plan: the headings this module will use (see Part 2), the teaching devices it needs (see Part 3), and what it deliberately omits.
+ 6. Length plan: target word count and reading time, with a one-line reason (see Part 4).
+ 7. Example plan: which running-story example it uses, or "none, because ...".
+
+Blueprint rules:
+ - Decide the number of modules from the evidence. Merge thin topics, split heavy ones. Never pad to hit a number.
+ - Order for learning, not for the order of the screen: foundation, then the thing the learner touches, then how it behaves, then rules, then cases, then support.
+ - Keep a "Story bible" under the table: the fixed set of items, parties, quantities and numbers that every example will reuse, so one story runs through the whole course.
+ - End the Blueprint with a coverage check: every field, tab, action, rule group, message group and status in the sources maps to at least one module, or is listed as "intentionally not taught" with a reason.
+
+=====================================================================
+PART 2. HEADINGS: DECIDED PER MODULE, NOT FIXED
+=====================================================================
+There is no mandatory heading list. For each module choose only the headings that module needs, name them in the learner's language (the question the section answers), and order them so each builds on the last.
+
+Choose from this menu, rename freely, or invent a better heading:
+ - Why this matters (use only when the business reason is not obvious from the title; 1 to 3 sentences)
+ - What you will be able to do (only for long or procedural modules)
+ - Terms you need (only terms new in this module; skip if none)
+ - How it works / The idea (the concept, in the order the learner needs it)
+ - What the screen shows (tour of fields and tabs; use a table)
+ - Step by step (a procedure: what the user does, what the screen shows after each step)
+ - Worked example (numbers; see Part 3)
+ - What happens behind the screen (system behaviour, downstream effects)
+ - The rules (only if rules live here; otherwise point to the rules module)
+ - Cases and variations
+ - If something goes wrong (messages, causes, fixes)
+ - Mistakes to avoid
+ - Key takeaways
+ - Check yourself (questions) and Answers (collapsible)
+
+Heading rules:
+ - A heading appears only if it has meaningful content. A short module may be three headings. A heavy procedure module may be eight.
+ - Do not reuse the same heading set for every module. If two modules end up with identical headings, check whether one is padding.
+ - Questions and takeaways are optional per module. Include them when the module is long, risky, or easy to misunderstand; skip them for a short reference module. The final Assessment module covers anything skipped.
+ - Quote an on-screen message exactly where the learner must recognise it, and say what to do next.
+
+=====================================================================
+PART 3. TEACHING DEVICES: USE WHEN THE CONTENT CALLS FOR THEM
+=====================================================================
+Pick devices per module; none is compulsory.
+ - Plain-language paragraph before every table, saying what to take from it.
+ - Numeric example: use when the module involves quantity, money, tolerance, dates, rates or status change. Skip for a pure screen tour or a glossary. When used, draw from the Story bible and show the arithmetic.
+ - Screen walk-through (Do / Screen shows, numbered): use for any procedure the learner performs. Mandatory for modules whose type is Procedure.
+ - Flow diagram or numbered flow: use when order matters; keep to 10 steps or fewer.
+ - Comparison table: use when the learner must tell similar things apart.
+ - Decision tree or if-then list: use for troubleshooting and for paths that branch.
+ - Callouts: "Not supported", "[Not confirmed]", "[Inferred]" exactly as defined in the evidence rules below.
+ - Collapsible answers for every question.
+
+=====================================================================
+PART 4. LENGTH: DYNAMIC
+=====================================================================
+Set each module's length from what it must carry, not from a fixed quota.
+ - Light (300 to 800 words, 5 to 10 minutes): a single idea, a glossary-type module, a short reference, a module with thin evidence.
+ - Standard (800 to 1,800 words, 10 to 20 minutes): a concept or screen tour with a few relationships and one example.
+ - Heavy (1,800 to 3,000 words, 20 to 30 minutes): a procedure with several paths, a calculation-heavy module, a scenario set, or the rules reference. Hard ceiling 3,000; split the module instead of going beyond.
+Rules:
+ - If a point can be said in a sentence, do not give it a section.
+ - Add an example only when it removes confusion; add several only for modules where the learner would otherwise guess (calculations, branching paths).
+ - Say each thing once. Rules live in the rules module; other modules link to it.
+ - Paragraphs of at most 4 sentences. Define every term the first time it appears; keep the product's own screen spellings exactly, even misspelt ones.
+ - Report the actual word count of each module in the build report; flag any module outside its planned band and justify it.
+
+=====================================================================
+PART 5. EVIDENCE RULES (always on)
+=====================================================================
+ - Never invent functionality, fields, validations, statuses, messages or technical objects. Verified behaviour carries no tag.
+ - Where the product does not support something, write "Not supported". Where evidence is missing write "[Not confirmed]". Where a statement is reasoned but not evidenced write "[Inferred]".
+ - Internal IDs (rule numbers, message numbers, stored procedure or method names, code lines), defect talk and migration commentary go only in the Appendix, never in lessons, unless the module is explicitly for engineers.
+ - Every message quoted must exist in the sources; every rule taught must trace to a source entry.
+ - Use the Story bible's items and numbers consistently across modules.
+
+=====================================================================
+PART 6. STEP TWO: GENERATE
+=====================================================================
+After the Blueprint is approved:
+ 1. Write modules in batches of 3 to 4, following each module's own blueprint row (type, headings, devices, length). Do not apply any heading list that is not in the blueprint.
+ 2. Then write the Assessment (questions per module sized to the module: more for heavy and risky modules, fewer for light ones; no repeats of in-module checks) and the Appendix (sources, rule IDs mapped to modules, objects per module, company settings, known quirks, shortcuts, open questions tagged by module, and every statement you could not verify).
+ 3. Assemble one HTML file. Sidebar entries are generated from the Blueprint, so adding, removing or reordering a module changes only the Blueprint and the sidebar, not the template.
+ 4. Quality checks before finishing:
+      - HTML is well-formed; every sidebar entry has a section and vice versa.
+      - Each module matches its blueprint (type, headings, length band) or the deviation is reported.
+      - No lesson restates a rule table, a term definition or a flow already given.
+      - Terms, numbers and example items are consistent with the Story bible.
+      - Coverage check from the Blueprint is closed: every source item is taught or explicitly excluded.
+      - No internal IDs or technical object names leaked into lessons.
+ 5. Final report: module list with word counts, deviations from the blueprint, and the list of statements that could not be verified.
+
+=====================================================================
+PART 7. HOW TO REUSE
+=====================================================================
+ - New form: change Part 0 only.
+ - Shorter or lighter course: add to "Optional hints" (for example "light modules only, no assessment").
+ - Different audience: change Learners and Learning goal; the Blueprint will re-balance module types and lengths.
+ - Re-run a single module: say "regenerate module N from its blueprint row" and, if needed, edit that row (type, headings, length) first.
