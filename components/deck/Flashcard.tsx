@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useTransform, type PanInfo } from "motion/react";
 import { Check, MousePointerClick, X } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
+import { RichText } from "./RichText";
 import { Badge } from "@/components/ui/badge";
 import { Kbd } from "@/components/ui/kbd";
 
@@ -113,7 +114,7 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
               <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{card.front.split("\n")[0]}</p>
             </div>
             <div className="mt-4 max-h-[42dvh] flex-1 overflow-y-auto pr-1 sm:max-h-[46vh]" data-testid="card-back">
-              <p className="text-[15px] leading-relaxed whitespace-pre-line sm:text-base">{card.back}</p>
+              <RichText text={card.back} className="space-y-2 text-[15px] leading-relaxed sm:text-base" />
             </div>
           </div>
         </motion.div>

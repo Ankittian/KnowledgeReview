@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RichText } from "@/components/deck/RichText";
 
 /** A card the user missed, with an expandable answer. */
 export function RevisitCard({ context, front, back }: { context: string; front: string; back: string }) {
@@ -30,7 +31,7 @@ export function RevisitCard({ context, front, back }: { context: string; front: 
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <p className="mt-2 border-l-2 border-primary/30 pl-3 text-sm leading-relaxed whitespace-pre-line text-muted-foreground">{back}</p>
+            <RichText text={back} className="mt-2 space-y-1.5 border-l-2 border-primary/30 pl-3 text-sm leading-relaxed text-muted-foreground" />
           </motion.div>
         )}
       </AnimatePresence>

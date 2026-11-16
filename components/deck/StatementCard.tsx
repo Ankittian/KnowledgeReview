@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { cn } from "@/lib/utils";
 import { LevelChip } from "./LevelChip";
+import { RichText } from "./RichText";
 
 export type StatementAnswer = "known" | "new" | "incorrect";
 
@@ -41,7 +42,6 @@ export function StatementCard({
   const [showFront, setShowFront] = useState(false);
   useEffect(() => setShowFront(false), [revealed, card.v]);
   const flipped = revealed && !showFront;
-  const lines = card.back.split(/\r?\n/).filter((l) => l.trim());
   const need = card.minRead * 1000;
   const done = need > 0 ? Math.min(1, 1 - remainingMs / need) : 1;
 
@@ -96,11 +96,11 @@ export function StatementCard({
         >
           <Meta />
           <p className="mt-4 text-[11px] font-medium tracking-wider text-primary uppercase">Description</p>
-          <div className="mt-2 max-h-[42dvh] flex-1 space-y-2 overflow-y-auto pr-1 text-[15px] leading-relaxed sm:max-h-[44vh] sm:text-base" data-testid="statement-body">
-            {lines.map((l, i) => (
-              <p key={i}>{l}</p>
-            ))}
-          </div>
+          <RichText
+            text={card.back}
+            className="mt-2 max-h-[42dvh] flex-1 space-y-2 overflow-y-auto pr-1 text-[15px] leading-relaxed sm:max-h-[44vh] sm:text-base"
+            testId="statement-body"
+          />
           {READ_LOCK_ENABLED && (
             <div className="mt-4" aria-live="polite">
               <div
