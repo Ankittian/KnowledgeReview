@@ -1,0 +1,312 @@
+NOTE TO OPERATOR (delete this block before sending the prompt)
+  1. Replace the single placeholder {{EXISTING_CARDS}} with the current MM card list so the model avoids repeats. Create it with:
+       node -e "const j=require('./data/generated-cards/MM.functional.json');console.log(j.items.flatMap(g=>g.cards.map(c=>[g.key,c.level,c.topic_key,c.title].join(' | '))).join('\n'))"
+     (or export the same four columns from the database for a more complete list).
+  2. Give the model access to the kb/ folder, or attach the YAML files named in section 0A.
+  3. Save the result as data/generated-cards/MM.forms.functional.json, run  npm run cards:push -- --dry-run  and then  npm run cards:push  (append mode only).
+     NEVER use --mode purge with this file: it would delete all existing MM cards and keep only the cards in this file.
+  4. A very large batch may not fit in one answer. If so, run the prompt once per group (A, B, C in section 0A), writing MM.forms-A.functional.json, MM.forms-B.functional.json and MM.forms-C.functional.json, and paste the previous groups' new cards into the ledger before each run.
+--------------------------------------------------------------------------------
+
+You are an expert ERP Knowledge Engineer and Corporate Trainer. Your job is to write flashcards that make our employees genuinely better at using the ERP: they must understand HOW and WHY the business works, not just recognise screen names.
+
+This prompt produces ONE batch of FORM-LEVEL flashcards for Material Management (MM): a set of cards per form listed in section 0, plus five flows and common-question sets. It is NOT a module-overview batch and it is NOT bound to a fixed number of cards: write as many distinct, useful cards as the knowledge base supports, between the minimum and the ceiling given for each item. Read the whole prompt before writing anything.
+
+================================================================================
+0. RUN INPUTS
+================================================================================
+MODULE            : MM (Material Management)
+AUDIENCE          : functional
+BATCH SIZE        : NOT FIXED. Each item below has a MINIMUM and a CEILING. The minimums add up to 200 cards and the ceilings to 370. Expect a batch of roughly 275 cards; write more where the knowledge base supports more.
+FOCUS             : FORM-LEVEL questions. Every form below gets its own cards at all three difficulty levels where the KB supports them. Do not write module-overview cards.
+OUTPUT FILE       : data/generated-cards/MM.forms.functional.json   (exactly one JSON file; nothing else is written)
+
+HOW MANY CARDS (coverage rule, read carefully)
+  - The minimum for an item is a floor, never a reason to stop. Keep adding cards for an item while the KB still supports a NEW, useful question for it, up to the item's ceiling.
+  - Walk the angle lists in section 5 for each item and each level. An item is "covered in depth" when every angle the KB supports has a card at the right level.
+  - A card must teach something distinct. Never pad to reach a number; if an item runs out of new material before its minimum, stop and say so in "skipped".
+  - If an item hits its ceiling and valuable angles remain, list them in "skipped" with the reason "ceiling reached" so the next run can continue from there.
+  - Keep the overall mix near 40% easy, 40% medium, 20% hard, and for every form at least one easy and one medium card. Hard cards go to the forms with the most rules, approvals and downstream effects.
+
+================================================================================
+0A. WHAT TO LOOK AT: MODULES, FORMS, CONCEPTS AND FLOWS
+================================================================================
+Source of truth is ONLY the `kb/` folder (and the knowledge graph tools, if provided).
+  - Form files:    kb/forms/<key>.yaml          (read in full; each has a "kind" of master or transaction and a "uses_concepts" list)
+  - Flow files:    kb/processes/<key>.yaml      (read in full)
+  - Concepts:      kb/concepts.yaml             (very large: search for a concept key and read only that entry)
+  - Rules:         kb/rules.yaml                (very large: search for the form key or a concept key and read only the matching entries)
+Never read concepts.yaml or rules.yaml whole.
+
+MODULES
+  - Primary module of this batch: MM (Material Management).
+  - Purchase Bill belongs to the Finance module (FI) but is part of the MM purchase flow; read it as written in the KB.
+  - Common-question sets draw on several modules; the exact forms to compare are listed under "COMMON-QUESTION COMPARISON SETS" below.
+
+FLOW FILES TO USE (kb/processes)
+  material-master-setup, procure-to-pay, goods-receipt-quality-inspection, payment-flow, inventory-storage, gst-tax-determination (tax on the Purchase Order and the Purchase Bill), p2-purchase-purchase-order (Purchase Order Amendment), p2-inventory-issue-return-transfer (Material Return), plus preventive-maintenance (Material Issue is also used there).
+
+CONCEPTS TO COVER ACROSS THE BATCH (concept keys in kb/concepts.yaml; teach each one on the forms that use it)
+  Classification and items : material-category, material-group, material-sub-group, material-item, make, unit-of-measure, unit-type, item-unit-weight, item-technical-grade, item-attribute-value, hsn-sac-code, chapter-heading, gst-category
+  Buying                   : material-request, purchase-request, rfq, vendor-quotation, comparative-statement, purchase-organization, purchase-order, material-agreement, purchase-order-follow-up, authorization-group, supplier-advance-request, vendor, vendor-location, vendor-contact-person
+  Receiving and quality    : gate-entry, goods-receipt-note, inspection-intimation, quality-inspection, qc-parameter, qc-group, quality-parameter, quality-specification, tech-specification-head, bin, warehouse, production-unit
+  Issue and stock          : material-issue, raw-material-issue, stock-adjustment, value-stock-adjustment, cost-center, expense-head
+  Billing and finance link : purchase-bill, document-receipt, payment-plan, accounting-voucher, ledger-account, account-group, chart-of-accounts, finance-book, account-determination-rule, currency, currency-exchange-rate, tdc-charge, tdc-group, tdc-account-rule
+  The concept "lot" has no entry of its own: it is built from the forms listed under the lot-concept flow below.
+
+TARGET ITEMS. Use these exact keys and scopes.
+
+A. MASTER FORMS (min 24, up to 44 cards)
+  scope form | fMaterialGroup | Material Group | min 6, up to 10 cards
+      flows (kb/processes): material-master-setup, goods-receipt-quality-inspection
+      concepts to look up (kb/concepts.yaml): material-category, material-sub-group, material-item, qc-parameter
+  scope form | fMaterialSubGroupMaster | Material Sub Group | min 6, up to 10 cards
+      flows (kb/processes): material-master-setup, procure-to-pay, inventory-storage, goods-receipt-quality-inspection, gst-tax-determination
+      concepts to look up (kb/concepts.yaml): material-category, material-group, material-item, bin, make, vendor, vendor-location, warehouse, unit-of-measure, unit-type, qc-parameter, gst-category, item-technical-grade, tdc-charge
+  scope form | fItemMaster | Item Master | min 12, up to 24 cards
+      flows (kb/processes): material-master-setup
+      concepts to look up (kb/concepts.yaml): material-category, material-group, material-sub-group, hsn-sac-code, chapter-heading, gst-category, unit-of-measure, unit-type, item-unit-weight, item-technical-grade, item-attribute-value, make, bin, warehouse, vendor, vendor-location, qc-parameter, tdc-charge, account-determination-rule, ledger-account, purchase-request, purchase-order, gate-entry
+
+B. TRANSACTION FORMS (min 107, up to 200 cards)
+  scope form | fIndent | Purchase Request | min 10, up to 16 cards
+      flows (kb/processes): procure-to-pay
+      concepts to look up (kb/concepts.yaml): purchase-request, material-request, purchase-order, goods-receipt-note, material-item, make, vendor, vendor-location, warehouse, cost-center, unit-of-measure, hsn-sac-code, quality-parameter, quality-specification, tech-specification-head, qc-parameter, tdc-charge
+  scope form | fIndentRequisition | Material Request | min 9, up to 16 cards
+      flows (kb/processes): procure-to-pay
+      concepts to look up (kb/concepts.yaml): material-request, purchase-request, material-issue, material-item, make, vendor, warehouse, cost-center, unit-of-measure, quality-parameter, quality-specification, tech-specification-head
+  scope form | fPurchaseOrder | Purchase Order | min 14, up to 28 cards
+      flows (kb/processes): procure-to-pay, gst-tax-determination
+      concepts to look up (kb/concepts.yaml): purchase-order, purchase-request, rfq, vendor-quotation, purchase-organization, vendor, vendor-location, vendor-contact-person, material-item, make, payment-plan, tdc-charge, tdc-group, tdc-account-rule, account-determination-rule, accounting-voucher, currency-exchange-rate, hsn-sac-code, gate-entry, goods-receipt-note, purchase-bill, cost-center, expense-head, finance-book, warehouse
+  scope form | fPOAmendment | Purchase Order Amendment | min 8, up to 16 cards
+      flows (kb/processes): p2-purchase-purchase-order
+      concepts to look up (kb/concepts.yaml): authorization-group, material-agreement, purchase-order-follow-up, supplier-advance-request, accounting-voucher
+  scope form | fGateEntry | Gate Entry | min 9, up to 16 cards
+      flows (kb/processes): procure-to-pay, goods-receipt-quality-inspection
+      concepts to look up (kb/concepts.yaml): gate-entry, purchase-order, purchase-request, goods-receipt-note, vendor, vendor-location, vendor-contact-person, vendor-quotation, material-item, make, currency, currency-exchange-rate, production-unit, warehouse, item-attribute-value
+  scope form | fGRN | Material Receipt Note (GRN) | min 14, up to 28 cards
+      flows (kb/processes): procure-to-pay, goods-receipt-quality-inspection
+      concepts to look up (kb/concepts.yaml): goods-receipt-note, gate-entry, purchase-order, purchase-request, inspection-intimation, quality-inspection, qc-parameter, bin, warehouse, vendor, vendor-location, material-item, make, material-issue, purchase-bill, payment-plan, tdc-charge, tdc-group, tdc-account-rule, account-determination-rule, accounting-voucher, finance-book, cost-center, currency-exchange-rate, production-unit
+  scope form | fInspectionIntimation | Inspection Intimation | min 7, up to 12 cards
+      flows (kb/processes): goods-receipt-quality-inspection
+      concepts to look up (kb/concepts.yaml): inspection-intimation, goods-receipt-note, gate-entry, purchase-order, purchase-request, vendor, vendor-location, material-item, make, cost-center
+  scope form | fInspectionEntry | Inspection Entry | min 8, up to 14 cards
+      flows (kb/processes): goods-receipt-quality-inspection
+      concepts to look up (kb/concepts.yaml): quality-inspection, inspection-intimation, goods-receipt-note, gate-entry, purchase-order, purchase-request, qc-parameter, vendor, vendor-location, material-item, make
+  scope form | fPurchaseBill | Purchase Bill | min 10, up to 20 cards
+      flows (kb/processes): payment-flow, gst-tax-determination
+      concepts to look up (kb/concepts.yaml): purchase-bill, goods-receipt-note, purchase-order, gate-entry, material-issue, vendor, vendor-location, payment-plan, document-receipt, accounting-voucher, ledger-account, account-group, chart-of-accounts, finance-book, account-determination-rule, tdc-charge, tdc-group, tdc-account-rule, gst-category, hsn-sac-code, chapter-heading, currency-exchange-rate, warehouse, bin
+  scope form | fMaterialIssue | Material Issue | min 10, up to 20 cards
+      flows (kb/processes): inventory-storage, preventive-maintenance
+      concepts to look up (kb/concepts.yaml): material-issue, material-request, goods-receipt-note, gate-entry, purchase-order, purchase-bill, material-item, make, warehouse, vendor, vendor-location, cost-center, expense-head, accounting-voucher, ledger-account, account-determination-rule, payment-plan, tdc-charge, tdc-group, tdc-account-rule, item-attribute-value
+  scope form | fMaterialReturn | Material Return | min 8, up to 14 cards
+      flows (kb/processes): p2-inventory-issue-return-transfer
+      concepts to look up (kb/concepts.yaml): raw-material-issue, stock-adjustment, value-stock-adjustment, accounting-voucher
+
+C. FLOWS AND COMMON QUESTIONS (min 69, up to 126 cards)
+  scope flow | material-classification | Material Classification: Category, Group, Sub Group, Item | min 6, up to 12 cards
+  scope flow | lot-concept | Lot Concept: Creation and Issue | min 16, up to 30 cards
+  scope flow | procure-to-pay | Procure-to-Pay (PO Flow) | min 24, up to 40 cards
+  scope flow | mm-master-forms-common | Master Forms: Common Questions | min 11, up to 20 cards
+  scope flow | mm-transaction-forms-common | Transaction Forms: Common Questions | min 12, up to 24 cards
+
+How to build the flow items (read carefully):
+  - material-classification: there is no separate Category screen. Category is the top level of the classification (Category, then Group, then Sub Group, then Item) described inside the Material Group, Material Sub Group and Item Master files and kb/processes/material-master-setup.yaml. Teach how the hierarchy builds the item code, what each level controls, and what happens when something changes at a level.
+  - lot-concept: there is no lot process file. Build it from the lot details in the Material Receipt Note (lot detail, lot quantity against reserved quantity, lot rejected quantity against inspection rejected quantity, receipts that cannot be deleted once their lot is issued), the Material Issue (choosing lots, capital and non-capital lots, conversion cases) and the Material Return, plus any other form you find by searching the KB for "lot". Teach only what the KB supports; if it is thin on a point, list it under "skipped". About half the cards on creation, half on issue.
+  - procure-to-pay: the end-to-end journey in this order: Material Request, Purchase Request, Request For Quotation, Quotation, Comparative Statement, Purchase Order (and its amendment), Gate Entry, Material Receipt Note, Inspection, then Purchase Bill. Sources: kb/processes/procure-to-pay.yaml, goods-receipt-quality-inspection.yaml, payment-flow.yaml and the forms above (plus the sourcing forms Request For Quotation, Quotation and Comparative Statement). Teach hand-offs between steps: what each step needs from the one before, who owns it, what blocks the next step, what a change or rejection does to the other steps. Include cross-form scenarios (a short delivery, a rejected lot, a price change after authorisation). Do not write cards that only describe one screen: those belong to the form items.
+  - Purchase Order and "POA" (the original handwritten list says "PO & POA"): cover BOTH readings. The Purchase Order Amendment form is its own item above. In addition, include Purchase Order AUTHORISATION on the Purchase Order and Purchase Order Amendment cards: the multi-level approval panel used on those screens is described in kb/forms/MultiAuthorization.yaml (a shared component, not a screen of its own) and in the authorisation parts of the two form files. Teach who approves, in which order, what the lock means and how an authorised order is changed. Do not create a separate item for the component.
+  - Inspection (the original list shows two inspection screens): Inspection Intimation (the request to inspect received goods) and Inspection Entry (the recorded result) are separate items above; together they close the receiving step before the Purchase Bill.
+  - mm-master-forms-common and mm-transaction-forms-common: see the comparison sets below.
+
+COMMON-QUESTION COMPARISON SETS (modules MM, FI, SD, PM, MD and others; read every form in the set, then write only patterns that really hold across them, and name the example forms in source_refs)
+  MASTER forms (kind: master) to compare:
+    MM : fMaterialGroup, fMaterialSubGroupMaster, fItemMaster, fUnitMaster, fMakeMaster, fWarehouse, fVendorCard, fHSNCode, fCityMaster, fSingleFieldMaster, fQCParameter, fPurchaseOrganization
+    FI : fAccountMaster, fAccountGroupMaster, fCostCenterMaster, fCurrencyMaster, fExpenseHead, fFinanceBook
+    MD : fAssetClass, fAssetGroup, fAuthorizationGroup, fExpenseCategory, fPricingFactor, fOrderNature
+    PM : fPermitMaster
+    Patterns to test: unique codes, mandatory fields, the inactive switch instead of deleting, why a master cannot be deleted once used, entering many rows at once or importing them, edit limits after use, how master changes reach transactions, approvals if any.
+  TRANSACTION forms (kind: transaction) to compare:
+    MM : fIndent, fIndentRequisition, fPurchaseOrder, fPOAmendment, fGateEntry, fGRN, fInspectionEntry, fMaterialIssue, fMaterialReturn, fStockAdjustment, fInvStockTransfer
+    FI : fPurchaseBill, fBankJournal, fCashJournal, fContraVoucher, fCreditNote, fDebitNote, fDocumentReceipt
+    SD : fSalesOrder, fCommercialInvoice, fDispatchChallan, fDispatchPlanning, fCustomerEnquiry
+    PM : fEquipmentRunningHours, fFuelConsumption
+    WB : fFirstWeighment
+    DRM: fGateEntryDRM
+    Patterns to test: document number and date, status steps, authorisation and what the lock means, changes after authorisation and the amendment route, cancellation guards, closed accounting period, mandatory header and line checks, links to a previous document, remarks and attachments.
+
+EXISTING CARDS (the coverage ledger). One line per card already in the database for this module. Your cards must be NEW; see section 6.
+  <item key> | <level> | <topic_key> | <title>
+{{EXISTING_CARDS}}
+
+================================================================================
+1. PURPOSE: BUILD KNOWLEDGE, DEPTH OVER WEEKS
+================================================================================
+Every card must leave the employee able to DO or DECIDE something they could not before. Before writing a card, finish this sentence: "After reading this, the employee can ______." If you cannot, do not write the card.
+
+Across the weeks the deck must cover each module IN DEPTH. Think in layers:
+  1. WHAT it is and who uses it           (easy)
+  2. HOW it works, step by step and why   (medium)
+  3. WHAT CAN GO WRONG and what it affects (hard)
+
+Prefer teaching the business reason ("because the order is locked once authorised, a change needs a formal amendment") over listing facts ("the order is locked").
+
+================================================================================
+2. DIFFICULTY LEVELS (depth, NOT form size)
+================================================================================
+Difficulty = conceptual depth, never how big or important the form is. The limits below are the card contract (lib/cards/spec.ts). The weekly job checks every card against them and rejects cards outside them.
+
+| Level  | Points | Words   | Lines | What it teaches |
+|--------|--------|---------|-------|-----------------|
+| easy   | 1      | 20-70   | 3-5   | Purpose, who uses it, when it is used, where it sits in the flow, key business terms. |
+| medium | 2      | 90-200  | 6-10  | The standard way it works: sequence, mandatory inputs, approvals and roles, normal checks, hand-offs, status changes, normal limits. |
+| hard   | 3      | 180-380 | 10-20 | Governance and consequences: authorisation locks, cascading effects on other documents and modules, exceptions, reversals and corrections, period and closing controls, tolerance calculations, worked scenarios, diagnosing a failure. |
+
+A "line" is one non-empty line of the body (a bullet counts as a line). Word count is of the whole body.
+
+Mix for the batch: about 40% easy, 40% medium, 20% hard overall, and per form where the KB allows (section 0 gives the minimum and ceiling per item). Give EVERY target form at least one easy and one medium card. Give a hard card to the forms with the most business rules, approvals or downstream effects.
+
+================================================================================
+3. COVERAGE: EVERY TARGET ITEM, IN DEPTH
+================================================================================
+- Cover EVERY item listed under TARGET ITEMS. None may be skipped or left with zero cards, and each reaches at least its minimum unless the KB truly runs out (then say so in "skipped").
+- Go for depth: use every angle in section 5 that the KB supports for an item, at the matching level, before moving on. More distinct cards are better than fewer, up to the item's ceiling.
+- For each item pick DIFFERENT ANGLES (section 5). Two cards on the same item must teach different things, never the same fact in other words.
+- Flows: teach the order of steps, who hands over to whom, and what each hand-off needs.
+- Module overview: purpose, its flows, and how it hands over to other modules.
+- Cross-module links belong on the card of the form that triggers them, written in business terms ("Finance is notified", "stock value changes").
+
+================================================================================
+4. ANSWER FORMAT (the "body"): EXPLAIN, DON'T JUST STATE
+================================================================================
+The body is read on the back of the card. It must read like a good colleague explaining the topic: clear, structured, easy to scan.
+
+Format rules (a small, fixed markup the card screen understands):
+  - Lines are separated by "\n" in the JSON string. One idea per line.
+  - **Bold** (double asterisks) marks key business terms: roles, document names, statuses, limits, outcomes. Use 3-8 bold phrases per card, counting bold labels such as **Watch out:**. Each bold phrase is 1-4 words. Never bold a whole sentence. Never nest bold. Every ** must be closed on the same line.
+  - Bullet points start the line with "- " (dash and one space). Use them for steps, conditions, checks and consequences. No nested bullets. No numbered markup; for ordered steps write "- **Step 1:** ..." style lines instead.
+  - A line that ends with a colon and bold label, e.g. "**What to check:**", introduces the bullets below it.
+  - No headings (#), no tables, no links, no emojis, no italic markers, no code formatting.
+  - Plain sentences otherwise. Active voice, present tense. Short sentences. Put a SPACE after every full stop.
+
+Recommended shapes (adapt to the topic):
+  EASY   : 1 lead line that defines the thing, then 2-3 bullets (who uses it / when / why it matters).
+  MEDIUM : 1 lead line, "**How it works:**" + 3-5 bullets in order, then 1 "**Watch out:**" line with the common slip.
+  HARD   : 1 lead line, "**Rule:**" + bullets, "**What it affects:**" + bullets, "**Worked example:**" with real-looking numbers or a short scenario, "**If it goes wrong:**" with the consequence and the correct fix.
+
+Teaching quality bar:
+  - Explain the WHY at least once per medium and hard card.
+  - Hard cards must contain a concrete scenario or worked example.
+  - Use the business words the employees use on the floor; define a term the first time it appears.
+
+================================================================================
+5. TITLES AND KEYS: BUILT SO THE WEEKLY JOB NEVER DUPLICATES
+================================================================================
+The title and topic_key are how future weekly runs recognise what has already been taught. Treat them as a precise, stable label.
+
+TITLE (the front of the card)
+  - Pattern:  <Business subject> - <the specific question or claim being taught>
+    Example:  "Purchase Order - who must authorise it, and in what order"
+  - 12 to 110 characters. A question or a clear statement the employee can self-check ("Do I know this?").
+  - Specific, never generic. Banned: "Overview", "Introduction", "Basics", "About", "Details" on their own.
+  - The part before " - " is the item's business name, written exactly as in the TARGET ITEMS list. The part after it names the angle.
+  - Titles must be UNIQUE across the whole module, including every title in EXISTING CARDS. Not merely different text: a title that asks the same thing as an existing one, in different words, is a duplicate.
+
+TOPIC_KEY (the card's identity)
+  - Pattern:  <angle>--<specific-subject>   (lowercase kebab-case, e.g. "approvals-roles--two-tier-po-release")
+  - <angle> MUST be one of the fixed slugs below, so coverage can be counted per item and angle.
+  - Unique per item AND level. NEVER reuse a topic_key that appears in EXISTING CARDS. Reusing a key with new text would silently overwrite the existing card in the database. If you want to change a card, do not; skip it.
+
+Fixed angle slugs
+  easy   : purpose | ownership | trigger | vocabulary | position-in-flow | outputs
+  medium : sequence | prerequisites | mandatory-inputs | approvals-roles | standard-checks | limits-tolerances | hand-offs | status-lifecycle | document-links | reports-and-reconciliation
+  hard   : authorization-locks | cascade-effects | exceptions | reversal-correction | period-controls | cross-module-impact | tolerance-calculation | audit-trail | scenario-walkthrough | failure-diagnosis
+
+================================================================================
+6. NO DUPLICATES: PROCEDURE YOU MUST FOLLOW
+================================================================================
+Before writing, read EXISTING CARDS. For every card you plan:
+  1. Look up the item in EXISTING CARDS. List the angles already used for that item and level.
+  2. Choose an angle NOT yet used for that item and level. If every angle of that level is used, move up or down a level or pick a different item.
+  3. Compare your planned title with ALL existing titles in the module. If it asks the same thing, even reworded, discard it and plan another.
+  4. Compare your planned card with the other new cards in this run. Two cards must never teach the same fact.
+  5. Facts must not repeat across levels either. A hard card builds on an easy fact; it does not restate it. Never copy sentences from an existing card.
+  6. If the KB offers nothing new for an item, SKIP it. Do not pad. List it under "skipped" with the reason.
+
+The weekly job also checks your output against the database and rejects near-duplicates and reused keys, so duplicates cost you cards. Quality and distinctness beat volume.
+
+================================================================================
+7. AUDIENCE CONTRACT: FUNCTIONAL ONLY
+================================================================================
+Write for the business user: Storekeepers, Buyers, Quality Inspectors, Accounts Payable clerks, Plant Supervisors, Approvers.
+Use clear business names for forms, e.g. "Purchase Order", "Material Receipt Note (GRN)", "Gate Entry".
+
+STRICTLY FORBIDDEN in titles and bodies (the weekly job's leak check rejects them):
+  - Form codes (fPurchaseOrder, fGRN, mXxx, tXxx), camelCase or snake_case identifiers.
+  - Table, view or schema names (Purchase.PMPurchaseOrder). Any word of the form Name.Name without a space after the full stop.
+  - Words: table, column, dataset, database, schema, query, SQL, stored procedure, method, API, backend, source code.
+  - Screen mechanics: dropdown, text box, check box, radio button, grid, popup, tab, toolbar, button, combo, icon.
+  - Internal rule or message IDs (BR-05, MSG-12, VAL-3).
+  - Field lengths or formats, e.g. "(50)", "max 1000 characters", "10 digits".
+  - Keyboard shortcuts (Ctrl + Y).
+Numbers that are business facts are fine and encouraged: "within 2 percent of the order quantity", "after 30 days". Write them in words and digits without brackets.
+
+================================================================================
+8. JSON OUTPUT FORMAT (ONE FILE)
+================================================================================
+Write exactly ONE JSON file at data/generated-cards/MM.forms.functional.json. Valid JSON, UTF-8, no comments, no trailing commas, nothing before or after it.
+
+{
+  "module": "MM",
+  "title": "Material Management",
+  "audience": "functional",
+  "total_cards": <number of cards in this file>,
+  "breakdown": { "easy": <n>, "medium": <n>, "hard": <n> },
+  "items": [
+    {
+      "scope": "module" | "flow" | "form",
+      "key": "<the item key exactly as in TARGET ITEMS>",
+      "title": "<business name of the item>",
+      "context": "<Module > Flow > Form, using business names>",
+      "cards": [
+        {
+          "level": "easy" | "medium" | "hard",
+          "topic_key": "<angle>--<specific-subject>",
+          "title": "<Business subject> - <specific question or claim>",
+          "body": "line one\n- bullet\n- bullet\n**Watch out:** ...",
+          "source_refs": ["forms/<file>.yaml", "rule:<key>"]
+        }
+      ]
+    }
+  ],
+  "skipped": [ { "item": "<item key>", "reason": "<why no new card was possible>" } ]
+}
+
+Rules:
+  - One entry per TARGET ITEM in `items`. An item with no new cards goes in "skipped" instead.
+  - `scope` decides how the item is stored: "module" for the module overview, "flow" for a business process, "form" for a single form.
+  - `source_refs` lists the KB files or rule keys the card was written from. Required in practice: at least one per card.
+  - `total_cards` and `breakdown` must match the cards actually written.
+
+Example of ONE well-formed medium card (body shown with \n as it appears in the file):
+  {
+    "level": "medium",
+    "topic_key": "approvals-roles--two-tier-po-release",
+    "title": "Purchase Order - who must authorise it, and in what order",
+    "body": "A **Purchase Order** becomes a binding commitment to the supplier only after it is authorised.\n**How it works:**\n- The Purchase Officer drafts the order and moves it to Release.\n- The Purchase Manager reviews the supplier, price, quantity and delivery date against the approved request.\n- Orders above the manager's financial limit go on to the **Senior Approver**; only the last approver sets the status to **Authorised**.\n**Why it matters:** the supplier acts on this order, so a silent edit could change what you owe them.\n**Watch out:** once Authorised, the order is locked. A change then needs a formal **amendment**, not a direct edit.",
+    "source_refs": ["forms/fPurchaseOrder.yaml"]
+  }
+
+================================================================================
+9. SELF-CHECK BEFORE YOU WRITE THE FILE
+================================================================================
+For every card, confirm:
+  [ ] Taught fact is supported by the KB and by the listed source_refs.
+  [ ] Level, word count and line count are inside the section 2 limits.
+  [ ] Body uses only the allowed markup: "\n" lines, "- " bullets, **bold** (3-8 balanced phrases). Explains the WHY (medium, hard). Hard has a worked example.
+  [ ] Title follows "<Business subject> - <specific question or claim>", 12-110 characters, not generic.
+  [ ] topic_key is "<angle>--<subject>", angle from the fixed list, unique per item and level, NOT present in EXISTING CARDS.
+  [ ] Title and content are not a duplicate or paraphrase of any existing card or any other new card.
+  [ ] No forbidden words, codes, identifiers or bracketed numbers (section 7).
+For the file:
+  [ ] Every TARGET ITEM has cards or is listed in "skipped" with a reason.
+  [ ] Each item has at least its minimum number of cards (or an explanation in "skipped") and no more than its ceiling. The easy/medium/hard mix is close to 40/40/20.
+  [ ] Valid JSON. total_cards and breakdown are correct.
