@@ -38,7 +38,7 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
   };
 
   const face =
-    "backface-hidden [grid-area:1/1] flex min-h-[300px] flex-col rounded-2xl bg-card p-5 shadow-float ring-1 ring-foreground/[0.08] sm:min-h-[340px] sm:p-7";
+    "backface-hidden [grid-area:1/1] flex min-h-[200px] flex-col rounded-2xl bg-card p-4 shadow-float ring-1 ring-foreground/[0.08] sm:min-h-[220px] sm:p-5";
 
   const Meta = () => (
     <div className="flex min-w-0 flex-wrap items-center gap-1.5">
@@ -91,7 +91,7 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
           {/* front */}
           <div className={`${face} group`} style={reduce ? { visibility: flipped ? "hidden" : "visible" } : undefined} aria-hidden={flipped}>
             <Meta />
-            <div className="flex flex-1 items-center py-8">
+            <div className="flex flex-1 items-center py-3">
               <p className="text-xl leading-snug font-semibold tracking-tight whitespace-pre-line text-balance sm:text-[1.6rem] sm:leading-[1.3]">{card.front}</p>
             </div>
             <p className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -109,11 +109,11 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
             aria-hidden={!flipped}
           >
             <Meta />
-            <div className="mt-5 border-l-2 border-primary/40 pl-3">
+            <div className="mt-3 border-l-2 border-primary/40 pl-3">
               <p className="text-[11px] font-medium tracking-wider text-primary uppercase">Answer</p>
               <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{card.front.split("\n")[0]}</p>
             </div>
-            <div className="mt-4 max-h-[42dvh] flex-1 overflow-y-auto pr-1 sm:max-h-[46vh]" data-testid="card-back">
+            <div className="mt-3 max-h-[26dvh] flex-1 overflow-y-auto pr-1" data-testid="card-back">
               <RichText text={card.back} className="space-y-2 text-[15px] leading-relaxed sm:text-base" />
             </div>
           </div>

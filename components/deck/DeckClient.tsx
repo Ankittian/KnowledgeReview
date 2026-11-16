@@ -282,12 +282,12 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
   const progress = dayTotal ? (dayDone / dayTotal) * 100 : 0;
 
   return (
-    <div className="mx-auto w-full max-w-xl px-4 pt-5 sm:pt-8">
+    <div className="mx-auto w-full max-w-xl px-4 pt-3 sm:pt-4">
       {/* header */}
-      <div className="mb-5 flex items-end justify-between gap-3">
+      <div className="mb-3 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium text-muted-foreground">{dateLabel}</p>
-          <h1 className="mt-0.5 text-2xl font-semibold tracking-tight">Today’s cards</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Today’s cards</h1>
         </div>
         <div className="flex items-center gap-1.5">
           <AnimatePresence>
@@ -315,7 +315,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
         </div>
       </div>
       {dayTotal > 0 && (
-        <div className="mb-6 flex items-center gap-3">
+        <div className="mb-3 flex items-center gap-3">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={dayDone} aria-valuemin={0} aria-valuemax={dayTotal}>
             <motion.div
               className="h-full rounded-full bg-primary"
@@ -336,7 +336,8 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
         <Summary total={dayTotal} stats={stats} resumed={initialAnswered.length > 0} limitReached={limitReached} />
       ) : (
         <>
-          <div className="relative">
+          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative min-w-0 flex-1">
             {queue.length > 1 && (
               <div aria-hidden className="absolute inset-x-4 -bottom-2 h-full rounded-2xl bg-card/80 shadow-card ring-1 ring-foreground/[0.06]" />
             )}
@@ -372,16 +373,19 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
               </motion.div>
             </AnimatePresence>
           </div>
+          <SkipSide enabled={canSkip} onClick={skip} />
+          </div>
 
           {/* actions */}
-          <div className="mt-9">
+          {/* right margin = skip button + gap, so the buttons line up with the card width */}
+          <div className="mt-4 mr-11 sm:mr-[3.25rem]">
             {current.statement && phase === "back" ? (
               <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} />
             ) : (
               <AnimatePresence mode="wait" initial={false}>
                 {phase === "front" ? (
                   <motion.div key="reveal" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                    <Button size="lg" className="h-12 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
+                    <Button size="lg" className="h-11 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
                       Reveal answer
                       <Kbd className="hide-touch ml-1 bg-primary-foreground/15 text-primary-foreground">Space</Kbd>
                     </Button>
@@ -393,7 +397,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="space-y-5"
+                    className="space-y-3"
                   >
                     <section aria-labelledby="q-knew">
                       <StepHeading id="q-knew" step={1} title="Did you know it?">
@@ -450,12 +454,6 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
                 )}
               </AnimatePresence>
             )}
-            {canSkip && (
-              <Button variant="ghost" size="sm" className="mx-auto mt-4 flex text-muted-foreground" onClick={skip} data-testid="skip-card">
-                <SkipForward /> Skip for now
-                <Kbd className="hide-touch ml-1">S</Kbd>
-              </Button>
-            )}
           </div>
           <FeedbackSheet
             open={sheetOpen}
@@ -474,9 +472,35 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
   );
 }
 
+/** Skip-for-now arrow shown on both sides of the card (same action; hidden but space-keeping when skipping is not possible). */
+function SkipSide({ enabled, onClick }: { enabled: boolean; onClick: () => void }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <button
+            type="button"
+            onClick={onClick}
+            disabled={!enabled}
+            aria-label="Skip for now"
+            data-testid="skip-card"
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-card transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:size-10 [&_svg]:size-4",
+              !enabled && "pointer-events-none invisible",
+            )}
+          />
+        }
+      >
+        <SkipForward />
+      </TooltipTrigger>
+      <TooltipContent className="text-xs">Skip for now (S)</TooltipContent>
+    </Tooltip>
+  );
+}
+
 function StepHeading({ id, step, title, children }: { id: string; step: number; title: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-2.5 flex items-center justify-between gap-2">
+    <div className="mb-2 flex items-center justify-between gap-2">
       <h2 id={id} className="flex items-center gap-2 text-sm font-medium">
         <span className="inline-flex size-5 items-center justify-center rounded-full bg-muted font-mono text-[11px] text-muted-foreground">{step}</span>
         {title}
@@ -501,14 +525,14 @@ function ChoiceButton({
 }) {
   const idle =
     tone === "success"
-      ? "bg-card hover:border-success/40 hover:bg-success/[0.06] [&_svg]:text-success"
-      : "bg-card hover:border-destructive/40 hover:bg-destructive/[0.06] [&_svg]:text-destructive";
+      ? "border-success/40 bg-success/[0.10] text-success hover:border-success hover:bg-success/20 [&_svg]:text-success"
+      : "border-destructive/40 bg-destructive/[0.10] text-destructive hover:border-destructive hover:bg-destructive/20 [&_svg]:text-destructive";
   const on = tone === "success" ? "border-success bg-success text-background" : "border-destructive bg-destructive text-background";
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
       className={cn(
-        "inline-flex h-12 items-center justify-center gap-2 rounded-lg border text-[15px] font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-[18px]",
+        "inline-flex h-11 items-center justify-center gap-2 rounded-lg border text-[15px] font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-[18px]",
         active ? on : idle,
       )}
       onClick={onClick}
@@ -534,15 +558,15 @@ function VerdictButton({
   testId: string;
 }) {
   const t = {
-    success: "hover:border-success/40 hover:bg-success/[0.06] [&_svg]:text-success",
-    warning: "hover:border-warning/50 hover:bg-warning/[0.08] [&_svg]:text-warning",
-    neutral: "hover:border-foreground/20 hover:bg-accent [&_svg]:text-muted-foreground",
+    success: "border-success/40 bg-success/[0.10] text-success hover:border-success hover:bg-success/20 [&_svg]:text-success",
+    warning: "border-warning/50 bg-warning/[0.12] text-warning hover:border-warning hover:bg-warning/25 [&_svg]:text-warning",
+    neutral: "border-foreground/25 bg-foreground/[0.06] text-foreground/80 hover:border-foreground/40 hover:bg-foreground/[0.12] [&_svg]:text-muted-foreground",
   }[tone];
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
       className={cn(
-        "inline-flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg border bg-card px-2 py-2.5 text-sm font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:flex-row sm:gap-2 [&_svg]:size-[18px]",
+        "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-1.5 py-2 text-sm font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-[18px]",
         t,
       )}
       onClick={onClick}
