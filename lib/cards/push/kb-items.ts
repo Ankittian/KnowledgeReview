@@ -46,10 +46,18 @@ export class KbIndex {
     return ids && ids.length === 1 ? ids[0] : undefined;
   }
 
-  /** A `source_refs` entry points at a KB item by yaml file, by `rule:<key>` or by plain key (in that order). */
+  /**
+   * A `source_refs` entry points at a KB item by yaml file, by graph node id (`form:<key>`, `rule:<key>`,
+   * `process:<key>`, `module:<key>`) or by plain key (in that order).
+   */
   resolveRef(ref: string): number | undefined {
     const byFile = this.byYamlFile.get(ref);
     if (byFile !== undefined) return byFile;
+    // "Node name (type:key)": the id in the closing brackets is what identifies the item; the name is for readers.
+    const bracketed = /\(([a-z]+:[^()\s]+)\)\s*$/.exec(ref)?.[1];
+    const byNodeId = this.byTypeKey.get(bracketed ?? ref);
+    if (byNodeId !== undefined) return byNodeId;
+    if (bracketed) ref = bracketed;
     if (ref.startsWith("rule:")) {
       const rule = this.byRuleKey.get(ref.slice("rule:".length));
       if (rule !== undefined) return rule;

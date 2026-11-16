@@ -24,7 +24,7 @@ One JSON file per **module and audience**, in `data/generated-cards/`, for examp
           "topic_key": "procure-to-pay-overview",
           "title": "Front of the card (the question or statement)",
           "body": "Back of the card (the answer).",
-          "source_refs": ["processes/procure-to-pay.yaml", "rule:some-rule-key"]
+          "source_refs": ["Procure to Pay (process:procure-to-pay)", "Some Rule Name (rule:some-rule-key)"]
         }
       ]
     }
@@ -41,7 +41,7 @@ One JSON file per **module and audience**, in `data/generated-cards/`, for examp
 | `cards[].level` | `easy`, `medium` or `hard`. |
 | `cards[].topic_key` | Unique per group and level. Part of the card id. |
 | `cards[].title` / `body` | Front and back of the card. Required, not empty. |
-| `cards[].source_refs` | Optional. KB yaml files, `rule:<key>` or plain keys. Each one that is found becomes a `source` link. |
+| `cards[].source_refs` | Optional. Graph nodes written as `<node name> (<node id>)`, for example `Purchase Order (form:fPurchaseOrder)`. KB yaml files, bare `rule:<key>` and plain keys are still accepted. Each one that is found becomes a `source` link. |
 
 A card id is `gen:<key>:<audience>:<level>:<topic_key>`. Pushing the same card again finds the same id, so a re-push never creates duplicates.
 
