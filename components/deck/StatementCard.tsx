@@ -45,7 +45,7 @@ export function StatementCard({
   const need = card.minRead * 1000;
   const done = need > 0 ? Math.min(1, 1 - remainingMs / need) : 1;
 
-  const Meta = () => (
+  const Meta = ({ timer = false }: { timer?: boolean }) => (
     <div className="flex flex-wrap items-center gap-1.5">
       <Badge variant="secondary" className="max-w-full truncate" title={card.context}>
         {card.context}
@@ -56,6 +56,12 @@ export function StatementCard({
         <span className="ml-auto text-xs font-medium text-muted-foreground tabular-nums">
           {position}/{total}
         </span>
+      )}
+      {timer && READ_LOCK_ENABLED && (
+        <svg viewBox="0 0 24 24" className={cn("size-6 shrink-0 -rotate-90", position === undefined && "ml-auto")} role="progressbar" aria-label="Read time" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(done * 100)} data-testid="read-timer">
+          <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" className="stroke-muted" />
+          <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-primary transition-[stroke-dashoffset] duration-200" strokeDasharray={2 * Math.PI * 9} strokeDashoffset={2 * Math.PI * 9 * (1 - done)} />
+        </svg>
       )}
     </div>
   );
@@ -94,38 +100,13 @@ export function StatementCard({
           style={reduce ? { visibility: flipped ? "visible" : "hidden" } : { transform: "rotateY(180deg)" }}
           aria-hidden={!flipped}
         >
-          <Meta />
+          <Meta timer />
           <p className="mt-4 text-[11px] font-medium tracking-wider text-primary uppercase">Description</p>
           <RichText
             text={card.back}
             className="mt-2 max-h-[42dvh] flex-1 space-y-2 overflow-y-auto pr-1 text-[15px] leading-relaxed sm:max-h-[44vh] sm:text-base"
             testId="statement-body"
           />
-          {READ_LOCK_ENABLED && (
-            <div className="mt-4" aria-live="polite">
-              <div
-                className="h-1.5 overflow-hidden rounded-full bg-muted"
-                role="progressbar"
-                aria-label="Read time"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={Math.round(done * 100)}
-              >
-                <div className="h-full rounded-full bg-primary transition-[width] duration-200" style={{ width: `${done * 100}%` }} />
-              </div>
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground" data-testid="read-timer">
-                {remainingMs > 0 ? (
-                  <>
-                    <Lock className="size-3.5" /> Read the card. You can answer in {Math.ceil(remainingMs / 1000)}s
-                  </>
-                ) : (
-                  <>
-                    <Check className="size-3.5 text-success" /> Ready: choose your answer
-                  </>
-                )}
-              </p>
-            </div>
-          )}
         </div>
       </motion.div>
     </div>
