@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { MobileTabBar } from "./NavLinks";
 import { TopBar } from "./TopBar";
+import { WelcomeTour } from "./WelcomeTour";
 
 export async function AppShell({ user, children }: { user: SessionUser; children: React.ReactNode }) {
   const isStaff = user.role === "admin";
@@ -24,6 +25,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
         <div className="flex-1 pb-24 md:pb-10">{children}</div>
       </SidebarInset>
       <MobileTabBar isStaff={isStaff} />
+      <WelcomeTour userId={user.id} name={user.displayName} />
     </SidebarProvider>
   );
 }

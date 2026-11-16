@@ -22,6 +22,7 @@ export function MobileTabBar({ isStaff }: { isStaff: boolean }) {
             <li key={href} className="flex-1">
               <Link
                 href={href}
+                data-tour={href}
                 aria-current={on ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-lg py-1 text-[11px] font-medium transition-colors",

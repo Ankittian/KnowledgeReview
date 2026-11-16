@@ -37,7 +37,7 @@ export function AppSidebar({ user, isStaff, isAdmin }: { user: ShellUser; isStaf
         <SidebarMenuButton
           isActive={isActive(path, i.href)}
           tooltip={i.label}
-          render={<Link href={i.href} onClick={() => setOpenMobile(false)} aria-current={isActive(path, i.href) ? "page" : undefined} />}
+          render={<Link href={i.href} data-tour={i.href} onClick={() => setOpenMobile(false)} aria-current={isActive(path, i.href) ? "page" : undefined} />}
         >
           <i.icon />
           <span>{i.label}</span>
