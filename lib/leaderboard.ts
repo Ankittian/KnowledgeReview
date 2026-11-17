@@ -1,6 +1,6 @@
 import { sql, type SQL } from "drizzle-orm";
 import { query, type DB } from "@/db/client";
-import { LEVELS, LEVEL_ORDER } from "./cards/spec";
+import { FLAG_POINTS_MULTIPLIER, LEVELS, LEVEL_ORDER } from "./cards/spec";
 
 export type LeaderboardPeriod = "week" | "all";
 
@@ -20,9 +20,10 @@ const pointsCase = sql.join(
 );
 
 /**
- * Points leaderboard for signed-in users. Each card scores once: the user's first correct answer to it
- * (Known and correct, or New to me), worth the card's level points. "This week" counts only cards whose first
- * correct answer fell in the current week. `module` (a module code) limits the board to that area's cards.
+ * Points leaderboard for signed-in users. Each card scores once, from the user's FIRST scoring answer to it:
+ * Known and correct / New to me earn the card's level points; reporting the card as incorrect or incomplete earns
+ * FLAG_POINTS_MULTIPLIER (2) times that. "This week" counts only cards whose first scoring answer fell in the
+ * current week. `module` (a module code) limits the board to that area's cards.
  * Admins are ranked like everyone else; only active users are listed. Ties go to whoever reached their score first.
  */
 export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: string, module: string | null = null): Promise<LeaderRow[]> {
@@ -34,17 +35,17 @@ export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: st
     db,
     sql`WITH first_correct AS (
           SELECT DISTINCT ON (r.user_id, c.id)
-                 r.user_id, c.id AS card_id, c.level::text AS level, i.module AS module,
+                 r.user_id, c.id AS card_id, c.level::text AS level, i.module AS module, r.verdict::text AS verdict,
                  coalesce(r.answered_at, r.created_at) AS answered_at
           FROM card_reviews r
           JOIN card_versions v ON v.id = r.card_version_id
           JOIN cards c ON c.id = v.card_id
           JOIN kb_items i ON i.id = c.kb_item_id
-          WHERE r.verdict = 'correct' AND c.level IS NOT NULL
+          WHERE r.verdict IN ('correct', 'needs_improvement') AND c.level IS NOT NULL
           ORDER BY r.user_id, c.id, coalesce(r.answered_at, r.created_at)
         )
         SELECT f.user_id, u.display_name AS name,
-               coalesce(sum(CASE f.level ${pointsCase} END), 0)::int AS points,
+               coalesce(sum((CASE f.level ${pointsCase} END) * (CASE WHEN f.verdict = 'needs_improvement' THEN ${FLAG_POINTS_MULTIPLIER}::int ELSE 1 END)), 0)::int AS points,
                count(*)::int AS cards
         FROM first_correct f
         JOIN users u ON u.id = f.user_id AND u.status = 'active'

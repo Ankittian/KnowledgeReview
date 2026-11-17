@@ -183,7 +183,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     [current, knew, date, deckId],
   );
 
-  /** Statement cards: Known / New earn the card's weight; Incorrect needs a reason and goes to review. */
+  /** Statement cards: Known / New earn the card weight; Incorrect or incomplete needs a reason, goes to review and earns double. */
   const submitStatement = useCallback(
     (kind: StatementAnswer, fb?: FeedbackValue) => {
       if (!current) return;
@@ -380,7 +380,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
           {/* right margin = skip button + gap, so the buttons line up with the card width */}
           <div className="mt-4 mr-11 sm:mr-[3.25rem]">
             {current.statement && phase === "back" ? (
-              <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} />
+              <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} weight={current.weight} />
             ) : (
               <AnimatePresence mode="wait" initial={false}>
                 {phase === "front" ? (

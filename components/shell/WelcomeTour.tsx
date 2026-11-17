@@ -48,8 +48,8 @@ const STEPS: Step[] = [
     icon: Trophy,
     title: "Leaderboard: earn points",
     href: "/leaderboard",
-    body: "Correct answers earn points. Each card scores once, from your first correct answer.",
-    tips: ["Some cards are worth more than others", "See how you compare with your team"],
+    body: "Answers earn points, and reporting a card as incorrect or incomplete earns double. Each card scores once, from your first answer.",
+    tips: ["Some cards are worth more than others", "Spotting a wrong or incomplete card is worth 2× its points", "See how you compare with your team"],
   },
   {
     icon: Search,
