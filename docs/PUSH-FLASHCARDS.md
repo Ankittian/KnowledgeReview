@@ -41,7 +41,7 @@ One JSON file per **module and audience**, in `data/generated-cards/`, for examp
 | `cards[].level` | `easy`, `medium` or `hard`. |
 | `cards[].topic_key` | Unique per group and level. Part of the card id. |
 | `cards[].title` / `body` | Front and back of the card. Required, not empty. |
-| `cards[].source_refs` | Optional. Graph nodes written as `<node name> (<node id>)`, for example `Purchase Order (form:fPurchaseOrder)`. KB yaml files, bare `rule:<key>` and plain keys are still accepted. Each one that is found becomes a `source` link. |
+| `cards[].source_refs` | Optional. Graph nodes written as `<node name> [<element id>] (<node id>)`, for example `Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)`. The node id (`form:fPurchaseOrder`) resolves the link and is stored in `card_related_items.node_id`; the element id is stored in `card_related_items.element_id` so the exact graph node can be found again from feedback. Without the `[…]` part the link still works but `element_id` stays empty. KB yaml files, bare `rule:<key>` and plain keys are still accepted. Each one that is found becomes a `source` link. |
 
 A card id is `gen:<key>:<audience>:<level>:<topic_key>`. Pushing the same card again finds the same id, so a re-push never creates duplicates.
 

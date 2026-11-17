@@ -185,6 +185,10 @@ export const cardRelatedItems = pgTable(
       .notNull()
       .references(() => kbItems.id),
     relation: text("relation").notNull(),
+    /** Knowledge-graph node id of the source (`form:fGRN`, `rule:<key>`...): lets feedback be traced back to the graph node. */
+    nodeId: text("node_id"),
+    /** Graph element id (`4:<database uuid>:<number>`) of the same node: the handle used to find and update it in the graph. */
+    elementId: text("element_id"),
   },
   (t) => [primaryKey({ columns: [t.cardId, t.kbItemId, t.relation] }), index("card_related_items_item_idx").on(t.kbItemId)],
 );

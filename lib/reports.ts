@@ -118,7 +118,11 @@ export async function loadFeedbackExport(db: DB, status?: string) {
                coalesce((SELECT array_agg(DISTINCT le.key ORDER BY le.key) FROM card_related_items l JOIN kb_items le ON le.id = l.kb_item_id
                          WHERE l.card_id = c.id AND le.type = 'process'), '{}') AS linked_processes,
                coalesce((SELECT array_agg(DISTINCT le.key ORDER BY le.key) FROM card_related_items l JOIN kb_items le ON le.id = l.kb_item_id
-                         WHERE l.card_id = c.id AND le.type = 'rule'), '{}') AS linked_rules
+                         WHERE l.card_id = c.id AND le.type = 'rule'), '{}') AS linked_rules,
+               coalesce((SELECT array_agg(DISTINCT l.node_id ORDER BY l.node_id) FROM card_related_items l
+                         WHERE l.card_id = c.id AND l.node_id IS NOT NULL), '{}') AS source_node_ids,
+               coalesce((SELECT array_agg(DISTINCT l.element_id ORDER BY l.element_id) FROM card_related_items l
+                         WHERE l.card_id = c.id AND l.element_id IS NOT NULL), '{}') AS source_element_ids
         FROM card_feedback f
         JOIN card_versions cv ON cv.id = f.card_version_id
         JOIN cards c ON c.id = cv.card_id
@@ -135,6 +139,8 @@ export async function loadFeedbackExport(db: DB, status?: string) {
     linked_forms: arr(r.linked_forms),
     linked_processes: arr(r.linked_processes),
     linked_rules: arr(r.linked_rules),
+    source_node_ids: arr(r.source_node_ids),
+    source_element_ids: arr(r.source_element_ids),
     created_at: iso(r.created_at),
     resolved_at: iso(r.resolved_at),
   }));

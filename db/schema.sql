@@ -55,6 +55,8 @@ CREATE TABLE "card_related_items" (
 	"card_id" text NOT NULL,
 	"kb_item_id" integer NOT NULL,
 	"relation" text NOT NULL,
+	"node_id" text,
+	"element_id" text,
 	CONSTRAINT "card_related_items_card_id_kb_item_id_relation_pk" PRIMARY KEY("card_id","kb_item_id","relation")
 );
 

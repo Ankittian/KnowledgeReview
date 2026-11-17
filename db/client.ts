@@ -13,6 +13,7 @@ export interface DbHandle {
 }
 
 const SCHEMA_FILE = path.join(process.cwd(), "db", "schema.sql");
+const MIGRATIONS_FILE = path.join(process.cwd(), "db", "migrations.sql");
 const VIEWS_FILE = path.join(process.cwd(), "db", "views.sql");
 
 /**
@@ -50,6 +51,8 @@ export async function applySchema(h: DbHandle): Promise<{ created: boolean }> {
       for (const stmt of statements) await tx.execute(sql.raw(stmt));
     });
   }
+  // upgrades for databases made from an older schema.sql (idempotent), then the views that may read the new columns
+  for (const stmt of splitSql(fs.readFileSync(MIGRATIONS_FILE, "utf8"))) await h.db.execute(sql.raw(stmt));
   for (const stmt of splitSql(fs.readFileSync(VIEWS_FILE, "utf8"))) await h.db.execute(sql.raw(stmt));
   return { created: !present };
 }
