@@ -152,7 +152,7 @@ For the **first load** the project owner reviews the generated JSON (`generated-
 
 ### 4.4 Where the old template builder goes
 
-`lib/cards/build.ts` and `lib/sync.ts` keep working for the knowledge-base item catalog and the card-to-item links. The new generator is a separate module (`lib/generation/*`, `scripts/generate-cards.ts`) that writes only the new card fields. The earlier "level 1–3 by length" plan (`PLAN-flashcard-levels.md`) is replaced by this one: levels are now generated intent, not computed from length.
+`lib/cards/build.ts` and `lib/sync.ts` keep working for the knowledge-base item catalog and the card-to-item links. The new generator is a separate module (`lib/generation/*`, `scripts/generate-cards.ts`) that writes only the new card fields. The earlier "level 1–3 by length" plan (since removed) is replaced by this one: levels are now generated intent, not computed from length.
 
 ---
 

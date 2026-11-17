@@ -252,7 +252,7 @@ Reporting views (`db/views.sql`): `card_health`, `kb_item_health`, `needs_change
 | `npm run kb:import -- <dir>` | Copy a knowledge-base `domain/` folder into `kb/` |
 | `npm run cards:sync` | Build cards from `kb/` (`-- --entities-only` for KB items only) |
 | `npm run cards:push` | Load `data/generated-cards/*.json` |
-| `npm run report:needs-change` | Write `reports/needs-change.{jsonl,md}` |
+| `npm run cards:worker` | Run the card-generation worker (admin Cards page jobs) |
 
 **Chat**
 
