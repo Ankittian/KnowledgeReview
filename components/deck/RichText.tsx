@@ -17,7 +17,7 @@ const BULLET = /^\s*[-•]\s+/;
 
 /**
  * Card answer text: one idea per line. Lines starting with "- " become a bullet list, `**bold**` marks key terms,
- * every other line is a paragraph. This is the whole markup the card generator is allowed to use (docs/prompts/prompt3.txt).
+ * every other line is a paragraph. This is the whole markup the card generator is allowed to use (data/templates/flashcards/generation-prompt.functional.txt).
  */
 export function RichText({ text, className, testId }: { text: string; className?: string; testId?: string }) {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());

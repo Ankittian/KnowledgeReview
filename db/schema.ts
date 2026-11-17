@@ -452,3 +452,74 @@ export const chatFeedback = pgTable(
   },
   (t) => [uniqueIndex("chat_feedback_msg_user").on(t.messageId, t.userId)],
 );
+
+// ---------------------------------------------------------------- card generation (admin UI)
+
+/**
+ * One admin request to generate cards. Statuses: queued, generating, ready, pushing, pushed, failed, cancelled.
+ * `requested_by` and notifications' `user_id` carry no foreign key (like activity_log), so deleting a user never fails
+ * because of them.
+ */
+export const cardGenerationJobs = pgTable(
+  "card_generation_jobs",
+  {
+    id: serial("id").primaryKey(),
+    requestedBy: uuid("requested_by").notNull(),
+    level: text("level").notNull(), // module | form
+    params: jsonb("params").$type<Record<string, unknown>>().notNull(), // items with counts, instructions, model
+    status: text("status").notNull().default("queued"),
+    progress: jsonb("progress").$type<{ done: number; total: number }>().notNull().default({ done: 0, total: 0 }),
+    report: jsonb("report").$type<Record<string, unknown>>().notNull().default({}), // warnings, dropped cards, dry run, push result
+    filePaths: text("file_paths").array().notNull().default(sql`ARRAY[]::text[]`),
+    model: text("model"),
+    inputTokens: integer("input_tokens").notNull().default(0),
+    outputTokens: integer("output_tokens").notNull().default(0),
+    cancelRequested: boolean("cancel_requested").notNull().default(false),
+    error: text("error"),
+    createdAt: createdAt(),
+    startedAt: ts("started_at"),
+    finishedAt: ts("finished_at"),
+  },
+  (t) => [index("card_generation_jobs_status_idx").on(t.status, t.createdAt)],
+);
+
+/** A generated card waiting for review. status: draft | deleted. Pushed cards stay as draft rows for the record. */
+export const generatedCards = pgTable(
+  "generated_cards",
+  {
+    id: serial("id").primaryKey(),
+    jobId: integer("job_id")
+      .notNull()
+      .references(() => cardGenerationJobs.id, { onDelete: "cascade" }),
+    module: text("module").notNull(),
+    scope: text("scope").notNull(), // module | flow | form
+    groupKey: text("group_key").notNull(),
+    groupTitle: text("group_title").notNull(),
+    context: text("context"),
+    level: cardLevel("level").notNull(),
+    topicKey: text("topic_key").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    sourceRefs: text("source_refs").array().notNull().default(sql`ARRAY[]::text[]`),
+    status: text("status").notNull().default("draft"),
+    edited: boolean("edited").notNull().default(false),
+    warnings: jsonb("warnings").$type<string[]>().notNull().default([]),
+    createdAt: createdAt(),
+  },
+  (t) => [index("generated_cards_job_idx").on(t.jobId, t.groupKey)],
+);
+
+/** In-app notification for one user (the bell). kind: cards_ready | cards_failed | cards_pushed. */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: serial("id").primaryKey(),
+    userId: uuid("user_id").notNull(),
+    kind: text("kind").notNull(),
+    jobId: integer("job_id"),
+    message: text("message").notNull(),
+    readAt: ts("read_at"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("notifications_user_idx").on(t.userId, t.readAt, t.createdAt)],
+);

@@ -52,6 +52,25 @@ CREATE TABLE "card_feedback" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 
+CREATE TABLE "card_generation_jobs" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"requested_by" uuid NOT NULL,
+	"level" text NOT NULL,
+	"params" jsonb NOT NULL,
+	"status" text DEFAULT 'queued' NOT NULL,
+	"progress" jsonb DEFAULT '{"done":0,"total":0}'::jsonb NOT NULL,
+	"report" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"file_paths" text[] DEFAULT ARRAY[]::text[] NOT NULL,
+	"model" text,
+	"input_tokens" integer DEFAULT 0 NOT NULL,
+	"output_tokens" integer DEFAULT 0 NOT NULL,
+	"cancel_requested" boolean DEFAULT false NOT NULL,
+	"error" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"started_at" timestamp with time zone,
+	"finished_at" timestamp with time zone
+);
+
 CREATE TABLE "card_related_items" (
 	"card_id" text NOT NULL,
 	"kb_item_id" integer NOT NULL,
@@ -171,6 +190,25 @@ CREATE TABLE "deck_cards" (
 	CONSTRAINT "deck_cards_deck_id_card_id_pk" PRIMARY KEY("deck_id","card_id")
 );
 
+CREATE TABLE "generated_cards" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"job_id" integer NOT NULL,
+	"module" text NOT NULL,
+	"scope" text NOT NULL,
+	"group_key" text NOT NULL,
+	"group_title" text NOT NULL,
+	"context" text,
+	"level" "card_level" NOT NULL,
+	"topic_key" text NOT NULL,
+	"title" text NOT NULL,
+	"body" text NOT NULL,
+	"source_refs" text[] DEFAULT ARRAY[]::text[] NOT NULL,
+	"status" text DEFAULT 'draft' NOT NULL,
+	"edited" boolean DEFAULT false NOT NULL,
+	"warnings" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
 CREATE TABLE "kb_items" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"type" "kb_item_type" NOT NULL,
@@ -188,6 +226,16 @@ CREATE TABLE "login_sessions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE TABLE "notifications" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL,
+	"kind" text NOT NULL,
+	"job_id" integer,
+	"message" text NOT NULL,
+	"read_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -282,6 +330,7 @@ ALTER TABLE "conversations" ADD CONSTRAINT "conversations_user_id_users_id_fk" F
 ALTER TABLE "daily_decks" ADD CONSTRAINT "daily_decks_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "deck_cards" ADD CONSTRAINT "deck_cards_deck_id_daily_decks_id_fk" FOREIGN KEY ("deck_id") REFERENCES "public"."daily_decks"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "deck_cards" ADD CONSTRAINT "deck_cards_card_id_cards_id_fk" FOREIGN KEY ("card_id") REFERENCES "public"."cards"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "generated_cards" ADD CONSTRAINT "generated_cards_job_id_card_generation_jobs_id_fk" FOREIGN KEY ("job_id") REFERENCES "public"."card_generation_jobs"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "login_sessions" ADD CONSTRAINT "login_sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_session_id_login_sessions_id_fk" FOREIGN KEY ("session_id") REFERENCES "public"."login_sessions"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "review_schedule" ADD CONSTRAINT "review_schedule_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
@@ -295,6 +344,7 @@ CREATE INDEX "activity_log_user_idx" ON "activity_log" USING btree ("user_id","c
 CREATE INDEX "activity_log_action_idx" ON "activity_log" USING btree ("action","created_at");
 CREATE INDEX "card_feedback_version_idx" ON "card_feedback" USING btree ("card_version_id","status");
 CREATE INDEX "card_feedback_status_idx" ON "card_feedback" USING btree ("status");
+CREATE INDEX "card_generation_jobs_status_idx" ON "card_generation_jobs" USING btree ("status","created_at");
 CREATE INDEX "card_related_items_item_idx" ON "card_related_items" USING btree ("kb_item_id");
 CREATE INDEX "card_reviews_user_idx" ON "card_reviews" USING btree ("user_id","created_at");
 CREATE INDEX "card_reviews_version_idx" ON "card_reviews" USING btree ("card_version_id");
@@ -311,7 +361,9 @@ CREATE INDEX "conversations_user_idx" ON "conversations" USING btree ("user_id",
 CREATE INDEX "daily_decks_user_day_idx" ON "daily_decks" USING btree ("user_id","deck_date");
 CREATE INDEX "daily_decks_session_idx" ON "daily_decks" USING btree ("session_id","deck_date");
 CREATE INDEX "deck_cards_card_idx" ON "deck_cards" USING btree ("card_id");
+CREATE INDEX "generated_cards_job_idx" ON "generated_cards" USING btree ("job_id","group_key");
 CREATE INDEX "login_sessions_user_idx" ON "login_sessions" USING btree ("user_id");
+CREATE INDEX "notifications_user_idx" ON "notifications" USING btree ("user_id","read_at","created_at");
 CREATE INDEX "refresh_tokens_session_idx" ON "refresh_tokens" USING btree ("session_id");
 CREATE INDEX "review_schedule_due_idx" ON "review_schedule" USING btree ("user_id","due_date");
 
