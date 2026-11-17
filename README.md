@@ -84,7 +84,7 @@ The sync is idempotent: run it twice and the second run changes nothing.
 2. **Admin → What needs change** lists flagged cards worst first, plus roll-ups *by form / process / rule / concept*,
    with drill-down to each YAML item.
 3. **Admin → Feedback** is where reviewers triage suggestions: accept, reject, or mark applied with the commit SHA.
-4. **Export needs-change** (`/api/admin/export/needs-change?format=jsonl|csv|md`, or `npm run report:needs-change`)
+4. **Export needs-change** (`/api/admin/export/needs-change?format=jsonl|csv|md`)
    gives one row per `yaml_file + entity_key + field`. Each row has the current text, vote counts, the score, the
    linked forms, processes and rules, and every suggestion. Apply the fixes to the YAML (by hand or with Claude Code),
    commit, re-import and sync, then mark the feedback *applied*.
@@ -171,7 +171,6 @@ Answers and events are written to `localStorage` first, then sent with retry and
 | `npm run cards:sync` | build cards from `kb/` and upsert (`-- --entities-only`: KB items only) |
 | `npm run cards:push` | push `data/generated-cards/*.json` (append, or `-- --mode purge`); see docs/PUSH-FLASHCARDS.md |
 | `npm run seed:admin -- --username x --password y` | create or reset an admin |
-| `npm run report:needs-change` | write `reports/needs-change.{jsonl,md}` |
 | `npm run chat:check` | ask the KB one question through the Claude harness and try a prompt injection (no database) |
 | `npm test` | unit + DB integration tests (in-memory Postgres) |
 | `npm run build && npm run e2e` | Playwright: full flow on desktop + mobile, plus screenshots in `test-results/screens` |

@@ -102,7 +102,7 @@ npm run cards:push -- --no-revisions            # refuse if any card would be re
 
 ### The ledger: what is already taught
 
-The generation prompt (`docs/prompts/prompt5.txt`) needs the titles already in the database so it does not repeat them. Export them (titles only, never bodies):
+The generation prompt (`data/templates/flashcards/generation-prompt.txt`) needs the titles already in the database so it does not repeat them. Export them (titles only, never bodies):
 
 ```bash
 npm run cards:ledger -- --module MM                          # every functional card of the module
