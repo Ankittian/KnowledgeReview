@@ -1,6 +1,7 @@
 # Flashcard templates
 
-- `generation-prompt.txt` - the prompt used to have an LLM generate one `<MODULE>.functional.json` per module from `kb/`.
+- `generation-prompt.functional.txt` - the prompt template for FUNCTIONAL (business user) cards (the former `prompt5-final.txt`). The admin UI (Admin > Cards, `lib/cards/generate/prompt.ts`) fills its `{{PLACEHOLDERS}}` and removes the operator note at the top; an operator can fill it by hand the same way.
+- `generation-prompt.technical.txt` - the template for TECHNICAL cards. It does not exist yet: add it with the same placeholders and the UI enables the Technical choice by itself (until then the choice shows "soon"). Set `CARDS_TEMPLATE_DIR` to read templates from another folder.
 - `catalog.template.json` - the JSON shape `npm run cards:push` reads (put real files in `data/generated-cards/`).
   - `scope`: `module` | `flow` | `form`; `key` is the KB key of that module/flow/form.
   - Card id = `gen:{key}:{audience}:{level}:{topic_key}`, so `topic_key` must be unique per group + level.

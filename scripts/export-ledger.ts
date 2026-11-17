@@ -8,7 +8,7 @@
  *
  * One line per active card:  <item key> | <level> | <topic_key> | <title>
  * Only the title (the first line of the card front) is exported, never the body: the next run decides what is already
- * taught from the titles alone. Paste the output into {{EXISTING_CARDS}} of docs/prompts/prompt5.txt.
+ * taught from the titles alone. Paste the output into {{EXISTING_CARDS}} of data/templates/flashcards/generation-prompt.txt.
  */
 import "./_env";
 import fs from "node:fs";

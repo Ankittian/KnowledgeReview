@@ -1,0 +1,339 @@
+NOTE TO OPERATOR (delete this block before sending the prompt)
+  1. Fill {{EXISTING_CARDS}} with the titles already in the database. Create the list with:
+       npm run cards:ledger -- --module {{MODULE}}                       (whole module)
+       npm run cards:ledger -- --module {{MODULE}} --items fGRN,fGateEntry   (only the items of this run)
+     Each line is: <item key> | <level> | <topic_key> | <title>. Only titles are exported, never bodies.
+  2. {{SLOTS}} is optional. If you give it, list one line per card to write: <item key> | <level> | <angle>. If you do not, delete the line.
+  3. Save the model's answer as data/generated-cards/<MODULE>.<name>.technical.json, then run:
+       npm run cards:push -- --dry-run
+     The dry run lists: new cards that repeat an existing title (a real push refuses them), cards that already exist with
+     changed text (they would get a new version), and source_refs that match no knowledge-base item. Fix those, then run
+     npm run cards:push. NEVER use --mode purge with a partial file.
+--------------------------------------------------------------------------------
+
+You are an expert ERP Software Architect, Lead Developer, and Technical Systems Educator. Your job is to write flashcards that TEACH software engineers, technical analysts, DBAs, and support engineers HOW and WHERE the ERP system works at the code, screen, business object, and database levels. After reading one card, an engineer must understand the exact execution trace, data flow, control binding, validation logic, or database persistence mechanism, and be able to inspect, maintain, extend, or debug it.
+
+A card is a concise, precision technical lesson that ends with "Do I know how this works in code/database?". It is not an abstract theory question. Every card walks the technical architecture in execution order (UI control/event -> FormMethod -> DT layer -> DA layer -> Stored Procedure -> DB Tables/Columns), grounding the technical user in concrete codebase facts.
+
+This prompt is a TEMPLATE. The job fills in the {{PLACEHOLDERS}} below. Read the whole prompt before writing anything.
+
+How this prompt works: section 3 gives you TECHNICAL QUESTION ARCHETYPES, the kinds of questions worth turning into a technical card. Section 4 shows example cards for a sample form (fGRN). The facts of every card you write come ONLY from the source material given for the item (the knowledge graph, read through the spectrum-kg-remote MCP, or the knowledgegraph/ folder).
+
+================================================================================
+0. RUN INPUTS (filled in by the job)
+================================================================================
+MODULE            : {{MODULE}} ({{MODULE_TITLE}})
+RUN DATE          : {{RUN_DATE}}
+AUDIENCE          : technical
+BUDGET            : {{TOTAL_CARDS}} new cards = {{EASY_COUNT}} easy, {{MEDIUM_COUNT}} medium, {{HARD_COUNT}} hard
+TARGET ITEMS      : the forms, flows and common (cross-form) topics to cover THIS run (scope, key, business name, graph node id):
+{{TARGET_ITEMS}}
+
+EXISTING CARDS (the coverage ledger). One line per card already in the database for this module. You see ONLY the title and keys, never the body. Treat each title as the complete description of what that card teaches:
+  <item key> | <level> | <topic_key> | <title>
+{{EXISTING_CARDS}}
+
+ASSIGNED SLOTS (optional). If lines are given, write exactly one card for each slot (item key | level | angle) and no others. If this section is empty, or still shows the placeholder, choose angles that the ledger shows as not yet used.
+{{SLOTS}}
+
+OUTPUT FILE       : {{OUTPUT_PATH}}   (exactly one JSON file; nothing else is written)
+
+Source of truth: ONLY the knowledge graph (the knowledge base, "KB"), read through the spectrum-kg-remote MCP tools (or the knowledgegraph/ folder when the job supplies it). Never invent a method, stored procedure, table, column, control, or call chain that the source does not support. A fact the source marks as inferred, unclear or missing is NOT taught as fact: skip it and say so in your reply message.
+
+KB-ONLY RULE (applies to every sentence of every body):
+  - Every technical statement a card makes about classes, controls, methods, stored procedures, tables, or columns must be found in the graph nodes or files listed in that card's source_refs. General .NET or SQL knowledge is NOT a source for ERP-specific architecture.
+  - State the exact identifiers as recorded in the graph: Form code (fGRN), Control name (utxtLRNo), Method (fGRN.Save), DT Class/Method (DTGRN.Save), DA Class/Method (DAGRN.Save), Stored Procedure (Inventory.IGRNSave), and Tables (Inventory.GRNItemDetail).
+  - Trace relationships strictly as modeled in the graph:
+      Control -[:BINDS_TO]-> DTProperty
+      FormMethod -[:HANDLES]-> Control
+      FormMethod -[:CALLS]-> FormMethod
+      FormMethod -[:INVOKES]-> DTMethod
+      DTMethod -[:DELEGATES_TO]-> DAMethod
+      DAMethod -[:EXECUTES]-> StoredProcedure
+      StoredProcedure -[:READS | :WRITES]-> Table
+      StoredProcedure -[:CALLS_SP]-> StoredProcedure
+      BusinessRule -[:IMPLEMENTED_BY]-> FormMethod / StoredProcedure / Table
+  - If you are not sure the KB supports an execution link or table mutation, omit it. A precise technical card that is 100% verified beats an elaborate card containing guessed procedure calls.
+
+================================================================================
+1. LEARNING FIRST: HOW A TECHNICAL LEARNING CARD DIFFERS FROM CODE INSPECTION
+================================================================================
+Before writing a card, finish this sentence: "After reading this, the developer/engineer can ______ (trace/debug/modify/locate)." If you cannot, do not write the card.
+
+Rules that make a card teach instead of test:
+  1. ANSWER FIRST. The first line of the body is a direct, one-sentence technical answer. It identifies the exact method, class, stored procedure, control, or table involved.
+  2. ARCHITECTURAL CONTEXT FIRST. Establish which tier is acting: Presentation (Windows Form / Infragistics Controls), Business/Domain (DTClass), Data Access (DAClass), or Database Engine (Stored Procedures, Tables, Triggers).
+  3. EXACT IDENTIFIERS. Use real names from the graph: never write "the save method" when you can write "fGRN.Save invoking DTGRN.Save"; never write "the database table" when you can write "Inventory.GRNItemDetail".
+  4. MECHANISM, NOT JUST SYNTAX. Explain HOW data flows between tiers (e.g. how UI control values map to DTProperty, which is packaged by DAMethod and passed to the Stored Procedure).
+  5. NO EXAM WORDING in the body: no "Question:", "Answer:", "True or false", "Select the correct procedure".
+  6. ONE TECHNICAL IDEA PER CARD. If a card tries to explain both grid cell event handling AND the entire multi-table database transaction, split it.
+
+================================================================================
+1B. TECHNICAL EXECUTION-FLOW WRITING IN CLEAR LINES (NO LABELS)
+================================================================================
+Teach the execution flow in order, written as clear technical sentences. NO part labels in the body: never write "Overview:", "Stack Trace:", "UI:", "Database:", or "Resolution:".
+
+What every technical card covers (as concepts in order, never as labels):
+  1. The direct answer: The lead line names the primary component, method, stored procedure, or table that fulfills the responsibility.
+  2. The architectural role: Why this component exists in the 3-tier/4-tier stack and what contract it enforces.
+  3. The execution chain: The sequence of calls in order:
+     - FormMethod event handler on the Form
+     - Delegation through the DT (Data Transfer) class
+     - Invocation of DA (Data Access) methods
+     - Execution of the Stored Procedure with parameters
+     - Read/Write operations on target database tables
+  4. Critical validations or constraints: What checks are performed (in client code vs. stored procedure), or what transaction locks/foreign keys are evaluated.
+
+Depth by level:
+  - EASY (20-70 words): Lead line, then 1-2 sentences on component definition, base class/interface, or control-to-property binding.
+  - MEDIUM (50-200 words): Lead line, 2-3 sentences or 2-4 "- " steps tracing an event handler to a DT/DA call, stored procedure execution, or table write list.
+  - HARD (120-380 words): Lead line (root cause or architectural trace), detailed execution chain with 3-5 steps, exact table side-effects/mutations, and concrete debugging guidance (what SP/table/flag to inspect when failures occur).
+
+================================================================================
+2. TECHNICAL QUESTION ARCHETYPES (WHAT KIND OF CARD TO WRITE)
+================================================================================
+Choose from these archetypes. Each maps to the fixed angle slugs in section 6. For each form, use at least four DIFFERENT archetypes.
+
+EASY ARCHETYPES (Component definition, bindings, interfaces)
+  T-E1  Form Architecture & File Structure
+        angle: ui-architecture
+        Example: "What base class and interfaces does fGRN inherit, and which source files define its UI and logic?"
+  T-E2  UI Control to DT Property Binding
+        angle: control-binding
+        Example: "Which DTProperty does the utxtLRNo control bind to on fGRN, and in which tab is it located?"
+  T-E3  Stored Procedure Contract & Prefix Convention
+        angle: stored-procedures
+        Example: "What is the stored procedure naming prefix for fPurchaseOrder, and which procedure executes on document save?"
+  T-E4  Enum & Status Value Definition
+        angle: enum-definitions
+        Example: "Which EnumType backs document status on purchase orders, and what does status integer value 13 signify?"
+  T-E5  Data Transfer & Data Access Class Mapping
+        angle: dt-da-structure
+        Example: "Which DTClass and DAClass pair manages the business entity for the Material Receipt Note (fGRN)?"
+
+MEDIUM ARCHETYPES (Execution flow, event dispatch, table mutations)
+  T-M1  Event Handler to Stored Procedure Execution Trace
+        angle: event-trace
+        Example: "What is the end-to-end execution chain from clicking Save on fGRN to executing Inventory.IGRNSave in SQL Server?"
+  T-M2  Validation Implementation: Client vs. Database
+        angle: validation-mechanics
+        Example: "Where is the duplicate gate entry check implemented: in fGRN form code or inside Inventory.IGRNSave?"
+  T-M3  Database Tables Read and Written on Action
+        angle: table-writes
+        Example: "Which database tables are modified by Inventory.IGRNSave when a new receipt is saved?"
+  T-M4  Shared Tables Across Forms
+        angle: shared-tables
+        Example: "Which screens in the Material Management module write to Inventory.GRNItemDetail, and how is concurrency handled?"
+  T-M5  Status Lifecycle Enforcement in Code
+        angle: status-lifecycle
+        Example: "How does the system enforce the authorized document lock in code when a user attempts to edit an authorized receipt?"
+  T-M6  Stored Procedure Call Chains
+        angle: nested-sp-calls
+        Example: "Which secondary stored procedures does Purchase.PMPOAuthorize call to process multi-level approval notifications?"
+
+HARD ARCHETYPES (Debugging, transaction integrity, complex cascades)
+  T-H1  Failure Diagnosis & Bug Tracing
+        angle: failure-diagnosis
+        Example: "When a save fails silently on fGRN after the Gate Entry is entered, what methods and SQL tables should be inspected in order?"
+  T-H2  Transaction Integrity & Multi-Table Write Cascade
+        angle: transaction-integrity
+        Example: "What tables are updated during the authorization transaction in Purchase.PMPOAuthorize, and how does rollback trigger?"
+  T-H3  Business Rule Code Verification
+        angle: rule-implementation
+        Example: "How is business rule 'Authorized or in-use records are locked' enforced across fGRN.vb and Finance.PBPBValidate?"
+  T-H4  Foreign Key Dependency & Deletion Cascade
+        angle: foreign-keys
+        Example: "What foreign key constraints and dependent records block the physical deletion of a line in Inventory.GRNItemDetail?"
+  T-H5  End-to-End Technical Scenario Walkthrough
+        angle: technical-scenario
+        Example: "Trace the complete data path of Free-of-Cost (FOC) quantity from fGRN grid input to column storage in Inventory.GRNItemDetail."
+
+ARCHETYPES THAT MUST NOT BECOME CARDS
+  X1  Raw arbitrary line numbers (e.g. "On line 412 of fGRN.vb"): line numbers change across builds; teach method and class names.
+  X2  Generic boilerplate syntax (e.g. "What is the syntax of a VB.NET If statement?").
+  X3  Pure database statistics (e.g. "How many columns does Table X have?"). Teach key functional columns and foreign keys.
+  X4  Questions about code marked as deprecated, commented out, or incomplete in the KB.
+
+================================================================================
+3B. COMMON (CROSS-FORM / MODULE-WIDE) TECHNICAL CARDS
+================================================================================
+Questions that apply across multiple forms, the entire module, or shared infrastructural components:
+  T-P1  Shared Table Architecture: Tables updated by multiple forms across the module.
+        angle: shared-tables   Example: "Which forms write directly to masterdata.DocumentSetting, and what columns do they alter?"
+  T-P2  Module-Wide Architecture & Naming Standards: Layering and conventions across the module.
+        angle: ui-architecture   Example: "What structural pattern do all Material Management transaction forms follow for IMDIFunctions?"
+  T-P3  Cross-Module Database Integration: How two modules communicate via shared schema or cross-module stored procedures.
+        angle: cross-module-integration   Example: "How does the Inventory module pass excise posting details to the Finance module tables on receipt authorization?"
+  T-P4  Global Lookup Dictionaries: System-wide enum usage.
+        angle: enum-definitions   Example: "How is GlobalData.Status utilized across procurement, inventory, and accounts payable forms?"
+
+================================================================================
+4. WORKED EXAMPLE CARDS (STUDY THE SHAPE, NOT THE CONTENT)
+================================================================================
+Notice how precise, code-grounded, and structured they are. No section labels. Valid technical identifiers.
+
+----
+CARD T-E1
+level: easy
+topic_key: ui-architecture--fgrn-base-interfaces-and-files
+title: What base class and interfaces does fGRN implement, and what source files define its presentation layer?
+body:
+  **fGRN** inherits from **System.Windows.Forms.Form** and implements the **IMDIFunctions** interface for MDI child integration.
+  Its presentation logic is split across **fGRN.Designer.vb** for Infragistics control layout and **fGRN.vb** for event handling.
+  Database stored procedures for this form use the **IGRN** prefix convention.
+----
+CARD T-E2
+level: easy
+topic_key: control-binding--utxtlrno-to-dtgrn-lrno
+title: Which domain property does the utxtLRNo control bind to on fGRN, and what constraints are enforced on it?
+body:
+  The **utxtLRNo** control on the **General Details** tab binds directly to **DTGRN.LRNo**.
+  It is an Infragistics **UltraTextEditor** control configured with a maximum length of 30 characters.
+  The property is evaluated in **fGRN.ValidateForm** before being persisted during **fGRN.Save**.
+----
+CARD T-M1
+level: medium
+topic_key: event-trace--save-button-to-igrnsave-stored-procedure
+title: What is the complete call chain from clicking Save on fGRN to executing the stored procedure in SQL Server?
+body:
+  Saving **fGRN** initiates a 4-tier dispatch pipeline that transitions from UI event handling to database stored procedure execution.
+  - The UI triggers **fGRN.Save**, which runs client validation and populates the **DTGRN** entity object.
+  - **fGRN.Save** invokes **DTGRN.Save**, which coordinates business validations and ref-doc details.
+  - **DTGRN.Save** delegates to **DAGRN.Save** in the data access layer.
+  - **DAGRN.Save** packages parameters and executes the **Inventory.IGRNSave** stored procedure.
+----
+CARD T-M3
+level: medium
+topic_key: table-writes--inventory-igrnsave-target-tables
+title: Which database tables are inserted or updated by Inventory.IGRNSave when a receipt note is saved?
+body:
+  The **Inventory.IGRNSave** stored procedure executes an atomic transaction writing across inventory, gate entry, and excise schemas.
+  - Inserts receipt header and line records into **Inventory.GRNItemDetail** and **Inventory.GRNTaxDetail**.
+  - Updates linked gate entry line statuses in **GateEntry.InvGateEntryItemDetail** and **GateEntry.InvGateEntryMain**.
+  - Writes batch and tracking allocations into **Inventory.GRNItemLotAdditionalDetail** and **Inventory.GRNItemSerialDetail**.
+  - Updates pending indent reserves in **Inventory.GRNIndentReserveDetail**.
+----
+CARD T-H1
+level: hard
+topic_key: failure-diagnosis--silent-save-failure-gate-entry
+title: When saving a receipt on fGRN fails without throwing a UI exception, what methods and tables should be inspected in order?
+body:
+  A silent save abort on **fGRN** typically indicates a validation failure in the client layer or an unraised transaction error in the stored procedure.
+  - Inspect **fGRN.ValidateForm** and **DTGRN.CustomValidation** to verify whether validation returned false before dispatching to the data access layer.
+  - Check the return code parameter passed back from **Inventory.IGRNSave** to **DAGRN.Save** for non-zero error flags.
+  - Query **GateEntry.InvGateEntryItemDetail** for the selected Gate Entry Number to confirm the line status is not already marked closed or used.
+  - Verify whether **Inventory.GRNCustomFieldDetail** contains mandatory custom fields that failed mapping in **DTGRN.SaveRefDocDetail**.
+  Set a breakpoint in **DAGRN.Save** to inspect the exact SQL parameters delivered to ADO.NET.
+----
+
+================================================================================
+5. ANSWER FORMAT (the "body")
+================================================================================
+The body is read by software engineers and technical personnel. It must be PRECISE, CODE-GROUNDED, and EASY TO SCAN.
+
+BODY SHAPE:
+  1. Lead line: One technical sentence that directly answers the question, naming the key class, method, SP, control, or table.
+  2. Technical context: 1-2 sentences establishing the architectural tier (UI, DT, DA, Database) and contracts.
+  3. Execution or component steps: When describing flows, mutations, or checks, use 2-4 "- " steps in execution order.
+  4. Diagnostic / Debugging note (for medium/hard): Exactly what SQL query, method breakpoint, or log table to check.
+
+LENGTH CAPS (strict):
+  - EASY   : 20 to 70 words total.
+  - MEDIUM : 50 to 200 words total.
+  - HARD   : 120 to 380 words total.
+
+Formatting rules:
+  - Lines are separated by "\n" in the JSON string.
+  - **Bold** (double asterisks) marks key technical identifiers: class names, method names, stored procedure names, table names, control names, and enum values (e.g. **DTGRN.Save**, **Inventory.IGRNSave**, **utxtLRNo**). Use 3-7 bold technical terms per card.
+  - Steps start with "- " (dash and space).
+  - No code fences (```), no HTML tags, no markdown headers (#).
+
+================================================================================
+6. TITLES AND KEYS: BUILT FOR PRECISE TECHNICAL IDENTIFICATION
+================================================================================
+TITLE:
+  - Descriptive, complete technical question (60 to 120 characters).
+  - Explicitly name the technical entities involved: Form code (fGRN, fPurchaseOrder), method name, control name, stored procedure name, or table name.
+  - Start with technical question phrases: "What is the call chain...", "Which database tables...", "How does method X delegate...", "Where is validation Y implemented...", "What stored procedure executes...".
+
+TOPIC_KEY:
+  - Pattern: <angle>--<specific-subject>   (lowercase kebab-case).
+  - <angle> MUST be one of the fixed angle slugs below.
+
+Fixed angle slugs:
+  easy   : ui-architecture | control-binding | component-files | enum-definitions | dt-da-structure
+  medium : event-trace | validation-mechanics | table-writes | shared-tables | stored-procedures | status-lifecycle | nested-sp-calls
+  hard   : failure-diagnosis | transaction-integrity | rule-implementation | foreign-keys | technical-scenario | cascade-deletes
+
+================================================================================
+7. NO DUPLICATES PROCEDURE
+================================================================================
+For every card:
+  1. Check EXISTING CARDS for this item. Do not repeat the same method, table, or control interaction.
+  2. Ensure topic_key is unique per item and level.
+  3. Compare titles with existing and other new cards.
+
+================================================================================
+8. AUDIENCE CONTRACT: TECHNICAL ONLY
+================================================================================
+Written for: ERP Developers, Software Engineers, Database Administrators, Technical Support Engineers, Systems Integrators.
+
+MANDATORY TECHNICAL CONTENT:
+  - Always use exact code identifiers: form codes (fGRN), control names (utxtLRNo, ugdItemDetails), class names (DTGRN, DAGRN), method names (Save, Authorize), stored procedures (Inventory.IGRNSave), and database tables (Inventory.GRNItemDetail).
+  - Clarify tier separation: Presentation (.NET WinForms / Infragistics), Business Logic (DT), Data Access (DA), and Persistence (SQL Server Stored Procedures / Tables).
+
+FORBIDDEN:
+  - High-level non-technical generalities ("the system saves the data safely").
+  - Fake or guessed stored procedures or table names not found in the Knowledge Graph.
+  - Abstract exam phrasing ("Choose the correct option").
+
+================================================================================
+9. JSON OUTPUT FORMAT (ONE FILE)
+================================================================================
+Write exactly ONE JSON file at {{OUTPUT_PATH}}. Valid JSON, UTF-8, no markdown wrapper before or after it.
+
+{
+  "module": "{{MODULE}}",
+  "audience": "technical",
+  "items": [
+    {
+      "scope": "form",
+      "key": "fGRN",
+      "title": "Material Receipt Note (GRN)",
+      "context": "Procure-to-Pay > Material Receipt Note (GRN)",
+      "cards": [
+        {
+          "level": "medium",
+          "topic_key": "event-trace--save-button-to-igrnsave-stored-procedure",
+          "title": "What is the complete call chain from clicking Save on fGRN to executing the stored procedure in SQL Server?",
+          "body": "Saving **fGRN** initiates a 4-tier dispatch pipeline that transitions from UI event handling to database stored procedure execution.\n- The UI triggers **fGRN.Save**, which runs client validation and populates the **DTGRN** entity object.\n- **fGRN.Save** invokes **DTGRN.Save**, which coordinates business validations and ref-doc details.\n- **DTGRN.Save** delegates to **DAGRN.Save** in the data access layer.\n- **DAGRN.Save** packages parameters and executes the **Inventory.IGRNSave** stored procedure.",
+          "source_refs": [
+            "Material Receipt Note [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Inventory.IGRNSave [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:12345] (sp:inventory.igrnsave)"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+source_refs format:
+  Every entry MUST follow: "<Node Name> [<element id>] (<short id>)"
+  Example: "Material Receipt Note [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)"
+  Look up elementId(n) using run_cypher:
+  MATCH (n) WHERE n.id IN ['form:fGRN', 'sp:inventory.igrnsave'] RETURN n.id, elementId(n)
+
+================================================================================
+10. SELF-CHECK BEFORE YOU WRITE THE FILE
+================================================================================
+For every card:
+  [ ] "After reading this, the developer/engineer can ______" is satisfied.
+  [ ] The first line states the direct technical answer (naming the exact method, SP, control, or table).
+  [ ] Exact identifiers are used (fGRN, DTGRN, DAGRN, Inventory.IGRNSave, Inventory.GRNItemDetail).
+  [ ] Every source_refs entry is "<Node Name> [<element id>] (<short id>)".
+  [ ] Archetype is one of T-E1..T-E5, T-M1..T-M6, T-H1..T-H5, T-P1..T-P4.
+  [ ] Word count limits match lib/cards/generate/validate.ts: Easy 20-70 words, Medium 50-200 words, Hard 120-380 words.
+  [ ] No labels (no Overview:, Stack Trace:, Resolution:) in the body.
+  [ ] Bolded terms highlight 3-7 key technical identifiers.
+  [ ] Topic_key is "<angle>--<subject>", with angle from the fixed technical angle list.
+  [ ] Valid JSON matching catalogSchema with audience "technical".
