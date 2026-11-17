@@ -12,6 +12,7 @@ export class KbIndex {
   private idsByKey = new Map<string, number[]>();
   private byYamlFile = new Map<string, number>();
   private byRuleKey = new Map<string, number>();
+  private nodeIds = new Map<number, string>();
 
   static async load(tx: Tx): Promise<KbIndex> {
     const idx = new KbIndex();
@@ -22,11 +23,17 @@ export class KbIndex {
 
   /** First row wins on duplicate keys, so lookups stay deterministic. */
   add(r: { id: number; type: string; key: string; yamlFile: string }) {
+    this.nodeIds.set(r.id, `${r.type}:${r.key}`);
     if (!this.byKey.has(r.key)) this.byKey.set(r.key, r.id);
     if (!this.byTypeKey.has(`${r.type}:${r.key}`)) this.byTypeKey.set(`${r.type}:${r.key}`, r.id);
     this.idsByKey.set(r.key, [...(this.idsByKey.get(r.key) ?? []), r.id]);
     if (!this.byYamlFile.has(r.yamlFile)) this.byYamlFile.set(r.yamlFile, r.id);
     if (r.type === "rule" && !this.byRuleKey.has(r.key)) this.byRuleKey.set(r.key, r.id);
+  }
+
+  /** Graph node id (`type:key`) of a kb_item. */
+  nodeIdOf(id: number): string | undefined {
+    return this.nodeIds.get(id);
   }
 
   findByKey(key: string): number | undefined {

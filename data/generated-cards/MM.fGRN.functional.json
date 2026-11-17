@@ -14,7 +14,7 @@
           "title": "When do stores staff prepare a receipt after a consignment arrives, and what do they confirm it against?",
           "body": "Stores staff prepare a **goods receipt** when a vehicle or consignment has arrived at the company.\nThey confirm what was received against the **purchase order**, gate entry, stock transfer or challan.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)"
           ]
         },
         {
@@ -23,7 +23,7 @@
           "title": "What does an authorized goods receipt give stores, the purchase team and finance once it is complete?",
           "body": "An **authorized** receipt raises stock, closes orders against what arrived, and gives finance a valued entry.\nStock rises only for checked receipts, and orders, indents and transfers close against actual receipts.\nFinance uses the **valued inward entry** for the **purchase bill**.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)"
           ]
         },
         {
@@ -32,11 +32,11 @@
           "title": "Where does the goods receipt sit between the gate entry and the quality inspection of received goods?",
           "body": "The goods receipt comes after the **gate entry** and before the inspection documents.\nThe gate records the inward vehicle, stores receive the goods, then an **inspection intimation** and an **inspection entry** follow.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Goods Receipt & Quality Inspection (process:goods-receipt-quality-inspection)",
-            "Gate Entry (form:fGateEntry)",
-            "Inspection Intimation (form:fInspectionIntimation)",
-            "Inspection Entry (form:fInspectionEntry)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Goods Receipt & Quality Inspection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77684] (process:goods-receipt-quality-inspection)",
+            "Gate Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61036] (form:fGateEntry)",
+            "Inspection Intimation [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61054] (form:fInspectionIntimation)",
+            "Inspection Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61053] (form:fInspectionEntry)"
           ]
         },
         {
@@ -45,8 +45,8 @@
           "title": "Which purchasing steps come before stores receive goods in the Procure-to-Pay flow, and which is last?",
           "body": "Receiving the goods is the last step of the **Procure-to-Pay** flow.\nA request becomes a **purchase request**, the buyer compares quotations and places the **purchase order**, then the gate and stores receive it.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Procure-to-Pay (PO Flow) (process:procure-to-pay)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Procure-to-Pay (PO Flow) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77757] (process:procure-to-pay)"
           ]
         },
         {
@@ -55,9 +55,9 @@
           "title": "What is the difference between the challan quantity and the received quantity on a goods receipt line?",
           "body": "**Challan quantity** is what the supplier's challan declares; **received quantity** is what stores record as received.\nBoth are needed on every line: the challan quantity must be above zero and the received quantity must be entered.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Line Quantities Present (rule:material-receipt-note-line-quantities-present)",
-            "Gate Entry (form:fGateEntry)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Line Quantities Present [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79879] (rule:material-receipt-note-line-quantities-present)",
+            "Gate Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61036] (form:fGateEntry)"
           ]
         },
         {
@@ -66,9 +66,9 @@
           "title": "What is free-of-cost (FOC) quantity on a goods receipt line, and what is the most stores can record?",
           "body": "**FOC quantity** is the free quantity received on a line, recorded apart from the accepted quantity.\nIt can never be more than the **received quantity**, and it carries its own rate, amount and warehouse.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Detail rows are replaced on save (rule:detail-replacement-on-save)",
-            "Material Receipt Note (GRN): Automatic Calculations (rule:material-receipt-note-automatic-calculations)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Detail rows are replaced on save [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:78616] (rule:detail-replacement-on-save)",
+            "Material Receipt Note (GRN): Automatic Calculations [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79860] (rule:material-receipt-note-automatic-calculations)"
           ]
         },
         {
@@ -77,8 +77,8 @@
           "title": "What is replaceable quantity on a goods receipt, and why does a line need rejected quantity first?",
           "body": "**Replaceable quantity** can be recorded on a line only when that line has **rejected quantity**.\nMarking it fills in the rejected quantity, and it must be above zero and not more than the received quantity.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Detail rows are replaced on save (rule:detail-replacement-on-save)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Detail rows are replaced on save [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:78616] (rule:detail-replacement-on-save)"
           ]
         },
         {
@@ -87,8 +87,8 @@
           "title": "What changes on a receipt when stores staff choose the MRA document type instead of the GRN type?",
           "body": "A receipt is either a **GRN** or an **MRA**, and choosing MRA changes the defaults.\nWith MRA the source defaults to **Purchase Order**, excise is switched off, locations unlock, consignee details open, and header and item taxes are saved.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): MRA Behaviour (rule:material-receipt-note-mra-behaviour)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): MRA Behaviour [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79882] (rule:material-receipt-note-mra-behaviour)"
           ]
         },
         {
@@ -97,9 +97,9 @@
           "title": "What does marking a goods receipt as Inspection Required mean, and when is it forced on?",
           "body": "**Inspection Required** means the receipt must pass quality inspection before it can be authorized.\nIf the company forces **receipt inspection**, the flag is set and locked, so stores staff cannot switch it off.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Inspection (rule:material-receipt-note-inspection)",
-            "Inspection Intimation (form:fInspectionIntimation)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Inspection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79876] (rule:material-receipt-note-inspection)",
+            "Inspection Intimation [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61054] (form:fInspectionIntimation)"
           ]
         },
         {
@@ -108,8 +108,8 @@
           "title": "What must each lot row carry when stores staff receive a heat-wise item on a goods receipt?",
           "body": "A **heat-wise item** is received in lot rows, each with a heat number or serial number.\nEach lot row also needs a **warehouse** and an **accepted quantity**, and lot totals must match the line's challan and received quantities.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Heat-wise Lots (rule:material-receipt-note-heat-wise-lots)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Heat-wise Lots [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79874] (rule:material-receipt-note-heat-wise-lots)"
           ]
         },
         {
@@ -118,8 +118,8 @@
           "title": "What happens to the warehouse on a receipt line when stores staff choose a BIN card for the item?",
           "body": "A **BIN card** is a storage bin inside a warehouse, and choosing one fills and locks the line's **warehouse**.\nUnder a company setting, an item that uses bins but has no BIN card gives a warning or an error, unless inspection is already done.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): BIN Card (rule:material-receipt-note-bin-card)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): BIN Card [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79862] (rule:material-receipt-note-bin-card)"
           ]
         },
         {
@@ -128,9 +128,9 @@
           "title": "Which received items need a batch number and which need an expiry date on the goods receipt?",
           "body": "Items kept by batch need a **batch number**, and items with an expiry need an **expiry date**.\nFor serial items with expiry, each serial number carries its own expiry date.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Batch and Expiry (rule:material-receipt-note-batch-and-expiry)",
-            "Document numbers are generated and must be unique (rule:document-numbering)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Batch and Expiry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79861] (rule:material-receipt-note-batch-and-expiry)",
+            "Document numbers are generated and must be unique [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:78732] (rule:document-numbering)"
           ]
         },
         {
@@ -139,8 +139,8 @@
           "title": "How does a goods receipt link the purchase order unit to the stock unit through conversion factors?",
           "body": "Two **conversion factors** link the **order unit** to the **stock unit** on each line.\nBoth factors must be above zero, and stores staff can change them only for the item conversion type that allows editing.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Conversion Factors (rule:material-receipt-note-conversion-factors)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Conversion Factors [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79865] (rule:material-receipt-note-conversion-factors)"
           ]
         },
         {
@@ -149,8 +149,8 @@
           "title": "When does a goods receipt need no purchase bill at all, even after it is saved?",
           "body": "No **purchase bill** is needed when **accepted quantity** is zero and there is no return through dispatch challan.\nThe system works this out again on every save, so the flag follows the latest quantities.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)"
           ]
         },
         {
@@ -159,8 +159,8 @@
           "title": "Why can stores staff not put capital and non-capital items on the same goods receipt?",
           "body": "One receipt holds either **capital items** or **non-capital items**, never both.\nThe receipt also needs at least one selected line, and the same item with the same make cannot appear twice.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Item Selection (rule:material-receipt-note-item-selection)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Item Selection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79878] (rule:material-receipt-note-item-selection)"
           ]
         },
         {
@@ -169,9 +169,9 @@
           "title": "How many dispatch challans can one goods receipt cover when material comes from another unit of the company?",
           "body": "An **inter-unit receipt** is made against one **dispatch challan** only.\nWhen the reference is inter-unit, stores staff must choose that dispatch challan before the receipt can be saved.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Inter-unit Dispatch Challan (rule:material-receipt-note-inter-unit-dispatch-challan)",
-            "Material Receipt Note (GRN): Reference Selection Consistency (rule:material-receipt-note-reference-selection-consistency)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Inter-unit Dispatch Challan [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79877] (rule:material-receipt-note-inter-unit-dispatch-challan)",
+            "Material Receipt Note (GRN): Reference Selection Consistency [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79887] (rule:material-receipt-note-reference-selection-consistency)"
           ]
         },
         {
@@ -180,10 +180,10 @@
           "title": "Why can stores staff not save a goods receipt again once it has been authorized, and how is it blocked?",
           "body": "An **authorized** receipt cannot be saved again, because stock is posted at authorization.\nThe screen refuses a receipt loaded as Authorized, and the system also refuses any receipt that already has an **authorizer** recorded.\nA wrong authorized receipt is corrected by deleting it while its stock is unused, not by editing it.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Authorized or in-use records are locked (rule:authorized-document-lock)",
-            "Deleting a document is restricted and reverses its links (rule:transaction-delete-rules)",
-            "Material Receipt Note (GRN): Stock Posting on Authorization (rule:material-receipt-note-stock-posting-on-authorization)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Authorized or in-use records are locked [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77939] (rule:authorized-document-lock)",
+            "Deleting a document is restricted and reverses its links [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:82387] (rule:transaction-delete-rules)",
+            "Material Receipt Note (GRN): Stock Posting on Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79893] (rule:material-receipt-note-stock-posting-on-authorization)"
           ]
         },
         {
@@ -192,8 +192,8 @@
           "title": "What does each goods receipt status record about who released and who authorized the receipt, and when?",
           "body": "A receipt moves Initial -> Release -> Authorized, and each status records more of its history.\n- **Initial** records neither a releaser nor an authorizer.\n- **Release** records the person who released it and the date.\n- **Authorized** records the person who saved it as authorizer, with the date.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Status Mapping and Audit (rule:material-receipt-note-status-mapping-and-audit)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Status Mapping and Audit [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79892] (rule:material-receipt-note-status-mapping-and-audit)"
           ]
         },
         {
@@ -202,8 +202,8 @@
           "title": "Under multi-level approval of a goods receipt, who can set it to Authorized and how does that happen?",
           "body": "Under **multi-level approval**, only the **last-level approver** can authorize a receipt.\nWhen the last-level approver records the approval, the system moves the status from Release to Authorized.\nAnyone setting Authorized directly, or before the last level approves, is refused.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Multi-level Authorization (rule:material-receipt-note-multi-level-authorization)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Multi-level Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79883] (rule:material-receipt-note-multi-level-authorization)"
           ]
         },
         {
@@ -212,8 +212,8 @@
           "title": "Why is a receipt line refused when accepted, rejected and free quantity do not add up to received quantity?",
           "body": "For order and gate entry receipts, **accepted, rejected and free** must add up to the **received quantity**.\nIf the company validates on the challan, the three must equal the **challan quantity** instead.\nStores staff correct the split before saving; the line is refused until it balances.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Quantity Balance (rule:material-receipt-note-quantity-balance)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Quantity Balance [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79885] (rule:material-receipt-note-quantity-balance)"
           ]
         },
         {
@@ -222,10 +222,10 @@
           "title": "Why can stores staff not use a gate entry for a second goods receipt once one receipt is made from it?",
           "body": "A **gate entry** can feed only one goods receipt; a second receipt from it is refused.\nThe receipt writes its **received quantity** back to the gate entry, unless weighment controls that quantity.\nA gate entry with a receipt against it also cannot be deleted.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Gate Entry Single Use (rule:material-receipt-note-gate-entry-single-use)",
-            "Deleting a document is restricted and reverses its links (rule:transaction-delete-rules)",
-            "Gate Entry (form:fGateEntry)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Gate Entry Single Use [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79873] (rule:material-receipt-note-gate-entry-single-use)",
+            "Deleting a document is restricted and reverses its links [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:82387] (rule:transaction-delete-rules)",
+            "Gate Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61036] (form:fGateEntry)"
           ]
         },
         {
@@ -234,10 +234,10 @@
           "title": "What must the inspecting department finish before a goods receipt that needs inspection can be authorized?",
           "body": "A receipt marked **Inspection Required** cannot be authorized until both inspection documents exist.\n- An **inspection intimation** lists the receipt lines for the inspecting department.\n- The inspecting department records accepted and rejected quantity in an **inspection entry**.\n- Only then can the receipt be authorized; either one missing blocks it.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Inspection (rule:material-receipt-note-inspection)",
-            "Inspection Intimation (form:fInspectionIntimation)",
-            "Inspection Entry (form:fInspectionEntry)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Inspection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79876] (rule:material-receipt-note-inspection)",
+            "Inspection Intimation [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61054] (form:fInspectionIntimation)",
+            "Inspection Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61053] (form:fInspectionEntry)"
           ]
         },
         {
@@ -246,9 +246,9 @@
           "title": "Why did stock not rise when stores staff saved the goods receipt, and when does it rise?",
           "body": "Saving adds no stock; stock rises only when the receipt is **Authorized**.\nThe company increases stock only for checked and authorized receipts, so **Initial** and **Release** post nothing.\nAuthorization posts stock only if inspection, weighment and the **stock month** checks pass.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Stock Posting on Authorization (rule:material-receipt-note-stock-posting-on-authorization)",
-            "Material Receipt Note (GRN): Inspection (rule:material-receipt-note-inspection)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Stock Posting on Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79893] (rule:material-receipt-note-stock-posting-on-authorization)",
+            "Material Receipt Note (GRN): Inspection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79876] (rule:material-receipt-note-inspection)"
           ]
         },
         {
@@ -257,8 +257,8 @@
           "title": "Why is a goods receipt refused when its order or gate entry is dated later or uses a different currency?",
           "body": "A receipt cannot reference a document dated after the **receipt date** or in a different **currency**.\nEvery receipt except Direct needs at least one selected reference, and each one is checked against the receipt's date and currency.\nStores staff change the receipt date or choose a matching reference.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)"
           ]
         },
         {
@@ -267,11 +267,11 @@
           "title": "What extra details must stores staff enter when they make a Direct goods receipt without any order?",
           "body": "A **Direct receipt** has no reference, so stores staff enter more details by hand.\n**Department** and **freight type** are required, and with freight type TOPAY the **transporter** is required too.\nOnly Direct receipts let stores staff add lines and enter item, make, grade, specification and rate.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Department (rule:material-receipt-note-department)",
-            "Material Receipt Note (GRN): Freight Type (rule:material-receipt-note-freight-type)",
-            "Material Receipt Note (GRN): Transporter (rule:material-receipt-note-transporter)",
-            "Material Receipt Note (GRN): Source-dependent Fields (rule:material-receipt-note-source-dependent-fields)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Department [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79866] (rule:material-receipt-note-department)",
+            "Material Receipt Note (GRN): Freight Type [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79872] (rule:material-receipt-note-freight-type)",
+            "Material Receipt Note (GRN): Transporter [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79895] (rule:material-receipt-note-transporter)",
+            "Material Receipt Note (GRN): Source-dependent Fields [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79890] (rule:material-receipt-note-source-dependent-fields)"
           ]
         },
         {
@@ -280,11 +280,11 @@
           "title": "Why must the vendor bill, challan, LR and e-way bill dates on a receipt never be later than the receipt date?",
           "body": "Each supporting document number needs its date, and that date cannot be after the **receipt date**.\nThis applies to the **vendor bill**, the challan, the LR and the **e-way bill**.\nVendor bill number and bill date must be given together or both left empty.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Vendor Bill (rule:material-receipt-note-vendor-bill)",
-            "Material Receipt Note (GRN): Challan (rule:material-receipt-note-challan)",
-            "Material Receipt Note (GRN): LR (rule:material-receipt-note-lr)",
-            "Material Receipt Note (GRN): E-way Bill (rule:material-receipt-note-e-way-bill)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Vendor Bill [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79896] (rule:material-receipt-note-vendor-bill)",
+            "Material Receipt Note (GRN): Challan [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79863] (rule:material-receipt-note-challan)",
+            "Material Receipt Note (GRN): LR [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79881] (rule:material-receipt-note-lr)",
+            "Material Receipt Note (GRN): E-way Bill [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79868] (rule:material-receipt-note-e-way-bill)"
           ]
         },
         {
@@ -293,8 +293,8 @@
           "title": "How many serial numbers must stores staff record for a serial item on a goods receipt line?",
           "body": "A serial item needs one **serial number** for every unit of **accepted plus rejected** quantity.\nSerial numbers cannot repeat, and items with an expiry need an **expiry date** for each serial.\nFor example, 48 accepted and 2 rejected need exactly 50 serial numbers.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Document numbers are generated and must be unique (rule:document-numbering)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Document numbers are generated and must be unique [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:78732] (rule:document-numbering)"
           ]
         },
         {
@@ -303,8 +303,8 @@
           "title": "Which earlier documents does saving a goods receipt update, and what happens when the receipt is edited?",
           "body": "Saving a receipt recalculates the status of the documents it was made from.\nThese are the **purchase order** line, gate pass, service order, **purchase request**, sales order and stock transfer.\nEditing a receipt first resets those statuses, then the save works them out again.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Source Status Cascade (rule:material-receipt-note-source-status-cascade)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Source Status Cascade [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79891] (rule:material-receipt-note-source-status-cascade)"
           ]
         },
         {
@@ -313,9 +313,9 @@
           "title": "When can stores staff mark rejected goods for return through a dispatch challan, and what does it change?",
           "body": "**Return through dispatch challan** opens only once a selected line has **rejected quantity**.\nWhen it is marked, the rejected quantity is included in the **finance posting** quantity.\nUnder a company setting, authorizing an inspected receipt with rejection but without it gives a warning or an error.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Return through Dispatch Challan (rule:material-receipt-note-return-through-dispatch-challan)",
-            "Material Receipt Note (GRN): Configurable Custom Validations (rule:material-receipt-note-configurable-custom-validations)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Return through Dispatch Challan [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79889] (rule:material-receipt-note-return-through-dispatch-challan)",
+            "Material Receipt Note (GRN): Configurable Custom Validations [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79864] (rule:material-receipt-note-configurable-custom-validations)"
           ]
         },
         {
@@ -324,8 +324,8 @@
           "title": "Why is a goods receipt refused on save when another user changed it after it was opened?",
           "body": "A receipt changed by another user since it was opened is refused on save, and must be **reloaded**.\nThe header and all lines are saved in **one transaction**, so a refused save changes nothing.\nStores staff reload the receipt and then make their change again.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Header and details are saved in one transaction (rule:atomic-save)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Header and details are saved in one transaction [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77918] (rule:atomic-save)"
           ]
         },
         {
@@ -334,8 +334,8 @@
           "title": "Why must all orders or gate entries chosen on one goods receipt share the same source and currency?",
           "body": "All references on one receipt must share the same **source** and **currency**.\nOrders, or gate entries, in different currencies cannot be combined on one receipt.\nA different **exchange rate** only gives a warning, and stores staff may continue.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Reference Selection Consistency (rule:material-receipt-note-reference-selection-consistency)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Reference Selection Consistency [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79887] (rule:material-receipt-note-reference-selection-consistency)"
           ]
         },
         {
@@ -344,9 +344,9 @@
           "title": "In what order do stores staff build a goods receipt against open orders or gate entries for a supplier?",
           "body": "Stores staff choose the source first, because it decides which references are listed.\n- Choose the document type and **source document**.\n- Choose the vendor and **vendor location**; open references for that location are listed.\n- Select references, then enter challan, received, accepted and rejected quantities.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)",
-            "Material Receipt Note (GRN): Source-dependent Fields (rule:material-receipt-note-source-dependent-fields)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)",
+            "Material Receipt Note (GRN): Source-dependent Fields [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79890] (rule:material-receipt-note-source-dependent-fields)"
           ]
         },
         {
@@ -355,8 +355,8 @@
           "title": "Is a fourth delivery of 400 kg allowed on a 5,000 kg order with 3% tolerance after 4,800 kg received?",
           "body": "Only with a warning: 5,200 kg passes the 5,150 kg limit, and the excess over the order is 200 kg.\nDeliveries against one order are added up, and the total may not pass the order quantity plus its **tolerance**.\n- Earlier receipts total 4,800 kg; this delivery makes 5,200 kg.\n- The limit is 5,000 plus 3%, which is 5,150 kg.\n- By default the system shows a **warning** and stores staff may continue.\n- If the company sets this check as an **error**, the save is refused.\nUnder the error setting, receive at most 350 kg on this receipt.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Tolerance (rule:material-receipt-note-tolerance)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Tolerance [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79894] (rule:material-receipt-note-tolerance)"
           ]
         },
         {
@@ -365,9 +365,9 @@
           "title": "What happens to stock, vouchers and order status when stores staff delete an authorized goods receipt?",
           "body": "An **authorized** receipt can be deleted while its stock is unused, and deletion reverses everything it posted.\nStores staff confirm the delete, and the system checks the stock before removing anything.\n- Refused if material was **issued** from the receipt's lots.\n- Refused if a tyre repair entry exists or the **stock month** is locked.\n- Otherwise lots, the finance voucher and excise posting are removed.\n- Order, request and transfer statuses are restored.\nIf the refusal names an issue number, that issue is using the stock.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Deleting a document is restricted and reverses its links (rule:transaction-delete-rules)",
-            "Authorized or in-use records are locked (rule:authorized-document-lock)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Deleting a document is restricted and reverses its links [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:82387] (rule:transaction-delete-rules)",
+            "Authorized or in-use records are locked [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77939] (rule:authorized-document-lock)"
           ]
         },
         {
@@ -376,11 +376,11 @@
           "title": "A goods receipt is refused when stores staff set it to Authorized: what should they check, and in what order?",
           "body": "Check inspection, approval, the stock month and quantities, in that order.\nStores staff run these checks before trying again.\n- Is the **inspection intimation** and **inspection entry** done?\n- Under multi-level approval, has the **last level** approved?\n- Is the stock month locked by monthly closing?\n- Is rejected quantity above inspection's rejected quantity, or weighment missing?\nIf all pass, reload the receipt in case another user changed it.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Inspection (rule:material-receipt-note-inspection)",
-            "Material Receipt Note (GRN): Multi-level Authorization (rule:material-receipt-note-multi-level-authorization)",
-            "Material Receipt Note (GRN): Stock Posting on Authorization (rule:material-receipt-note-stock-posting-on-authorization)",
-            "Header and details are saved in one transaction (rule:atomic-save)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Inspection [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79876] (rule:material-receipt-note-inspection)",
+            "Material Receipt Note (GRN): Multi-level Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79883] (rule:material-receipt-note-multi-level-authorization)",
+            "Material Receipt Note (GRN): Stock Posting on Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79893] (rule:material-receipt-note-stock-posting-on-authorization)",
+            "Header and details are saved in one transaction [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77918] (rule:atomic-save)"
           ]
         },
         {
@@ -389,10 +389,10 @@
           "title": "A 1,000-unit delivery has 40 units rejected at inspection: what do stock, rejection and the return record?",
           "body": "Stock rises by 960 units at authorization, and the 40 rejected units stay out of stock.\nStores staff receive the goods, the inspecting department inspects, and authorization posts only the **accepted quantity**.\n- Stores staff record challan 1,000 and received 1,000, and save as **Release**.\n- Inspection records 40 rejected, so accepted is 960.\n- The receipt's rejected quantity cannot exceed inspection's 40.\n- With **return through dispatch challan** marked, authorization adds 960 to stock.\nEntering 45 rejected on the receipt is refused; match the inspection figure.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Stock Posting on Authorization (rule:material-receipt-note-stock-posting-on-authorization)",
-            "Material Receipt Note (GRN): Return through Dispatch Challan (rule:material-receipt-note-return-through-dispatch-challan)",
-            "Inspection Entry (form:fInspectionEntry)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Stock Posting on Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79893] (rule:material-receipt-note-stock-posting-on-authorization)",
+            "Material Receipt Note (GRN): Return through Dispatch Challan [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79889] (rule:material-receipt-note-return-through-dispatch-challan)",
+            "Inspection Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61053] (form:fInspectionEntry)"
           ]
         },
         {
@@ -401,9 +401,9 @@
           "title": "Why can stores staff neither authorize nor delete an October receipt once October stock is closed?",
           "body": "A locked **stock month** blocks both authorization and deletion of receipts in that month.\nMonthly closing locks the month's stock, so receipts dated in it can no longer post or reverse stock.\n- A receipt dated 28 October is still in Release on 3 November.\n- October is locked by **stock monthly closing**.\n- Authorizing it is refused; deleting an authorized October receipt is refused too.\n- The receipt stays in Release, so October stock is unchanged.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Stock Posting on Authorization (rule:material-receipt-note-stock-posting-on-authorization)",
-            "Deleting a document is restricted and reverses its links (rule:transaction-delete-rules)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Stock Posting on Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79893] (rule:material-receipt-note-stock-posting-on-authorization)",
+            "Deleting a document is restricted and reverses its links [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:82387] (rule:transaction-delete-rules)"
           ]
         },
         {
@@ -412,8 +412,8 @@
           "title": "How is the rate of a raw material line recalculated at authorization when challan quantity is passed on?",
           "body": "When the company passes on **challan quantity**, the raw material rate is recalculated at authorization.\nThe rate becomes challan quantity times rate, divided by **accepted quantity**.\n- Challan 10,000 kg at 50 per kg is worth 500,000.\n- Accepted is 9,800 kg.\n- New rate = 500,000 / 9,800 = 51.02 per kg.\n- With return through dispatch challan, divide by accepted plus rejected instead.\nThis applies only to raw material items under that company setting.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Pass-on-Quantity Rate (rule:material-receipt-note-pass-on-quantity-rate)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Pass-on-Quantity Rate [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79884] (rule:material-receipt-note-pass-on-quantity-rate)"
           ]
         },
         {
@@ -422,8 +422,8 @@
           "title": "How is the line rate worked out when a multi-rate item arrives as 600 units at one rate and 400 at another?",
           "body": "The line rate becomes the **weighted average** of the attribute rates, here 98 per unit.\nFor a **multi-rate item**, stores staff split the accepted quantity by attribute, and each attribute rate is the order rate plus its difference.\n- Order rate 100; attribute A has difference 0, attribute B has minus 5.\n- A: 600 x 100 = 60,000. B: 400 x 95 = 38,000.\n- Total 98,000 / 1,000 = 98 per unit.\nIf attribute quantities total less than accepted quantity, the save is refused.",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Attribute Rates (rule:material-receipt-note-attribute-rates)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Attribute Rates [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79859] (rule:material-receipt-note-attribute-rates)"
           ]
         },
         {
@@ -432,10 +432,10 @@
           "title": "An expected order or gate entry does not appear when stores staff build a receipt: what should they check?",
           "body": "Only **open references** for the chosen source and vendor location are offered.\nStores staff check these in order.\n- Is the right **source document** chosen for the document type?\n- Is the right **vendor location** chosen, not another location?\n- Is the gate entry already used by another receipt?\n- Is the reference dated after the receipt date?",
           "source_refs": [
-            "Material Receipt Note (GRN) (form:fGRN)",
-            "Material Receipt Note (GRN): Gate Entry Single Use (rule:material-receipt-note-gate-entry-single-use)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)",
-            "Material Receipt Note (GRN): Source Status Cascade (rule:material-receipt-note-source-status-cascade)"
+            "Material Receipt Note (GRN) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61031] (form:fGRN)",
+            "Material Receipt Note (GRN): Gate Entry Single Use [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79873] (rule:material-receipt-note-gate-entry-single-use)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)",
+            "Material Receipt Note (GRN): Source Status Cascade [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79891] (rule:material-receipt-note-source-status-cascade)"
           ]
         }
       ]

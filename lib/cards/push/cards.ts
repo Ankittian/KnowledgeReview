@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { cardRelatedItems, cards, cardVersions, kbItems } from "@/db/schema";
 import { cardIdOf, type CardGroup, type CardItem, type Catalog } from "./catalog";
 import type { TitledCard } from "./dedupe";
@@ -107,12 +107,20 @@ export async function linkSources(tx: Tx, idx: KbIndex, cardId: string, card: Ca
       unresolved.push(ref);
       continue;
     }
+    // The node id written in the ref ("Name (form:fGRN)") wins; otherwise it is the resolved item's type:key.
+    const nodeId = /\(([a-z]+:[^()\s]+)\)\s*$/.exec(ref)?.[1] ?? idx.nodeIdOf(kbItemId) ?? null;
+    // "Name [4:<uuid>:<number>] (form:fGRN)": the graph element id is the bracketed part.
+    const elementId = /\[(\d+:[0-9a-fA-F-]{36}:\d+)\]/.exec(ref)?.[1] ?? null;
     const rows = await tx
       .insert(cardRelatedItems)
-      .values({ cardId, kbItemId, relation: "source" })
-      .onConflictDoNothing()
-      .returning({ kbItemId: cardRelatedItems.kbItemId });
-    created += rows.length;
+      .values({ cardId, kbItemId, relation: "source", nodeId, elementId })
+      .onConflictDoUpdate({
+        target: [cardRelatedItems.cardId, cardRelatedItems.kbItemId, cardRelatedItems.relation],
+        // a re-push without an element id must not erase one that is already stored
+        set: { nodeId, elementId: sql`coalesce(excluded.element_id, ${cardRelatedItems.elementId})` },
+      })
+      .returning({ kbItemId: cardRelatedItems.kbItemId, inserted: sql<boolean>`(xmax = 0)` });
+    created += rows.filter((r) => r.inserted).length;
   }
   return { created, unresolved };
 }
