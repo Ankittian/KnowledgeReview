@@ -34,6 +34,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}/login`,
     timeout: 240_000,
     reuseExistingServer: false,
-    env: { DATABASE_URL: E2E_DATABASE_URL, ADMIN_USERNAME: "e2e-admin", ADMIN_PASSWORD: "e2e-admin-password", KB_DIR: "./kb" },
+    env: { DATABASE_URL: E2E_DATABASE_URL, ADMIN_USERNAME: "e2e-admin", ADMIN_PASSWORD: "e2e-admin-password", KB_DIR: "./kb", CARDS_OUTPUT_DIR: "test-results/generated-cards", CLAUDE_RUNNER: "mock", CARDS_WORKER: "off" },
   },
 });
