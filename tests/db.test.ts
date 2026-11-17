@@ -185,60 +185,56 @@ describe("deck -> review -> feedback -> needs-change", () => {
   });
 });
 
-describe("random set per sign-in, capped by the admin's daily limit", () => {
+describe("deck fixed for the day, capped by the admin's daily limit", () => {
   const answer = (userId: string, v: number, deckId: number | null, n: string) =>
     rr(h.db, userId, { clientEventId: `lim-${n}-xxxx`, versionId: v, deckDate: TODAY, deckId, knewIt: true, verdict: "correct" }, {}, TODAY);
 
-  it("gives each sign-in a new random set and never exceeds the daily limit", async () => {
+  it("keeps the same set for every sign-in of the day and never exceeds the daily limit", async () => {
     await setDailyCardLimit(h.db, 10);
     const carol = await mkUser("carol");
 
     const first = await getOrCreateDeck(h.db, carol, TODAY, "carol-1");
     expect(first.cards).toHaveLength(10);
     expect(first.dailyLimit).toBe(10);
-    // reload within the same sign-in keeps the same set
-    expect((await getOrCreateDeck(h.db, carol, TODAY, "carol-1")).cards.map((c) => c.v)).toEqual(first.cards.map((c) => c.v));
+    // a new sign-in (session) the same day gets the same set
+    const again = await getOrCreateDeck(h.db, carol, TODAY, "carol-2");
+    expect(again.deckId).toBe(first.deckId);
+    expect(again.cards.map((c) => c.v)).toEqual(first.cards.map((c) => c.v));
 
-    // answer 4, then sign in again: a different random set of the remaining 6
+    // answer 4, sign in again: still the same deck, with 4 answered and 6 open
     for (const [i, c] of first.cards.slice(0, 4).entries()) expect(await answer(carol.id, c.v, first.deckId, `a${i}`)).toMatchObject({ ok: true, duplicate: false });
-    const second = await getOrCreateDeck(h.db, carol, TODAY, "carol-2");
-    expect(second.deckId).not.toBe(first.deckId);
+    const second = await getOrCreateDeck(h.db, carol, TODAY, "carol-3");
+    expect(second.deckId).toBe(first.deckId);
     expect(second.answeredToday).toBe(4);
-    expect(second.cards).toHaveLength(6);
-    const answeredV = new Set(first.cards.slice(0, 4).map((c) => c.v));
-    expect(second.cards.some((c) => answeredV.has(c.v))).toBe(false);
-    expect(second.cards.map((c) => c.v)).not.toEqual(first.cards.slice(4).map((c) => c.v)); // random, not a replay
+    expect(second.answered).toHaveLength(4);
+    expect(second.cards.map((c) => c.v)).toEqual(first.cards.map((c) => c.v));
 
-    // an answer from the abandoned first set still counts (and is still accepted)
-    expect(await answer(carol.id, first.cards[4].v, first.deckId, "a4")).toMatchObject({ ok: true });
-    const leftover = second.cards.filter((c) => c.v !== first.cards[4].v);
-    for (const [i, c] of leftover.slice(0, 5).entries()) await answer(carol.id, c.v, second.deckId, `b${i}`);
-
-    // limit reached: a third sign-in gets nothing new, and extra answers are refused
-    const third = await getOrCreateDeck(h.db, carol, TODAY, "carol-3");
-    expect(third.answeredToday).toBe(10);
-    expect(third.cards).toHaveLength(0);
-    const extra = leftover[5] ?? second.cards[5];
-    expect(await answer(carol.id, extra.v, second.deckId, "c0")).toMatchObject({ ok: false, status: 409 });
+    // the admin lowers the limit to 6: two more answers are accepted, the next is refused
+    await setDailyCardLimit(h.db, 6);
+    for (const [i, c] of first.cards.slice(4, 6).entries()) expect(await answer(carol.id, c.v, first.deckId, `b${i}`)).toMatchObject({ ok: true });
+    expect(await answer(carol.id, first.cards[6].v, first.deckId, "c0")).toMatchObject({ ok: false, status: 409 });
+    const capped = await getOrCreateDeck(h.db, carol, TODAY, "carol-4");
+    expect(capped.answeredToday).toBe(6);
+    expect(capped.cards).toHaveLength(6); // only the answered ones; no open card is offered past the limit
 
     const evs = await query<{ event_type: string; n: number }>(
       h.db,
       sql`SELECT action AS event_type, count(*)::int AS n FROM activity_log WHERE user_id = ${carol.id} GROUP BY 1`,
     );
     const m = Object.fromEntries(evs.map((e) => [e.event_type, e.n]));
-    expect(m).toMatchObject({ deck_created: 2, review_submitted: 10, daily_limit_reached: 1 });
+    expect(m).toMatchObject({ deck_created: 1, review_submitted: 6, daily_limit_reached: 1 });
   });
 
   it("applies a raised limit immediately by topping up the current sign-in", async () => {
     const carol = await userByName("carol");
     await setDailyCardLimit(h.db, 13);
     const more = await getOrCreateDeck(h.db, carol, TODAY, "carol-3");
-    expect(more.cards.length).toBe(3);
+    expect(more.cards.length).toBe(13); // 6 answered + 4 still open + 3 added
     expect(more.dailyLimit).toBe(13);
     // lowering it hides open cards beyond the limit
     await setDailyCardLimit(h.db, 11);
     const fewer = await getOrCreateDeck(h.db, carol, TODAY, "carol-3");
-    expect(fewer.cards.length).toBe(1);
+    expect(fewer.cards.length).toBe(11); // 6 answered + 5 open allowed
     await setDailyCardLimit(h.db, 10);
   });
 });
