@@ -139,9 +139,10 @@ export interface TodayDeck {
 }
 
 /**
- * The deck for this sign-in. A new random set is generated for every new session (and for a new day). Its size is
- * whatever is left of the admin's daily limit, so signing in again never shows more than the limit in one day.
- * If this session's set is finished but the limit still has room (e.g. the admin raised it), it is topped up.
+ * The user's deck for the day. The set is fixed for the day: every sign-in (session) reloads the same deck, and a new
+ * one is drawn only on a new day. Its size is whatever is left of the admin's daily limit, so the limit is never
+ * exceeded. If the set is finished but the limit still has room (e.g. the admin raised it), a new set is drawn;
+ * if cards are still open, it is topped up.
  */
 export async function getOrCreateDeck(
   db: DB,
@@ -163,15 +164,16 @@ export async function getOrCreateDeck(
   let [deck] = await db
     .select()
     .from(dailyDecks)
-    .where(and(eq(dailyDecks.userId, user.id), eq(dailyDecks.deckDate, today), eq(dailyDecks.sessionId, sessionId)))
+    .where(and(eq(dailyDecks.userId, user.id), eq(dailyDecks.deckDate, today)))
     .orderBy(desc(dailyDecks.id))
     .limit(1);
 
   let deckCardIds = deck ? await loadDeckCardIds(db, deck.id) : [];
   const activeOpen = deck ? await activeUnanswered(db, deckCardIds, answeredCards, audiences) : 0;
   const remaining = dailyLimit - answeredToday;
+  // Fixed for the day: the same seed for every build of this user's deck today, so the draw is reproducible.
+  const seed = `${user.id}:${today}`;
   if ((!deck || activeOpen === 0) && remaining > 0) {
-    const seed = crypto.randomUUID();
     const pools = await loadDeckPools(db, user.id, user.primaryModule, today, remaining, seed, audiences);
     const cardIds = composeDeck(pools, remaining, seed).filter((id) => !answeredCards.has(id));
     if (cardIds.length) {
@@ -199,7 +201,6 @@ export async function getOrCreateDeck(
   if (deck && activeOpen > 0 && remaining > activeOpen) {
     const need = remaining - activeOpen;
     const inDeck = new Set(deckCardIds);
-    const seed = crypto.randomUUID();
     const pools = await loadDeckPools(db, user.id, user.primaryModule, today, need + inDeck.size, seed, audiences);
     const extra = composeDeck(pools, need + inDeck.size, seed)
       .filter((id) => !answeredCards.has(id) && !inDeck.has(id))
