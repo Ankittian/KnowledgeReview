@@ -277,6 +277,23 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
     return q ? convs.filter((c) => c.title.toLowerCase().includes(q)) : convs;
   }, [convs, search]);
 
+  // A first message swaps the URL to /chat/<id> via history.replaceState, but the rendered route is still /chat,
+  // so the router treats <Link href="/chat"> as a no-op. Reset the client state ourselves.
+  function startNewChat() {
+    setDrawer(false);
+    if (!active) return;
+    esRef.current?.close();
+    esRef.current = null;
+    setLive(null);
+    setActive(null);
+    setMessages([]);
+    setInput("");
+    setBanner(null);
+    setSending(false);
+    window.history.replaceState(null, "", "/chat");
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
   const busy = !!live || sending;
   const lastAssistantId = [...messages].reverse().find((m) => m.sender === "assistant")?.id;
 
@@ -284,7 +301,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 p-3">
-        <Link href="/chat" className={cn(buttonVariants(), "h-9 flex-1")} onClick={() => setDrawer(false)} data-testid="new-chat">
+        <Link href="/chat" className={cn(buttonVariants(), "h-9 flex-1")} onClick={startNewChat} data-testid="new-chat">
           <MessageSquarePlus /> New chat
         </Link>
       </div>
