@@ -14,7 +14,7 @@
           "title": "When does a buyer raise a purchase order, and which earlier documents can it be converted from?",
           "body": "A buyer raises a **purchase order** when goods or services must be ordered from a vendor.\nIt can convert an approved **indent**, LOI, quotation or agreement, or be a **drop-shipment** against a sales order or GRC.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)"
           ]
         },
         {
@@ -23,8 +23,8 @@
           "title": "Where does the purchase order sit in Procure-to-Pay, between comparing quotations and receiving goods?",
           "body": "The **purchase order** comes after quotations are compared and before the goods arrive.\nThe buyer compares vendor quotations, places the order, the gate records the inward vehicle, and stores record the **goods receipt**.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Procure-to-Pay (PO Flow) (process:procure-to-pay)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Procure-to-Pay (PO Flow) [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77757] (process:procure-to-pay)"
           ]
         },
         {
@@ -33,10 +33,10 @@
           "title": "What is the validity date on a purchase order, and what is the earliest date it can carry?",
           "body": "The **validity date** is a required date on every order and cannot be earlier than the **order date**.\nUnder a company rule it must also equal the latest **schedule date**, as a warning or a block.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Header Dates (rule:purchase-order-header-dates)",
-            "Purchase Order: Validity Equals Last Schedule Rule (rule:purchase-order-validity-equals-last-schedule-rule)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Header Dates [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80426] (rule:purchase-order-header-dates)",
+            "Purchase Order: Validity Equals Last Schedule Rule [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80451] (rule:purchase-order-validity-equals-last-schedule-rule)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)"
           ]
         },
         {
@@ -45,8 +45,8 @@
           "title": "What is an authorization group on a purchase order, and how does the order's value decide which one applies?",
           "body": "An **authorization group** is the set of approvers for an order, picked by the order's **net amount**.\nEach group covers an amount range, and the group is chosen again whenever the net amount changes.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Group by Net Amount (rule:purchase-order-group-by-net-amount)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Group by Net Amount [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80422] (rule:purchase-order-group-by-net-amount)"
           ]
         },
         {
@@ -55,8 +55,8 @@
           "title": "What does repeating a previous purchase order copy, and what starts fresh on the new order?",
           "body": "**Repeat previous order** copies a chosen earlier order into a brand-new order only.\nThe date, number and prefix are reset, and the copy starts in **Initial** status.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Bulk entry follows the listed format and checks (rule:fast-entry-excel-import)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Bulk entry follows the listed format and checks [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:78936] (rule:fast-entry-excel-import)"
           ]
         },
         {
@@ -65,9 +65,9 @@
           "title": "When does the system build the delivery schedule for a purchase order automatically?",
           "body": "For a **Direct** order, the system generates the **delivery schedule** for the lines when the **auto schedule** setting is on.\nA Direct order is one placed without a source document such as an indent.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Auto Schedule (rule:purchase-order-auto-schedule)",
-            "Purchase Order: Order Origin (rule:purchase-order-order-origin)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Auto Schedule [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80394] (rule:purchase-order-auto-schedule)",
+            "Purchase Order: Order Origin [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80435] (rule:purchase-order-order-origin)"
           ]
         },
         {
@@ -76,9 +76,9 @@
           "title": "What is a consignee location on a purchase order, and how many must the buyer give?",
           "body": "Every purchase order needs at least one valid **consignee location**.\nWhen a line is split across consignees, each consignee needs its own **item detail**.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Consignee Locations (rule:purchase-order-consignee-locations)",
-            "Purchase Order: Consignee Quantity Split (rule:purchase-order-consignee-quantity-split)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Consignee Locations [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80398] (rule:purchase-order-consignee-locations)",
+            "Purchase Order: Consignee Quantity Split [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80399] (rule:purchase-order-consignee-quantity-split)"
           ]
         },
         {
@@ -87,8 +87,8 @@
           "title": "Which payment and billing parties must the buyer name on every purchase order before it saves?",
           "body": "Every order names a **Pay To** party and location, a **Billed To** party and location, and a **payment mode**.\nPayment terms are also checked, except on orders against a DO.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Accounts and Payment (rule:purchase-order-accounts-and-payment)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Accounts and Payment [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80347] (rule:purchase-order-accounts-and-payment)"
           ]
         },
         {
@@ -97,8 +97,8 @@
           "title": "Can the buyer give both a freight amount and a freight order on the same purchase order leg?",
           "body": "No: a leg or the header carries either a **freight amount** or a **freight order**, never both.\nA freight amount is saved only when it is above zero.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Freight Amount or Freight Order (rule:purchase-order-freight-amount-or-freight-order)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Freight Amount or Freight Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80421] (rule:purchase-order-freight-amount-or-freight-order)"
           ]
         },
         {
@@ -107,7 +107,7 @@
           "title": "Where do the terms and conditions and payment terms on a new purchase order come from?",
           "body": "The **terms and conditions** and **payment terms** of an order are filled in from the **vendor location**.\nSo choosing the vendor location also brings in that location's terms.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)"
           ]
         },
         {
@@ -116,8 +116,8 @@
           "title": "What must each item be linked to before the buyer can order it on a purchase that is not under GST?",
           "body": "On a **non-GST purchase**, each item must be linked to a **chapter heading**.\nAn item with no chapter heading link is refused, and the refusal names the item.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Chapter Heading (rule:purchase-order-chapter-heading)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Chapter Heading [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80396] (rule:purchase-order-chapter-heading)"
           ]
         },
         {
@@ -126,8 +126,8 @@
           "title": "Can a purchase order line carry a zero rate or a zero quantity, and what does the buyer enter?",
           "body": "The **rate** must be entered but may be zero; the **quantity** must be above zero.\nA line with no rate, or with zero quantity, stops the save.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Quantity and Rate (rule:purchase-order-quantity-and-rate)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Quantity and Rate [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80438] (rule:purchase-order-quantity-and-rate)"
           ]
         },
         {
@@ -136,8 +136,8 @@
           "title": "Why must lines of the same item on one purchase order share the same order unit and rate?",
           "body": "Lines of the same item on one order must use the same **order unit** and the same **rate**.\nA different unit or rate on a second line of that item is refused.\nFor example, two lines of one item at 120 and 125 per unit cannot be saved together.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Same Item Consistency (rule:purchase-order-same-item-consistency)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Same Item Consistency [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80445] (rule:purchase-order-same-item-consistency)"
           ]
         },
         {
@@ -146,8 +146,8 @@
           "title": "Can the buyer add the same item twice to one purchase order with the same make and technical grade?",
           "body": "No: the same item with the same **make** and **technical grade** cannot repeat on one order.\nEvery order also needs at least one item line.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Names, codes and aliases must be unique (rule:unique-master-names)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Names, codes and aliases must be unique [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:82501] (rule:unique-master-names)"
           ]
         },
         {
@@ -156,8 +156,8 @@
           "title": "Why is a capital item refused on a General purchase order, and what else cannot be mixed?",
           "body": "A **capital item** cannot be ordered on a **General** order.\nCapital and non-capital items cannot share one order, and items of different item types cannot be mixed.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Item Type Consistency (rule:purchase-order-item-type-consistency)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Item Type Consistency [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80431] (rule:purchase-order-item-type-consistency)"
           ]
         },
         {
@@ -166,8 +166,8 @@
           "title": "How does the system decide whether a purchase order came from a sales order, an indent or no source?",
           "body": "The **order origin** comes from the source lines the buyer selects.\nIt is a sales order, a GRC task or an **indent**, depending on those lines, and **Direct** when none applies.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Order Origin (rule:purchase-order-order-origin)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Order Origin [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80435] (rule:purchase-order-order-origin)"
           ]
         },
         {
@@ -176,8 +176,8 @@
           "title": "What happens to the purchase type, category and reference type when the buyer changes the document type?",
           "body": "Changing the **document type** resets the **purchase type**, purchase category and reference document type.\nThe buyer chooses the document type first, then fills those fields again.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Header Cascade (rule:purchase-order-header-cascade)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Header Cascade [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80425] (rule:purchase-order-header-cascade)"
           ]
         },
         {
@@ -186,9 +186,9 @@
           "title": "Who can still change a purchase order once it is released under an authorization group, and when is it locked?",
           "body": "A **released** order under an authorization group can be changed only by users assigned to that group.\nOn loading, its status and group are read-only and its lines cannot be edited.\nOnce **Authorized**, the order cannot be saved again by anyone.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Released Order Editing (rule:purchase-order-released-order-editing)",
-            "Authorized or in-use records are locked (rule:authorized-document-lock)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Released Order Editing [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80440] (rule:purchase-order-released-order-editing)",
+            "Authorized or in-use records are locked [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77939] (rule:authorized-document-lock)"
           ]
         },
         {
@@ -197,9 +197,9 @@
           "title": "Under multi-level approval, why can no user set a purchase order straight to Authorized?",
           "body": "Under **multi-level approval**, an order is authorized only through the approval entries, never by setting the status.\nWhen the order is released, approval entries are created and **level 1** becomes ready to approve.\nSetting Authorized directly, or before the **last level** approves, is refused.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Multi-level Authorization (rule:purchase-order-multi-level-authorization)",
-            "Purchase Order: Approval Processing (rule:purchase-order-approval-processing)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Multi-level Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80433] (rule:purchase-order-multi-level-authorization)",
+            "Purchase Order: Approval Processing [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80391] (rule:purchase-order-approval-processing)"
           ]
         },
         {
@@ -208,9 +208,9 @@
           "title": "What must each approver record on a purchase order approval, and what extra is needed to reject?",
           "body": "Each approver records an **action**, Approve or Reject, on the selected approval entry.\nA **rejection** must carry a comment, and under multi-level approval an authorization group must be chosen.\nAn entry already approved at that level cannot be approved again.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Approval Grid Entry (rule:purchase-order-approval-grid-entry)",
-            "Purchase Order: Approval Processing (rule:purchase-order-approval-processing)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Approval Grid Entry [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80390] (rule:purchase-order-approval-grid-entry)",
+            "Purchase Order: Approval Processing [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80391] (rule:purchase-order-approval-processing)"
           ]
         },
         {
@@ -219,8 +219,8 @@
           "title": "Why is a user refused when they try to authorize a purchase order above their own amount limit?",
           "body": "A user can authorize an order only if its **net amount** falls inside one of their **limit ranges**.\nEach user has From and To amounts set in configuration.\nA larger order must be authorized by a user whose range covers it.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: User Authorization Limit (rule:purchase-order-user-authorization-limit)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: User Authorization Limit [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80449] (rule:purchase-order-user-authorization-limit)"
           ]
         },
         {
@@ -229,8 +229,8 @@
           "title": "Why can an approver not authorize a purchase order that is already completed or cancelled?",
           "body": "A **completed** or **cancelled** order cannot be authorized.\nThe order is already closed, so authorization is refused.\nThe refusal states whether the order is completed or cancelled.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Authorize Closed Order (rule:purchase-order-authorize-closed-order)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Authorize Closed Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80393] (rule:purchase-order-authorize-closed-order)"
           ]
         },
         {
@@ -239,10 +239,10 @@
           "title": "Why can the buyer not edit an authorized purchase order directly, and how is it changed instead?",
           "body": "An **authorized** order is locked; the buyer changes it through a **purchase order amendment**.\nEach amendment is a versioned copy with its own number, reason and status, approved before it takes effect.\nThe live order always reflects the last authorized amendment.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Authorized or in-use records are locked (rule:authorized-document-lock)",
-            "Purchase Order Amendment (form:fPOAmendment)",
-            "Purchase Order: Amendment Model (rule:purchase-order-amendment-model)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Authorized or in-use records are locked [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77939] (rule:authorized-document-lock)",
+            "Purchase Order Amendment [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61122] (form:fPOAmendment)",
+            "Purchase Order: Amendment Model [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80373] (rule:purchase-order-amendment-model)"
           ]
         },
         {
@@ -251,9 +251,9 @@
           "title": "Why can the buyer not change the quantity of a completed, cancelled or short-closed line in an amendment?",
           "body": "On an amendment, a line whose status is **Completed**, **Cancel** or **Short Close** keeps its quantity.\nThose lines are already closed, so their quantity is locked.\nThe buyer can still amend the quantity of lines that remain open.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Authorized or in-use records are locked (rule:authorized-document-lock)",
-            "Purchase Order Amendment (form:fPOAmendment)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Authorized or in-use records are locked [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77939] (rule:authorized-document-lock)",
+            "Purchase Order Amendment [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61122] (form:fPOAmendment)"
           ]
         },
         {
@@ -262,9 +262,9 @@
           "title": "When must the buyer pick a reference document on a purchase order, and how is its date checked?",
           "body": "A **reference document** is required unless the reference type is Sales Order, Direct or Purchase Request.\nThe **order date** cannot be earlier than that reference's date.\nWhen indents are required by settings, at least one source line must also be selected.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Reference Document (rule:purchase-order-reference-document)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Reference Document [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80439] (rule:purchase-order-reference-document)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)"
           ]
         },
         {
@@ -273,9 +273,9 @@
           "title": "What extra details must the buyer enter on a Direct purchase order that has no source document?",
           "body": "A **Direct** order needs a **department**, and is the only reference type that uses it.\nWhen the company uses cost centers, each line of a Direct order also needs a **cost center**.\nUntil both are given, the save stops and names the missing department or the line without a cost center.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Department (rule:purchase-order-department)",
-            "Purchase Order: Cost Center (rule:purchase-order-cost-center)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Department [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80403] (rule:purchase-order-department)",
+            "Purchase Order: Cost Center [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80402] (rule:purchase-order-cost-center)"
           ]
         },
         {
@@ -284,8 +284,8 @@
           "title": "How is the order rate worked out when the buyer converts the indent unit into a different order unit?",
           "body": "The **order rate** = indent rate x **first factor** / **second factor**.\nThe buyer enters both factors and the order unit; confirming them clears the order quantity for re-entry.\n- Indent rate 20 per kg, first factor 25, second factor 1.\n- Order rate = 20 x 25 / 1 = 500 per order unit.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Unit Conversion Popup (rule:purchase-order-unit-conversion-popup)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Unit Conversion Popup [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80447] (rule:purchase-order-unit-conversion-popup)"
           ]
         },
         {
@@ -294,8 +294,8 @@
           "title": "Which dates does the system check on each indent line the buyer selects for a purchase order?",
           "body": "Each selected **indent line** must pass three date checks before the order saves.\n- The **order date** cannot be earlier than the indent date.\n- A **schedule date** is required.\n- The schedule date cannot be earlier than the order date.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Indent Line Rules (rule:purchase-order-indent-line-rules)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Indent Line Rules [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80429] (rule:purchase-order-indent-line-rules)"
           ]
         },
         {
@@ -304,8 +304,8 @@
           "title": "When an indent has reserved quantity, how must the buyer split the order quantity across reservations?",
           "body": "Where **reservation** exists, the selected reserve quantities must add up to the **order quantity**.\nAt least one reserve entry must be selected, and each one cannot exceed its **balance**.\nFor example, an order of 300 can take 200 and 100 from two reservations.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Reserve Allocation (rule:purchase-order-reserve-allocation)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Reserve Allocation [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80441] (rule:purchase-order-reserve-allocation)"
           ]
         },
         {
@@ -314,9 +314,9 @@
           "title": "Why can the buyer not add a transportation route or expense heads to an order with discrete items?",
           "body": "An order with **discrete items** cannot carry a **transportation route** or **expense heads**.\nThe save is refused until the route or expense heads are removed.\nInventory indents and discrete raw material indents also cannot be combined on one order.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Discrete Items (rule:purchase-order-discrete-items)",
-            "Purchase Order: Indent Type Mix (rule:purchase-order-indent-type-mix)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Discrete Items [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80404] (rule:purchase-order-discrete-items)",
+            "Purchase Order: Indent Type Mix [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80430] (rule:purchase-order-indent-type-mix)"
           ]
         },
         {
@@ -325,8 +325,8 @@
           "title": "Why are intermediate, finished goods and phantom items refused on most purchase orders?",
           "body": "**Intermediate**, finished goods and phantom items are blocked on an order unless it is a **drop-shipment**.\nA company rule configured for these item types also lifts the block.\nOtherwise the buyer removes the item or changes the purchase type to drop-shipment.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Restricted Item Types (rule:purchase-order-restricted-item-types)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Restricted Item Types [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80442] (rule:purchase-order-restricted-item-types)"
           ]
         },
         {
@@ -335,8 +335,8 @@
           "title": "In what order does the system check a purchase order on save, and why does only one problem show at a time?",
           "body": "The system checks the order part by part and stops at the **first failure**, so one problem shows per save.\n- Number, header, indents, shipping, accounts and terms come first.\n- Then items, tax, GST, route, expenses and limits.\n- Finally account assignment, company rules, **authorization group** and advances.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Validation Order (rule:purchase-order-validation-order)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Validation Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80450] (rule:purchase-order-validation-order)"
           ]
         },
         {
@@ -345,9 +345,9 @@
           "title": "An order of 480,000 under a group for up to 500,000 is raised to 530,000: what happens to its approvals?",
           "body": "The order moves to the group covering 530,000, and its earlier approval entries are cleared.\nThe **authorization group** follows the **net amount**, so a bigger order needs the approvers for that amount.\n- The buyer raises the order at 480,000; group A covers up to 500,000.\n- An approver at level 1 approves it.\n- The buyer raises the amount to 530,000; the group is chosen again as group B.\n- Because the group changed, the **approval entries** are cleared and start again.\nAgree the final amount before release to avoid a second approval round.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Group by Net Amount (rule:purchase-order-group-by-net-amount)",
-            "Purchase Order: Amendment Model (rule:purchase-order-amendment-model)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Group by Net Amount [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80422] (rule:purchase-order-group-by-net-amount)",
+            "Purchase Order: Amendment Model [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80373] (rule:purchase-order-amendment-model)"
           ]
         },
         {
@@ -356,8 +356,8 @@
           "title": "Is a 1,200-unit line split as 500, 400 and 250 across three consignees allowed, and what fixes it?",
           "body": "No: 500 + 400 + 250 = 1,150, which is short of the line's 1,200, so the save is refused.\nThe buyer splits each line across **consignee** locations, and the parts must add up to the line quantity.\n- Line quantity is 1,200.\n- Consignee A 500, B 400, C 250 make 1,150.\n- The system refuses: **consignee quantity** must equal 1,200.\n- Changing C to 300 makes 1,200, and the line saves.\nNo consignee row may be zero or empty either.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Consignee Quantity Split (rule:purchase-order-consignee-quantity-split)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Consignee Quantity Split [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80399] (rule:purchase-order-consignee-quantity-split)"
           ]
         },
         {
@@ -366,12 +366,12 @@
           "title": "A purchase order is refused when someone tries to authorize it: what should they check, and in what order?",
           "body": "Check approvals, your own limit and the order's state, in that order.\nWhoever is authorizing checks each point in turn.\n- Under **multi-level approval**, has the last level approved through the approval entries?\n- Does the **net amount** fall inside your own limit range?\n- Is the order already **completed** or cancelled?\n- Is it released under a group you are not assigned to?\nIf another user changed the order meanwhile, reload it and try again.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Multi-level Authorization (rule:purchase-order-multi-level-authorization)",
-            "Purchase Order: User Authorization Limit (rule:purchase-order-user-authorization-limit)",
-            "Purchase Order: Authorize Closed Order (rule:purchase-order-authorize-closed-order)",
-            "Purchase Order: Released Order Editing (rule:purchase-order-released-order-editing)",
-            "Header and details are saved in one transaction (rule:atomic-save)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Multi-level Authorization [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80433] (rule:purchase-order-multi-level-authorization)",
+            "Purchase Order: User Authorization Limit [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80449] (rule:purchase-order-user-authorization-limit)",
+            "Purchase Order: Authorize Closed Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80393] (rule:purchase-order-authorize-closed-order)",
+            "Purchase Order: Released Order Editing [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80440] (rule:purchase-order-released-order-editing)",
+            "Header and details are saved in one transaction [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77918] (rule:atomic-save)"
           ]
         },
         {
@@ -380,8 +380,8 @@
           "title": "With an advance balance of 50,000 on a recurring agreement, can the buyer adjust 60,000 on a 40,000 order?",
           "body": "No: an adjustment cannot exceed the advance **balance amount** of 50,000.\nOn orders under a **recurring agreement**, open advances are adjusted against the order when the company's advance rule is active.\n- Advance balance 50,000; order net amount 40,000.\n- Adjusting 60,000 is refused: it exceeds the 50,000 balance.\n- Adjusting 45,000 is within balance but above the net amount, so it warns.\n- Leaving the advance unadjusted warns or blocks, per the **advance rule**.\nAdjust 40,000 to match the order's net amount.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Advance Adjustment (rule:purchase-order-advance-adjustment)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Advance Adjustment [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80348] (rule:purchase-order-advance-adjustment)"
           ]
         },
         {
@@ -390,9 +390,9 @@
           "title": "What happens to the live purchase order when the buyer saves and then authorizes an amendment?",
           "body": "The live order changes only when the **amendment** is authorized; saving alone changes only the amendment copy.\nChanges must be approved before they take effect, so the live order keeps the last authorized version.\n- The buyer saves an amendment raising the rate from 200 to 210.\n- Only the **amendment copy** is written; the live order still shows 200.\n- On update, indent quantities are reversed and all lines rewritten.\n- Once the amendment is **authorized**, the live order shows 210.\nIf the change must not apply, leave the amendment unauthorized.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Amendment Model (rule:purchase-order-amendment-model)",
-            "Purchase Order Amendment (form:fPOAmendment)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Amendment Model [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80373] (rule:purchase-order-amendment-model)",
+            "Purchase Order Amendment [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61122] (form:fPOAmendment)"
           ]
         },
         {
@@ -401,8 +401,8 @@
           "title": "Why is a two-item order with inclusive freight refused once the buyer turns on PO rate validation?",
           "body": "Under **PO rate validation**, an order may hold one item, no route, and no **inclusive tax or charges**.\nThese limits apply when the company has configured the rule and the buyer marks the order for it.\n- The buyer marks PO rate validation on an order with two items.\n- The save is refused: only **one item** is allowed.\n- Inclusive freight would also be refused, and so would any transportation route.\nSplit the items into separate orders and make the charges exclusive.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: PO Rate Validation Rule (rule:purchase-order-po-rate-validation-rule)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: PO Rate Validation Rule [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80436] (rule:purchase-order-po-rate-validation-rule)"
           ]
         },
         {
@@ -411,9 +411,9 @@
           "title": "Is a minus tolerance of 100% or of 200 units allowed on a 200-unit purchase order line?",
           "body": "No to both: **minus tolerance** must stay below 100% and below the line quantity.\n**Tolerance** on a line is set either on a percentage basis or on a quantity basis.\n- Line quantity is 200.\n- Percentage basis: 100% is refused; 5% is allowed.\n- Quantity basis: 200 is refused, since it equals the quantity; 10 is allowed.\nUnder a company rule, a line with no tolerance at all warns or blocks.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: Line Tolerance (rule:purchase-order-line-tolerance)",
-            "Mandatory fields and valid selections on documents (rule:mandatory-document-fields)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: Line Tolerance [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80432] (rule:purchase-order-line-tolerance)",
+            "Mandatory fields and valid selections on documents [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:79742] (rule:mandatory-document-fields)"
           ]
         },
         {
@@ -422,10 +422,10 @@
           "title": "A vendor in one state bills to a company location in another: which GST applies, and what is refused?",
           "body": "**IGST** applies across states; **SGST and CGST** are refused for an inter-state purchase.\nThe tax is checked by comparing the vendor location with the billed-to location in the same country.\n- Vendor location in state A; billed-to location in state B.\n- The buyer adds SGST and CGST: the save is refused.\n- The buyer replaces them with IGST: the order saves.\n- With both in state A, IGST is refused and SGST and CGST apply.\nUnder a company rule, an order with no GST at all warns before saving.",
           "source_refs": [
-            "Purchase Order (form:fPurchaseOrder)",
-            "Purchase Order: GST State Rule (rule:purchase-order-gst-state-rule)",
-            "Purchase Order: GST Selection Rule (rule:purchase-order-gst-selection-rule)",
-            "GST Tax Determination (process:gst-tax-determination)"
+            "Purchase Order [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:61142] (form:fPurchaseOrder)",
+            "Purchase Order: GST State Rule [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80424] (rule:purchase-order-gst-state-rule)",
+            "Purchase Order: GST Selection Rule [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:80423] (rule:purchase-order-gst-selection-rule)",
+            "GST Tax Determination [4:478dbad0-cd96-4aa4-bac7-6d61036ab7b0:77685] (process:gst-tax-determination)"
           ]
         }
       ]
