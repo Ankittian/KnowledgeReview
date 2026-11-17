@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ArrowDown, CheckCircle2, X } from "lucide-react";
 import { deviceInfo, enqueue, startOutbox, trackEvent, uid } from "@/lib/client/outbox";
 import type { ClientCard } from "@/lib/deck";
-import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
+import { FLAG_POINTS_MULTIPLIER, READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LevelChip } from "@/components/deck/LevelChip";
@@ -239,7 +239,9 @@ export function BrowseExpanded({
       feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
     });
     if (fb) {
-      // the sheet's own "Suggestion sent" toast covers this
+      // reporting a card earns double its points
+      const pts = card.weight * FLAG_POINTS_MULTIPLIER;
+      if (pts > 0) toast.success(`+${pts} points for reporting this card`, { description: card.context });
     } else if (kind !== "incorrect" && card.weight > 0) toast.success(`+${card.weight} point${card.weight === 1 ? "" : "s"}`, { description: card.context });
     else toast("Answer saved", { description: card.context });
     onAnswered();
@@ -270,7 +272,7 @@ export function BrowseExpanded({
             You’ve already answered this card. Its points are counted.
           </p>
         ) : (
-          <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={(k) => answer(k)} />
+          <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={(k) => answer(k)} weight={card.weight} />
         )}
       </div>
       <FeedbackSheet

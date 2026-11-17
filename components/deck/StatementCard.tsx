@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Check, Lock, PencilLine, BookOpenCheck, MousePointerClick } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
-import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
+import { FLAG_POINTS_MULTIPLIER, READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
@@ -119,7 +119,10 @@ export function StatementActions({
   remainingMs,
   onAnswer,
   selected = null,
+  weight = 0,
 }: {
+  /** points of the card for a normal answer; reporting it as incorrect or incomplete earns double */
+  weight?: number;
   locked: boolean;
   remainingMs: number;
   onAnswer: (a: StatementAnswer) => void;
@@ -169,6 +172,7 @@ export function StatementActions({
         >
           <PencilLine className="size-5" />
           <span className="leading-tight">Incorrect or incomplete</span>
+          {weight > 0 && <span className="text-[11px] font-normal text-muted-foreground">{weight * FLAG_POINTS_MULTIPLIER} points</span>}
         </Button>
       </div>
       {locked && <p className="mt-2 text-center text-xs text-muted-foreground">The answers unlock after the read time so every card is actually read.</p>}

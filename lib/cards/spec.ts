@@ -14,6 +14,11 @@ export const LEVELS: Record<Level, { weight: number; words: [number, number]; li
 };
 export const LEVEL_ORDER: Level[] = ["easy", "medium", "hard"];
 
+/** Reporting a card as incorrect or incomplete earns this many times the card's weight (a normal answer earns 1x). */
+export const FLAG_POINTS_MULTIPLIER = 2;
+/** Points a user earns for answering a card of this level: `flagged` = they reported it as incorrect or incomplete. */
+export const pointsFor = (level: Level, flagged = false) => LEVELS[level].weight * (flagged ? FLAG_POINTS_MULTIPLIER : 1);
+
 /**
  * The flow-first ladder (docs/plans/PLAN-flashcards-flow-ladder.md): difficulty = depth of the ERP flow.
  *   module -> easy   (what the module is for, its flows, hand-offs to other modules)

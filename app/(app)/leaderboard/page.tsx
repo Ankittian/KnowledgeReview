@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Medal, Trophy, UserRound } from "lucide-react";
 import { getDb } from "@/db/client";
 import { requireUser } from "@/lib/auth/session";
-import { LEVELS } from "@/lib/cards/spec";
+import { FLAG_POINTS_MULTIPLIER, LEVELS } from "@/lib/cards/spec";
 import { getModuleNames } from "@/lib/deck";
 import { getLeaderboard, type LeaderboardPeriod } from "@/lib/leaderboard";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -45,7 +45,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 pt-6 sm:px-6 sm:pt-8">
-      <PageHeader title="Leaderboard" description={`Points from correct answers: ${pointsLine}. Each card scores once, from your first correct answer.`} />
+      <PageHeader title="Leaderboard" description={`Points per card: ${pointsLine}. Reporting a card as incorrect or incomplete earns ${FLAG_POINTS_MULTIPLIER}× its points. Each card scores once, from your first answer.`} />
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
