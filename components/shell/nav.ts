@@ -7,6 +7,7 @@ import {
   MessageSquareWarning,
   Search,
   Settings2,
+  Sparkles,
   ShieldCheck,
   Stethoscope,
   Trophy,
@@ -27,7 +28,7 @@ export const MAIN_NAV: NavItem[] = [
   { href: "/chat", label: "Chat", icon: MessageSquare, description: "Ask questions about SpectrumERP" },
   { href: "/today", label: "Today", icon: Layers, description: "Review today’s flashcards" },
   { href: "/progress", label: "Progress", icon: BarChart3, description: "Your streak and knowledge by area" },
-  { href: "/leaderboard", label: "Leaderboard", icon: Trophy, description: "Points from correct answers" },
+  { href: "/leaderboard", label: "Leaderboard", icon: Trophy, description: "Points from your answers" },
   { href: "/browse", label: "Browse", icon: Search, description: "Search and study every card" },
 ];
 
@@ -37,6 +38,7 @@ export const ADMIN_NAV: (NavItem & { adminOnly?: boolean })[] = [
   { href: "/admin/feedback", label: "Feedback", icon: MessageSquareWarning, description: "Triage suggested corrections" },
   { href: "/admin/team", label: "Team knowledge", icon: UsersRound, description: "Knowledge and coverage per employee" },
   { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
+  { href: "/admin/cards", label: "Cards", icon: Sparkles, adminOnly: true },
   { href: "/admin/users", label: "Users", icon: Users, adminOnly: true, description: "Approve sign-ups, roles and access" },
   { href: "/admin/chats", label: "All chats", icon: MessagesSquare, adminOnly: true, description: "Every assistant conversation" },
   { href: "/admin/settings", label: "Settings", icon: Settings2, adminOnly: true, description: "Daily limit, banner, email and exports" },

@@ -45,6 +45,10 @@ export default defineConfig({
       // no mail connection in tests: emailed codes are appended to this file, which e2e/email-recovery.spec.ts reads
       MAIL_CAPTURE_FILE: MAIL_FILE,
       OTP_SECRET: "e2e-otp-secret-e2e-otp-secret-0123456789",
+      // card generation: no real Claude calls and no background worker in tests
+      CARDS_OUTPUT_DIR: "test-results/generated-cards",
+      CLAUDE_RUNNER: "mock",
+      CARDS_WORKER: "off",
     },
   },
 });

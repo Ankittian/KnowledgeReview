@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { CommandMenu } from "./CommandMenu";
 import { LogoMark } from "./Logo";
+import { NotificationBell } from "./NotificationBell";
 import { ThemeToggle } from "./ThemeToggle";
 import { TOUR_EVENT } from "./WelcomeTour";
 import { sectionFor } from "./nav";
@@ -40,6 +41,7 @@ export function TopBar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolea
       </Breadcrumb>
       <div className="ml-auto flex items-center gap-1">
         <CommandMenu isStaff={isStaff} isAdmin={isAdmin} />
+        {isAdmin && <NotificationBell />}
         <ThemeToggle />
         <Tooltip>
           <TooltipTrigger
