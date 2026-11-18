@@ -26,3 +26,35 @@ export async function getDailyCardLimit(db: DB): Promise<number> {
 }
 
 export const setDailyCardLimit = (db: DB, n: number) => setSetting(db, DAILY_LIMIT_KEY, n);
+
+// ---- Announcement banner (shown at the top of every signed-in page) ----
+
+export const ANNOUNCEMENT_TONES = ["info", "success", "warning"] as const;
+export type AnnouncementTone = (typeof ANNOUNCEMENT_TONES)[number];
+export const ANNOUNCEMENT_MAX_LENGTH = 300;
+
+export interface Announcement {
+  /** Changes on every save, so a user who dismissed an older announcement sees the new one. */
+  id: string;
+  message: string;
+  tone: AnnouncementTone;
+  active: boolean;
+}
+
+const ANNOUNCEMENT_KEY = "announcement";
+
+/** The saved announcement (active or not), for the admin form. */
+export async function getAnnouncement(db: DB): Promise<Announcement | null> {
+  const v = await getSetting<Partial<Announcement> | null>(db, ANNOUNCEMENT_KEY, null);
+  if (!v || typeof v.message !== "string" || typeof v.id !== "string") return null;
+  const tone = ANNOUNCEMENT_TONES.includes(v.tone as AnnouncementTone) ? (v.tone as AnnouncementTone) : "info";
+  return { id: v.id, message: v.message, tone, active: v.active === true };
+}
+
+/** The announcement to show employees, or null when there is none or it is switched off. */
+export async function getActiveAnnouncement(db: DB): Promise<Announcement | null> {
+  const a = await getAnnouncement(db);
+  return a && a.active && a.message.trim() ? a : null;
+}
+
+export const setAnnouncement = (db: DB, a: Announcement) => setSetting(db, ANNOUNCEMENT_KEY, a);

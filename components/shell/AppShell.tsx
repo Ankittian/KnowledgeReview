@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 import type { SessionUser } from "@/lib/auth/session";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getDb } from "@/db/client";
+import { getActiveAnnouncement } from "@/lib/settings";
+import { AnnouncementBanner } from "./AnnouncementBanner";
 import { AppSidebar } from "./AppSidebar";
 import { MobileTabBar } from "./NavLinks";
 import { TopBar } from "./TopBar";
@@ -15,6 +18,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
     .join("")
     .slice(0, 2)
     .toUpperCase();
+  const announcement = await getActiveAnnouncement(await getDb());
   const sidebarOpen = (await cookies()).get("sidebar_state")?.value !== "false";
 
   return (
@@ -22,6 +26,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
       <AppSidebar user={{ displayName: user.displayName, username: user.username, role: user.role, initials }} isStaff={isStaff} isAdmin={isAdmin} />
       <SidebarInset className="min-w-0">
         <TopBar isStaff={isStaff} isAdmin={isAdmin} />
+        {announcement && <AnnouncementBanner announcement={announcement} />}
         <div className="flex-1 pb-24 md:pb-10">{children}</div>
       </SidebarInset>
       <MobileTabBar isStaff={isStaff} />

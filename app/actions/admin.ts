@@ -7,7 +7,7 @@ import { getDb } from "@/db/client";
 import { cardFeedback, roleIdOf, users } from "@/db/schema";
 import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
-import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, setDailyCardLimit } from "@/lib/settings";
+import { ANNOUNCEMENT_MAX_LENGTH, ANNOUNCEMENT_TONES, DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, setAnnouncement, setDailyCardLimit } from "@/lib/settings";
 import { ANSWER_ROLES } from "@/lib/chat/config";
 import { setAnswerRole } from "@/lib/chat/service";
 
@@ -119,4 +119,18 @@ export async function saveDailyCardLimit(fd: FormData) {
   await setDailyCardLimit(db, limit);
   await audit(db, actor.id, "setting_changed", "setting", "daily_card_limit", { value: limit });
   revalidatePath("/admin/settings");
+}
+
+/** Publishes, edits or switches off the announcement banner. Each save gets a new id so earlier dismissals reset. */
+export async function saveAnnouncement(fd: FormData) {
+  const { user: actor } = await requireRole(["admin"]);
+  const message = z.string().trim().max(ANNOUNCEMENT_MAX_LENGTH).parse(fd.get("message") ?? "");
+  const tone = z.enum(ANNOUNCEMENT_TONES).catch("info").parse(fd.get("tone"));
+  const publish = fd.get("intent") === "publish";
+  if (publish && !message) throw new Error("Write a message to publish.");
+  const db = await getDb();
+  const prev = await getAnnouncement(db);
+  await setAnnouncement(db, { id: crypto.randomUUID(), message: message || prev?.message || "", tone, active: publish });
+  await audit(db, actor.id, "setting_changed", "setting", "announcement", { active: publish, tone, message });
+  revalidatePath("/", "layout");
 }

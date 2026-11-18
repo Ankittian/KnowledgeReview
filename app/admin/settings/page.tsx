@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Download, Gauge, PackageOpen } from "lucide-react";
+import { Download, Gauge, Megaphone, PackageOpen } from "lucide-react";
 import { getDb } from "@/db/client";
-import { saveDailyCardLimit } from "@/app/actions/admin";
+import { saveAnnouncement, saveDailyCardLimit } from "@/app/actions/admin";
 import { surface } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AnnouncementForm } from "@/components/admin/AnnouncementForm";
 import { requireRole } from "@/lib/auth/session";
-import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getDailyCardLimit } from "@/lib/settings";
+import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, getDailyCardLimit } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Settings & exports" };
@@ -44,6 +45,7 @@ export default async function SettingsPage() {
   await requireRole(["admin"]);
   const db = await getDb();
   const dailyLimit = await getDailyCardLimit(db);
+  const announcement = await getAnnouncement(db);
 
   return (
     <Stagger className="grid gap-4 lg:grid-cols-2">
@@ -64,6 +66,14 @@ export default async function SettingsPage() {
             {DAILY_LIMIT_MIN}–{DAILY_LIMIT_MAX}
           </span>
         </form>
+      </StaggerItem>
+
+      <StaggerItem className={cn(surface, "flex flex-col p-5")}>
+        <CardHead icon={<Megaphone />} title="Announcement banner">
+          Shows a message at the top of every page for all signed-in users. They can dismiss it; saving again shows it to everyone anew.
+          {announcement?.active ? " A banner is live right now." : " No banner is live."}
+        </CardHead>
+        <AnnouncementForm announcement={announcement} action={saveAnnouncement} />
       </StaggerItem>
 
       <StaggerItem className={cn(surface, "p-5 lg:col-span-2")}>
