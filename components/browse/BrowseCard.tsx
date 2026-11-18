@@ -139,10 +139,9 @@ export function BrowseCardPreview({
         data-viewed={viewed}
       >
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-          <Badge variant="secondary" className="min-w-0 max-w-[70%] truncate" title={card.context}>
-            <span className="truncate">{card.context}</span>
+          <Badge variant="secondary" className="h-auto min-w-0 max-w-full py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
+            {card.context}
           </Badge>
-          {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
           {card.level && <LevelChip level={card.level} weight={card.weight} />}
         </div>
         <p className="mt-3 line-clamp-4 flex-1 text-[15px] leading-snug font-semibold whitespace-pre-line">{card.front}</p>

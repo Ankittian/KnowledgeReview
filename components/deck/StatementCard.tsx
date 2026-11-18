@@ -47,10 +47,9 @@ export function StatementCard({
 
   const Meta = ({ timer = false }: { timer?: boolean }) => (
     <div className="flex flex-wrap items-center gap-1.5">
-      <Badge variant="secondary" className="min-w-0 max-w-full truncate" title={card.context}>
+      <Badge variant="secondary" className="h-auto min-w-0 max-w-full py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
         {card.context}
       </Badge>
-      {card.module && <Badge className="bg-primary/10 text-primary">{card.module}</Badge>}
       {card.level && <LevelChip level={card.level} weight={card.weight} />}
       {position !== undefined && total !== undefined && (
         <span className="ml-auto text-xs font-medium text-muted-foreground tabular-nums">
