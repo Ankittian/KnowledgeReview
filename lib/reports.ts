@@ -196,11 +196,18 @@ export async function loadEventsExport(db: DB, opts: { days?: number; limit?: nu
   return rows.map((r) => ({ ...r, id: Number(r.id), created_at: iso(r.created_at), occurred_at: iso(r.occurred_at) }));
 }
 
+/**
+ * Spreadsheet apps run text that starts with = + - @ (or tab / CR) as a formula. User-controlled strings (names,
+ * comments, chat prompts) end up in exports, so such text gets a leading apostrophe. Real numbers are left alone.
+ */
+export const neutraliseFormula = (s: string) => (/^[=+\-@\t\r]/.test(s) ? `'${s}` : s);
+
 export function toCsv(rows: Record<string, unknown>[]): string {
   if (!rows.length) return "";
   const cols = Object.keys(rows[0]);
   const cell = (v: unknown) => {
-    const s = v == null ? "" : Array.isArray(v) ? v.join("; ") : typeof v === "object" ? JSON.stringify(v) : String(v);
+    const raw = v == null ? "" : Array.isArray(v) ? v.join("; ") : typeof v === "object" ? JSON.stringify(v) : String(v);
+    const s = typeof v === "number" || typeof v === "boolean" ? raw : neutraliseFormula(raw);
     return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return [cols.join(","), ...rows.map((r) => cols.map((c) => cell(r[c])).join(","))].join("\r\n") + "\r\n";

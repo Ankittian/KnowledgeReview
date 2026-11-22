@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cardFeedback, roleIdOf, users } from "@/db/schema";
@@ -18,7 +18,17 @@ export async function approveUser(fd: FormData) {
   const id = uuid.parse(fd.get("userId"));
   const role = z.enum(["admin", "functional", "technical"]).catch("functional").parse(fd.get("role"));
   const db = await getDb();
-  await db.update(users).set({ status: "active", roleId: roleIdOf(role) }).where(eq(users.id, id));
+  // Only a pending sign-up can be approved: this must not re-enable a disabled account or re-role an active one.
+  const approved = await db
+    .update(users)
+    .set({ status: "active", roleId: roleIdOf(role) })
+    .where(and(eq(users.id, id), eq(users.status, "pending")))
+    .returning({ id: users.id });
+  if (!approved.length) {
+    revalidatePath("/admin/users");
+    return;
+  }
+  await revokeUserSessions(id); // nothing from before the approval stays valid
   await audit(db, actor.id, "user_approved", "user", id, { role });
   revalidatePath("/admin/users");
 }

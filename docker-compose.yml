@@ -64,6 +64,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-kr_app}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-knowledge_review}
       # false is required when the site is served over plain http, otherwise the browser drops the login cookie.
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-false}
       PORT: ${APP_PORT:-3000}
       CLAUDE_CONFIG_DIR: /home/app/.claude
       CLAUDE_HARNESS_DIR: /app/claude-harness

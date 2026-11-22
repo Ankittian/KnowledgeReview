@@ -88,6 +88,12 @@ export const CLIENT_EVENT_TYPES = [
   "browse_flip",
 ] as const;
 
+/** Largest accepted event payload, serialised. Real payloads are a few short fields. */
+export const MAX_EVENT_PAYLOAD_BYTES = 2048;
+const eventPayload = z
+  .record(z.string(), z.unknown())
+  .refine((p) => JSON.stringify(p).length <= MAX_EVENT_PAYLOAD_BYTES, { message: "Event payload too large." });
+
 export const eventsSchema = z.object({
   events: z
     .array(
@@ -96,7 +102,7 @@ export const eventsSchema = z.object({
         type: z.enum(CLIENT_EVENT_TYPES),
         versionId: z.number().int().positive().optional().nullable(),
         at: isoDate,
-        payload: z.record(z.string(), z.unknown()).optional(),
+        payload: eventPayload.optional(),
       }),
     )
     .min(1)

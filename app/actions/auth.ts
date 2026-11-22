@@ -18,13 +18,23 @@ export interface FormState {
   success?: string;
 }
 
-const MAX_FAILS_PER_USER = 8;
+// Failures are counted per (username, IP) pair, so a stranger guessing wrong passwords for "admin" from their own
+// address cannot lock the real admin out from theirs. The username-only ceiling is a high backstop against guessing
+// spread over many addresses; the IP ceiling stops one address spraying many usernames. Without a trusted IP
+// (see lib/client-ip.ts) the username alone is limited at the lower figure.
+const MAX_FAILS_PER_USER_AND_IP = 8;
+const MAX_FAILS_PER_USER = 50;
+const MAX_FAILS_PER_USER_NO_IP = 8;
 const MAX_FAILS_PER_IP = 40;
 const MAX_SIGNUPS_PER_IP_HOUR = 10;
+const MAX_PENDING_USERS = 200; // sign-ups waiting for approval; stops a flood of fake accounts
 
 async function recentCount(type: string, minutes: number, by: { username?: string; ip?: string | null }) {
   const db = await getDb();
-  const filter = by.username ? sql`details->>'username' = ${by.username}` : sql`ip = ${by.ip ?? ""}`;
+  const parts = [];
+  if (by.username) parts.push(sql`details->>'username' = ${by.username}`);
+  if (by.ip) parts.push(sql`ip = ${by.ip}`);
+  const filter = parts.length ? sql.join(parts, sql` AND `) : sql`false`;
   const [{ n }] = await query<{ n: number }>(
     db,
     sql`SELECT count(*)::int AS n FROM activity_log
@@ -43,7 +53,12 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
   const meta = await requestMeta();
   const db = await getDb();
 
-  if ((await recentCount("login_failed", 15, { username })) >= MAX_FAILS_PER_USER || (meta.ip && (await recentCount("login_failed", 15, { ip: meta.ip })) >= MAX_FAILS_PER_IP)) {
+  const blocked = meta.ip
+    ? (await recentCount("login_failed", 15, { username, ip: meta.ip })) >= MAX_FAILS_PER_USER_AND_IP ||
+      (await recentCount("login_failed", 15, { ip: meta.ip })) >= MAX_FAILS_PER_IP ||
+      (await recentCount("login_failed", 15, { username })) >= MAX_FAILS_PER_USER
+    : (await recentCount("login_failed", 15, { username })) >= MAX_FAILS_PER_USER_NO_IP;
+  if (blocked) {
     return { error: "Too many failed attempts. Try again in 15 minutes.", values: { username } };
   }
 
@@ -82,6 +97,8 @@ export async function signupAction(_prev: FormState, fd: FormData): Promise<Form
     return { error: "Too many sign-ups from this network. Try again later.", values };
   }
   const db = await getDb();
+  const [{ pending }] = await query<{ pending: number }>(db, sql`SELECT count(*)::int AS pending FROM users WHERE status = 'pending'`);
+  if (pending >= MAX_PENDING_USERS) return { error: "Sign-ups are paused until an administrator reviews pending accounts.", values };
   const d = parsed.data;
   const [exists] = await db.select({ id: users.id }).from(users).where(eq(users.username, d.username));
   if (exists) return { fieldErrors: { username: "That username is taken." }, values };
@@ -118,7 +135,7 @@ export async function changePasswordAction(_prev: FormState, fd: FormData): Prom
   const db = await getDb();
 
   // Same throttle idea as sign-in: a stolen session must not be able to guess the current password.
-  if ((await recentCount("password_change_failed", 15, { username: me.username })) >= MAX_FAILS_PER_USER) {
+  if ((await recentCount("password_change_failed", 15, { username: me.username })) >= MAX_FAILS_PER_USER_AND_IP) {
     return { error: "Too many failed attempts. Try again in 15 minutes." };
   }
   const [user] = await db.select().from(users).where(eq(users.id, me.id));

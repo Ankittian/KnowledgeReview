@@ -242,7 +242,8 @@ export async function recordClientEvents(db: DB, userId: string, input: EventsIn
       cardId: e.versionId ? (map.get(e.versionId) ?? null) : null,
       type: e.type,
       payload: { ...(e.payload ?? {}), ...(e.versionId ? { version_id: e.versionId } : {}) },
-      clientEventId: e.clientEventId,
+      // Namespaced by user: the column is globally unique, so a bare client id lets one user pre-claim another's ids.
+      clientEventId: `${userId}:${e.clientEventId}`,
       occurredAt: toDate(e.at),
       ...meta,
     })),

@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { clientIp } from "@/lib/client-ip";
 
 export interface RequestMeta {
   ip: string | null;
@@ -7,8 +8,7 @@ export interface RequestMeta {
 
 export async function requestMeta(): Promise<RequestMeta> {
   const h = await headers();
-  const fwd = h.get("x-forwarded-for");
-  return { ip: (fwd ? fwd.split(",")[0].trim() : h.get("x-real-ip")) || null, userAgent: h.get("user-agent") };
+  return { ip: clientIp((n) => h.get(n)), userAgent: h.get("user-agent") };
 }
 
 /** CSRF guard for JSON route handlers: the Origin must match the host serving the request. */

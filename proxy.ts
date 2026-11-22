@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/db/client";
+import { clientIp } from "@/lib/client-ip";
 import { rotateRefreshToken } from "@/lib/auth/refresh";
 import { ACCESS_COOKIE, accessCookie, clearedCookie, REFRESH_COOKIE, refreshCookie, verifyAccessToken } from "@/lib/auth/tokens";
 
@@ -22,9 +23,8 @@ export async function proxy(req: NextRequest) {
     return res;
   }
 
-  const fwd = req.headers.get("x-forwarded-for");
   const result = await rotateRefreshToken(await getDb(), refresh, {
-    ip: (fwd ? fwd.split(",")[0].trim() : req.headers.get("x-real-ip")) || null,
+    ip: clientIp((n) => req.headers.get(n)),
     userAgent: req.headers.get("user-agent"),
   });
 
