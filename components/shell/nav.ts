@@ -13,6 +13,7 @@ import {
   Users,
   UsersRound,
   type LucideIcon,
+  Network,
 } from "lucide-react";
 
 export interface NavItem {
@@ -35,6 +36,7 @@ export const ADMIN_NAV: (NavItem & { adminOnly?: boolean })[] = [
   { href: "/admin/health", label: "What needs change", icon: Stethoscope, description: "Flagged knowledge, worst first" },
   { href: "/admin/feedback", label: "Feedback", icon: MessageSquareWarning, description: "Triage suggested corrections" },
   { href: "/admin/team", label: "Team knowledge", icon: UsersRound, description: "Knowledge and coverage per employee" },
+  { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
   { href: "/admin/users", label: "Users", icon: Users, adminOnly: true, description: "Approve sign-ups, roles and access" },
   { href: "/admin/chats", label: "All chats", icon: MessagesSquare, adminOnly: true, description: "Every assistant conversation" },
   { href: "/admin/settings", label: "Settings & exports", icon: Settings2, adminOnly: true, description: "Daily limit, KB sync and exports" },

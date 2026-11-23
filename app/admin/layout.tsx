@@ -6,7 +6,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { user } = await requireRole(["admin"]);
   return (
     <AppShell user={user}>
-      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-8">
+      {/* Pages that render a [data-fullbleed] element (the graph explorer) use the full content width. */}
+      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-8 has-[[data-fullbleed]]:max-w-none">
         <AdminHeader />
         <div className="mt-5">
           <AdminNav isAdmin={user.role === "admin"} />
