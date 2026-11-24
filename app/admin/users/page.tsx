@@ -4,7 +4,8 @@ import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
 import { roles, users } from "@/db/schema";
 import { DeleteUserButton } from "@/components/admin/DeleteUserButton";
-import { approveUser, deleteUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
+import { ResetPasswordButton } from "@/components/admin/ResetPasswordButton";
+import { approveUser, deleteUser, resetUserPassword, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
 import { defaultAnswerRole } from "@/lib/chat/service";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
@@ -132,6 +133,9 @@ export default async function UsersPage() {
                           {u.username}
                           {u.department ? ` · ${u.department}` : ""}
                         </p>
+                        <p className="text-xs text-muted-foreground" data-testid="user-email">
+                          {u.email ? `${u.email}${u.emailVerifiedAt ? "" : " (unverified)"}` : "No email"}
+                        </p>
                       </div>
                     </div>
                   </TableCell>
@@ -183,7 +187,8 @@ export default async function UsersPage() {
                   <TableCell className={cn(tcell, "align-middle text-xs text-muted-foreground")}>{fmt(u.lastLoginAt)}</TableCell>
                   <TableCell className={cn(tcell, "align-middle text-right")}>
                     {u.id !== me.id && (
-                      <div className="flex justify-end gap-1">
+                      <div className="flex flex-wrap justify-end gap-1">
+                        <ResetPasswordButton action={resetUserPassword} userId={u.id} name={u.displayName} />
                         <form action={setUserStatus}>
                           <input type="hidden" name="userId" value={u.id} />
                           <button

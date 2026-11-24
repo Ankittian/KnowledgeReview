@@ -1,6 +1,8 @@
 "use server";
 
+import crypto from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { hashPassword } from "@/lib/auth/password";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -83,6 +85,26 @@ export async function deleteUser(fd: FormData) {
   });
   await audit(db, actor.id, "user_deleted", "user", id, { username: target.username, displayName: target.displayName });
   revalidatePath("/admin/users");
+}
+
+/**
+ * Fallback for someone who cannot use email recovery (no verified email, or no access to it): the admin sets a
+ * one-time temporary password and tells the user in person. Every session of that user is signed out. The password is
+ * returned once to the admin and is never stored or logged in plain text.
+ */
+export async function resetUserPassword(fd: FormData): Promise<{ password?: string; error?: string }> {
+  const { user: actor } = await requireRole(["admin"]);
+  const id = uuid.parse(fd.get("userId"));
+  if (id === actor.id) return { error: "Change your own password on your profile page." };
+  const db = await getDb();
+  const [target] = await db.select({ status: users.status }).from(users).where(eq(users.id, id));
+  if (!target) return { error: "User not found." };
+  const password = `${crypto.randomBytes(9).toString("base64url")}`; // 12 URL-safe characters
+  await db.update(users).set({ passwordHash: await hashPassword(password) }).where(eq(users.id, id));
+  await revokeUserSessions(id);
+  await audit(db, actor.id, "admin_password_reset", "user", id);
+  revalidatePath("/admin/users");
+  return { password };
 }
 
 /** Answer style (Claude skill) of a general user (REQ-ROLE-01). Applies to chats they start from now on. */
