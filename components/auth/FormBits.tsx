@@ -40,3 +40,12 @@ export function FieldError({ message }: { message?: string }) {
     </motion.p>
   ) : null;
 }
+
+/** Small text link under a primary button (e.g. switch between password and email-code sign-in). */
+export function SwitchLink({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button type="button" onClick={onClick} className="mx-auto block text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+      {children}
+    </button>
+  );
+}

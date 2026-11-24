@@ -1,12 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNotNull, sql } from "drizzle-orm";
 import { getDb, query } from "@/db/client";
 import { roleIdOf, users } from "@/db/schema";
 import { safeNext } from "@/lib/auth/safe-next";
 import { dummyHash, hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, destroySession, getSession, requireUser, revokeOtherSessions } from "@/lib/auth/session";
+import { recentCount } from "@/lib/auth/throttle";
 import { logEvent } from "@/lib/events";
 import { requestMeta } from "@/lib/request";
 import { changePasswordSchema, loginSchema, signupSchema } from "@/lib/validation";
@@ -16,6 +17,8 @@ export interface FormState {
   fieldErrors?: Record<string, string>;
   values?: Record<string, string>;
   success?: string;
+  /** multi-step forms: which step to show next */
+  step?: "verify" | "reset";
 }
 
 // Failures are counted per (username, IP) pair, so a stranger guessing wrong passwords for "admin" from their own
@@ -28,20 +31,6 @@ const MAX_FAILS_PER_USER_NO_IP = 8;
 const MAX_FAILS_PER_IP = 40;
 const MAX_SIGNUPS_PER_IP_HOUR = 10;
 const MAX_PENDING_USERS = 200; // sign-ups waiting for approval; stops a flood of fake accounts
-
-async function recentCount(type: string, minutes: number, by: { username?: string; ip?: string | null }) {
-  const db = await getDb();
-  const parts = [];
-  if (by.username) parts.push(sql`details->>'username' = ${by.username}`);
-  if (by.ip) parts.push(sql`ip = ${by.ip}`);
-  const filter = parts.length ? sql.join(parts, sql` AND `) : sql`false`;
-  const [{ n }] = await query<{ n: number }>(
-    db,
-    sql`SELECT count(*)::int AS n FROM activity_log
-        WHERE action = ${type} AND created_at > now() - make_interval(mins => ${minutes}) AND ${filter}`,
-  );
-  return n;
-}
 
 const pick = (fd: FormData, keys: string[]) => Object.fromEntries(keys.map((k) => [k, String(fd.get(k) ?? "")]));
 
@@ -62,7 +51,10 @@ export async function loginAction(_prev: FormState, fd: FormData): Promise<FormS
     return { error: "Too many failed attempts. Try again in 15 minutes.", values: { username } };
   }
 
-  const [user] = await db.select().from(users).where(eq(users.username, username));
+  // `username` is a username or, when it contains "@" (which a username never does), a verified email address.
+  const [user] = username.includes("@")
+    ? await db.select().from(users).where(and(eq(sql`lower(${users.email})`, username), isNotNull(users.emailVerifiedAt)))
+    : await db.select().from(users).where(eq(users.username, username));
   const ok = user ? await verifyPassword(user.passwordHash, password) : (await verifyPassword(await dummyHash(), password), false);
   if (!user || !ok) {
     await logEvent(db, { type: "login_failed", payload: { username }, ip: meta.ip });
