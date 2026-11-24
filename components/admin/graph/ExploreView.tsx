@@ -4,7 +4,7 @@ import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState 
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { KgEdge, KgGraph, KgNode } from "@/lib/kg/types";
-import { FALLBACK_COLOR, kgGet, truncate } from "./api";
+import { FALLBACK_COLOR, truncate, useKgGet } from "./api";
 import { usePanZoom } from "./usePanZoom";
 import { ZoomControls } from "./ZoomControls";
 
@@ -90,6 +90,7 @@ export function ExploreView({
     kick(1);
   }, [kick]);
 
+  const kgGet = useKgGet();
   const expand = useCallback(async (id: string, rel?: string, dir?: "in" | "out") => {
     onBusy(true);
     try {
@@ -97,7 +98,7 @@ export function ExploreView({
       merge(g, id);
       if (g.truncated) onError("Showing the first 25 neighbours. Pick a single relationship in the drawer to narrow it.");
     } catch (e) { onError(e instanceof Error ? e.message : "Request failed"); } finally { onBusy(false); }
-  }, [merge, onBusy, onError]);
+  }, [merge, onBusy, onError, kgGet]);
 
   useImperativeHandle(ref, () => ({ add: (n) => merge({ nodes: [n], edges: [] }), expand }), [merge, expand]);
 

@@ -1,9 +1,10 @@
 import { chatCaller } from "@/lib/chat/http";
 import { json } from "@/lib/request";
-import { KgClientError } from "./client";
-import * as graph from "./graph";
+import { KgClientError, kgGraphName } from "./client";
+import * as oldGraph from "./graph";
+import * as newGraph from "./graph-new";
 
-type Endpoint = "overview" | "search" | "nodes" | "node" | "expand" | "edges" | "paths";
+type Endpoint = "overview" | "search" | "nodes" | "node" | "expand" | "edges" | "paths" | "code";
 const bad = (message: string): never => { throw new KgClientError("bad_request", message); };
 const required = (p: URLSearchParams, key: string) => p.get(key)?.trim() || bad(`Missing ${key}`);
 const integer = (p: URLSearchParams, key: string, fallback: number, min = 1) => {
@@ -19,6 +20,8 @@ export async function graphRoute(req: Request, endpoint: Endpoint): Promise<Resp
   if (!caller.isAdmin) return json({ error: "Forbidden", code: "forbidden" }, 403);
   try {
     const p = new URL(req.url).searchParams;
+    // `graph=new` reads SpectrumERP-new; anything else or nothing reads the old graph (D12).
+    const isNew = kgGraphName(p.get("graph")) === "new", graph = isNew ? newGraph : oldGraph;
     let result: unknown;
     switch (endpoint) {
       case "overview": result = await graph.overview(); break;
@@ -36,11 +39,12 @@ export async function graphRoute(req: Request, endpoint: Endpoint): Promise<Resp
         const exclude = p.get("excludeDerived") ?? "0"; if (exclude !== "0" && exclude !== "1") bad("Invalid excludeDerived");
         result = await graph.paths(required(p, "from"), required(p, "to"), integer(p, "maxHops", 6), integer(p, "k", 3), exclude === "1"); break;
       }
+      case "code": if (!isNew) bad("Code is only available for graph=new"); result = await newGraph.code(required(p, "id"), p.has("start") ? integer(p, "start", 1) : undefined); break;
     }
     return json(result);
   } catch (error) {
     const e = error instanceof KgClientError ? error : new KgClientError("kg_unavailable", "Knowledge graph unavailable");
-    const status = { bad_request: 400, not_found: 404, kg_unconfigured: 503, kg_unavailable: 502, kg_timeout: 504, forbidden: 403, unauthorized: 401 }[e.code];
+    const status = { bad_request: 400, not_found: 404, kg_unconfigured: 503, kg_unavailable: 502, kg_timeout: 504, forbidden: 502, unauthorized: 502 }[e.code];
     return json({ error: e.message, code: e.code }, status);
   }
 }

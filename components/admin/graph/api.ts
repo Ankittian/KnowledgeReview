@@ -1,4 +1,5 @@
-import type { KgLayer, KgOverview } from "@/lib/kg/types";
+import { createContext, useCallback, useContext } from "react";
+import type { KgGraphName, KgOverview } from "@/lib/kg/types";
 
 const API = "/api/admin/graph";
 
@@ -17,8 +18,18 @@ export async function kgGet<T>(path: string, params: Params = {}, signal?: Abort
   return body as T;
 }
 
-export const LAYERS: KgLayer[] = ["functional", "bridge", "code", "data", "other"];
-export const LAYER_NAME: Record<KgLayer, string> = { functional: "Functional", bridge: "Bridge", code: "Code", data: "Data", other: "Other" };
+/** Which graph the explorer is showing; every request carries it as `graph=`. */
+export const GraphContext = createContext<KgGraphName>("old");
+export const GRAPH_LABEL: Record<KgGraphName, string> = { old: "SpectrumERP", new: "SpectrumERP-new" };
+
+/** `kgGet` bound to the current graph. Stable for the life of an explorer, which remounts when the graph changes. */
+export function useKgGet() {
+  const graph = useContext(GraphContext);
+  return useCallback(<T,>(path: string, params: Params = {}, signal?: AbortSignal) => kgGet<T>(path, { ...params, graph }, signal), [graph]);
+}
+
+/** Display name of a layer id, from the overview's own layer list. */
+export const layerName = (overview: KgOverview, id: string) => overview.layers.find((l) => l.id === id)?.name ?? id;
 
 const PALETTE = ["#6366f1", "#14b8a6", "#f59e0b", "#ef4444", "#8b5cf6", "#0ea5e9", "#84cc16", "#ec4899", "#f97316", "#10b981", "#a855f7", "#64748b"];
 export const FALLBACK_COLOR = "#94a3b8";

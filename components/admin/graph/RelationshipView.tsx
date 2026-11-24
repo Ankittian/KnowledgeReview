@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { cn } from "@/lib/utils";
 import type { KgEdge, KgGraph, KgNode, KgOverview, KgRelInfo } from "@/lib/kg/types";
-import { FALLBACK_COLOR, kgGet, truncate } from "./api";
+import { FALLBACK_COLOR, truncate, useKgGet } from "./api";
 import { useWidth } from "./usePanZoom";
 
 export interface RelSelection {
@@ -24,8 +24,13 @@ const connects = (r: KgRelInfo, a: string, b: string) => (r.from.includes(a) && 
 /** Options for the relationship dropdown, given the chosen node types. */
 export function relOptions(overview: KgOverview, sel: RelSelection): KgRelInfo[] {
   const { a, b } = sel;
-  return overview.relationships
-    .filter((r) => (a && b ? connects(r, a, b) : a ? touches(r, a) : b ? touches(r, b) : true))
+  // A graph may list one entry per (type, from, to) pattern; the dropdown offers each type once.
+  const merged = new Map<string, KgRelInfo>();
+  for (const r of overview.relationships.filter((r) => (a && b ? connects(r, a, b) : a ? touches(r, a) : b ? touches(r, b) : true))) {
+    const m = merged.get(r.type);
+    merged.set(r.type, m ? { ...m, from: [...new Set([...m.from, ...r.from])], to: [...new Set([...m.to, ...r.to])], count: (m.count ?? 0) + (r.count ?? 0), derived: Boolean(m.derived && r.derived) } : r);
+  }
+  return [...merged.values()]
     .sort((x, y) => Number(Boolean(x.derived)) - Number(Boolean(y.derived)) || (y.count ?? 0) - (x.count ?? 0));
 }
 
@@ -53,6 +58,7 @@ export function RelationshipView({
   const [hover, setHover] = useState<string | null>(null);
   const [tip, setTip] = useState<{ x: number; y: number; edge: KgEdge } | null>(null);
   const [boxRef, width] = useWidth<HTMLDivElement>();
+  const kgGet = useKgGet();
 
   const labels = useMemo(() => [...overview.labels].sort((x, y) => x.label.localeCompare(y.label)), [overview]);
   const options = useMemo(() => relOptions(overview, value), [overview, value]);
@@ -75,7 +81,7 @@ export function RelationshipView({
       .catch((e) => { if (!ctrl.signal.aborted) onError(e.message); })
       .finally(() => { if (!ctrl.signal.aborted) setLoading(false); });
     return () => ctrl.abort();
-  }, [value.type, onError]);
+  }, [value.type, onError, kgGet]);
 
   const loadMore = async () => {
     if (!data || !value.type) return;
