@@ -17,7 +17,8 @@ export function CommandMenu({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: b
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
+      // `key` is undefined on the synthetic keydown events that browser autofill / password managers dispatch
+      if (e.key?.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((o) => !o);
       }
