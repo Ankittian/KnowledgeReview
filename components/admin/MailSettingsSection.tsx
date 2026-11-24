@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { eq } from "drizzle-orm";
 import { CheckCircle2, Mail, Pencil, Plus, Power, Trash2 } from "lucide-react";
 import { getDb } from "@/db/client";
-import { users } from "@/db/schema";
 import { activateMailConnectionAction, deleteMailConnectionAction } from "@/app/actions/mail-admin";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 import { MailConnectionForm } from "@/components/admin/MailConnectionForm";
@@ -13,11 +11,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getMailConnection, listMailConnections } from "@/lib/mail-settings";
 import { cn } from "@/lib/utils";
 
-/** Where the section lives: Admin > Settings & exports. Links and redirects use this path and the #email anchor. */
+/** Where the section lives: Admin > Settings. Links and redirects use this path and the #email anchor. */
 export const MAIL_SETTINGS_HREF = "/admin/settings";
 
 /**
- * "Email" part of Settings & exports: the SMTP connections that send sign-in, verification and password codes.
+ * "Email" part of Settings: the SMTP connections that send sign-in, verification and password codes.
  * Save several (Gmail, Outlook / Microsoft 365, SES ...), test each, and pick the one to use.
  */
 export async function MailSettingsSection({ userId, edit, saved }: { userId: string; edit?: string; saved?: string }) {
@@ -25,7 +23,6 @@ export async function MailSettingsSection({ userId, edit, saved }: { userId: str
   const connections = await listMailConnections(db);
   const active = connections.find((c) => c.isActive) ?? null;
   const editing = edit && /^[0-9a-f-]{36}$/i.test(edit) ? await getMailConnection(db, edit) : null;
-  const [me] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId));
 
   const testOptions = connections.map((c) => ({ id: c.id, label: `${c.name} (${c.host})${c.isActive ? " - active" : ""}` }));
 
@@ -156,7 +153,7 @@ export async function MailSettingsSection({ userId, edit, saved }: { userId: str
             {testOptions.length === 0 ? (
               <p className="text-sm text-muted-foreground">Save a connection first.</p>
             ) : (
-              <MailTestForm options={testOptions} defaultId={active?.id ?? testOptions[0].id} defaultTo={me?.email ?? ""} />
+              <MailTestForm options={testOptions} defaultId={active?.id ?? testOptions[0].id} defaultTo="" />
             )}
           </div>
         </div>
