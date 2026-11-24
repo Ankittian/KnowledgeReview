@@ -130,6 +130,7 @@ Edit the file (`nano .env`) and set at least:
 | `COOKIE_SECURE` | `false` while you use plain `http://`. `true` only behind HTTPS. |
 | `ANTHROPIC_API_KEY` **or** `CLAUDE_CODE_OAUTH_TOKEN` | The Assistant's Claude credential. |
 | `KG_MCP_URL` / `KG_MCP_TOKEN` | The knowledge-base MCP server (host name, not an IP). |
+| `CLASSIFIER_ENABLED`, `CLASSIFIER_MODE`, `CLASSIFIER_API_KEY` | Optional intent classifier in front of the Assistant (jev). Off by default; start with `CLASSIFIER_ENABLED=true`, `CLASSIFIER_MODE=shadow` and the TypeSafe AI key. Also `CLASSIFIER_TIMEOUT_MS`, `CLASSIFIER_MODEL`, `CLASSIFIER_BASE_URL`, `CLASSIFIER_THRESHOLDS`. See [INTENT-CLASSIFIER.md](INTENT-CLASSIFIER.md). After editing: `docker compose --profile app up -d`. |
 
 Quick check that nothing required is empty:
 

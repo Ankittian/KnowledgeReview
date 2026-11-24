@@ -110,6 +110,15 @@ Ownership: every chat query is filtered by the caller's user id; another user's 
 like a missing one (404). Chat API routes re-check the session and user status in Postgres on every call, so a
 deactivated user loses access immediately (REQ-AUTH-06), and mutating routes check the Origin (CSRF).
 
+### 3a. Intent check before the agent
+
+When `CLASSIFIER_ENABLED=true`, every question is classified by the jev model **before** Claude runs. The check sits in
+`execute()` in `lib/chat/live.ts`, ahead of the runner (the code is in `lib/chat/intent/`). A refused question never
+reaches Claude or the MCP server: the user and assistant rows are still saved, the assistant row completes with a short
+refusal and `chat_messages.blocked_category`, and the question counts toward the daily limit. Admin → All chats has a
+**Blocked** filter and the transcript shows a badge on refused answers. Every classification is logged as
+`chat_classified` in `activity_log`. Off by default; full description in [INTENT-CLASSIFIER.md](INTENT-CLASSIFIER.md).
+
 ## 4. Configuration
 
 See `.env.example` (section "Knowledge Assistant"). Required: `KG_MCP_URL`, `KG_MCP_TOKEN`, and Claude credentials:
@@ -127,6 +136,9 @@ server):
 | `CHAT_NEW_TIMEOUT_SECONDS`, `CHAT_NEW_MAX_TURNS` | Optional; default to `CHAT_TIMEOUT_SECONDS` / `CHAT_MAX_TURNS`. Set them from the §6 numbers |
 
 Never commit real tokens; they live in the new server's `.env` and the app's environment only.
+
+The optional intent classifier has its own `CLASSIFIER_*` variables (enable, shadow/enforce mode, key, thresholds); see
+[INTENT-CLASSIFIER.md](INTENT-CLASSIFIER.md).
 
 ## 5. Running
 
