@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { DB } from "@/db/client";
 import { chatMessages, conversations } from "@/db/schema";
 import { logEvent } from "@/lib/events";
-import { chatConfig, type AnswerRole } from "./config";
+import { chatConfig, kbServer, type AnswerRole, type KbSource } from "./config";
 import { looksLikeResumeFailure, type ChatErrorCode } from "./errors";
 import { toolActivityLabel } from "./policy";
 import { buildReplayPrompt } from "./prompts";
@@ -91,6 +91,8 @@ export interface StartAnswerInput {
   conversationId: string;
   claudeSessionId: string | null;
   role: AnswerRole;
+  /** The conversation's knowledge base, fixed at creation: its Claude and MCP sessions stay on one server (D1). */
+  kbSource: KbSource;
   user: RunUser;
   /** The user's question row; earlier rows are the history replayed if the session cannot be resumed. */
   userMessageId: number;
@@ -161,6 +163,7 @@ function emit(run: LiveRun, e: LiveEvent) {
 async function execute(run: LiveRun, input: StartAnswerInput) {
   const { db } = input;
   const cfg = chatConfig();
+  const kb = kbServer(input.kbSource, input.role, cfg);
   const started = Date.now();
   const tools: ToolCallRec[] = [];
   let flushedLen = 0;
@@ -195,13 +198,14 @@ async function execute(run: LiveRun, input: StartAnswerInput) {
     timer = setTimeout(() => {
       run.stopReason = "timeout";
       run.abort.abort("timeout");
-    }, cfg.timeoutMs);
+    }, kb.timeoutMs);
     flushTimer = setInterval(flush, 1500);
 
     const attempt = (prompt: string, resumeSessionId: string | null) =>
       runner().run({
         prompt,
         role: input.role,
+        kbSource: input.kbSource,
         user: input.user,
         resumeSessionId,
         signal: run.abort.signal,
@@ -310,6 +314,8 @@ async function execute(run: LiveRun, input: StartAnswerInput) {
       conversationId: run.conversationId,
       messageId: run.messageId,
       role: input.role,
+      kbSource: input.kbSource,
+      tokenRole: kb.tokenRole,
       status,
       errorCode,
       errorDetail: result?.errorDetail ?? null,

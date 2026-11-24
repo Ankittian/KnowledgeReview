@@ -4,16 +4,18 @@ import { getDb } from "@/db/client";
 import { conversations } from "@/db/schema";
 import { logEvent } from "@/lib/events";
 import { json } from "@/lib/request";
-import { ANSWER_ROLES, chatConfig } from "@/lib/chat/config";
-import { chatCaller, readJson, type ChatCaller } from "@/lib/chat/http";
+import { ANSWER_ROLES, chatConfig, DEFAULT_KB_SOURCE, KB_SOURCES } from "@/lib/chat/config";
+import { chatCaller, kbForbidden, kbReadOnlyResponse, readJson, type ChatCaller } from "@/lib/chat/http";
 import { hasActiveRunForConversation, releaseUser, reserveUser, startAnswer } from "@/lib/chat/live";
 import { titleFrom } from "@/lib/chat/prompts";
-import { createConversation, getAnswerRole, getOwnConversation, insertMessage, questionsToday } from "@/lib/chat/service";
+import { canUseKgNew, createConversation, getAnswerRole, getOwnConversation, insertMessage, kbReadOnly, questionsToday, type Conversation } from "@/lib/chat/service";
 
 const bodySchema = z.object({
   conversationId: z.uuid().optional().nullable(),
   /** Admins only, and only when starting a new conversation (REQ-CHAT-05). */
   role: z.enum(ANSWER_ROLES).optional().nullable(),
+  /** Knowledge base for a NEW conversation only; ignored for an existing one (D1, D18). Default SpectrumERP. */
+  kbSource: z.enum(KB_SOURCES).optional().nullable(),
   text: z.string(),
 });
 
@@ -33,16 +35,27 @@ export async function POST(req: Request) {
   const db = await getDb();
   const { user } = caller.session;
 
+  // KB permission is checked before anything is reserved or saved (D2, D17, D19).
+  let existing: Conversation | null = null;
+  if (parsed.data.conversationId) {
+    existing = await getOwnConversation(db, user.id, parsed.data.conversationId);
+    if (!existing) return json({ error: "Conversation not found" }, 404);
+    const readOnly = await kbReadOnly(db, existing, caller.isAdmin);
+    if (readOnly) return kbReadOnlyResponse(readOnly);
+  } else if (parsed.data.kbSource === "spectrumerp_new" && !(await canUseKgNew(db, user.id, caller.isAdmin))) {
+    return kbForbidden();
+  }
+
   // One answer at a time per user keeps the shared queue fair.
   if (!reserveUser(user.id)) return json({ error: "Please wait for your current answer to finish, or stop it." }, 409);
   try {
-    return await send(db, caller, parsed.data, text);
+    return await send(db, caller, parsed.data, text, existing);
   } finally {
     releaseUser(user.id);
   }
 }
 
-async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, data: z.infer<typeof bodySchema>, text: string) {
+async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, data: z.infer<typeof bodySchema>, text: string, existing: Conversation | null) {
   const cfg = chatConfig();
   const { user } = caller.session;
   const asked = await questionsToday(db, user.id);
@@ -50,15 +63,15 @@ async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, d
     return json({ error: `You have reached today's limit of ${cfg.dailyLimit} questions. It resets at midnight.`, code: "daily_limit" }, 429);
   }
 
-  let conv;
-  if (data.conversationId) {
-    conv = await getOwnConversation(db, user.id, data.conversationId);
-    if (!conv) return json({ error: "Conversation not found" }, 404);
+  let conv: Conversation;
+  if (existing) {
+    conv = existing;
     if (hasActiveRunForConversation(conv.id)) return json({ error: "An answer is still being written in this chat." }, 409);
   } else {
-    // General users always get their assigned role; admins pick one per conversation (REQ-ROLE-04).
+    // General users always get their assigned role; admins pick one per conversation (REQ-ROLE-04). The KB is chosen
+    // by admins and approved users alike (D18) and fixed for the conversation (D1).
     const role = caller.isAdmin ? (data.role ?? (await getAnswerRole(db, user.id))) : await getAnswerRole(db, user.id);
-    conv = await createConversation(db, user.id, titleFrom(text), role);
+    conv = await createConversation(db, user.id, titleFrom(text), role, data.kbSource ?? DEFAULT_KB_SOURCE);
   }
 
   const question = await insertMessage(db, { conversationId: conv.id, sender: "user", content: text });
@@ -67,7 +80,7 @@ async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, d
   await logEvent(db, {
     userId: user.id,
     type: "chat_prompt",
-    payload: { conversationId: conv.id, messageId: question.id, role: conv.roleUsed, text, newConversation: !data.conversationId },
+    payload: { conversationId: conv.id, messageId: question.id, role: conv.roleUsed, kbSource: conv.kbSource, text, newConversation: !data.conversationId },
     ...caller.meta,
   });
 
@@ -76,6 +89,7 @@ async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, d
     conversationId: conv.id,
     claudeSessionId: conv.claudeSessionId,
     role: conv.roleUsed,
+    kbSource: conv.kbSource,
     user: { id: user.id, username: user.username },
     userMessageId: question.id,
     assistantMessageId: answer.id,
@@ -84,7 +98,7 @@ async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, d
   });
 
   return json({
-    conversation: { id: conv.id, title: conv.title, roleUsed: conv.roleUsed },
+    conversation: { id: conv.id, title: conv.title, roleUsed: conv.roleUsed, kbSource: conv.kbSource },
     userMessage: { id: question.id, createdAt: question.createdAt.toISOString() },
     assistantMessageId: answer.id,
     remainingToday: Math.max(0, cfg.dailyLimit - asked - 1),

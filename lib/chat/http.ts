@@ -3,6 +3,8 @@ import { getDb } from "@/db/client";
 import { loginSessions, roles, users } from "@/db/schema";
 import { getSession, type Role, type Session } from "@/lib/auth/session";
 import { isSameOrigin, json, requestMeta } from "@/lib/request";
+import { KB_LABELS } from "./config";
+import type { KbReadOnly } from "./service";
 
 export interface ChatCaller {
   session: Session;
@@ -44,3 +46,17 @@ export async function readJson(req: Request): Promise<unknown> {
 }
 
 export const parseId = (s: string) => (/^\d{1,15}$/.test(s) ? Number(s) : null);
+
+/** 403 for choosing SpectrumERP-new on a new chat without permission, or while it is not configured (D2, D19). */
+export const kbForbidden = () => json({ error: `You don't have access to ${KB_LABELS.spectrumerp_new}.`, code: "kb_forbidden" }, 403);
+
+/** 403 for send/retry on a SpectrumERP-new chat that can no longer be continued (D17, D19). */
+export const kbReadOnlyResponse = (reason: Exclude<KbReadOnly, null>) =>
+  json(
+    {
+      error: reason === "revoked" ? `You no longer have access to ${KB_LABELS.spectrumerp_new}.` : `${KB_LABELS.spectrumerp_new} is not available right now.`,
+      code: "kb_read_only",
+      reason,
+    },
+    403,
+  );
