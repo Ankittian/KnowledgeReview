@@ -213,10 +213,40 @@ CREATE TABLE "roles" (
 	CONSTRAINT "roles_name_unique" UNIQUE("name")
 );
 
+CREATE TABLE "mail_connections" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" text NOT NULL,
+	"host" text NOT NULL,
+	"port" integer NOT NULL,
+	"security" text DEFAULT 'starttls' NOT NULL,
+	"username" text DEFAULT '' NOT NULL,
+	"password_enc" text,
+	"from_name" text DEFAULT '' NOT NULL,
+	"from_email" text NOT NULL,
+	"is_active" boolean DEFAULT false NOT NULL,
+	"created_by" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE TABLE "email_otps" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"email" text NOT NULL,
+	"purpose" text NOT NULL,
+	"code_hash" text NOT NULL,
+	"attempts" integer DEFAULT 0 NOT NULL,
+	"expires_at" timestamp with time zone NOT NULL,
+	"consumed_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" text NOT NULL,
 	"password_hash" text NOT NULL,
+	"email" text,
+	"email_verified_at" timestamp with time zone,
 	"display_name" text NOT NULL,
 	"department" text,
 	"primary_module" text,
@@ -228,6 +258,8 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_username_unique" UNIQUE("username")
 );
 
+ALTER TABLE "mail_connections" ADD CONSTRAINT "mail_connections_created_by_users_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "email_otps" ADD CONSTRAINT "email_otps_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "card_feedback" ADD CONSTRAINT "card_feedback_review_id_card_reviews_id_fk" FOREIGN KEY ("review_id") REFERENCES "public"."card_reviews"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "card_feedback" ADD CONSTRAINT "card_feedback_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "card_feedback" ADD CONSTRAINT "card_feedback_card_version_id_card_versions_id_fk" FOREIGN KEY ("card_version_id") REFERENCES "public"."card_versions"("id") ON DELETE no action ON UPDATE no action;
@@ -251,6 +283,10 @@ ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_session_id_login_ses
 ALTER TABLE "review_schedule" ADD CONSTRAINT "review_schedule_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 ALTER TABLE "review_schedule" ADD CONSTRAINT "review_schedule_card_id_cards_id_fk" FOREIGN KEY ("card_id") REFERENCES "public"."cards"("id") ON DELETE no action ON UPDATE no action;
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;
+CREATE UNIQUE INDEX "mail_connections_name_unique" ON "mail_connections" (lower("name"));
+CREATE UNIQUE INDEX "mail_connections_one_active" ON "mail_connections" USING btree ("is_active") WHERE "is_active";
+CREATE INDEX "email_otps_user_idx" ON "email_otps" USING btree ("user_id","purpose","created_at");
+CREATE UNIQUE INDEX "users_email_unique" ON "users" (lower("email")) WHERE "email" IS NOT NULL;
 CREATE INDEX "activity_log_user_idx" ON "activity_log" USING btree ("user_id","created_at");
 CREATE INDEX "activity_log_action_idx" ON "activity_log" USING btree ("action","created_at");
 CREATE INDEX "card_feedback_version_idx" ON "card_feedback" USING btree ("card_version_id","status");

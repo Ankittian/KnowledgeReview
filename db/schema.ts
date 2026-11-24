@@ -37,6 +37,8 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   username: text("username").notNull().unique(), // stored lower-case
   passwordHash: text("password_hash").notNull(),
+  email: text("email"), // stored lower-case; only ever set after the owner proved it with a one-time code
+  emailVerifiedAt: ts("email_verified_at"),
   displayName: text("display_name").notNull(),
   department: text("department"),
   primaryModule: text("primary_module"), // module code, e.g. MM
@@ -47,7 +49,54 @@ export const users = pgTable("users", {
   status: userStatus("status").notNull().default("active"),
   lastLoginAt: ts("last_login_at"),
   createdAt: createdAt(),
-});
+},
+(t) => [uniqueIndex("users_email_unique").on(sql`lower(${t.email})`).where(sql`${t.email} is not null`)]);
+
+/** One-time codes emailed to a user (verify an email, change or reset a password). Only a keyed hash of the code is stored. */
+export const emailOtps = pgTable(
+  "email_otps",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    email: text("email").notNull(), // the address the code was sent to
+    purpose: text("purpose").notNull(), // verify_email | change_password | reset_password
+    codeHash: text("code_hash").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+    expiresAt: ts("expires_at").notNull(),
+    consumedAt: ts("consumed_at"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("email_otps_user_idx").on(t.userId, t.purpose, t.createdAt)],
+);
+
+/**
+ * Saved outgoing-mail (SMTP) connections. An admin keeps several (e.g. Gmail for testing, Outlook for real) and marks one
+ * active; that one is used to send one-time codes. The password is stored encrypted (lib/secret-box.ts).
+ */
+export const mailConnections = pgTable(
+  "mail_connections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(), // admin's label, e.g. "Gmail (testing)"
+    host: text("host").notNull(),
+    port: integer("port").notNull(),
+    security: text("security").notNull().default("starttls"), // starttls | ssl
+    username: text("username").notNull().default(""),
+    passwordEnc: text("password_enc"), // AES-GCM box; null when the server needs no login
+    fromName: text("from_name").notNull().default(""),
+    fromEmail: text("from_email").notNull(),
+    isActive: boolean("is_active").notNull().default(false),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("mail_connections_name_unique").on(sql`lower(${t.name})`),
+    uniqueIndex("mail_connections_one_active").on(t.isActive).where(sql`${t.isActive}`), // at most one active connection
+  ],
+);
 
 /** One row per sign-in (its id is the JWT `sid` claim). */
 export const loginSessions = pgTable(
