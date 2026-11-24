@@ -33,8 +33,29 @@ export const changePasswordSchema = z
   .refine((d) => d.newPassword === d.confirmPassword, { path: ["confirmPassword"], message: "Passwords do not match." })
   .refine((d) => d.newPassword !== d.currentPassword, { path: ["newPassword"], message: "Choose a password you haven't used here before." });
 
+export const emailSchema = z.string().trim().toLowerCase().max(254, "That email address is too long.").pipe(z.email("Enter a valid email address."));
+export const otpCodeSchema = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code.");
+
+const passwordsMatch = { path: ["confirmPassword"], message: "Passwords do not match." };
+
+/** Add or change the email: the address to verify, plus the current password when an email is already set. */
+export const requestEmailSchema = z.object({ email: emailSchema, currentPassword: z.string().max(128).optional() });
+export const verifyEmailSchema = z.object({ email: emailSchema, code: otpCodeSchema });
+
+/** Signed in, no old password: the emailed code authorises the new password. */
+export const changePasswordWithOtpSchema = z
+  .object({ code: otpCodeSchema, newPassword: passwordSchema, confirmPassword: z.string() })
+  .refine((d) => d.newPassword === d.confirmPassword, passwordsMatch);
+
+/** Signed out: who (username or verified email), the emailed code, and the new password. */
+export const identifierSchema = z.string().transform(normalizeUsername).pipe(z.string().min(1, "Enter your username or email.").max(254));
+export const resetPasswordSchema = z
+  .object({ identifier: identifierSchema, code: otpCodeSchema, newPassword: passwordSchema, confirmPassword: z.string() })
+  .refine((d) => d.newPassword === d.confirmPassword, passwordsMatch);
+
+/** `username` is a username or, when it contains "@", a verified email address. */
 export const loginSchema = z.object({
-  username: z.string().transform(normalizeUsername).pipe(z.string().min(1, "Enter your username.").max(64)),
+  username: z.string().transform(normalizeUsername).pipe(z.string().min(1, "Enter your username or email.").max(254)),
   password: z.string().min(1, "Enter your password.").max(128),
 });
 
