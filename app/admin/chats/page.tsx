@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { APP_TZ } from "@/lib/dates";
 import Link from "next/link";
 import { asc } from "drizzle-orm";
-import { Coins, Cpu, MessagesSquare, MessageCircleQuestion, SlidersHorizontal, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Coins, Cpu, MessagesSquare, MessageCircleQuestion, ShieldAlert, SlidersHorizontal, ThumbsDown, ThumbsUp } from "lucide-react";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { requireRole } from "@/lib/auth/session";
 import { ANSWER_ROLES, KB_LABELS, KB_SOURCES, isKbSource, type AnswerRole } from "@/lib/chat/config";
 import { queueStats } from "@/lib/chat/live";
-import { adminListChats, type AdminChatFilter } from "@/lib/chat/service";
+import { adminListChats, BLOCKED_FILTERS, isBlockedFilter, type AdminChatFilter } from "@/lib/chat/service";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "All chats" };
@@ -31,6 +31,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
   const role = one(sp.role);
   const feedback = one(sp.feedback);
   const kb = one(sp.kb);
+  const blocked = one(sp.blocked);
   const filter: AdminChatFilter = {
     userId: one(sp.user),
     role: (ANSWER_ROLES as readonly string[]).includes(role ?? "") ? (role as AnswerRole) : undefined,
@@ -38,6 +39,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
     from: one(sp.from),
     to: one(sp.to),
     feedback: ["up", "down", "any", "none"].includes(feedback ?? "") ? (feedback as AdminChatFilter["feedback"]) : undefined,
+    blocked: isBlockedFilter(blocked) ? blocked : undefined,
     includeDeleted: one(sp.deleted) === "1",
   };
   const db = await getDb();
@@ -78,7 +80,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
         </StaggerItem>
       </Stagger>
 
-      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-7")} method="get">
+      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-8")} method="get">
         <div className="grid gap-1.5 lg:col-span-2">
           <Label htmlFor="f-user">User</Label>
           <NativeSelect id="f-user" name="user" defaultValue={filter.userId ?? ""} className="w-full">
@@ -123,6 +125,18 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           </NativeSelect>
         </div>
         <div className="grid gap-1.5">
+          <Label htmlFor="f-blocked">Blocked</Label>
+          <NativeSelect id="f-blocked" name="blocked" defaultValue={filter.blocked ?? ""} className="w-full">
+            <NativeSelectOption value="">Any</NativeSelectOption>
+            <NativeSelectOption value="any">Any blocked</NativeSelectOption>
+            {BLOCKED_FILTERS.map((b) => (
+              <NativeSelectOption key={b} value={b}>
+                {b.replace(/_/g, " ")}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
           <Label htmlFor="f-from">From</Label>
           <Input id="f-from" type="date" name="from" defaultValue={filter.from ?? ""} />
         </div>
@@ -130,7 +144,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           <Label htmlFor="f-to">To</Label>
           <Input id="f-to" type="date" name="to" defaultValue={filter.to ?? ""} />
         </div>
-        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-7">
+        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-8">
           <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input type="checkbox" name="deleted" value="1" defaultChecked={filter.includeDeleted} className="size-4 rounded border-input accent-primary" /> Include deleted chats
           </label>
@@ -178,6 +192,15 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
                       <Tag tone="destructive" className="ml-2">
                         deleted
                       </Tag>
+                    )}
+                    {r.blocked > 0 && (
+                      <Tag tone="destructive" className="ml-2 whitespace-nowrap" title={`Refused by the intent classifier: ${r.blockedCategories.map((c) => c.replace(/_/g, " ")).join(", ")}`}>
+                        <ShieldAlert className="mr-1 inline size-3" />
+                        {r.blocked} blocked
+                      </Tag>
+                    )}
+                    {r.blocked > 0 && (
+                      <p className="mt-1 text-xs text-destructive/80">{r.blockedCategories.map((c) => c.replace(/_/g, " ")).join(", ")}</p>
                     )}
                   </TableCell>
                   <TableCell className={tcell}>

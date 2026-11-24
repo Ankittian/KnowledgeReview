@@ -24,6 +24,10 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
   const data = await adminLoadConversation(await getDb(), (await params).id);
   if (!data) notFound();
   const { conversation: c, messages, tools, feedback } = data;
+  /** Question id -> category of the classifier refusal that answered it. */
+  const blockedQuestion = new Map(messages.filter((m) => m.blockedCategory && m.replyToId != null).map((m) => [m.replyToId!, m.blockedCategory!]));
+  const blockedCount = messages.filter((m) => m.blockedCategory).length;
+  const label = (cat: string) => cat.replace(/_/g, " ");
 
   return (
     <div className="space-y-5">
@@ -44,6 +48,12 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
               </Tag>
             )}
             {c.deletedAt && <Tag tone="destructive">deleted by user {fmt(c.deletedAt)}</Tag>}
+            {blockedCount > 0 && (
+              <Tag tone="destructive" title="Answers refused by the intent classifier">
+                <ShieldAlert className="mr-1 inline size-3" />
+                {blockedCount} blocked
+              </Tag>
+            )}
           </div>
           <p className="mt-1.5 text-sm text-muted-foreground">
             {data.displayName} ({data.username}) · started {fmt(c.createdAt)}
@@ -72,12 +82,24 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
               <div className={cn("min-w-0", isUser ? "max-w-[85%]" : "flex-1")}>
                 <div className={cn("mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground", isUser && "justify-end")}>
                   <span className="font-medium text-foreground">{isUser ? "Question" : "Answer"}</span>
+                  {isUser && blockedQuestion.has(m.id) && (
+                    <Tag tone="destructive" title="This question was refused by the intent classifier">
+                      <ShieldAlert className="mr-1 inline size-3" />
+                      blocked: {label(blockedQuestion.get(m.id)!)}
+                    </Tag>
+                  )}
                   <span className="inline-flex items-center gap-1">
                     <Clock className="size-3" /> {fmt(m.createdAt)}
                   </span>
                   {!isUser && (
                     <>
                       <Tag tone={m.status === "ok" ? "success" : m.status === "error" ? "destructive" : "neutral"}>{m.status}</Tag>
+                      {m.blockedCategory && (
+                        <Tag tone="destructive" title="Refused by the intent classifier">
+                          <ShieldAlert className="mr-1 inline size-3" />
+                          blocked: {label(m.blockedCategory)}
+                        </Tag>
+                      )}
                       {m.durationMs != null && <span className="font-mono tabular-nums">{(m.durationMs / 1000).toFixed(1)} s</span>}
                       {m.tokensIn != null && (
                         <span className="font-mono tabular-nums">
@@ -91,9 +113,16 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
                 </div>
 
                 {isUser ? (
-                  <div className="rounded-2xl rounded-tr-md bg-primary px-4 py-2.5 text-[15px] whitespace-pre-wrap text-primary-foreground">{m.content}</div>
+                  <div
+                    className={cn(
+                      "rounded-2xl rounded-tr-md bg-primary px-4 py-2.5 text-[15px] whitespace-pre-wrap text-primary-foreground",
+                      blockedQuestion.has(m.id) && "ring-2 ring-destructive ring-offset-2 ring-offset-background",
+                    )}
+                  >
+                    {m.content}
+                  </div>
                 ) : (
-                  <div className={cn(surface, "p-4")}>
+                  <div className={cn(surface, "p-4", m.blockedCategory && "border-l-4 border-l-destructive bg-destructive/5")}>
                     {m.content ? <Markdown text={m.content} /> : <p className="text-sm text-muted-foreground">(no text)</p>}
                     {m.status === "error" && <p className="mt-3 rounded-lg bg-warning/12 px-3 py-2 text-sm text-warning">{chatErrorText(m.errorCode)}</p>}
 

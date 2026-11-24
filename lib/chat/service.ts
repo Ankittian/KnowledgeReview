@@ -200,8 +200,15 @@ export interface AdminChatFilter {
   from?: string; // yyyy-mm-dd
   to?: string;
   feedback?: "up" | "down" | "any" | "none";
+  /** Intent classifier refusals: "any" = at least one blocked answer, otherwise that blocked_category. */
+  blocked?: "any" | BlockedFilter;
   includeDeleted?: boolean;
 }
+
+/** Values of chat_messages.blocked_category (the intent classifier's categories plus "classifier_error"). */
+export const BLOCKED_FILTERS = ["sql_injection", "jailbreak", "out_of_domain", "restricted_object", "classifier_error"] as const;
+export type BlockedFilter = (typeof BLOCKED_FILTERS)[number];
+export const isBlockedFilter = (v: unknown): v is "any" | BlockedFilter => v === "any" || (BLOCKED_FILTERS as readonly string[]).includes(v as string);
 
 export interface AdminChatRow {
   id: string;
@@ -218,6 +225,9 @@ export interface AdminChatRow {
   downs: number;
   errors: number;
   tokens: number;
+  /** Answers the intent classifier refused, and their distinct categories. */
+  blocked: number;
+  blockedCategories: string[];
 }
 
 export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminChatRow[]> {
@@ -228,6 +238,9 @@ export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminC
   if (f.from && /^\d{4}-\d{2}-\d{2}$/.test(f.from)) conds.push(sql`c.updated_at >= ${f.from}::date`);
   if (f.to && /^\d{4}-\d{2}-\d{2}$/.test(f.to)) conds.push(sql`c.created_at < ${f.to}::date + 1`);
   if (!f.includeDeleted) conds.push(sql`c.deleted_at IS NULL`);
+  if (f.blocked === "any") conds.push(sql`EXISTS (SELECT 1 FROM chat_messages b WHERE b.conversation_id = c.id AND b.blocked_category IS NOT NULL)`);
+  else if (f.blocked && isBlockedFilter(f.blocked))
+    conds.push(sql`EXISTS (SELECT 1 FROM chat_messages b WHERE b.conversation_id = c.id AND b.blocked_category = ${f.blocked})`);
   const fbFilter =
     f.feedback === "up" ? sql`WHERE ups > 0`
     : f.feedback === "down" ? sql`WHERE downs > 0`
@@ -240,7 +253,9 @@ export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminC
           SELECT conversation_id,
                  count(*) FILTER (WHERE sender = 'user')::int AS questions,
                  count(*) FILTER (WHERE status = 'error')::int AS errors,
-                 coalesce(sum(coalesce(tokens_in, 0) + coalesce(tokens_out, 0)), 0)::int AS tokens
+                 coalesce(sum(coalesce(tokens_in, 0) + coalesce(tokens_out, 0)), 0)::int AS tokens,
+                 count(*) FILTER (WHERE blocked_category IS NOT NULL)::int AS blocked,
+                 coalesce(array_agg(DISTINCT blocked_category) FILTER (WHERE blocked_category IS NOT NULL), '{}') AS blocked_categories
           FROM chat_messages GROUP BY conversation_id
         ), fb AS (
           SELECT cm.conversation_id,
@@ -251,7 +266,8 @@ export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminC
           SELECT c.id, c.title, c.role_used AS "roleUsed", c.kb_source AS "kbSource", u.username, u.display_name AS "displayName",
                  c.created_at AS "createdAt", c.updated_at AS "updatedAt", c.deleted_at AS "deletedAt",
                  coalesce(m.questions, 0) AS questions, coalesce(fb.ups, 0) AS ups, coalesce(fb.downs, 0) AS downs,
-                 coalesce(m.errors, 0) AS errors, coalesce(m.tokens, 0) AS tokens
+                 coalesce(m.errors, 0) AS errors, coalesce(m.tokens, 0) AS tokens,
+                 coalesce(m.blocked, 0) AS blocked, coalesce(m.blocked_categories, '{}') AS "blockedCategories"
           FROM conversations c
           JOIN users u ON u.id = c.user_id
           LEFT JOIN m ON m.conversation_id = c.id
