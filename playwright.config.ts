@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
 for (const f of [".env.local", ".env"]) {
@@ -9,6 +10,8 @@ for (const f of [".env.local", ".env"]) {
 }
 
 const PORT = Number(process.env.E2E_PORT ?? 3200);
+const MAIL_FILE = path.join(process.cwd(), "test-results", "mail-outbox.jsonl");
+process.env.MAIL_CAPTURE_FILE = MAIL_FILE; // the spec files run in this process tree and read it too
 const E2E_DATABASE_URL = process.env.E2E_DATABASE_URL;
 if (!E2E_DATABASE_URL) throw new Error("E2E_DATABASE_URL is not set (see .env.example).");
 
@@ -34,6 +37,14 @@ export default defineConfig({
     url: `http://localhost:${PORT}/login`,
     timeout: 240_000,
     reuseExistingServer: false,
-    env: { DATABASE_URL: E2E_DATABASE_URL, ADMIN_USERNAME: "e2e-admin", ADMIN_PASSWORD: "e2e-admin-password", KB_DIR: "./kb" },
+    env: {
+      DATABASE_URL: E2E_DATABASE_URL,
+      ADMIN_USERNAME: "e2e-admin",
+      ADMIN_PASSWORD: "e2e-admin-password",
+      KB_DIR: "./kb",
+      // no mail connection in tests: emailed codes are appended to this file, which e2e/email-recovery.spec.ts reads
+      MAIL_CAPTURE_FILE: MAIL_FILE,
+      OTP_SECRET: "e2e-otp-secret-e2e-otp-secret-0123456789",
+    },
   },
 });
