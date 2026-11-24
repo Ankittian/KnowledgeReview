@@ -271,15 +271,23 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
     }
   }
 
-  async function rate(messageId: number, value: "up" | "down", comment: string | null) {
+  // Rating requests for one answer run one after another, so a quick double click (rate, then undo) reaches the server in order.
+  const rateQueue = useRef(new Map<number, Promise<void>>());
+  function rate(messageId: number, value: "up" | "down" | null, comment: string | null) {
     const prev = messages.find((m) => m.id === messageId)?.feedback ?? null;
-    patchMsg(messageId, (m) => ({ ...m, feedback: { value, comment } }));
-    try {
-      await api(`/api/chat/messages/${messageId}/feedback`, { method: "POST", json: { value, comment } });
-    } catch (e) {
-      patchMsg(messageId, (m) => ({ ...m, feedback: prev }));
-      setBanner(e instanceof Error ? e.message : String(e));
-    }
+    patchMsg(messageId, (m) => ({ ...m, feedback: value ? { value, comment } : null }));
+    const run = async () => {
+      try {
+        if (value) await api(`/api/chat/messages/${messageId}/feedback`, { method: "POST", json: { value, comment } });
+        else await api(`/api/chat/messages/${messageId}/feedback`, { method: "DELETE" });
+      } catch (e) {
+        patchMsg(messageId, (m) => ({ ...m, feedback: prev }));
+        setBanner(e instanceof Error ? e.message : String(e));
+      }
+    };
+    const next = (rateQueue.current.get(messageId) ?? Promise.resolve()).then(run);
+    rateQueue.current.set(messageId, next);
+    return next;
   }
 
   async function saveRename() {
@@ -762,7 +770,7 @@ function AssistantMessage({
   live: Live | null;
   canRetry: boolean;
   onRetry: () => void;
-  onRate: (v: "up" | "down", comment: string | null) => void;
+  onRate: (v: "up" | "down" | null, comment: string | null) => void;
 }) {
   const [commenting, setCommenting] = useState(false);
   const [comment, setComment] = useState("");
@@ -829,7 +837,7 @@ function AssistantMessage({
                     className={cn(m.feedback?.value === "up" ? "text-success hover:text-success" : "text-muted-foreground")}
                     onClick={() => {
                       setCommenting(false);
-                      onRate("up", null);
+                      onRate(m.feedback?.value === "up" ? null : "up", null);
                     }}
                     aria-label="Good answer"
                     aria-pressed={m.feedback?.value === "up"}
@@ -852,8 +860,13 @@ function AssistantMessage({
                     size="icon-sm"
                     className={cn(m.feedback?.value === "down" ? "text-destructive hover:text-destructive" : "text-muted-foreground")}
                     onClick={() => {
-                      onRate("down", m.feedback?.value === "down" ? m.feedback.comment : null);
-                      setComment(m.feedback?.comment ?? "");
+                      if (m.feedback?.value === "down") {
+                        setCommenting(false);
+                        onRate(null, null);
+                        return;
+                      }
+                      onRate("down", null);
+                      setComment("");
                       setCommenting(true);
                     }}
                     aria-label="Bad answer"

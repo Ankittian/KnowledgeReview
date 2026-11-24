@@ -3,7 +3,7 @@ import { getDb } from "@/db/client";
 import { logEvent } from "@/lib/events";
 import { json } from "@/lib/request";
 import { chatCaller, parseId, readJson } from "@/lib/chat/http";
-import { getOwnMessage, saveFeedback } from "@/lib/chat/service";
+import { deleteFeedback, getOwnMessage, saveFeedback } from "@/lib/chat/service";
 
 const bodySchema = z.object({
   value: z.enum(["up", "down"]),
@@ -27,6 +27,25 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     userId: caller.session.user.id,
     type: "chat_feedback",
     payload: { conversationId: own.conversation.id, messageId: id, value: parsed.data.value, comment },
+    ...caller.meta,
+  });
+  return json({ ok: true });
+}
+
+/** Undo: remove the caller's thumbs up/down from an answer. */
+export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const caller = await chatCaller(req, { mutating: true });
+  if (caller instanceof Response) return caller;
+  const id = parseId((await ctx.params).id);
+  if (id == null) return json({ error: "Not found" }, 404);
+  const db = await getDb();
+  const own = await getOwnMessage(db, caller.session.user.id, id);
+  if (!own || own.message.sender !== "assistant" || own.message.status === "streaming") return json({ error: "Not found" }, 404);
+  await deleteFeedback(db, caller.session.user.id, id);
+  await logEvent(db, {
+    userId: caller.session.user.id,
+    type: "chat_feedback",
+    payload: { conversationId: own.conversation.id, messageId: id, value: null },
     ...caller.meta,
   });
   return json({ ok: true });

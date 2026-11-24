@@ -187,6 +187,11 @@ export async function saveFeedback(db: DB, userId: string, messageId: number, va
     .onConflictDoUpdate({ target: [chatFeedback.messageId, chatFeedback.userId], set: { value, comment, updatedAt: new Date() } });
 }
 
+/** Undo a thumbs up/down: removes the viewer's own feedback on an answer. */
+export async function deleteFeedback(db: DB, userId: string, messageId: number) {
+  await db.delete(chatFeedback).where(and(eq(chatFeedback.messageId, messageId), eq(chatFeedback.userId, userId)));
+}
+
 export async function insertToolCalls(db: DB, rows: (typeof chatToolCalls.$inferInsert)[]) {
   if (rows.length) await db.insert(chatToolCalls).values(rows);
 }
