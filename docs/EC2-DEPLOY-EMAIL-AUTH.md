@@ -13,7 +13,7 @@ What changes on the server:
 | Code | New pages `/profile`, `/forgot-password`; `/account` redirects to `/profile` | image rebuild |
 | Dependency | `nodemailer` added to `package.json` / `package-lock.json` | image rebuild (`npm ci` runs again) |
 | Database | `users.email`, `users.email_verified_at`, unique index on `lower(email)`, new tables `email_otps` and `mail_connections` (saved SMTP connections), plus a missing unique index on `chat_feedback` | applied automatically by the `init` container (`db/migrations.sql`); additive only |
-| `.env` | New `OTP_SECRET` (one random string). **No SMTP settings go in `.env`** at all: an admin enters the connection in Settings & exports, Email | edit by hand, never committed |
+| `.env` | New `OTP_SECRET` (one random string). **No SMTP settings go in `.env`** at all: an admin enters the connection in Settings, Email | edit by hand, never committed |
 | `.env` (from `main`, all optional) | `KG_NEW_MCP_URL`, `KG_NEW_MCP_TOKEN_TECHNICAL`, `KG_NEW_MCP_TOKEN_FUNCTIONAL`, `CHAT_NEW_TIMEOUT_SECONDS`, `CHAT_NEW_MAX_TURNS`, and the commented `CLASSIFIER_*` block. Leave them **empty**: an empty `KG_NEW_MCP_URL` hides SpectrumERP-new, empty limits fall back to `CHAT_TIMEOUT_SECONDS` / `CHAT_MAX_TURNS`, and the classifier stays off unless `CLASSIFIER_ENABLED=true`. See `.env.production.example` | copy only the keys you need |
 | Database (from `main`) | `conversations.kb_source` (+ enum), `users.can_use_kg_new`, `chat_messages.blocked_category` | applied automatically by `init`, same as the email tables |
 | Network | Outbound TCP 587 to the mail provider | EC2 security groups allow all outbound by default; check if you restricted it |
@@ -56,7 +56,7 @@ ls -lh ~/kr-before-email-*.sql
 ## Step 3. Add one secret to `.env`
 
 Email is **not** configured in `.env`. The SMTP host, port, login and sender are entered later in the Email section of
-Admin > Settings & exports and saved in the database, with the password encrypted. The only thing `.env` needs is one
+Admin > Settings and saved in the database, with the password encrypted. The only thing `.env` needs is one
 random secret:
 
 ```bash
@@ -110,7 +110,7 @@ You should see `email`, `email_verified_at`, the `users_email_unique` index and 
 
 ## Step 7. Add the Gmail connection on the admin page and test it
 
-1. Open `http://<EC2_PUBLIC_IP>:3000/login`, sign in as the admin, open **Admin, Settings & exports** and scroll to **Email**.
+1. Open `http://<EC2_PUBLIC_IP>:3000/login`, sign in as the admin, open **Admin, Settings** and scroll to **Email**.
 2. Press the **Gmail** preset (host `smtp.gmail.com`, port 587, STARTTLS), then fill in:
    Name `Gmail (testing)`, Username = the Gmail address, Password = the **16-character app password**,
    Sender email = the same Gmail address. Tick **Use this connection for sending now** and **Save connection**.
@@ -154,7 +154,7 @@ Ask the Microsoft 365 admin for a dedicated mailbox (for example `no-reply@force
 getting phased out by Microsoft, so confirm it is still allowed for your tenant before relying on it. If the account has MFA
 the admin may need to allow an app password or exempt the mailbox.
 
-No `.env` edit, rebuild or restart is needed. On **Admin, Settings & exports, Email**:
+No `.env` edit, rebuild or restart is needed. On **Admin, Settings, Email**:
 
 1. Press the **Outlook / Microsoft 365** preset (host `smtp.office365.com`, port 587, STARTTLS), enter the mailbox address and
    password, name it `Outlook (real)` and **Save connection** (leave "Use this connection now" unticked).

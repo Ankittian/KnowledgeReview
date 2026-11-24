@@ -13,7 +13,7 @@ import { requireRole } from "@/lib/auth/session";
 import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, getDailyCardLimit } from "@/lib/settings";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Settings & exports" };
+export const metadata: Metadata = { title: "Settings" };
 
 const EXPORTS = [
   { name: "needs-change", label: "What needs change", desc: "One row per flagged YAML file + key + field, with linked forms, processes and suggestions.", formats: ["jsonl", "csv", "md"] },

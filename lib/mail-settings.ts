@@ -5,7 +5,7 @@ import { mailConnections } from "@/db/schema";
 import { decryptSecret, encryptSecret } from "@/lib/secret-box";
 
 /**
- * Outgoing-mail (SMTP) connections. An admin saves several under Admin > Settings & exports > Email (table `mail_connections`)
+ * Outgoing-mail (SMTP) connections. An admin saves several under Admin > Settings > Email (table `mail_connections`)
  * and marks one active; the active one sends the one-time codes. The password is stored encrypted (lib/secret-box.ts).
  * There is no environment-variable configuration: with no active connection no email is sent.
  */

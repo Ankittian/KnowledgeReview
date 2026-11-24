@@ -7,7 +7,7 @@ import { resolveMailConfig, type MailConfig } from "@/lib/mail-settings";
 
 /**
  * Outgoing email (one-time codes). Plain SMTP through nodemailer, so any provider works: Gmail (app password), Outlook /
- * Microsoft 365, AWS SES. The connection is chosen by an admin under Admin > Settings & exports > Email (saved in the
+ * Microsoft 365, AWS SES. The connection is chosen by an admin under Admin > Settings > Email (saved in the
  * database, password encrypted); nothing is read from environment variables.
  *
  * With no active connection: outside production the message is printed to the server console (local development) and
@@ -61,13 +61,13 @@ export async function sendMail(mail: Mail): Promise<void> {
       fs.appendFileSync(process.env.MAIL_CAPTURE_FILE, `${JSON.stringify({ to: mail.to, subject: mail.subject, text: mail.text, html: mail.html })}\n`);
       return;
     }
-    if (process.env.NODE_ENV === "production") throw new Error("Email is not configured: an admin must set it up under Admin > Settings & exports > Email.");
+    if (process.env.NODE_ENV === "production") throw new Error("Email is not configured: an admin must set it up under Admin > Settings > Email.");
     outbox.push(mail);
     if (outbox.length > 50) outbox.shift();
     console.log(`\n[mail:dev] To: ${mail.to}\n[mail:dev] Subject: ${mail.subject}\n${mail.text}\n`);
     return;
   }
-  if (cfg.passwordUnreadable) throw new Error("The saved email password can no longer be read (the server secret changed). Enter it again under Admin > Settings & exports > Email.");
+  if (cfg.passwordUnreadable) throw new Error("The saved email password can no longer be read (the server secret changed). Enter it again under Admin > Settings > Email.");
   await transportFor(cfg).sendMail({ from: mailFrom(cfg), to: mail.to, subject: mail.subject, text: mail.text, html: mail.html, attachments: mail.attachments });
 }
 
