@@ -23,7 +23,7 @@ const STEPS: Step[] = [
     icon: Sparkles,
     title: "Welcome to Knowledge Review",
     body: "A quick tour of every page in the app. The tour takes you to each one. It takes about a minute, and you can replay it any time from the help button in the top bar.",
-    tips: ["Daily flashcards keep your SpectrumERP knowledge fresh", "Progress and the leaderboard show how you're doing", "The Assistant answers questions about SpectrumERP"],
+    tips: ["Daily flashcards keep your SpectrumERP knowledge fresh", "Progress and the leaderboard show how you're doing", "Chat answers questions about SpectrumERP"],
   },
   {
     icon: Layers,
@@ -60,7 +60,7 @@ const STEPS: Step[] = [
   },
   {
     icon: MessageSquare,
-    title: "Assistant: ask anything",
+    title: "Chat: ask anything",
     body: "Ask questions about SpectrumERP in plain language and get answers grounded in the knowledge base.",
     tips: [
       "Start from a suggested question or type your own",

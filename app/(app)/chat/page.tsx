@@ -8,7 +8,7 @@ import { getOrCreateDeck } from "@/lib/deck";
 import { getStreak } from "@/lib/stats";
 import { loadChatPage } from "./data";
 
-export const metadata: Metadata = { title: "Assistant" };
+export const metadata: Metadata = { title: "Chat" };
 
 export default async function ChatPage() {
   const session = await requireUser();
