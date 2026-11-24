@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Plus, Search, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { MAIN_NAV, adminItems } from "./nav";
 
@@ -41,10 +40,6 @@ export function CommandMenu({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: b
       >
         <Search />
         <span className="flex-1 text-left">Search or jump to…</span>
-        <KbdGroup>
-          <Kbd>Ctrl</Kbd>
-          <Kbd>K</Kbd>
-        </KbdGroup>
       </Button>
       <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => setOpen(true)} aria-label="Search or jump to">
         <Search />
