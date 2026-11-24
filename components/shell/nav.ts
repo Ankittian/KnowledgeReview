@@ -39,7 +39,7 @@ export const ADMIN_NAV: (NavItem & { adminOnly?: boolean })[] = [
   { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
   { href: "/admin/users", label: "Users", icon: Users, adminOnly: true, description: "Approve sign-ups, roles and access" },
   { href: "/admin/chats", label: "All chats", icon: MessagesSquare, adminOnly: true, description: "Every assistant conversation" },
-  { href: "/admin/settings", label: "Settings & exports", icon: Settings2, adminOnly: true, description: "Daily limit, KB sync and exports" },
+  { href: "/admin/settings", label: "Settings & exports", icon: Settings2, adminOnly: true, description: "Daily limit, banner, email and exports" },
 ];
 
 export const ADMIN_ROOT: NavItem = { href: "/admin", label: "Admin", icon: ShieldCheck };

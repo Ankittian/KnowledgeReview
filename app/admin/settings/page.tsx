@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AnnouncementForm } from "@/components/admin/AnnouncementForm";
+import { MailSettingsSection } from "@/components/admin/MailSettingsSection";
 import { requireRole } from "@/lib/auth/session";
 import { DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, getDailyCardLimit } from "@/lib/settings";
 import { cn } from "@/lib/utils";
@@ -41,8 +42,9 @@ function CardHead({ icon, title, children, tone = "default" }: { icon: React.Rea
   );
 }
 
-export default async function SettingsPage() {
-  await requireRole(["admin"]);
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ edit?: string; saved?: string }> }) {
+  const { user } = await requireRole(["admin"]);
+  const { edit, saved } = await searchParams;
   const db = await getDb();
   const dailyLimit = await getDailyCardLimit(db);
   const announcement = await getAnnouncement(db);
@@ -75,6 +77,10 @@ export default async function SettingsPage() {
         </CardHead>
         <AnnouncementForm announcement={announcement} action={saveAnnouncement} />
       </StaggerItem>
+
+      <div className="min-w-0 lg:col-span-2">
+        <MailSettingsSection userId={user.id} edit={edit} saved={saved} />
+      </div>
 
       <StaggerItem className={cn(surface, "p-5 lg:col-span-2")}>
         <CardHead icon={<PackageOpen />} title="Exports">
