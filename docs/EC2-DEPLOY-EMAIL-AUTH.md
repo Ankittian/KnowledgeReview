@@ -1,8 +1,10 @@
 # EC2: deploying email, OTP and password recovery
 
 Applies to the server that is currently running commit **`86e6027ab16b487b8dab2d7c8edf68b3980d6551`**
-("feat: add knowledge graph to admin nav with full-width layout"). The only commit after it on `main` is a docs-only PDF,
-so the server is effectively on `main`. This change comes from the branch `feature/forget-pass-and-login`.
+("feat: add knowledge graph to admin nav with full-width layout"). This branch (`feature/forget-pass-and-login`) has
+`main` merged into it, so one rebuild brings the server from 86e6027 to everything on `main` **plus** the email and
+OTP work. Besides the email changes below, that includes what `main` added since 86e6027: the SpectrumERP-new knowledge
+base (chat can pick it, per-user access switch), the intent classifier, and the `chat_messages.blocked_category` column.
 
 What changes on the server:
 
@@ -12,6 +14,8 @@ What changes on the server:
 | Dependency | `nodemailer` added to `package.json` / `package-lock.json` | image rebuild (`npm ci` runs again) |
 | Database | `users.email`, `users.email_verified_at`, unique index on `lower(email)`, new tables `email_otps` and `mail_connections` (saved SMTP connections), plus a missing unique index on `chat_feedback` | applied automatically by the `init` container (`db/migrations.sql`); additive only |
 | `.env` | New `OTP_SECRET` (one random string). **No SMTP settings go in `.env`** at all: an admin enters the connection in Settings & exports, Email | edit by hand, never committed |
+| `.env` (from `main`, all optional) | `KG_NEW_MCP_URL`, `KG_NEW_MCP_TOKEN_TECHNICAL`, `KG_NEW_MCP_TOKEN_FUNCTIONAL`, `CHAT_NEW_TIMEOUT_SECONDS`, `CHAT_NEW_MAX_TURNS`, and the commented `CLASSIFIER_*` block. Leave them **empty**: an empty `KG_NEW_MCP_URL` hides SpectrumERP-new, empty limits fall back to `CHAT_TIMEOUT_SECONDS` / `CHAT_MAX_TURNS`, and the classifier stays off unless `CLASSIFIER_ENABLED=true`. See `.env.production.example` | copy only the keys you need |
+| Database (from `main`) | `conversations.kb_source` (+ enum), `users.can_use_kg_new`, `chat_messages.blocked_category` | applied automatically by `init`, same as the email tables |
 | Network | Outbound TCP 587 to the mail provider | EC2 security groups allow all outbound by default; check if you restricted it |
 
 The Dockerfile and `docker-compose.yml` themselves are unchanged. "Rebuilding the Docker files" here means rebuilding the
