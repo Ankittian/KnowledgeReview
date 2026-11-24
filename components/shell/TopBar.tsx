@@ -50,10 +50,10 @@ export function TopBar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolea
           <TooltipContent side="bottom">Take the tour</TooltipContent>
         </Tooltip>
         <Tooltip>
-          <TooltipTrigger render={<Link href="/account" aria-label="Account and password" className={buttonVariants({ variant: "ghost", size: "icon" })} />}>
+          <TooltipTrigger render={<Link href="/profile" aria-label="Profile and security" className={buttonVariants({ variant: "ghost", size: "icon" })} />}>
             <KeyRound />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Account &amp; password</TooltipContent>
+          <TooltipContent side="bottom">Profile &amp; security</TooltipContent>
         </Tooltip>
         <form action={logoutAction}>
           <Tooltip>

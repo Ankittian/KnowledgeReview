@@ -4,12 +4,13 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getDb } from "@/db/client";
 import { getActiveAnnouncement } from "@/lib/settings";
 import { AnnouncementBanner } from "./AnnouncementBanner";
+import { EmailBanner } from "./EmailBanner";
 import { AppSidebar } from "./AppSidebar";
 import { MobileTabBar } from "./NavLinks";
 import { TopBar } from "./TopBar";
 import { WelcomeTour } from "./WelcomeTour";
 
-export async function AppShell({ user, children }: { user: SessionUser; children: React.ReactNode }) {
+export async function AppShell({ user, needsEmail = false, children }: { user: SessionUser; needsEmail?: boolean; children: React.ReactNode }) {
   const isStaff = user.role === "admin";
   const isAdmin = user.role === "admin";
   const initials = user.displayName
@@ -27,6 +28,7 @@ export async function AppShell({ user, children }: { user: SessionUser; children
       <SidebarInset className="min-w-0">
         <TopBar isStaff={isStaff} isAdmin={isAdmin} />
         {announcement && <AnnouncementBanner announcement={announcement} />}
+        {needsEmail && <EmailBanner />}
         <div className="flex-1 pb-24 md:pb-10">{children}</div>
       </SidebarInset>
       <MobileTabBar isStaff={isStaff} />
