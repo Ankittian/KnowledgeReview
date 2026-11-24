@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { query, type DB } from "@/db/client";
 import { chatFeedback, chatMessages, chatToolCalls, conversations, roles, users } from "@/db/schema";
-import { DEFAULT_ANSWER_ROLE, type AnswerRole } from "./config";
+import { DEFAULT_ANSWER_ROLE, DEFAULT_KB_SOURCE, kgNewConfigured, type AnswerRole, type KbSource } from "./config";
 import type { ReplayTurn } from "./prompts";
 
 /**
@@ -16,6 +16,7 @@ export interface ConversationListItem {
   id: string;
   title: string;
   roleUsed: AnswerRole;
+  kbSource: KbSource;
   updatedAt: Date;
 }
 
@@ -49,9 +50,37 @@ export async function setAnswerRole(db: DB, userId: string, role: AnswerRole): P
   await db.update(users).set({ answerRole: role }).where(eq(users.id, userId));
 }
 
+/**
+ * May this user use SpectrumERP-new (D2, D19)? Admins always may; others only when an admin approved them. Always false
+ * while the new server is not configured. Checked on the new-chat screen and again on every send/retry (D17).
+ */
+export async function canUseKgNew(db: DB, userId: string, isAdmin: boolean): Promise<boolean> {
+  if (!kgNewConfigured()) return false;
+  if (isAdmin) return true;
+  const [r] = await db.select({ allowed: users.canUseKgNew }).from(users).where(eq(users.id, userId));
+  return r?.allowed === true;
+}
+
+/** Who changed it is recorded by the admin action's audit event. */
+export async function setCanUseKgNew(db: DB, userId: string, allowed: boolean): Promise<void> {
+  await db.update(users).set({ canUseKgNew: allowed }).where(eq(users.id, userId));
+}
+
+/**
+ * Why a conversation can no longer be continued, or null when it can (D17, D19). Only SpectrumERP-new chats can become
+ * read-only: "revoked" = the user lost the permission, "unconfigured" = the new server is no longer configured.
+ * The chat stays visible either way; send and retry are refused on the server.
+ */
+export async function kbReadOnly(db: DB, conv: Pick<Conversation, "kbSource" | "userId">, isAdmin: boolean): Promise<KbReadOnly> {
+  if (conv.kbSource !== "spectrumerp_new") return null;
+  if (!kgNewConfigured()) return "unconfigured";
+  return (await canUseKgNew(db, conv.userId, isAdmin)) ? null : "revoked";
+}
+export type KbReadOnly = null | "revoked" | "unconfigured";
+
 export async function listConversations(db: DB, userId: string): Promise<ConversationListItem[]> {
   return db
-    .select({ id: conversations.id, title: conversations.title, roleUsed: conversations.roleUsed, updatedAt: conversations.updatedAt })
+    .select({ id: conversations.id, title: conversations.title, roleUsed: conversations.roleUsed, kbSource: conversations.kbSource, updatedAt: conversations.updatedAt })
     .from(conversations)
     .where(and(eq(conversations.userId, userId), isNull(conversations.deletedAt)))
     .orderBy(desc(conversations.updatedAt))
@@ -67,8 +96,8 @@ export async function getOwnConversation(db: DB, userId: string, id: string): Pr
   return c ?? null;
 }
 
-export async function createConversation(db: DB, userId: string, title: string, role: AnswerRole): Promise<Conversation> {
-  const [c] = await db.insert(conversations).values({ userId, title, roleUsed: role }).returning();
+export async function createConversation(db: DB, userId: string, title: string, role: AnswerRole, kbSource: KbSource = DEFAULT_KB_SOURCE): Promise<Conversation> {
+  const [c] = await db.insert(conversations).values({ userId, title, roleUsed: role, kbSource }).returning();
   return c;
 }
 
@@ -167,6 +196,7 @@ export async function insertToolCalls(db: DB, rows: (typeof chatToolCalls.$infer
 export interface AdminChatFilter {
   userId?: string;
   role?: AnswerRole;
+  kb?: KbSource;
   from?: string; // yyyy-mm-dd
   to?: string;
   feedback?: "up" | "down" | "any" | "none";
@@ -177,6 +207,7 @@ export interface AdminChatRow {
   id: string;
   title: string;
   roleUsed: AnswerRole;
+  kbSource: KbSource;
   username: string;
   displayName: string;
   createdAt: Date;
@@ -193,6 +224,7 @@ export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminC
   const conds = [sql`true`];
   if (f.userId && isUuid(f.userId)) conds.push(sql`c.user_id = ${f.userId}`);
   if (f.role) conds.push(sql`c.role_used = ${f.role}`);
+  if (f.kb) conds.push(sql`c.kb_source = ${f.kb}`);
   if (f.from && /^\d{4}-\d{2}-\d{2}$/.test(f.from)) conds.push(sql`c.updated_at >= ${f.from}::date`);
   if (f.to && /^\d{4}-\d{2}-\d{2}$/.test(f.to)) conds.push(sql`c.created_at < ${f.to}::date + 1`);
   if (!f.includeDeleted) conds.push(sql`c.deleted_at IS NULL`);
@@ -216,7 +248,7 @@ export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminC
                  count(*) FILTER (WHERE f.value = 'down')::int AS downs
           FROM chat_feedback f JOIN chat_messages cm ON cm.id = f.message_id GROUP BY cm.conversation_id
         ), rows AS (
-          SELECT c.id, c.title, c.role_used AS "roleUsed", u.username, u.display_name AS "displayName",
+          SELECT c.id, c.title, c.role_used AS "roleUsed", c.kb_source AS "kbSource", u.username, u.display_name AS "displayName",
                  c.created_at AS "createdAt", c.updated_at AS "updatedAt", c.deleted_at AS "deletedAt",
                  coalesce(m.questions, 0) AS questions, coalesce(fb.ups, 0) AS ups, coalesce(fb.downs, 0) AS downs,
                  coalesce(m.errors, 0) AS errors, coalesce(m.tokens, 0) AS tokens

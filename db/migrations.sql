@@ -13,3 +13,10 @@ ALTER TABLE card_related_items ADD COLUMN IF NOT EXISTS element_id text;
 UPDATE card_related_items l SET node_id = k.type || ':' || k.key
   FROM kb_items k, cards c
   WHERE k.id = l.kb_item_id AND c.id = l.card_id AND c.audience IS NOT NULL AND l.relation = 'source' AND l.node_id IS NULL;
+
+-- Second knowledge-graph MCP (docs/plans/PLAN-kg-mcp-new.md D1, D2): the KB a conversation uses (fixed per chat) and the
+-- per-user permission to choose SpectrumERP-new. Existing conversations become 'spectrumerp'; existing users get false.
+-- Kept on ONE line: db/client.ts splitSql() cuts statements at a ';' that ends a line.
+DO $$ BEGIN CREATE TYPE "public"."kb_source" AS ENUM('spectrumerp', 'spectrumerp_new'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+ALTER TABLE conversations ADD COLUMN IF NOT EXISTS kb_source kb_source NOT NULL DEFAULT 'spectrumerp';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS can_use_kg_new boolean NOT NULL DEFAULT false;
