@@ -1,5 +1,5 @@
 import { CheckCircle2, Layers, MessageSquare, ShieldCheck } from "lucide-react";
-import { Logo } from "@/components/shell/Logo";
+import { ForceLogo } from "@/components/shell/Logo";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 
 const POINTS = [
@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* product panel (desktop) */}
       <aside className="relative hidden overflow-hidden border-r bg-sidebar lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14">
         <div aria-hidden className="bg-grid pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
-        <Logo className="relative" />
+        <ForceLogo className="relative h-12" />
         <div className="relative max-w-md">
           <h2 className="text-3xl font-semibold tracking-tight text-balance">Keep the knowledge base right, one card at a time.</h2>
           <ul className="mt-8 space-y-5">
@@ -39,7 +39,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* form side */}
       <main className="relative flex flex-col px-4 py-6 sm:px-8">
         <div className="flex items-center justify-between">
-          <Logo className="lg:invisible" />
+          <ForceLogo className="h-9 lg:invisible" />
           <ThemeToggle />
         </div>
         <div className="flex flex-1 items-center justify-center py-10">

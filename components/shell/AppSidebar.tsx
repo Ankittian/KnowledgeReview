@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -16,18 +15,10 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogoMark } from "./Logo";
+import { ForceLogo, LogoMark } from "./Logo";
 import { MAIN_NAV, adminItems, isActive, type NavItem } from "./nav";
 
-export interface ShellUser {
-  displayName: string;
-  username: string;
-  role: string;
-  initials: string;
-}
-
-export function AppSidebar({ user, isStaff, isAdmin }: { user: ShellUser; isStaff: boolean; isAdmin: boolean }) {
+export function AppSidebar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolean }) {
   const path = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -50,12 +41,13 @@ export function AppSidebar({ user, isStaff, isAdmin }: { user: ShellUser; isStaf
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0" render={<Link href="/today" aria-label="Knowledge Review home" />}>
+            {/* expanded: wordmark linking to the company site */}
+            <div className="flex px-2 py-1 group-data-[collapsible=icon]:hidden">
+              <ForceLogo className="h-9" />
+            </div>
+            {/* collapsed: small mark linking home */}
+            <SidebarMenuButton size="lg" className="hidden justify-center gap-0 group-data-[collapsible=icon]:flex" render={<Link href="/today" aria-label="Knowledge Review home" />}>
               <LogoMark className="size-8" />
-              <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate text-sm font-semibold text-sidebar-accent-foreground">Knowledge Review</span>
-                <span className="truncate text-xs text-muted-foreground">SpectrumERP</span>
-              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -78,23 +70,6 @@ export function AppSidebar({ user, isStaff, isAdmin }: { user: ShellUser; isStaf
         )}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <div className="flex items-center gap-2.5 rounded-md p-1.5 group-data-[collapsible=icon]:p-0" title={`${user.displayName} (${user.username})`}>
-              <Avatar className="size-8 rounded-lg">
-                <AvatarFallback className="rounded-lg bg-primary/10 text-xs font-semibold text-primary">{user.initials}</AvatarFallback>
-              </Avatar>
-              <div className="grid min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate text-sm font-medium text-sidebar-accent-foreground">{user.displayName}</span>
-                <span className="truncate text-xs text-muted-foreground capitalize">
-                  {user.username} · {user.role}
-                </span>
-              </div>
-            </div>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
