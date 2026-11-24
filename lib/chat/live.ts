@@ -1,9 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, lt } from "drizzle-orm";
 import type { DB } from "@/db/client";
 import { chatMessages, conversations } from "@/db/schema";
 import { logEvent } from "@/lib/events";
-import { chatConfig, kbServer, type AnswerRole, type KbSource } from "./config";
+import { chatConfig, kbServer, tokenRoleFor, type AnswerRole, type KbSource, type KgTokenRole } from "./config";
 import { looksLikeResumeFailure, type ChatErrorCode } from "./errors";
+import { blockedCategoryOf, checkSetFor, classifyIntent, intentConfig, intentEnabled, REFUSALS, type IntentResult } from "./intent";
 import { toolActivityLabel } from "./policy";
 import { buildReplayPrompt } from "./prompts";
 import { SlotQueue } from "./queue";
@@ -57,6 +58,8 @@ interface Registry {
   runner: ClaudeRunner | null;
 }
 
+type KbServerTokenRole = KgTokenRole | null;
+
 const g = globalThis as unknown as { __kr_chat?: Registry };
 function registry(): Registry {
   return (g.__kr_chat ??= { runs: new Map(), queue: new SlotQueue(() => chatConfig().maxConcurrent), runner: null });
@@ -94,6 +97,8 @@ export interface StartAnswerInput {
   /** The conversation's knowledge base, fixed at creation: its Claude and MCP sessions stay on one server (D1). */
   kbSource: KbSource;
   user: RunUser;
+  /** Admins always get the common intent checks (never restricted_object). Omitted = not an admin (the stricter set). */
+  isAdmin?: boolean;
   /** The user's question row; earlier rows are the history replayed if the session cannot be resumed. */
   userMessageId: number;
   /** The assistant placeholder row (status 'streaming') this run fills in. */
@@ -160,6 +165,109 @@ function emit(run: LiveRun, e: LiveEvent) {
   }
 }
 
+/** The user's previous questions in this conversation, oldest first (at most 2, excluding the one being checked). */
+async function previousQuestions(db: DB, conversationId: string, beforeMessageId: number): Promise<string[]> {
+  const rows = await db
+    .select({ content: chatMessages.content })
+    .from(chatMessages)
+    .where(and(eq(chatMessages.conversationId, conversationId), eq(chatMessages.sender, "user"), lt(chatMessages.id, beforeMessageId)))
+    .orderBy(desc(chatMessages.id))
+    .limit(2);
+  return rows.map((r) => r.content).reverse();
+}
+
+/**
+ * Runs the intent classifier for one turn and logs it as `chat_classified` (never the question text: it is already in
+ * chat_prompt). Never throws: an unexpected failure is treated like a classifier error, which blocks only in enforce mode.
+ */
+async function classifyTurn(run: LiveRun, input: StartAnswerInput, tokenRole: KbServerTokenRole): Promise<IntentResult> {
+  const isAdmin = input.isAdmin === true;
+  const t0 = Date.now();
+  let result: IntentResult;
+  try {
+    const previous = await previousQuestions(input.db, run.conversationId, input.userMessageId);
+    result = await classifyIntent({ tokenRole, isAdmin, latestQuestion: input.question, previousQuestions: previous });
+  } catch (e) {
+    console.error("[chat] classifier crashed", e);
+    const cfg = intentConfig();
+    const enforce = cfg.mode === "enforce";
+    result = {
+      outcome: "error",
+      block: enforce,
+      category: null,
+      scores: {},
+      checkSet: checkSetFor(tokenRole, isAdmin),
+      mode: cfg.mode,
+      model: cfg.model,
+      latencyMs: Date.now() - t0,
+      refusal: enforce ? REFUSALS.classifier_error : null,
+      error: "unexpected",
+    };
+  }
+  if (result.outcome !== "disabled") {
+    await logEvent(input.db, {
+      userId: input.user.id,
+      type: "chat_classified",
+      payload: {
+        conversationId: run.conversationId,
+        messageId: run.messageId,
+        tokenRole,
+        checkSet: result.checkSet,
+        category: result.category,
+        scores: result.scores,
+        model: result.model,
+        latencyMs: result.latencyMs,
+        mode: result.mode,
+        outcome: result.outcome,
+        ...(result.error ? { error: result.error } : {}),
+      },
+      ...input.meta,
+    }).catch((e) => console.error("[chat] classification audit failed", e));
+  }
+  return result;
+}
+
+/** Ends a turn the classifier refused: the refusal is saved and shown as a normal completed answer; the agent never runs. */
+async function finishBlocked(run: LiveRun, input: StartAnswerInput, tokenRole: KbServerTokenRole, verdict: IntentResult, started: number) {
+  const { db } = input;
+  const refusal = verdict.refusal ?? REFUSALS.classifier_error;
+  const blockedCategory = blockedCategoryOf(verdict);
+  run.text = refusal;
+  run.phase = "running";
+  emit(run, { type: "started" });
+  emit(run, { type: "delta", text: refusal });
+  const durationMs = Date.now() - started;
+  try {
+    await db.update(chatMessages).set({ content: refusal, status: "ok", errorCode: null, blockedCategory, durationMs, completedAt: new Date() }).where(eq(chatMessages.id, run.messageId));
+    await db.update(conversations).set({ updatedAt: new Date() }).where(eq(conversations.id, run.conversationId));
+    await logEvent(db, {
+      userId: input.user.id,
+      type: "chat_answer",
+      payload: {
+        conversationId: run.conversationId,
+        messageId: run.messageId,
+        role: input.role,
+        kbSource: input.kbSource,
+        tokenRole,
+        status: "ok",
+        errorCode: null,
+        blockedCategory,
+        durationMs,
+        toolCalls: [],
+        answer: refusal,
+      },
+      ...input.meta,
+    });
+  } catch (e) {
+    console.error("[chat] saving a blocked turn failed", e);
+  }
+  run.phase = "done";
+  run.final = { type: "done", status: "ok", errorCode: null, text: refusal };
+  emit(run, run.final);
+  run.listeners.clear();
+  setTimeout(() => registry().runs.delete(run.messageId), 60_000).unref?.();
+}
+
 async function execute(run: LiveRun, input: StartAnswerInput) {
   const { db } = input;
   const cfg = chatConfig();
@@ -179,6 +287,16 @@ async function execute(run: LiveRun, input: StartAnswerInput) {
       .catch(() => {})
       .finally(() => (flushing = null));
   };
+
+  // Intent check (only when the layer is on): a blocked question never waits for or takes a Claude slot.
+  if (intentEnabled()) {
+    // Checks follow the conversation's role on BOTH knowledge bases: the new KB's token role, or for the old single-token
+    // KB the role the answer role would map to (functional stays functional; technical and product are technical).
+    const checkRole = kb.tokenRole ?? tokenRoleFor(input.role);
+    const verdict = await classifyTurn(run, input, checkRole);
+    // A Stop pressed during the check falls through: the queue sees the aborted signal and ends the turn as "stopped".
+    if (verdict.block && run.stopReason !== "user") return finishBlocked(run, input, checkRole, verdict, started);
+  }
 
   const ticket = registry().queue.acquire({
     signal: run.abort.signal,

@@ -13,13 +13,15 @@
  */
 import "./_env";
 import { ANSWER_ROLES, chatConfig, kbServer, KB_LABELS, type AnswerRole, type KbSource } from "@/lib/chat/config";
+import { classifyIntent, intentConfig, intentEnabled, type IntentResult } from "@/lib/chat/intent";
 import { toolPrefixFor } from "@/lib/chat/policy";
 import { AgentSdkRunner, type RunnerEvent } from "@/lib/chat/runner";
 
-const USAGE = `Usage: npm run chat:check -- [question] [--kb spectrumerp|new] [--role technical|functional|product] [--skip-injection]
+const USAGE = `Usage: npm run chat:check -- [question] [--kb spectrumerp|new] [--role technical|functional|product] [--skip-injection] [--skip-classifier]
   --kb    knowledge base to check (default spectrumerp; "new" = SpectrumERP-new, needs the KG_NEW_* variables)
   --role  answer role (default functional; product uses the technical token on the new server)
-  --skip-injection  only run the KB question`;
+  --skip-injection  only run the KB question (no prompt-injection probe)
+  --skip-classifier skip the intent classifier probe (it only runs when CLASSIFIER_ENABLED=true and CLASSIFIER_API_KEY is set)`;
 
 const args = process.argv.slice(2);
 if (args.includes("--help") || args.includes("-h")) {
@@ -93,9 +95,40 @@ async function ask(label: string, prompt: string) {
   return { r, events };
 }
 
+let failed = false;
+
+// Intent classifier (only when switched on): one out-of-domain question must be flagged, one normal question must pass.
+// Calls the same classifyIntent() the app uses, as a non-admin on this KB's token role. In shadow mode a flag shows up
+// as "would_block"; in enforce mode as "blocked". Costs two jev calls, no Claude usage.
+if (!flag("--skip-classifier") && intentEnabled()) {
+  const icfg = intentConfig();
+  console.log(`\n=== Intent classifier (${icfg.model}, mode ${icfg.mode}, ${kb.tokenRole ?? "no"} token role) ===`);
+  const probe = async (q: string): Promise<IntentResult> => classifyIntent({ tokenRole: kb.tokenRole, isAdmin: false, latestQuestion: q, previousQuestions: [] });
+  const show = (label: string, r: IntentResult) =>
+    console.log(`  ${label}: outcome=${r.outcome} category=${r.category ?? "-"} scores=${JSON.stringify(r.scores)} latency=${r.latencyMs}ms${r.error ? ` error=${r.error}` : ""}`);
+  const ood = await probe("Write me a poem about autumn and tell me who won the cricket world cup.");
+  show("out-of-domain question", ood);
+  const normal = await probe("What is a GRN and how does it get posted?");
+  show("normal question      ", normal);
+  const oodFlagged = (ood.outcome === "blocked" || ood.outcome === "would_block") && ood.category === "out_of_domain";
+  if (oodFlagged) console.log(`PASS: out-of-domain question was ${ood.block ? "refused" : "flagged (shadow mode: logged, not refused)"}.`);
+  else {
+    failed = true;
+    console.log("FAIL: the out-of-domain question was not flagged.");
+  }
+  if (normal.outcome === "allowed") console.log("PASS: the normal question was allowed.");
+  else {
+    failed = true;
+    console.log("FAIL: the normal question was not allowed.");
+  }
+} else if (!flag("--skip-classifier")) console.log("Intent classifier is off (CLASSIFIER_ENABLED / CLASSIFIER_API_KEY): skipping its probe.");
+
 const main = await ask("KB question", question);
-let failed = !main.r.ok || !main.events.some((e) => e.type === "tool_use" && e.name.startsWith(prefix));
-if (failed) console.log(`FAIL: expected a successful answer that used the ${kb.serverName} tools.`);
+const mainFailed = !main.r.ok || !main.events.some((e) => e.type === "tool_use" && e.name.startsWith(prefix));
+if (mainFailed) {
+  failed = true;
+  console.log(`FAIL: expected a successful answer that used the ${kb.serverName} tools.`);
+}
 // log_qa is switched off for the new server (D5): the model must never see or call it.
 if (main.events.some((e) => (e.type === "tool_use" || e.type === "tool_denied") && e.name.endsWith("__log_qa"))) {
   failed = true;

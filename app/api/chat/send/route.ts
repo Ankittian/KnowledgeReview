@@ -91,6 +91,7 @@ async function send(db: Awaited<ReturnType<typeof getDb>>, caller: ChatCaller, d
     role: conv.roleUsed,
     kbSource: conv.kbSource,
     user: { id: user.id, username: user.username },
+    isAdmin: caller.isAdmin,
     userMessageId: question.id,
     assistantMessageId: answer.id,
     question: text,

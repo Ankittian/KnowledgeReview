@@ -166,12 +166,13 @@ describe("role -> token role and per-KB server config (D3, D8, D9)", () => {
 describe("harness process environment (REQ-NFR-05, REQ-HARN-05)", () => {
   const cfg = testCfg({ claudeConfigDir: "/srv/claude", kgMcpToken: "kg-secret" });
   it("never passes app secrets to the Claude process", () => {
-    const env = harnessEnv(cfg, { PATH: "/bin", DATABASE_URL: "postgres://x", JWT_SECRET: "j", KG_MCP_TOKEN: "kg-secret", KG_NEW_MCP_TOKEN_TECHNICAL: NEW_TECH, KG_NEW_MCP_TOKEN_FUNCTIONAL: NEW_FUNC, ADMIN_PASSWORD: "p", ANTHROPIC_API_KEY: "sk" });
+    const env = harnessEnv(cfg, { PATH: "/bin", DATABASE_URL: "postgres://x", JWT_SECRET: "j", KG_MCP_TOKEN: "kg-secret", KG_NEW_MCP_TOKEN_TECHNICAL: NEW_TECH, KG_NEW_MCP_TOKEN_FUNCTIONAL: NEW_FUNC, ADMIN_PASSWORD: "p", ANTHROPIC_API_KEY: "sk", CLASSIFIER_API_KEY: "clf-secret" });
     expect(env.PATH).toBe("/bin");
     expect(env.ANTHROPIC_API_KEY).toBe("sk");
     expect(env.CLAUDE_CONFIG_DIR).toBe("/srv/claude");
-    for (const k of ["DATABASE_URL", "JWT_SECRET", "KG_MCP_TOKEN", "KG_NEW_MCP_TOKEN_TECHNICAL", "KG_NEW_MCP_TOKEN_FUNCTIONAL", "ADMIN_PASSWORD"]) expect(env[k], k).toBeUndefined();
+    for (const k of ["DATABASE_URL", "JWT_SECRET", "KG_MCP_TOKEN", "KG_NEW_MCP_TOKEN_TECHNICAL", "KG_NEW_MCP_TOKEN_FUNCTIONAL", "ADMIN_PASSWORD", "CLASSIFIER_API_KEY"]) expect(env[k], k).toBeUndefined();
     expect(JSON.stringify(env)).not.toContain("kg-secret");
+    expect(JSON.stringify(env)).not.toContain("clf-secret");
     expect(JSON.stringify(env)).not.toContain(NEW_TECH);
     expect(JSON.stringify(env)).not.toContain(NEW_FUNC);
   });
@@ -329,11 +330,11 @@ describe("SDK runner: one MCP server per conversation (D3, D8, D9, D19, D20, NFR
   it("never puts a token into the Claude process environment (NFR-05)", async () => {
     const keep = { ...process.env };
     try {
-      Object.assign(process.env, { KG_MCP_TOKEN: OLD_TOKEN, KG_NEW_MCP_TOKEN_TECHNICAL: NEW_TECH, KG_NEW_MCP_TOKEN_FUNCTIONAL: NEW_FUNC });
+      Object.assign(process.env, { KG_MCP_TOKEN: OLD_TOKEN, KG_NEW_MCP_TOKEN_TECHNICAL: NEW_TECH, KG_NEW_MCP_TOKEN_FUNCTIONAL: NEW_FUNC, CLASSIFIER_API_KEY: "clf-secret" });
       for (const kb of KBS) {
         await run(testCfg(), kb, "technical");
         const env = JSON.stringify(last().env);
-        for (const t of [OLD_TOKEN, NEW_TECH, NEW_FUNC]) expect(env).not.toContain(t);
+        for (const t of [OLD_TOKEN, NEW_TECH, NEW_FUNC, "clf-secret"]) expect(env).not.toContain(t);
       }
     } finally {
       process.env = keep;

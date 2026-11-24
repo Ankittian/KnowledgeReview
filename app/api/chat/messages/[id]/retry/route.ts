@@ -57,6 +57,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       role: own.conversation.roleUsed,
       kbSource: own.conversation.kbSource,
       user: { id: user.id, username: user.username },
+      isAdmin: caller.isAdmin,
       userMessageId: question.id,
       assistantMessageId: answer.id,
       question: question.content,
