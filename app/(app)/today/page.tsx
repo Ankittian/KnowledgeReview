@@ -9,7 +9,7 @@ import { canSwitchSets, pickAudiences } from "@/lib/cards/audience";
 import { APP_TZ, todayStr } from "@/lib/dates";
 import { getOrCreateDeck } from "@/lib/deck";
 import { getStreak } from "@/lib/stats";
-import { getAnswerRole } from "@/lib/chat/service";
+import { canUseKgNew, getAnswerRole } from "@/lib/chat/service";
 
 export const metadata: Metadata = { title: "Today" };
 
@@ -21,9 +21,10 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
   // your own set (functional / technical); admin and technical users can look at either set
   const audiences = pickAudiences(user.role, sp.audience);
   const deck = await getOrCreateDeck(db, user, today, sessionId, audiences);
-  const [{ streak, answeredToday }, myRole] = await Promise.all([
+  const [{ streak, answeredToday }, myRole, kgNewAllowed] = await Promise.all([
     getStreak(db, user.id, today),
     getAnswerRole(db, user.id),
+    canUseKgNew(db, user.id, user.role === "admin"),
   ]);
   const dateLabel = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: APP_TZ }).format(new Date());
   return (
@@ -53,7 +54,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
         streak={streak}
         answeredToday={answeredToday}
       />
-      <ChatWidget myRole={myRole} />
+      <ChatWidget myRole={myRole} canUseKgNew={kgNewAllowed} />
     </>
   );
 }

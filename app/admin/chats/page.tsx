@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth/session";
-import { ANSWER_ROLES, type AnswerRole } from "@/lib/chat/config";
+import { ANSWER_ROLES, KB_LABELS, KB_SOURCES, isKbSource, type AnswerRole } from "@/lib/chat/config";
 import { queueStats } from "@/lib/chat/live";
 import { adminListChats, type AdminChatFilter } from "@/lib/chat/service";
 import { cn } from "@/lib/utils";
@@ -30,9 +30,11 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const role = one(sp.role);
   const feedback = one(sp.feedback);
+  const kb = one(sp.kb);
   const filter: AdminChatFilter = {
     userId: one(sp.user),
     role: (ANSWER_ROLES as readonly string[]).includes(role ?? "") ? (role as AnswerRole) : undefined,
+    kb: isKbSource(kb) ? kb : undefined,
     from: one(sp.from),
     to: one(sp.to),
     feedback: ["up", "down", "any", "none"].includes(feedback ?? "") ? (feedback as AdminChatFilter["feedback"]) : undefined,
@@ -76,7 +78,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
         </StaggerItem>
       </Stagger>
 
-      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-6")} method="get">
+      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-7")} method="get">
         <div className="grid gap-1.5 lg:col-span-2">
           <Label htmlFor="f-user">User</Label>
           <NativeSelect id="f-user" name="user" defaultValue={filter.userId ?? ""} className="w-full">
@@ -100,6 +102,17 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           </NativeSelect>
         </div>
         <div className="grid gap-1.5">
+          <Label htmlFor="f-kb">KB</Label>
+          <NativeSelect id="f-kb" name="kb" defaultValue={filter.kb ?? ""} className="w-full">
+            <NativeSelectOption value="">Any</NativeSelectOption>
+            {KB_SOURCES.map((k) => (
+              <NativeSelectOption key={k} value={k}>
+                {KB_LABELS[k]}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="grid gap-1.5">
           <Label htmlFor="f-feedback">Feedback</Label>
           <NativeSelect id="f-feedback" name="feedback" defaultValue={filter.feedback ?? ""} className="w-full">
             <NativeSelectOption value="">Any</NativeSelectOption>
@@ -117,7 +130,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           <Label htmlFor="f-to">To</Label>
           <Input id="f-to" type="date" name="to" defaultValue={filter.to ?? ""} />
         </div>
-        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-6">
+        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-7">
           <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input type="checkbox" name="deleted" value="1" defaultChecked={filter.includeDeleted} className="size-4 rounded border-input accent-primary" /> Include deleted chats
           </label>
@@ -136,12 +149,13 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
         <Empty title="No chats match these filters" icon={<MessagesSquare />} />
       ) : (
         <TableCard>
-          <Table className="min-w-[860px]" data-testid="all-chats">
+          <Table className="min-w-[940px]" data-testid="all-chats">
             <TableHeader className={thead}>
               <TableRow className="hover:bg-transparent">
                 <TableHead>Chat</TableHead>
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>KB</TableHead>
                 <TableHead className="text-right">Questions</TableHead>
                 <TableHead className="text-right">
                   <span className="inline-flex items-center gap-1" aria-label="Thumbs up / down">
@@ -173,6 +187,11 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
                   <TableCell className={tcell}>
                     <Tag tone="outline" className="capitalize">
                       {r.roleUsed}
+                    </Tag>
+                  </TableCell>
+                  <TableCell className={tcell}>
+                    <Tag tone={r.kbSource === "spectrumerp_new" ? "primary" : "neutral"} className="whitespace-nowrap">
+                      {KB_LABELS[r.kbSource]}
                     </Tag>
                   </TableCell>
                   <TableCell className={cn(tcell, "text-right tabular-nums")}>{r.questions}</TableCell>

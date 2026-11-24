@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { cardFeedback, roleIdOf, users } from "@/db/schema";
+import { cardFeedback, roleIdOf, roles, users } from "@/db/schema";
 import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
 import { ANNOUNCEMENT_MAX_LENGTH, ANNOUNCEMENT_TONES, DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, setAnnouncement, setDailyCardLimit } from "@/lib/settings";
 import { ANSWER_ROLES } from "@/lib/chat/config";
-import { setAnswerRole } from "@/lib/chat/service";
+import { setAnswerRole, setCanUseKgNew } from "@/lib/chat/service";
 
 const uuid = z.uuid();
 
@@ -93,6 +93,24 @@ export async function setUserAnswerRole(fd: FormData) {
   const db = await getDb();
   await setAnswerRole(db, id, role);
   await audit(db, actor.id, "user_answer_role_changed", "user", id, { answerRole: role });
+  revalidatePath("/admin/users");
+}
+
+/**
+ * Lets a non-admin user pick SpectrumERP-new for new chats, or takes that away (D2). Admins always have access, so
+ * their flag is never touched. Revoking leaves the user's existing SpectrumERP-new chats visible but read-only (D17).
+ */
+export async function setUserKgNewAccess(fd: FormData) {
+  const { user: actor } = await requireRole(["admin"]);
+  const id = uuid.parse(fd.get("userId"));
+  const allowed = z.enum(["on", "off"]).parse(fd.get("access")) === "on";
+  const db = await getDb();
+  const [target] = await db.select({ role: roles.name, was: users.canUseKgNew }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, id));
+  if (!target || target.role === "admin") return;
+  if (target.was !== allowed) {
+    await setCanUseKgNew(db, id, allowed);
+    await audit(db, actor.id, "user_kg_new_access_changed", "user", id, { old: target.was, new: allowed });
+  }
   revalidatePath("/admin/users");
 }
 

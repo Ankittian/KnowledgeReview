@@ -10,6 +10,7 @@ import { FadeIn, Stagger, StaggerItem } from "@/components/common/motion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { requireRole } from "@/lib/auth/session";
 import { chatErrorText } from "@/lib/chat/errors";
+import { KB_LABELS, tokenRoleFor } from "@/lib/chat/config";
 import { adminLoadConversation } from "@/lib/chat/service";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,12 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
             <Tag tone="outline" className="capitalize">
               {c.roleUsed} style
             </Tag>
+            <Tag tone={c.kbSource === "spectrumerp_new" ? "primary" : "neutral"}>{KB_LABELS[c.kbSource]}</Tag>
+            {c.kbSource === "spectrumerp_new" && (
+              <Tag tone="outline" className="capitalize" title="SpectrumERP-new picks its answer voice from the token role it is given">
+                {c.roleUsed} ({tokenRoleFor(c.roleUsed)} token)
+              </Tag>
+            )}
             {c.deletedAt && <Tag tone="destructive">deleted by user {fmt(c.deletedAt)}</Tag>}
           </div>
           <p className="mt-1.5 text-sm text-muted-foreground">

@@ -4,7 +4,8 @@ import { Check, Clock, UserCheck, UserX } from "lucide-react";
 import { getDb } from "@/db/client";
 import { roles, users } from "@/db/schema";
 import { DeleteUserButton } from "@/components/admin/DeleteUserButton";
-import { approveUser, deleteUser, setUserAnswerRole, setUserRole, setUserStatus } from "@/app/actions/admin";
+import { approveUser, deleteUser, setUserAnswerRole, setUserKgNewAccess, setUserRole, setUserStatus } from "@/app/actions/admin";
+import { KB_LABELS } from "@/lib/chat/config";
 import { defaultAnswerRole } from "@/lib/chat/service";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
 import { Stagger, StaggerItem } from "@/components/common/motion";
@@ -106,12 +107,15 @@ export default async function UsersPage() {
       <section>
         <SectionTitle title="All users" description={`${others.length} account${others.length === 1 ? "" : "s"}`} />
         <TableCard>
-          <Table className="min-w-[900px]">
+          <Table className="min-w-[1040px]">
             <TableHeader className={thead}>
               <TableRow className="hover:bg-transparent">
                 <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead title="How the assistant writes answers for this user. Admins choose per chat.">Answer style</TableHead>
+                <TableHead title={`Lets this user pick ${KB_LABELS.spectrumerp_new} as the knowledge base for new chats. Admins always can.`}>
+                  Can use {KB_LABELS.spectrumerp_new}
+                </TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Last sign-in</TableHead>
                 <TableHead />
@@ -171,6 +175,27 @@ export default async function UsersPage() {
                           <NativeSelectOption value="product">Product</NativeSelectOption>
                         </NativeSelect>
                         <button className={buttonVariants({ variant: "outline", size: "sm" })}>Save</button>
+                      </form>
+                    )}
+                  </TableCell>
+                  <TableCell className={cn(tcell, "align-middle")}>
+                    {u.role === "admin" ? (
+                      <span className="text-xs text-muted-foreground">Always (admin)</span>
+                    ) : (
+                      <form action={setUserKgNewAccess} className="flex items-center gap-2">
+                        <input type="hidden" name="userId" value={u.id} />
+                        <Tag tone={u.canUseKgNew ? "success" : "neutral"} className="w-12 justify-center">
+                          {u.canUseKgNew ? "On" : "Off"}
+                        </Tag>
+                        <button
+                          name="access"
+                          value={u.canUseKgNew ? "off" : "on"}
+                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                          aria-label={`${u.canUseKgNew ? "Revoke" : "Allow"} ${KB_LABELS.spectrumerp_new} for ${u.username}`}
+                          data-testid="kg-new-toggle"
+                        >
+                          {u.canUseKgNew ? "Revoke" : "Allow"}
+                        </button>
                       </form>
                     )}
                   </TableCell>

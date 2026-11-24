@@ -26,6 +26,7 @@ import {
   X,
 } from "lucide-react";
 import { CHAT_ERROR_TEXT, type ChatErrorCode } from "@/lib/chat/errors";
+import type { KbSource } from "@/lib/chat/config";
 import { cn } from "@/lib/utils";
 import {
   AlertDialog,
@@ -49,6 +50,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { LogoMark } from "@/components/shell/Logo";
 import { CopyButton, Markdown } from "./Markdown";
+import { ApiError, KB_LABEL, KB_READ_ONLY_TEXT, KbBadge, readOnlyState, type KbReadOnly, type KbReadOnlyState } from "./kb";
 
 export type AnswerRole = "technical" | "functional" | "product";
 
@@ -56,6 +58,7 @@ export interface ConvItem {
   id: string;
   title: string;
   roleUsed: AnswerRole;
+  kbSource: KbSource;
   updatedAt: string;
 }
 
@@ -70,10 +73,12 @@ export interface Msg {
 
 interface Props {
   conversations: ConvItem[];
-  active: { id: string; title: string; roleUsed: AnswerRole } | null;
+  active: { id: string; title: string; roleUsed: AnswerRole; kbSource: KbSource; readOnly: KbReadOnly | null } | null;
   messages: Msg[];
   isAdmin: boolean;
   myRole: AnswerRole;
+  /** Admin, or a user an admin approved, and SpectrumERP-new is configured (D2, D18). */
+  canUseKgNew: boolean;
 }
 
 interface Live {
@@ -88,6 +93,11 @@ const ROLES: { value: AnswerRole; label: string; hint: string }[] = [
   { value: "functional", label: "Functional", hint: "Screens, steps, business rules" },
   { value: "product", label: "Product", hint: "Scope, capabilities, gaps" },
 ];
+const KB_OPTIONS: { value: KbSource; hint: string }[] = [
+  { value: "spectrumerp", hint: "The current knowledge base" },
+  { value: "spectrumerp_new", hint: "New graph, with code access" },
+];
+
 const roleLabel = (r: AnswerRole) => ROLES.find((x) => x.value === r)?.label ?? r;
 
 const errorText = (code: string | null) => CHAT_ERROR_TEXT[(code as ChatErrorCode) ?? "error"] ?? CHAT_ERROR_TEXT.error;
@@ -103,16 +113,23 @@ async function api<T>(url: string, init?: RequestInit & { json?: unknown }): Pro
     window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
     throw new Error("Signed out");
   }
-  if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+  if (!res.ok) {
+    const d = data as { error?: string; code?: string; reason?: string };
+    throw new ApiError(d.error ?? `Request failed (${res.status})`, res.status, d.code, d.reason);
+  }
   return data;
 }
 
-export function ChatApp({ conversations: initialConvs, active: initialActive, messages: initialMessages, isAdmin, myRole }: Props) {
+export function ChatApp({ conversations: initialConvs, active: initialActive, messages: initialMessages, isAdmin, myRole, canUseKgNew }: Props) {
   const [convs, setConvs] = useState(initialConvs);
   const [active, setActive] = useState(initialActive);
   const [messages, setMessages] = useState<Msg[]>(initialMessages);
   const [input, setInput] = useState("");
   const [newRole, setNewRole] = useState<AnswerRole>(myRole);
+  // KB for the next new chat: always starts on the default (D18); sent with the first message only (D1).
+  const [newKb, setNewKb] = useState<KbSource>("spectrumerp");
+  const [kgNewOk, setKgNewOk] = useState(canUseKgNew);
+  const [readOnly, setReadOnly] = useState<KbReadOnlyState | null>(readOnlyState(initialActive?.readOnly));
   const [live, setLive] = useState<Live | null>(null);
   const [sending, setSending] = useState(false);
   const [banner, setBanner] = useState<string | null>(null);
@@ -185,17 +202,36 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
   };
 
   // ---- actions
+  /** Send/retry failed. A 403 about the KB is a state, not a glitch: show its text and lock the chat or the selector. */
+  function failed(e: unknown) {
+    if (e instanceof ApiError && e.code === "kb_read_only") {
+      const reason: KbReadOnly = e.reason === "unconfigured" ? "unconfigured" : "revoked";
+      setReadOnly({ reason, text: e.message || KB_READ_ONLY_TEXT[reason] });
+      setBanner(null);
+      return;
+    }
+    if (e instanceof ApiError && e.code === "kb_forbidden") {
+      setKgNewOk(false);
+      setNewKb("spectrumerp");
+    }
+    setBanner(e instanceof Error ? e.message : String(e));
+  }
+
   async function send() {
     const text = input.trim();
-    if (!text || sending || live) return;
+    if (!text || sending || live || readOnly) return;
     setSending(true);
     setBanner(null);
     try {
       const r = await api<{
-        conversation: { id: string; title: string; roleUsed: AnswerRole };
+        conversation: { id: string; title: string; roleUsed: AnswerRole; kbSource?: KbSource };
         userMessage: { id: number };
         assistantMessageId: number;
-      }>("/api/chat/send", { method: "POST", json: { conversationId: active?.id ?? null, role: active ? null : newRole, text } });
+      }>("/api/chat/send", {
+        method: "POST",
+        json: { conversationId: active?.id ?? null, role: active ? null : newRole, text, ...(!active && kgNewOk ? { kbSource: newKb } : {}) },
+      });
+      const conversation = { ...r.conversation, kbSource: r.conversation.kbSource ?? (kgNewOk ? newKb : "spectrumerp") };
       setInput("");
       stickToBottom.current = true;
       setMessages((ms) => [
@@ -204,13 +240,13 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
         { id: r.assistantMessageId, sender: "assistant", content: "", status: "streaming", errorCode: null, feedback: null },
       ]);
       if (!active) {
-        setActive(r.conversation);
-        window.history.replaceState(null, "", `/chat/${r.conversation.id}`);
+        setActive({ ...conversation, readOnly: null });
+        window.history.replaceState(null, "", `/chat/${conversation.id}`);
       }
-      setConvs((cs) => [{ ...r.conversation, updatedAt: new Date().toISOString() }, ...cs.filter((c) => c.id !== r.conversation.id)]);
+      setConvs((cs) => [{ ...conversation, updatedAt: new Date().toISOString() }, ...cs.filter((c) => c.id !== conversation.id)]);
       attach(r.assistantMessageId);
     } catch (e) {
-      setBanner(e instanceof Error ? e.message : String(e));
+      failed(e);
     } finally {
       setSending(false);
     }
@@ -233,7 +269,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
       stickToBottom.current = true;
       attach(r.assistantMessageId);
     } catch (e) {
-      setBanner(e instanceof Error ? e.message : String(e));
+      failed(e);
     }
   }
 
@@ -286,6 +322,8 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
     esRef.current = null;
     setLive(null);
     setActive(null);
+    setReadOnly(null);
+    setNewKb("spectrumerp");
     setMessages([]);
     setInput("");
     setBanner(null);
@@ -363,7 +401,16 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
                     >
                       {on && <motion.span layoutId="conv-active" className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary" />}
                       <span className="block truncate">{c.title}</span>
-                      {isAdmin && <span className="text-[11px] text-muted-foreground">{roleLabel(c.roleUsed)}</span>}
+                      {(isAdmin || c.kbSource === "spectrumerp_new") && (
+                        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                          {isAdmin && roleLabel(c.roleUsed)}
+                          {c.kbSource === "spectrumerp_new" && (
+                            <span className="rounded bg-primary/10 px-1 text-[10px] font-medium text-primary" data-testid="conv-kb">
+                              {KB_LABEL.spectrumerp_new}
+                            </span>
+                          )}
+                        </span>
+                      )}
                     </Link>
                     <div className="absolute top-1/2 right-1 -translate-y-1/2 opacity-100 transition-opacity md:opacity-0 md:group-hover/conv:opacity-100 md:focus-within:opacity-100 md:has-[[aria-expanded=true]]:opacity-100">
                       <DropdownMenu>
@@ -440,33 +487,67 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
             {active?.title ?? "New chat"}
           </h1>
           {active ? (
-            <Tooltip>
-              <TooltipTrigger render={<Badge variant="secondary" className="font-normal" data-testid="chat-role" />}>{roleLabel(active.roleUsed)}</TooltipTrigger>
-              <TooltipContent>Answer style for this chat</TooltipContent>
-            </Tooltip>
-          ) : isAdmin ? (
-            <div className="flex items-center gap-2 text-sm">
-              <span className="hidden text-xs text-muted-foreground sm:inline">Answer style</span>
-              <Select items={ROLES.map((r) => ({ value: r.value, label: r.label }))} value={newRole} onValueChange={(v) => v && setNewRole(v as AnswerRole)}>
-                <SelectTrigger size="sm" data-testid="role-select" aria-label="Answer style for this chat">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  {ROLES.map((r) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      <span className="flex flex-col">
-                        <span>{r.label}</span>
-                        <span className="text-xs text-muted-foreground">{r.hint}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-center gap-1.5">
+              <KbBadge kb={active.kbSource} />
+              <Tooltip>
+                <TooltipTrigger render={<Badge variant="secondary" className="font-normal" data-testid="chat-role" />}>{roleLabel(active.roleUsed)}</TooltipTrigger>
+                <TooltipContent>
+                  Answer style for this chat
+                  {active.kbSource === "spectrumerp_new" ? `. Knowledge base: ${KB_LABEL.spectrumerp_new}; start a new chat to use another.` : ""}
+                </TooltipContent>
+              </Tooltip>
             </div>
           ) : (
-            <Badge variant="secondary" className="font-normal">
-              {roleLabel(myRole)}
-            </Badge>
+            <div className="flex items-center gap-2 text-sm">
+              {kgNewOk && (
+                <div className="flex items-center gap-2">
+                  <span className="hidden text-xs text-muted-foreground sm:inline">Knowledge base</span>
+                  <Select
+                    items={KB_OPTIONS.map((k) => ({ value: k.value, label: KB_LABEL[k.value] }))}
+                    value={newKb}
+                    onValueChange={(v) => v && setNewKb(v as KbSource)}
+                  >
+                    <SelectTrigger size="sm" data-testid="kb-select" aria-label="Knowledge base for this chat">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {KB_OPTIONS.map((k) => (
+                        <SelectItem key={k.value} value={k.value}>
+                          <span className="flex flex-col">
+                            <span>{KB_LABEL[k.value]}</span>
+                            <span className="text-xs text-muted-foreground">{k.hint}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              {isAdmin ? (
+                <div className="flex items-center gap-2">
+                  <span className="hidden text-xs text-muted-foreground sm:inline">Answer style</span>
+                  <Select items={ROLES.map((r) => ({ value: r.value, label: r.label }))} value={newRole} onValueChange={(v) => v && setNewRole(v as AnswerRole)}>
+                    <SelectTrigger size="sm" data-testid="role-select" aria-label="Answer style for this chat">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {ROLES.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          <span className="flex flex-col">
+                            <span>{r.label}</span>
+                            <span className="text-xs text-muted-foreground">{r.hint}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <Badge variant="secondary" className="font-normal">
+                  {roleLabel(myRole)}
+                </Badge>
+              )}
+            </div>
           )}
         </header>
 
@@ -481,9 +562,15 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
               <LogoMark className="mx-auto size-10" />
               <p className="mt-4 text-xl font-semibold tracking-tight">Ask about SpectrumERP</p>
               <p className="mx-auto mt-1.5 max-w-md text-sm text-muted-foreground">
-                Answers come from the knowledge base{isAdmin ? "" : `, written in the ${roleLabel(myRole)} style`}.{" "}
+                Answers come from the {kgNewOk && newKb === "spectrumerp_new" ? `${KB_LABEL.spectrumerp_new} ` : ""}knowledge base
+                {isAdmin ? "" : `, written in the ${roleLabel(myRole)} style`}.{" "}
                 {isAdmin && "Pick the answer style above; it stays fixed for this chat."}
               </p>
+              {kgNewOk && (
+                <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground" data-testid="kb-hint">
+                  The knowledge base is fixed once you send the first message. To use a different one later, start a new chat.
+                </p>
+              )}
               <div className="mt-7 grid gap-2 text-left sm:grid-cols-2">
                 {SUGGESTIONS.map(({ q, icon: Icon }, i) => (
                   <motion.button
@@ -533,7 +620,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
                     key={m.id}
                     m={m}
                     live={live?.messageId === m.id ? live : null}
-                    canRetry={m.id === lastAssistantId && !busy}
+                    canRetry={m.id === lastAssistantId && !busy && !readOnly}
                     onRetry={() => void retry(m.id)}
                     onRate={(v, c) => void rate(m.id, v, c)}
                   />
@@ -562,8 +649,27 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
               </motion.div>
             )}
           </AnimatePresence>
+          {readOnly && (
+            <div
+              className="mx-auto mb-2 flex max-w-3xl flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-warning/30 bg-warning/[0.08] px-3 py-2 text-sm text-warning"
+              role="status"
+              data-testid="chat-read-only"
+              data-reason={readOnly.reason}
+            >
+              <TriangleAlert className="size-4 shrink-0" />
+              <span className="flex-1">
+                {readOnly.text} <span className="text-warning/80">This chat is read-only.</span>
+              </span>
+              <Link href="/chat" onClick={startNewChat} className={buttonVariants({ variant: "outline", size: "sm" })}>
+                <MessageSquarePlus /> New chat
+              </Link>
+            </div>
+          )}
           <form
-            className="mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-input bg-background p-1.5 pl-3.5 shadow-card transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 dark:bg-input/20"
+            className={cn(
+              "mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-input bg-background p-1.5 pl-3.5 shadow-card transition-[border-color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 dark:bg-input/20",
+              readOnly && "opacity-60",
+            )}
             onSubmit={(e) => {
               e.preventDefault();
               void send();
@@ -573,7 +679,8 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
               ref={inputRef}
               className="max-h-48 min-h-[40px] flex-1 resize-none bg-transparent py-2.5 text-[15px] outline-none placeholder:text-muted-foreground"
               rows={1}
-              placeholder="Ask a question about SpectrumERP…"
+              placeholder={readOnly ? "This chat is read-only" : "Ask a question about SpectrumERP…"}
+              disabled={!!readOnly}
               value={input}
               maxLength={4000}
               onChange={(e) => {
@@ -599,7 +706,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
                 </motion.div>
               ) : (
                 <motion.div key="send" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
-                  <Button type="submit" size="icon" className="size-10 rounded-xl" disabled={!input.trim() || sending} aria-label="Send" data-testid="send">
+                  <Button type="submit" size="icon" className="size-10 rounded-xl" disabled={!input.trim() || sending || !!readOnly} aria-label="Send" data-testid="send">
                     {sending ? <Spinner /> : <ArrowUp />}
                   </Button>
                 </motion.div>
