@@ -17,7 +17,6 @@ import {
   RotateCcw,
   Search,
   ShieldCheck,
-  Sparkles,
   Square,
   ThumbsDown,
   ThumbsUp,
@@ -42,10 +41,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { Kbd } from "@/components/ui/kbd";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Spinner } from "@/components/ui/spinner";
+import { KgLoader } from "./KgLoader";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { LogoMark } from "@/components/shell/Logo";
 import { CopyButton, Markdown } from "./Markdown";
@@ -314,7 +312,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
         </InputGroup>
       </div>
       <p className="px-4 pt-2 pb-1 text-[11px] font-medium text-muted-foreground">Recent</p>
-      <ul className="flex-1 space-y-px overflow-y-auto px-2 pb-3" data-testid="conversation-list">
+      <ul className="thin-scroll flex-1 space-y-px overflow-y-auto px-2 pb-3" data-testid="conversation-list">
         {filtered.length === 0 && <li className="px-3 py-8 text-center text-sm text-muted-foreground">{convs.length ? "No chats match." : "No chats yet."}</li>}
         <AnimatePresence initial={false}>
           {filtered.map((c) => {
@@ -470,7 +468,7 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
           )}
         </header>
 
-        <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-y-auto px-3 py-6 md:px-6" data-testid="messages">
+        <div ref={scrollRef} onScroll={onScroll} className="thin-scroll flex-1 overflow-y-auto px-3 py-6 md:px-6" data-testid="messages">
           {messages.length === 0 ? (
             <motion.div
               className="mx-auto mt-6 max-w-xl text-center sm:mt-12"
@@ -593,21 +591,20 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
             <AnimatePresence mode="popLayout" initial={false}>
               {live ? (
                 <motion.div key="stop" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
-                  <Button type="button" variant="outline" className="h-10 rounded-xl px-3" onClick={() => void stop()} aria-label="Stop answer" data-testid="stop">
-                    <Square className="fill-current" /> <span className="hidden sm:inline">Stop</span>
+                  <Button type="button" variant="outline" size="icon" className="size-10 rounded-xl" onClick={() => void stop()} aria-label="Stop answer" title="Stop answer" data-testid="stop">
+                    <Square className="fill-current" />
                   </Button>
                 </motion.div>
               ) : (
                 <motion.div key="send" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
                   <Button type="submit" size="icon" className="size-10 rounded-xl" disabled={!input.trim() || sending} aria-label="Send" data-testid="send">
-                    {sending ? <Spinner /> : <ArrowUp />}
+                    <ArrowUp />
                   </Button>
                 </motion.div>
               )}
             </AnimatePresence>
           </form>
           <p className="mx-auto mt-2 hidden max-w-3xl items-center gap-1 text-[11px] text-muted-foreground sm:flex">
-            <Kbd>Enter</Kbd> to send · <Kbd>Shift</Kbd>+<Kbd>Enter</Kbd> new line
             <span className="ml-auto">Answers can be wrong; check important details.</span>
           </p>
         </div>
@@ -673,24 +670,14 @@ function AssistantMessage({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
-      <span className="mt-0.5 hidden size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary sm:inline-flex" aria-hidden>
-        <Sparkles className="size-3.5" />
+      <span className="mt-0.5 hidden size-7 shrink-0 items-center justify-center sm:inline-flex" aria-hidden>
+        <KgLoader className="size-6" animated={streaming} />
       </span>
       <div className="min-w-0 flex-1">
         {m.content ? <Markdown text={m.content} /> : null}
 
         {streaming && (
           <p className="mt-1 flex items-center gap-2 text-sm" data-testid="answer-progress">
-            <span className="flex gap-0.5" aria-hidden>
-              {[0, 1, 2].map((i) => (
-                <motion.span
-                  key={i}
-                  className="size-1.5 rounded-full bg-primary"
-                  animate={{ opacity: [0.25, 1, 0.25], y: [0, -2, 0] }}
-                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
-                />
-              ))}
-            </span>
             <span className="text-shimmer">
               {live?.phase === "queued" && live.position > 0
                 ? `All assistant slots are busy. You are number ${live.position} in the queue…`

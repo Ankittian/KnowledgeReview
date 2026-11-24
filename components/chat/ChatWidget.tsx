@@ -15,7 +15,7 @@ import {
 import { CHAT_ERROR_TEXT, type ChatErrorCode } from "@/lib/chat/errors";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { KgLoader } from "./KgLoader";
 import { CopyButton, Markdown } from "./Markdown";
 
 /* ---- types (minimal subset of ChatApp) ---------------------------------- */
@@ -247,7 +247,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                 const el = scrollRef.current;
                 if (el) stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
               }}
-              className="flex-1 overflow-y-auto px-4 py-3"
+              className="thin-scroll flex-1 overflow-y-auto px-4 py-3"
             >
               {messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
@@ -283,23 +283,13 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                       </li>
                     ) : (
                       <li key={m.id} className="flex gap-2">
-                        <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                          <Sparkles className="size-3" />
+                        <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center" aria-hidden>
+                          <KgLoader className="size-5" animated={m.status === "streaming"} />
                         </span>
                         <div className="min-w-0 flex-1">
                           {m.content ? <Markdown text={m.content} /> : null}
                           {m.status === "streaming" && live?.messageId === m.id && (
                             <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <span className="flex gap-0.5" aria-hidden>
-                                {[0, 1, 2].map((i) => (
-                                  <motion.span
-                                    key={i}
-                                    className="size-1 rounded-full bg-primary"
-                                    animate={{ opacity: [0.25, 1, 0.25], y: [0, -2, 0] }}
-                                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
-                                  />
-                                ))}
-                              </span>
                               <span className="text-shimmer">
                                 {live.phase === "queued" && live.position > 0
                                   ? `Queue position ${live.position}…`
@@ -383,7 +373,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                   ) : (
                     <motion.div key="send" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
                       <Button type="submit" size="icon" className="size-8 rounded-lg" disabled={!input.trim() || sending} aria-label="Send">
-                        {sending ? <Spinner className="size-3.5" /> : <ArrowUp className="size-3.5" />}
+                        <ArrowUp className="size-3.5" />
                       </Button>
                     </motion.div>
                   )}
