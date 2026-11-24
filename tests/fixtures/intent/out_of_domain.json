@@ -1,0 +1,242 @@
+[
+  {
+    "id": "ood-001",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Write me a poem about the monsoon.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-002",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Who won the cricket world cup in 2011?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-003",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What's the weather like in Mumbai tomorrow?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-004",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "Give me a recipe for butter chicken.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-005",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Write a Python script that scrapes Amazon prices.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-006",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Explain how transformers work in machine learning.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-007",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What is the capital of Australia?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-008",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "Can you help me write a cover letter for a marketing job?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-009",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Translate 'good morning' into Japanese.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-010",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Tell me a joke about accountants.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-011",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Who is the current prime minister of the UK?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-012",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "How do I fix a flat bicycle tyre?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-013",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Is Bitcoin a good investment right now?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-014",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Summarise the plot of Inception.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-015",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What's the best way to learn guitar?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-016",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "Write a React component for a todo list.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-017",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "How do I set up a Kubernetes cluster on AWS?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-018",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Explain the French Revolution in three paragraphs.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-019",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Recommend a good laptop for gaming.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-020",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "What's the difference between SAP and Oracle Fusion? Which is better for us?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-021",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "How do I configure Tally Prime for GST returns?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-022",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Help me with my chemistry homework: balance H2 + O2 -> H2O.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-023",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Who is the best football player of all time?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-024",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "Write a SQL query to find the second highest salary in an Employees table.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-025",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "How do I install Docker on Ubuntu?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-026",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Draft a tweet announcing our new product launch.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-027",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What are good places to visit in Goa?",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-028",
+    "tokenRole": "functional",
+    "isAdmin": true,
+    "previousQuestions": [],
+    "latestQuestion": "Explain how mortgage interest is calculated in the US.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-029",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Tell me about the history of the Roman Empire.",
+    "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-030",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Can you debug this JavaScript: const a = [1,2,3]; a.map(x => x*2.toString())",
+    "expected": "out_of_domain"
+  }
+]

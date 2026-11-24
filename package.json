@@ -30,6 +30,7 @@
     "e2e": "playwright test",
     "postinstall": "node -e \"const fs = require('fs'); const p = 'node_modules/tw-animate-css/package.json'; if (fs.existsSync(p)) { const j = JSON.parse(fs.readFileSync(p, 'utf8')); if (j.exports && j.exports['.'] && !j.exports['.'].default) { j.exports['.'].default = j.exports['.'].style; j.exports['.'].import = j.exports['.'].style; fs.writeFileSync(p, JSON.stringify(j, null, 2)); } }\"",
     "chat:check": "tsx scripts/chat-check.ts",
+    "intent:eval": "tsx scripts/intent-eval.ts",
     "deploy:init": "tsx scripts/db-init.ts && tsx scripts/seed-admin.ts --if-missing && tsx scripts/sync-cards.ts --entities-only && tsx scripts/push-cards.ts"
   },
   "dependencies": {
