@@ -41,12 +41,12 @@ export function AppSidebar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: bo
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            {/* expanded: wordmark linking to the company site */}
+            {/* expanded: wordmark linking to Chat */}
             <div className="flex px-2 py-1 group-data-[collapsible=icon]:hidden">
               <ForceLogo className="h-9" />
             </div>
-            {/* collapsed: small mark linking home */}
-            <SidebarMenuButton size="lg" className="hidden justify-center gap-0 group-data-[collapsible=icon]:flex" render={<Link href="/today" aria-label="Knowledge Review home" />}>
+            {/* collapsed: small mark linking to Chat */}
+            <SidebarMenuButton size="lg" className="hidden justify-center gap-0 group-data-[collapsible=icon]:flex" render={<Link href="/chat" aria-label="Go to Chat" />}>
               <LogoMark className="size-8" />
             </SidebarMenuButton>
           </SidebarMenuItem>

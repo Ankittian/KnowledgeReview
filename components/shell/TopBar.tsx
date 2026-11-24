@@ -21,7 +21,7 @@ export function TopBar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: boolea
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b bg-background/80 px-3 backdrop-blur-md supports-backdrop-filter:bg-background/70 md:px-4">
       <SidebarTrigger className="-ml-1 hidden md:inline-flex" />
-      <Link href="/today" className="md:hidden" aria-label="Knowledge Review home">
+      <Link href="/chat" className="md:hidden" aria-label="Go to Chat">
         <LogoMark className="size-7" />
       </Link>
       <Separator orientation="vertical" className="mx-1 hidden h-4 data-vertical:self-center md:block" />

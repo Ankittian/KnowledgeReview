@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 /** Brand mark: two stacked cards with a check. Uses the primary token so it follows the theme. */
@@ -21,7 +22,7 @@ export function Logo({ size = "md", className }: { size?: "md" | "lg"; className
   );
 }
 
-/** ForceIntellect wordmark linking to the company site: transparent PNGs, a light and a brighter dark-theme variant. Fixed aspect ratio (353x78). */
+/** ForceIntellect wordmark linking to the Chat page: transparent PNGs, a light and a brighter dark-theme variant. Fixed aspect ratio (353x78). */
 export function ForceLogo({ className, linked = true }: { className?: string; linked?: boolean }) {
   const img = cn("aspect-[353/78] h-auto w-auto max-w-none shrink-0 object-contain object-left", className);
   const imgs = (
@@ -34,8 +35,8 @@ export function ForceLogo({ className, linked = true }: { className?: string; li
   );
   if (!linked) return imgs;
   return (
-    <a href="https://forceintellect.com/" target="_blank" rel="noopener noreferrer" aria-label="ForceIntellect website" className="w-fit self-start justify-self-start">
+    <Link href="/chat" aria-label="Go to Chat" className="w-fit self-start justify-self-start">
       {imgs}
-    </a>
+    </Link>
   );
 }

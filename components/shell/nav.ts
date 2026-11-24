@@ -24,11 +24,11 @@ export interface NavItem {
 }
 
 export const MAIN_NAV: NavItem[] = [
+  { href: "/chat", label: "Chat", icon: MessageSquare, description: "Ask questions about SpectrumERP" },
   { href: "/today", label: "Today", icon: Layers, description: "Review today’s flashcards" },
   { href: "/progress", label: "Progress", icon: BarChart3, description: "Your streak and knowledge by area" },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy, description: "Points from correct answers" },
   { href: "/browse", label: "Browse", icon: Search, description: "Search and study every card" },
-  { href: "/chat", label: "Chat", icon: MessageSquare, description: "Ask questions about SpectrumERP" },
 ];
 
 /** Admin + reviewer sections. `adminOnly` items are hidden from reviewers. */
@@ -39,7 +39,7 @@ export const ADMIN_NAV: (NavItem & { adminOnly?: boolean })[] = [
   { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
   { href: "/admin/users", label: "Users", icon: Users, adminOnly: true, description: "Approve sign-ups, roles and access" },
   { href: "/admin/chats", label: "All chats", icon: MessagesSquare, adminOnly: true, description: "Every assistant conversation" },
-  { href: "/admin/settings", label: "Settings & exports", icon: Settings2, adminOnly: true, description: "Daily limit, banner, email and exports" },
+  { href: "/admin/settings", label: "Settings", icon: Settings2, adminOnly: true, description: "Daily limit, banner, email and exports" },
 ];
 
 export const ADMIN_ROOT: NavItem = { href: "/admin", label: "Admin", icon: ShieldCheck };
