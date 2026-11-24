@@ -50,6 +50,7 @@ const testCfg = (over: Partial<ChatConfig> = {}): ChatConfig => ({
   maxTurns: 16,
   newTimeoutMs: 300_000,
   newMaxTurns: 30,
+  allowWeb: true, // pinned so a local .env cannot change what these tests expect
   ...over,
 });
 const KBS: KbSource[] = ["spectrumerp", "spectrumerp_new"];
