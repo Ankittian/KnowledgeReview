@@ -20,3 +20,7 @@ UPDATE card_related_items l SET node_id = k.type || ':' || k.key
 DO $$ BEGIN CREATE TYPE "public"."kb_source" AS ENUM('spectrumerp', 'spectrumerp_new'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 ALTER TABLE conversations ADD COLUMN IF NOT EXISTS kb_source kb_source NOT NULL DEFAULT 'spectrumerp';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS can_use_kg_new boolean NOT NULL DEFAULT false;
+
+-- Intent classifier (docs/INTENT-CLASSIFIER.md): the category that made the classifier refuse a question
+-- (sql_injection | jailbreak | out_of_domain | restricted_object | classifier_error). NULL = answered normally.
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS blocked_category text;

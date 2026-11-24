@@ -121,6 +121,7 @@ CREATE TABLE "chat_messages" (
 	"content" text DEFAULT '' NOT NULL,
 	"status" "chat_message_status" DEFAULT 'ok' NOT NULL,
 	"error_code" text,
+	"blocked_category" text,
 	"tokens_in" integer,
 	"tokens_out" integer,
 	"duration_ms" integer,
