@@ -10,7 +10,7 @@ How the stack works inside (what runs at each step) is in [DEPLOY-IMPLEMENTATION
 | AWS account and a key pair (`.pem`) | To launch the instance and SSH in. |
 | The repository URL | `https://github.com/Ankittian/KnowledgeReview.git`. If it is private you need a GitHub personal access token (or a deploy key). |
 | A Claude credential | `ANTHROPIC_API_KEY`, or a `CLAUDE_CODE_OAUTH_TOKEN` (made on your PC with `claude setup-token`). Needed for the Knowledge Assistant only. |
-| The knowledge-base MCP server URL and token | `KG_MCP_URL` must be a **host name that matches its TLS certificate** (a bare IP fails with `kb_unavailable`), and `KG_MCP_TOKEN`. Needed for the Assistant only. |
+| The knowledge-base MCP server URL and token | `KG_MCP_URL` must be a **host name that matches its TLS certificate** (a bare IP fails with `kb_unavailable`), and `KG_MCP_TOKEN`. Needed for the Assistant only. Setting up the second MCP server (`https://spectrum-mcp.forceintellect.com/mcp-new`) is covered in [`kg-mcp-new/EC2-SETUP.md`](../../kg-mcp-new/EC2-SETUP.md). |
 
 ## Step 1. Launch the EC2 instance (AWS console)
 
@@ -122,7 +122,7 @@ Edit the file (`nano .env`) and set at least:
 |---|---|
 | `POSTGRES_PASSWORD` | The hex string from above. **Required**, compose will not start without it. |
 | `JWT_SECRET` | The base64 string from above. **Required**, different on every server. |
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `admin@123` (already in the template). |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Set the username and a strong first-admin password. The deployment fails on an empty database if `ADMIN_PASSWORD` is blank. |
 | `APP_PORT` | `3000`: frontend and backend (one app). Must match the port opened in step 1. |
 | `POSTGRES_PORT` | `5432`: Postgres on the host (keep `POSTGRES_BIND=127.0.0.1`). |
 | `HTTP_PORT` / `HTTPS_PORT` | `8080` / `8443`: only for the nginx HTTPS profile (80/443 are often taken). |
@@ -130,6 +130,7 @@ Edit the file (`nano .env`) and set at least:
 | `COOKIE_SECURE` | `false` while you use plain `http://`. `true` only behind HTTPS. |
 | `ANTHROPIC_API_KEY` **or** `CLAUDE_CODE_OAUTH_TOKEN` | The Assistant's Claude credential. |
 | `KG_MCP_URL` / `KG_MCP_TOKEN` | The knowledge-base MCP server (host name, not an IP). |
+| `CLASSIFIER_ENABLED`, `CLASSIFIER_MODE`, `CLASSIFIER_API_KEY` | Optional intent classifier in front of the Assistant (jev). Off by default; start with `CLASSIFIER_ENABLED=true`, `CLASSIFIER_MODE=shadow` and the TypeSafe AI key. Also `CLASSIFIER_TIMEOUT_MS`, `CLASSIFIER_MODEL`, `CLASSIFIER_BASE_URL`, `CLASSIFIER_THRESHOLDS`. See [INTENT-CLASSIFIER.md](INTENT-CLASSIFIER.md). After editing: `docker compose --profile app up -d`. |
 
 Quick check that nothing required is empty:
 
@@ -262,6 +263,83 @@ Open `https://<your domain>:8443/login` (or without the port if `HTTPS_PORT=443`
 | Assistant: Claude unavailable | `ANTHROPIC_API_KEY` / `CLAUDE_CODE_OAUTH_TOKEN` missing in `.env`. After editing: `docker compose --profile app up -d`. |
 | Database URL error with a special-character password | Use a hex `POSTGRES_PASSWORD`. |
 | Port in use | Change `APP_PORT`, `POSTGRES_PORT`, `HTTP_PORT` or `HTTPS_PORT` in `.env`, then `docker compose --profile app up -d`. |
+| Build fails with `no space left on device` (`ResourceExhausted ... no space left`) | The disk is full. See step 13. |
+
+## Step 13. When the disk is full
+
+A full `docker compose --profile app up -d --build` needs about **7 GB free** on top of the images that are already
+running: the `init` image (~2.5 GB), the new `web` image (~2 GB) and the build cache (~3 GB). Docker keeps both a packed
+and an unpacked copy of each image, so a small disk (about 30 GB) with other services on it runs out halfway through
+the build. A failed build leaves the running app as it was.
+
+A full disk is also a risk for Postgres, which is on the same disk. Free space before you retry.
+
+**1. See where the space went**
+
+```bash
+df -h /
+docker system df
+sudo du -xh --max-depth=1 / 2>/dev/null | sort -rh | head
+```
+
+**2. Clear caches (safe, no downtime)**
+
+```bash
+docker builder prune -af                            # build cache, rebuilt on the next build
+docker image prune -f                               # dangling (untagged) images
+docker compose --profile app rm -f init             # the finished one-shot init container...
+docker rmi knowledgereview-init:latest              # ...and its image (2.5 GB), rebuilt when needed
+npm cache clean --force                             # only if npm is installed on the host
+sudo apt-get clean                                  # apt package cache (on Amazon Linux: sudo dnf clean all)
+sudo journalctl --vacuum-size=50M                   # old system logs
+df -h /
+```
+
+Do **not** run `docker volume prune` or `docker compose down -v` (they delete the database). Also leave alone model
+caches (for example `~/.cache/huggingface`) and data folders that other services on the same machine use.
+
+**3. Deploy only the web image**
+
+The web image is all the app needs at run time; `init` only prepares the database. If step 2 left about 5 GB free,
+the app can keep running while the new image builds:
+
+```bash
+cd ~/knowledge-review
+set -a; . ./.env; set +a                            # POSTGRES_USER / POSTGRES_DB for the psql lines below
+
+# Database changes first. Every statement is safe to run again, and the running app ignores the new columns.
+docker exec -i kr-postgres psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" < db/migrations.sql
+docker exec -i kr-postgres psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" < db/views.sql
+
+docker compose --profile app build web
+docker compose --profile app up -d --no-deps --no-build web   # swaps the container, a few seconds of downtime
+docker builder prune -af && docker image prune -f             # drop the build cache and the old web image
+```
+
+**Still not enough space?** Stop the app and delete its image, so the build can use that space too. The app is down
+until the build finishes (about 5 to 10 minutes); Postgres stays up.
+
+```bash
+docker stop kr-web && docker rm kr-web
+docker rmi knowledgereview-web:latest
+docker compose --profile app build web
+docker compose --profile app up -d --no-deps --no-build web
+docker builder prune -af
+```
+
+**Check**
+
+```bash
+docker compose --profile app ps                                            # kr-web healthy
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/login       # 200
+df -h /
+```
+
+This path skips the rest of `init`: the admin check and the flashcard sync and push. Run those only when the release
+changes cards, once there is space for the `init` image again (step 9). The lasting fix is a bigger disk: in the AWS
+console, raise the EBS volume size (EC2, Volumes, Modify volume), then grow the file system on the instance
+(`sudo growpart /dev/nvme0n1 1`, then `sudo xfs_growfs -d /` on Amazon Linux or `sudo resize2fs /dev/nvme0n1p1` on Ubuntu;
+check the device and partition names with `lsblk` first).
 
 ## Checklist
 
@@ -273,3 +351,4 @@ Open `https://<your domain>:8443/login` (or without the port if `HTTPS_PORT=443`
 - [ ] `init` exited 0, `web` healthy, `/login` returns 200
 - [ ] Logged in as admin and changed the password
 - [ ] Backup cron job set up
+- [ ] Disk has room for a build (`df -h /`: about 7 GB free; otherwise step 13)

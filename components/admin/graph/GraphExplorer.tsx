@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Columns2, Loader2, Orbit, Search, Share2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { KgNode, KgOverview } from "@/lib/kg/types";
-import { FALLBACK_COLOR, kgGet, labelColors } from "./api";
+import type { KgGraphName, KgNode, KgOverview } from "@/lib/kg/types";
+import { FALLBACK_COLOR, GRAPH_LABEL, GraphContext, labelColors, useKgGet } from "./api";
 import { ExploreView, type ExploreHandle } from "./ExploreView";
 import { NodeDrawer, type DrawerTarget } from "./NodeDrawer";
 import { RelationshipView, type RelSelection } from "./RelationshipView";
@@ -18,8 +19,23 @@ const VIEWS: { key: View; label: string; icon: typeof Share2; hint: string }[] =
   { key: "explore", label: "Explore", icon: Orbit, hint: "Walk outward from a node" },
 ];
 
-/** Admin knowledge-graph explorer: toolbar, one of three views, and a details drawer. */
-export function GraphExplorer() {
+/**
+ * Admin knowledge-graph explorer: graph switcher, toolbar, one of three views, and a details drawer.
+ * `graph` comes from `?graph=new` (D12); the explorer remounts when it changes, so selection and expanded nodes reset.
+ */
+export function GraphExplorer({ graph = "old", newAvailable = false }: { graph?: KgGraphName; newAvailable?: boolean }) {
+  return (
+    <GraphContext.Provider value={graph}>
+      <Explorer key={graph} graph={graph} newAvailable={newAvailable} />
+    </GraphContext.Provider>
+  );
+}
+
+function Explorer({ graph, newAvailable }: { graph: KgGraphName; newAvailable: boolean }) {
+  const kgGet = useKgGet();
+  const router = useRouter();
+  const [switching, startSwitch] = useTransition();
+  const switchTo = (g: KgGraphName) => startSwitch(() => router.replace(g === "new" ? "/admin/graph?graph=new" : "/admin/graph", { scroll: false }));
   const [overview, setOverview] = useState<KgOverview | null>(null);
   const [view, setView] = useState<View>("schema");
   const [rel, setRel] = useState<RelSelection>({});
@@ -34,7 +50,7 @@ export function GraphExplorer() {
 
   useEffect(() => {
     kgGet<KgOverview>("overview").then(setOverview).catch((e) => setError(e.message));
-  }, []);
+  }, [kgGet]);
 
   useEffect(() => {
     if (!error) return;
@@ -75,6 +91,27 @@ export function GraphExplorer() {
     <div data-fullbleed className="flex h-[calc(100dvh-17rem)] min-h-[520px] flex-col overflow-hidden rounded-xl bg-card shadow-card ring-1 ring-foreground/[0.07]">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2 border-b px-3 py-2">
+        <div role="tablist" aria-label="Knowledge graph" className="flex rounded-lg bg-muted p-0.5">
+          {(["old", "new"] as const).map((g) => {
+            const unavailable = g === "new" && !newAvailable && graph !== "new";
+            return (
+              <button
+                key={g}
+                role="tab"
+                aria-selected={graph === g}
+                disabled={unavailable}
+                title={unavailable ? "SpectrumERP-new is not configured" : undefined}
+                onClick={() => graph !== g && switchTo(g)}
+                className={cn(
+                  "rounded-md px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+                  graph === g ? "bg-card text-foreground shadow-sm" : "text-muted-foreground enabled:hover:text-foreground",
+                )}
+              >
+                {GRAPH_LABEL[g]}
+              </button>
+            );
+          })}
+        </div>
         <div role="tablist" aria-label="Graph view" className="flex rounded-lg bg-muted p-0.5">
           {VIEWS.map((v) => (
             <button
@@ -95,8 +132,8 @@ export function GraphExplorer() {
         </div>
         <SearchBox colors={colors} onPick={pickSearchHit} />
         <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
-          {busy > 0 && <Loader2 className="size-4 animate-spin" />}
-          {overview && <span className="hidden sm:inline">{overview.labels.length} types · {overview.relationships.length} relationships · {overview.totalNodes.toLocaleString()} nodes</span>}
+          {(busy > 0 || switching) && <Loader2 className="size-4 animate-spin" />}
+          {overview && <span className="hidden sm:inline">{overview.labels.length} types · {new Set(overview.relationships.map((r) => r.type)).size} relationships · {overview.totalNodes.toLocaleString()} nodes</span>}
         </div>
       </div>
 
@@ -151,6 +188,7 @@ export function GraphExplorer() {
 }
 
 function SearchBox({ colors, onPick }: { colors: Map<string, string>; onPick: (n: KgNode) => void }) {
+  const kgGet = useKgGet();
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<KgNode[] | null>(null);
   const [open, setOpen] = useState(false);
@@ -169,7 +207,7 @@ function SearchBox({ colors, onPick }: { colors: Map<string, string>; onPick: (n
         .finally(() => { if (!ctrl.signal.aborted) setLoading(false); });
     }, 300);
     return () => { clearTimeout(t); ctrl.abort(); };
-  }, [q]);
+  }, [q, kgGet]);
 
   const choose = (n: KgNode) => { onPick(n); setOpen(false); };
   const onKey = (e: React.KeyboardEvent) => {

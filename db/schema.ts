@@ -28,6 +28,9 @@ export const userStatus = pgEnum("user_status", ["pending", "active", "disabled"
 /** Answer style (Claude skill). General users have one, set by an admin (null = default); admins pick one per conversation. */
 export const answerRole = pgEnum("answer_role", ["technical", "functional", "product"]);
 
+/** Which knowledge-base MCP server a conversation uses (docs/plans/PLAN-kg-mcp-new.md D1). Fixed per conversation. */
+export const kbSource = pgEnum("kb_source", ["spectrumerp", "spectrumerp_new"]);
+
 export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(), // admin | functional | technical
@@ -43,6 +46,7 @@ export const users = pgTable("users", {
   department: text("department"),
   primaryModule: text("primary_module"), // module code, e.g. MM
   answerRole: answerRole("answer_role"), // chat answer style set by an admin; null = default (functional)
+  canUseKgNew: boolean("can_use_kg_new").notNull().default(false), // admin-approved access to SpectrumERP-new (admins always have it)
   roleId: integer("role_id")
     .notNull()
     .references(() => roles.id),
@@ -377,6 +381,7 @@ export const conversations = pgTable(
       .references(() => users.id),
     title: text("title").notNull(),
     roleUsed: answerRole("role_used").notNull(), // fixed for the whole conversation
+    kbSource: kbSource("kb_source").notNull().default("spectrumerp"), // fixed for the whole conversation
     claudeSessionId: text("claude_session_id"),
     createdAt: createdAt(),
     updatedAt: ts("updated_at").notNull().defaultNow(),
@@ -398,6 +403,8 @@ export const chatMessages = pgTable(
     content: text("content").notNull().default(""),
     status: chatMessageStatus("status").notNull().default("ok"),
     errorCode: text("error_code"), // timeout | usage_limit | kb_unavailable | claude_unavailable | error
+    /** Set when the intent classifier refused the question: sql_injection | jailbreak | out_of_domain | restricted_object | classifier_error. */
+    blockedCategory: text("blocked_category"),
     tokensIn: integer("tokens_in"),
     tokensOut: integer("tokens_out"),
     durationMs: integer("duration_ms"),

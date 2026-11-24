@@ -4,7 +4,7 @@ import { logEvent } from "@/lib/events";
 import { json } from "@/lib/request";
 import { chatCaller, readJson } from "@/lib/chat/http";
 import { stopConversation } from "@/lib/chat/live";
-import { getOwnConversation, loadMessages, renameConversation, softDeleteConversation } from "@/lib/chat/service";
+import { getOwnConversation, kbReadOnly, loadMessages, renameConversation, softDeleteConversation } from "@/lib/chat/service";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -16,7 +16,7 @@ export async function GET(req: Request, ctx: Ctx) {
   const conv = await getOwnConversation(db, caller.session.user.id, (await ctx.params).id);
   if (!conv) return json({ error: "Not found" }, 404);
   return json({
-    conversation: { id: conv.id, title: conv.title, roleUsed: conv.roleUsed },
+    conversation: { id: conv.id, title: conv.title, roleUsed: conv.roleUsed, kbSource: conv.kbSource, readOnly: await kbReadOnly(db, conv, caller.isAdmin) },
     messages: await loadMessages(db, conv.id, caller.session.user.id),
   });
 }

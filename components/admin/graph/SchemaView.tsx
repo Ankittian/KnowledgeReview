@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { KgOverview, KgRelInfo } from "@/lib/kg/types";
-import { FALLBACK_COLOR, LAYERS, LAYER_NAME, truncate } from "./api";
+import { FALLBACK_COLOR, layerName, truncate } from "./api";
 import { usePanZoom } from "./usePanZoom";
 import { ZoomControls } from "./ZoomControls";
 
@@ -30,7 +30,7 @@ export function SchemaView({
   const [hoverLink, setHoverLink] = useState<string | null>(null);
 
   const { boxes, links, cols, width, height } = useMemo(() => {
-    const cols = LAYERS.filter((l) => overview.labels.some((x) => x.layer === l));
+    const cols = overview.layers.map((l) => l.id).filter((id) => overview.labels.some((x) => x.layer === id));
     const perCol = cols.map((layer) => overview.labels.filter((l) => l.layer === layer).sort((a, b) => b.count - a.count));
     const maxRows = Math.max(1, ...perCol.map((c) => c.length));
     const boxes = new Map<string, Box>();
@@ -102,7 +102,7 @@ export function SchemaView({
         <g transform={pz.transform}>
           {cols.map((layer, i) => (
             <text key={layer} x={PAD + i * COL_W + NODE_W / 2} y={PAD} textAnchor="middle" className="fill-muted-foreground text-[12px] font-medium tracking-wide uppercase">
-              {LAYER_NAME[layer]}
+              {layerName(overview, layer)}
             </text>
           ))}
           {links.map((l) => {

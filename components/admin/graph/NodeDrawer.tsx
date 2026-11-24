@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Columns2, Copy, Loader2, Orbit, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { KgHopHint, KgNode, KgNodeDetail, KgNodePage, KgOverview } from "@/lib/kg/types";
-import { FALLBACK_COLOR, LAYER_NAME, kgGet, splitKeyProps } from "./api";
+import type { KgCode, KgHopHint, KgNode, KgNodeDetail, KgNodePage, KgOverview } from "@/lib/kg/types";
+import { FALLBACK_COLOR, layerName, splitKeyProps, useKgGet } from "./api";
 import type { RelSelection } from "./RelationshipView";
 
 export type DrawerTarget = { kind: "node"; id: string; seed?: KgNode } | { kind: "type"; label: string };
@@ -100,7 +100,8 @@ const SKIP_AUTO = new Set(["id", "name", "title", "summary", "kind", "label"]);
 function NodePanel({ id, seed, overview, colors, onClose, onOpenType, onExplore, onOpenRelationship }: { id: string; seed?: KgNode; overview: KgOverview; colors: Map<string, string> } & DrawerActions) {
   const [detail, setDetail] = useState<KgNodeDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"summary" | "rels" | "props">("summary");
+  const [tab, setTab] = useState<"summary" | "rels" | "props" | "code">("summary");
+  const kgGet = useKgGet();
   const [filter, setFilter] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -108,7 +109,7 @@ function NodePanel({ id, seed, overview, colors, onClose, onOpenType, onExplore,
     const ctrl = new AbortController();
     kgGet<KgNodeDetail>("node", { id }, ctrl.signal).then(setDetail).catch((e) => { if (!ctrl.signal.aborted) setError(e.message); });
     return () => ctrl.abort();
-  }, [id]);
+  }, [id, kgGet]);
 
   const node: KgNode | undefined = detail?.node ?? seed;
   const label = node?.label ?? "";
@@ -177,6 +178,7 @@ function NodePanel({ id, seed, overview, colors, onClose, onOpenType, onExplore,
           { key: "summary", label: "Summary" },
           { key: "rels", label: `Relationships${detail ? ` (${hints.length})` : ""}` },
           { key: "props", label: `Properties${detail ? ` (${props.length})` : ""}` },
+          ...(info?.hasCode ? [{ key: "code" as const, label: "Code" }] : []),
         ]}
       />
       <div className="min-h-0 flex-1 overflow-y-auto p-3 text-sm">
@@ -208,6 +210,8 @@ function NodePanel({ id, seed, overview, colors, onClose, onOpenType, onExplore,
             {inn.length > 0 && <div><div className="mb-1 text-xs font-medium text-muted-foreground">Incoming</div><ul className="space-y-0.5">{inn.map(hintRow)}</ul></div>}
             <p className="text-[11px] text-muted-foreground">Click a row to add those neighbours to Explore. <Columns2 className="inline size-3" /> shows every link of that kind side by side.</p>
           </div>
+        ) : tab === "code" ? (
+          <CodePanel id={id} />
         ) : (
           <div className="space-y-2">
             <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter properties…" className="h-7" aria-label="Filter properties" />
@@ -243,7 +247,7 @@ function TypePanel({ label, overview, colors, onClose, onOpenNode, onOpenRelatio
 
   return (
     <div className="flex h-full flex-col">
-      <Header color={colors.get(label) ?? FALLBACK_COLOR} kicker={`Node type · ${LAYER_NAME[info?.layer ?? "other"]} layer`} title={label} onClose={onClose}>
+      <Header color={colors.get(label) ?? FALLBACK_COLOR} kicker={`Node type · ${layerName(overview, info?.layer ?? "other")} layer`} title={label} onClose={onClose}>
         <p className="text-xs text-muted-foreground"><span className="font-medium text-foreground tabular-nums">{(info?.count ?? 0).toLocaleString()}</span> nodes{info?.means ? ` · ${info.means}` : ""}</p>
         {info?.keyProps && (
           <div className="flex flex-wrap gap-1">
@@ -284,6 +288,7 @@ function NodeList({ label, onOpenNode }: { label: string; onOpenNode: (n: KgNode
   const [page, setPage] = useState<{ nodes: KgNode[]; more: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const kgGet = useKgGet();
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -295,7 +300,7 @@ function NodeList({ label, onOpenNode }: { label: string; onOpenNode: (n: KgNode
         .finally(() => { if (!ctrl.signal.aborted) setLoading(false); });
     }, 250);
     return () => { clearTimeout(t); ctrl.abort(); };
-  }, [label, q]);
+  }, [label, q, kgGet]);
 
   const more = async () => {
     if (!page) return;
@@ -323,6 +328,51 @@ function NodeList({ label, onOpenNode }: { label: string; onOpenNode: (n: KgNode
       </ul>
       {loading && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
       {page?.more && !loading && <Button size="xs" variant="secondary" className="w-full" onClick={more}>Load more</Button>}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- code (new graph, read-only)
+
+/** Source text of a node, as the server returns it (its own line numbers included). Long files load in chunks. */
+function CodePanel({ id }: { id: string }) {
+  const kgGet = useKgGet();
+  const [chunks, setChunks] = useState<KgCode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async (start?: number, signal?: AbortSignal) => {
+    setLoading(true); setError(null);
+    try {
+      const c = await kgGet<KgCode>("code", { id, start }, signal);
+      setChunks((prev) => (start ? [...prev, c] : [c]));
+    } catch (e) { if (!signal?.aborted) setError(e instanceof Error ? e.message : "Request failed"); } finally { if (!signal?.aborted) setLoading(false); }
+  }, [id, kgGet]);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    void load(undefined, ctrl.signal);
+    return () => ctrl.abort();
+  }, [load]);
+
+  const first = chunks[0], last = chunks[chunks.length - 1];
+  return (
+    <div className="space-y-2">
+      {first && (
+        <p className="break-all font-mono text-[11px] text-muted-foreground" title={first.path}>
+          {first.path}
+          {first.startLine != null && <span className="text-foreground">:{first.startLine}{last.endLine != null && last.endLine !== first.startLine ? `–${last.endLine}` : ""}</span>}
+          {first.totalLines != null && <span> · {first.totalLines.toLocaleString()} lines</span>}
+        </p>
+      )}
+      {first?.outline && <p className="text-[11px] text-muted-foreground">Structure of the file (outline), not the full source.</p>}
+      {chunks.map((c, i) => (
+        <pre key={i} tabIndex={0} aria-label="Source code" className="max-h-[60vh] overflow-auto rounded bg-muted/60 p-2 font-mono text-[11px] leading-snug whitespace-pre">{c.code}</pre>
+      ))}
+      {last?.note && <p className="text-[11px] text-muted-foreground">{last.note}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      {loading && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
+      {last?.nextStartLine && !loading && <Button size="xs" variant="secondary" className="w-full" onClick={() => void load(last.nextStartLine ?? undefined)}>Load more</Button>}
     </div>
   );
 }

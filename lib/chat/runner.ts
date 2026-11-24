@@ -1,6 +1,6 @@
-import { chatConfig, KG_SERVER_NAME, type AnswerRole, type ChatConfig } from "./config";
+import { chatConfig, kbServer, type AnswerRole, type ChatConfig, type KbServer, type KbSource } from "./config";
 import { codeForAssistantError, codeForMessage, type ChatErrorCode } from "./errors";
-import { builtinTools, DENIED_TOOLS, isToolAllowed } from "./policy";
+import { builtinTools, disallowedToolsFor, isToolAllowed } from "./policy";
 import { buildSystemPrompt } from "./prompts";
 
 /**
@@ -15,6 +15,8 @@ export interface RunUser {
 export interface RunRequest {
   prompt: string;
   role: AnswerRole;
+  /** Knowledge base of the conversation: picks the MCP server, token and limits (D3, D8, D9). Fixed per conversation. */
+  kbSource: KbSource;
   user: RunUser;
   /** Claude session to continue (REQ-HARN-04). */
   resumeSessionId?: string | null;
@@ -49,8 +51,8 @@ export interface ClaudeRunner {
 // ---------------------------------------------------------------- environment for the Claude process
 
 /**
- * The Claude process gets a minimal environment: never DATABASE_URL, JWT_SECRET, KG_MCP_TOKEN or other app secrets
- * (REQ-NFR-05). Only what it needs to start, reach the network and find its own credentials.
+ * The Claude process gets a minimal environment: never DATABASE_URL, JWT_SECRET, KG_MCP_TOKEN, KG_NEW_MCP_TOKEN_* or
+ * other app secrets (REQ-NFR-05). Only what it needs to start, reach the network and find its own credentials.
  */
 const PASS_THROUGH = [
   "PATH",
@@ -103,16 +105,23 @@ export function harnessEnv(cfg: ChatConfig, src: Record<string, string | undefin
   return env;
 }
 
-/** Headers sent to the KB MCP server on every call: its token plus the app user, for its logs (REQ-HARN-05). */
-export function kgHeaders(cfg: ChatConfig, user: RunUser, role: AnswerRole): Record<string, string> {
+/**
+ * Headers sent to the KB MCP server on every call: its bearer token plus the app user, for its logs (REQ-HARN-05, D20).
+ * Same for both servers; `server` is the conversation's `kbServer(...)`, so the token is already the right one.
+ */
+export function kgHeaders(server: Pick<KbServer, "token">, user: RunUser, role: AnswerRole): Record<string, string> {
   const h: Record<string, string> = {
     "X-App-User-Id": user.id,
     "X-App-Username": user.username,
     "X-App-User-Role": role,
   };
-  if (cfg.kgMcpToken) h.Authorization = `Bearer ${cfg.kgMcpToken}`;
+  if (server.token) h.Authorization = `Bearer ${server.token}`;
   return h;
 }
+
+/** What to tell the log when the conversation's KB server is not configured (never includes values). */
+const unconfiguredDetail = (kb: KbSource) =>
+  kb === "spectrumerp_new" ? "KG_NEW_MCP_URL / KG_NEW_MCP_TOKEN_TECHNICAL / KG_NEW_MCP_TOKEN_FUNCTIONAL are not all configured" : "KG_MCP_URL is not configured";
 
 // ---------------------------------------------------------------- Claude Agent SDK runner
 
@@ -125,7 +134,9 @@ export class AgentSdkRunner implements ClaudeRunner {
     const cfg = this.cfg;
     const { query } = await import("@anthropic-ai/claude-agent-sdk");
     const result: RunResult = { ok: false, tokensIn: 0, tokensOut: 0, numTurns: 0, producedOutput: false };
-    if (!cfg.kgMcpUrl) return { ...result, errorCode: "kb_unavailable", errorDetail: "KG_MCP_URL is not configured" };
+    // The conversation's own server only; never a fallback to the other one (D19).
+    const kb = kbServer(req.kbSource, req.role, cfg);
+    if (!kb.configured) return { ...result, errorCode: "kb_unavailable", errorDetail: unconfiguredDetail(kb.kb) };
 
     const abort = new AbortController();
     const onAbort = () => abort.abort(req.signal.reason);
@@ -147,23 +158,24 @@ export class AgentSdkRunner implements ClaudeRunner {
           abortController: abort,
           // Only the harness project's settings; never the server user's ~/.claude settings (REQ-HARN-02).
           settingSources: ["project"],
-          systemPrompt: { type: "custom", prompt: buildSystemPrompt(cfg.harnessDir, req.role) },
+          systemPrompt: { type: "custom", prompt: buildSystemPrompt() },
           tools: builtinTools(cfg.allowWeb),
-          disallowedTools: DENIED_TOOLS,
+          disallowedTools: disallowedToolsFor(kb.kb),
           // No allow rules: every tool call goes through canUseTool, which is the single gate (REQ-HARN-01).
           permissionMode: "default",
           canUseTool: async (toolName, input, opts) => {
-            if (isToolAllowed(toolName, cfg.allowWeb)) return { behavior: "allow", updatedInput: input };
+            if (isToolAllowed(toolName, cfg.allowWeb, kb.kb)) return { behavior: "allow", updatedInput: input };
             req.onEvent({ type: "tool_denied", toolUseId: opts.toolUseID, name: toolName, input });
             return { behavior: "deny", message: `The ${toolName} tool is not available in this assistant.` };
           },
-          skills: [], // role skill is injected into the system prompt; the Skill tool stays off
+          skills: [], // role skills are not used (D4); the Skill tool stays off
           strictMcpConfig: true,
           mcpServers: {
-            [KG_SERVER_NAME]: { type: "http", url: cfg.kgMcpUrl, headers: kgHeaders(cfg, req.user, req.role), alwaysLoad: true },
+            // The token travels only in this header config, never in the process env (REQ-NFR-05).
+            [kb.serverName]: { type: "http", url: kb.url, headers: kgHeaders(kb, req.user, req.role), alwaysLoad: true },
           },
           resume: req.resumeSessionId ?? undefined,
-          maxTurns: cfg.maxTurns,
+          maxTurns: kb.maxTurns,
           includePartialMessages: true,
           verbatimPrompts: true, // user text is never treated as a slash command or @file mention
           persistSession: true, // needed for resume
@@ -181,7 +193,7 @@ export class AgentSdkRunner implements ClaudeRunner {
               result.sessionId = m.session_id;
               result.model = m.model;
               req.onEvent({ type: "session", sessionId: m.session_id, model: m.model });
-              const kg = m.mcp_servers.find((s) => s.name === KG_SERVER_NAME);
+              const kg = m.mcp_servers.find((s) => s.name === kb.serverName);
               if (!kg || KG_DOWN_STATUSES.has(kg.status)) {
                 pendingError = "kb_unavailable";
                 result.errorDetail = `MCP server status: ${kg?.status ?? "missing"}`;

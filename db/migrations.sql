@@ -36,7 +36,7 @@ CREATE INDEX IF NOT EXISTS email_otps_user_idx ON email_otps (user_id, purpose, 
 -- created from an older schema do not have it. Fresh databases already get it from db/schema.sql.
 CREATE UNIQUE INDEX IF NOT EXISTS chat_feedback_msg_user ON chat_feedback (message_id, user_id);
 
--- Saved SMTP connections for the one-time-code emails (Admin > Email settings). At most one is active.
+-- Saved SMTP connections for the one-time-code emails (Admin > Settings & exports > Email). At most one is active.
 CREATE TABLE IF NOT EXISTS mail_connections (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   name text NOT NULL,
@@ -54,3 +54,14 @@ CREATE TABLE IF NOT EXISTS mail_connections (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS mail_connections_name_unique ON mail_connections (lower(name));
 CREATE UNIQUE INDEX IF NOT EXISTS mail_connections_one_active ON mail_connections (is_active) WHERE is_active;
+
+-- Second knowledge-graph MCP (docs/plans/PLAN-kg-mcp-new.md D1, D2): the KB a conversation uses (fixed per chat) and the
+-- per-user permission to choose SpectrumERP-new. Existing conversations become 'spectrumerp'; existing users get false.
+-- Kept on ONE line: db/client.ts splitSql() cuts statements at a ';' that ends a line.
+DO $$ BEGIN CREATE TYPE "public"."kb_source" AS ENUM('spectrumerp', 'spectrumerp_new'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+ALTER TABLE conversations ADD COLUMN IF NOT EXISTS kb_source kb_source NOT NULL DEFAULT 'spectrumerp';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS can_use_kg_new boolean NOT NULL DEFAULT false;
+
+-- Intent classifier (docs/INTENT-CLASSIFIER.md): the category that made the classifier refuse a question
+-- (sql_injection | jailbreak | out_of_domain | restricted_object | classifier_error). NULL = answered normally.
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS blocked_category text;

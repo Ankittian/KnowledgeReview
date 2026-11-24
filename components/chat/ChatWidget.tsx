@@ -13,10 +13,12 @@ import {
   X,
 } from "lucide-react";
 import { CHAT_ERROR_TEXT, type ChatErrorCode } from "@/lib/chat/errors";
+import type { KbSource } from "@/lib/chat/config";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { KgLoader } from "./KgLoader";
 import { CopyButton, Markdown } from "./Markdown";
+import { ApiError, KB_LABEL, KB_READ_ONLY_TEXT, KbBadge, type KbReadOnly, type KbReadOnlyState } from "./kb";
 
 /* ---- types (minimal subset of ChatApp) ---------------------------------- */
 type AnswerRole = "technical" | "functional" | "product";
@@ -46,7 +48,10 @@ async function api<T>(url: string, init?: RequestInit & { json?: unknown }): Pro
     window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
     throw new Error("Signed out");
   }
-  if (!res.ok) throw new Error((data as { error?: string }).error ?? `Request failed (${res.status})`);
+  if (!res.ok) {
+    const d = data as { error?: string; code?: string; reason?: string };
+    throw new ApiError(d.error ?? `Request failed (${res.status})`, res.status, d.code, d.reason);
+  }
   return data;
 }
 
@@ -54,10 +59,15 @@ const errorText = (code: string | null) =>
   CHAT_ERROR_TEXT[(code as ChatErrorCode) ?? "error"] ?? CHAT_ERROR_TEXT.error;
 
 /* ======================================================================== */
-export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
+export function ChatWidget({ myRole, canUseKgNew = false }: { myRole: AnswerRole; canUseKgNew?: boolean }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [convId, setConvId] = useState<string | null>(null);
+  // KB of the chat being started: defaults to SpectrumERP, sent with the first message only, fixed afterwards (D1, D18).
+  const [kb, setKb] = useState<KbSource>("spectrumerp");
+  const [kgNewOk, setKgNewOk] = useState(canUseKgNew);
+  const [chatKb, setChatKb] = useState<KbSource>("spectrumerp");
+  const [readOnly, setReadOnly] = useState<KbReadOnlyState | null>(null);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState<Live | null>(null);
@@ -122,19 +132,34 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
   useEffect(() => () => esRef.current?.close(), []);
 
   /* send */
+  /** A 403 about the KB is a state: show the server's text and lock the chat (kb_read_only) or the selector (kb_forbidden). */
+  function failed(e: unknown) {
+    if (e instanceof ApiError && e.code === "kb_read_only") {
+      const reason: KbReadOnly = e.reason === "unconfigured" ? "unconfigured" : "revoked";
+      setReadOnly({ reason, text: e.message || KB_READ_ONLY_TEXT[reason] });
+      setBanner(null);
+      return;
+    }
+    if (e instanceof ApiError && e.code === "kb_forbidden") {
+      setKgNewOk(false);
+      setKb("spectrumerp");
+    }
+    setBanner(e instanceof Error ? e.message : String(e));
+  }
+
   async function send() {
     const text = input.trim();
-    if (!text || sending || live) return;
+    if (!text || sending || live || readOnly) return;
     setSending(true);
     setBanner(null);
     try {
       const r = await api<{
-        conversation: { id: string; title: string; roleUsed: AnswerRole };
+        conversation: { id: string; title: string; roleUsed: AnswerRole; kbSource?: KbSource };
         userMessage: { id: number };
         assistantMessageId: number;
       }>("/api/chat/send", {
         method: "POST",
-        json: { conversationId: convId, role: convId ? null : myRole, text },
+        json: { conversationId: convId, role: convId ? null : myRole, text, ...(!convId && kgNewOk ? { kbSource: kb } : {}) },
       });
       setInput("");
       stickToBottom.current = true;
@@ -143,10 +168,13 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
         { id: r.userMessage.id, sender: "user", content: text, status: "ok", errorCode: null },
         { id: r.assistantMessageId, sender: "assistant", content: "", status: "streaming", errorCode: null },
       ]);
-      if (!convId) setConvId(r.conversation.id);
+      if (!convId) {
+        setConvId(r.conversation.id);
+        setChatKb(r.conversation.kbSource ?? (kgNewOk ? kb : "spectrumerp"));
+      }
       attach(r.assistantMessageId);
     } catch (e) {
-      setBanner(e instanceof Error ? e.message : String(e));
+      failed(e);
     } finally {
       setSending(false);
     }
@@ -173,7 +201,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
       stickToBottom.current = true;
       attach(r.assistantMessageId);
     } catch (e) {
-      setBanner(e instanceof Error ? e.message : String(e));
+      failed(e);
     }
   }
 
@@ -222,7 +250,8 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
               <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles className="size-3.5" />
               </span>
-              <span className="flex-1 text-sm font-semibold">Ask the Assistant</span>
+              <span className="flex-1 truncate text-sm font-semibold">Ask the Assistant</span>
+              {convId && <KbBadge kb={chatKb} />}
               {convId && (
                 <a
                   href={`/chat/${convId}`}
@@ -253,6 +282,28 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                 <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
                   <Sparkles className="size-8 opacity-30" />
                   <p className="text-sm">Ask anything about SpectrumERP</p>
+                  {kgNewOk && !convId && (
+                    <div className="flex flex-col items-center gap-1" data-testid="kb-select">
+                      <div role="radiogroup" aria-label="Knowledge base for this chat" className="inline-flex rounded-lg bg-muted p-0.5 text-xs">
+                        {(["spectrumerp", "spectrumerp_new"] as const).map((k) => (
+                          <button
+                            key={k}
+                            type="button"
+                            role="radio"
+                            aria-checked={kb === k}
+                            onClick={() => setKb(k)}
+                            className={cn(
+                              "rounded-md px-2.5 py-1 font-medium transition-colors",
+                              kb === k ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+                            )}
+                          >
+                            {KB_LABEL[k]}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-[11px]">Fixed once you send; use a new chat to switch.</p>
+                    </div>
+                  )}
                   <div className="mt-2 flex flex-wrap justify-center gap-1.5">
                     {["What is the GRN form?", "How does voucher auth work?"].map((q) => (
                       <button
@@ -302,7 +353,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                             <div className="mt-1.5 flex flex-wrap items-center gap-2 rounded-lg border border-warning/30 bg-warning/[0.08] px-3 py-2 text-xs text-warning">
                               <TriangleAlert className="size-3.5 shrink-0" />
                               <span className="flex-1">{errorText(m.errorCode)}</span>
-                              {m.id === lastAssistantId && !busy && (
+                              {m.id === lastAssistantId && !busy && !readOnly && (
                                 <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={() => void retry(m.id)}>
                                   <RotateCcw className="size-3" /> Retry
                                 </Button>
@@ -337,6 +388,13 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
               )}
             </AnimatePresence>
 
+            {readOnly && (
+              <div className="flex shrink-0 items-start gap-2 border-t border-warning/30 bg-warning/[0.08] px-3 py-2 text-xs text-warning" role="status" data-testid="chat-read-only">
+                <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
+                <span className="flex-1">{readOnly.text} This chat is read-only.</span>
+              </div>
+            )}
+
             {/* Input */}
             <form
               className="shrink-0 border-t px-3 py-2.5"
@@ -347,7 +405,8 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                   ref={inputRef}
                   rows={1}
                   className="max-h-32 min-h-[32px] flex-1 resize-none bg-transparent py-1 text-sm outline-none placeholder:text-muted-foreground"
-                  placeholder="Ask a question…"
+                  placeholder={readOnly ? "This chat is read-only" : "Ask a question…"}
+                  disabled={!!readOnly}
                   value={input}
                   maxLength={4000}
                   onChange={(e) => {
@@ -372,7 +431,7 @@ export function ChatWidget({ myRole }: { myRole: AnswerRole }) {
                     </motion.div>
                   ) : (
                     <motion.div key="send" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
-                      <Button type="submit" size="icon" className="size-8 rounded-lg" disabled={!input.trim() || sending} aria-label="Send">
+                      <Button type="submit" size="icon" className="size-8 rounded-lg" disabled={!input.trim() || sending || !!readOnly} aria-label="Send">
                         <ArrowUp className="size-3.5" />
                       </Button>
                     </motion.div>

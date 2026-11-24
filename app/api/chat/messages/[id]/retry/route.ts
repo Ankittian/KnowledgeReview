@@ -4,9 +4,9 @@ import { chatMessages } from "@/db/schema";
 import { logEvent } from "@/lib/events";
 import { json } from "@/lib/request";
 import { chatConfig } from "@/lib/chat/config";
-import { chatCaller, parseId } from "@/lib/chat/http";
+import { chatCaller, kbReadOnlyResponse, parseId } from "@/lib/chat/http";
 import { hasActiveRunForConversation, releaseUser, reserveUser, startAnswer } from "@/lib/chat/live";
-import { getOwnMessage, insertMessage, questionsToday } from "@/lib/chat/service";
+import { getOwnMessage, insertMessage, kbReadOnly, questionsToday } from "@/lib/chat/service";
 
 /**
  * Retry a failed or stopped answer (REQ-CHAT-09): a new answer to the same question. Only the latest answer of a
@@ -21,6 +21,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const { user } = caller.session;
   const own = await getOwnMessage(db, user.id, id);
   if (!own || own.message.sender !== "assistant" || !own.message.replyToId) return json({ error: "Not found" }, 404);
+  // A SpectrumERP-new chat whose access was revoked (or whose server is gone) stays read-only (D17, D19).
+  const readOnly = await kbReadOnly(db, own.conversation, caller.isAdmin);
+  if (readOnly) return kbReadOnlyResponse(readOnly);
   if (own.message.status !== "error" && own.message.status !== "stopped") return json({ error: "Only failed or stopped answers can be retried." }, 400);
   const [latest] = await db
     .select({ id: chatMessages.id })
@@ -52,7 +55,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       conversationId: own.conversation.id,
       claudeSessionId: own.conversation.claudeSessionId,
       role: own.conversation.roleUsed,
+      kbSource: own.conversation.kbSource,
       user: { id: user.id, username: user.username },
+      isAdmin: caller.isAdmin,
       userMessageId: question.id,
       assistantMessageId: answer.id,
       question: question.content,

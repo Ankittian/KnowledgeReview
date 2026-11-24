@@ -8,15 +8,16 @@ const offset = (n: number | undefined) => Number.isFinite(n) ? Math.max(0, Math.
 const node = (r: Row): KgNode => ({ id: String(r.id), label: r.label ?? r.kind ?? "other", name: r.name || r.title || String(r.id), ...(r.summary != null ? { summary: r.summary } : {}), ...(typeof r.score === "number" ? { score: r.score } : {}) });
 const edge = (source: string, type: string, target: string, props?: Row): KgEdge => ({ id: JSON.stringify([source, type, target]), source, type, target, ...(props && Object.keys(props).length ? { props } : {}), ...(derivedTypes.has(type) || props?.derived === true ? { derived: true } : {}) });
 const cypher = async (query: string, params: Row = {}, limit = 1000): Promise<Row[]> => (await callTool<Row>("run_cypher", { query, params, limit, profile: "detailed" })).rows ?? [];
+const layers = [{ id: "functional", name: "Functional" }, { id: "bridge", name: "Bridge" }, { id: "code", name: "Code" }, { id: "data", name: "Data" }, { id: "other", name: "Other" }];
 let cached: { value: KgOverview; until: number } | undefined;
 
 export async function overview(): Promise<KgOverview> {
   if (cached && cached.until > Date.now()) return cached.value;
   const [schema, counts] = await Promise.all([callTool<Row>("describe_graph"), cypher("MATCH (n:Searchable) WHERE n.kind IS NOT NULL RETURN n.kind AS label, count(*) AS count")]);
   const metadata = new Map<string, Row>((schema.labels ?? []).map((v: Row) => [v.label, v]));
-  const labels: KgLabelInfo[] = counts.map((r) => { const m = metadata.get(r.label); return { label: r.label, count: r.count, layer: ["functional", "bridge", "code", "data"].includes(m?.layer) ? m!.layer : "other", ...(m?.means ? { means: m.means } : {}), ...(m?.key_props ? { keyProps: m.key_props } : {}) }; });
+  const labels: KgLabelInfo[] = counts.map((r) => { const m = metadata.get(r.label); return { label: r.label, count: r.count, layer: layers.some(l => l.id === m?.layer && l.id !== "other") ? m!.layer : "other", ...(m?.means ? { means: m.means } : {}), ...(m?.key_props ? { keyProps: m.key_props } : {}) }; });
   const relationships: KgRelInfo[] = (schema.relationships ?? []).map((r: Row) => ({ type: r.type, from: Array.isArray(r.from) ? r.from : String(r.from ?? "").split("|").filter(Boolean), to: Array.isArray(r.to) ? r.to : String(r.to ?? "").split("|").filter(Boolean), means: r.means, derived: Boolean(r.derived), count: r.count }));
-  const value = { labels, relationships, totalNodes: labels.reduce((s, l) => s + l.count, 0), fetchedAt: new Date().toISOString() };
+  const value = { layers, labels, relationships, totalNodes: labels.reduce((s, l) => s + l.count, 0), fetchedAt: new Date().toISOString() };
   cached = { value, until: Date.now() + 300_000 }; return value;
 }
 

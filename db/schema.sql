@@ -13,6 +13,7 @@ CREATE TYPE "public"."chat_sender" AS ENUM('user', 'assistant');
 CREATE TYPE "public"."feedback_category" AS ENUM('incorrect', 'incomplete', 'outdated', 'unclear', 'other');
 CREATE TYPE "public"."feedback_status" AS ENUM('open', 'accepted', 'rejected', 'applied', 'stale');
 CREATE TYPE "public"."kb_item_type" AS ENUM('module', 'concept', 'rule', 'form', 'usercontrol', 'process');
+CREATE TYPE "public"."kb_source" AS ENUM('spectrumerp', 'spectrumerp_new');
 CREATE TYPE "public"."user_status" AS ENUM('pending', 'active', 'disabled');
 CREATE TYPE "public"."verdict" AS ENUM('correct', 'needs_improvement', 'unsure');
 CREATE TABLE "activity_log" (
@@ -120,6 +121,7 @@ CREATE TABLE "chat_messages" (
 	"content" text DEFAULT '' NOT NULL,
 	"status" "chat_message_status" DEFAULT 'ok' NOT NULL,
 	"error_code" text,
+	"blocked_category" text,
 	"tokens_in" integer,
 	"tokens_out" integer,
 	"duration_ms" integer,
@@ -146,6 +148,7 @@ CREATE TABLE "conversations" (
 	"user_id" uuid NOT NULL,
 	"title" text NOT NULL,
 	"role_used" "answer_role" NOT NULL,
+	"kb_source" "kb_source" DEFAULT 'spectrumerp' NOT NULL,
 	"claude_session_id" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -251,6 +254,7 @@ CREATE TABLE "users" (
 	"department" text,
 	"primary_module" text,
 	"answer_role" "answer_role",
+	"can_use_kg_new" boolean DEFAULT false NOT NULL,
 	"role_id" integer NOT NULL,
 	"status" "user_status" DEFAULT 'active' NOT NULL,
 	"last_login_at" timestamp with time zone,
