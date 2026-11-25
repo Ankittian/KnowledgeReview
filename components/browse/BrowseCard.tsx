@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { ArrowDown, CheckCircle2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { deviceInfo, enqueue, startOutbox, trackEvent, uid } from "@/lib/client/outbox";
 import type { ClientCard } from "@/lib/deck";
 import { FLAG_POINTS_MULTIPLIER, READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { LevelChip } from "@/components/deck/LevelChip";
 import { FeedbackSheet, type FeedbackValue } from "@/components/deck/FeedbackSheet";
 import { StatementActions, StatementCard, type StatementAnswer } from "@/components/deck/StatementCard";
 
@@ -133,28 +132,29 @@ export function BrowseCardPreview({
       <button
         type="button"
         onClick={onOpen}
-        aria-label={`Open card: ${card.front.split("\n")[0]}`}
+        aria-label={`Open card: ${card.front.split("\n")[0]}${card.level ? ` (${card.level})` : ""}`}
         className="group flex h-full min-h-52 w-full flex-col rounded-xl bg-card p-4 text-left shadow-card ring-1 ring-foreground/[0.07] transition-shadow outline-none hover:-translate-y-0.5 hover:shadow-float hover:ring-foreground/[0.12] focus-visible:ring-3 focus-visible:ring-ring/50"
         data-testid="browse-statement"
         data-viewed={viewed}
       >
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
-          <Badge variant="secondary" className="h-auto min-w-0 max-w-full py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
+          <Badge variant="secondary" className="h-auto min-w-0 max-w-full rounded-lg py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
             {card.context}
           </Badge>
-          {card.level && <LevelChip level={card.level} weight={card.weight} />}
         </div>
         <p className="mt-3 line-clamp-4 flex-1 text-[15px] leading-snug font-semibold whitespace-pre-line">{card.front}</p>
-        <span className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors group-hover:text-primary">
-          <ArrowDown className="size-3" /> {viewed ? "Viewed · open to read again" : "Open to read and answer"}
-        </span>
       </button>
+      {card.level && (
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute right-3 bottom-3 size-2.5 rounded-full ${card.level === "easy" ? "bg-success" : card.level === "medium" ? "bg-yellow-400" : "bg-destructive"}`}
+          data-testid="level-chip"
+          data-level={card.level}
+        />
+      )}
       {viewed && (
         <>
-          <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl bg-success/10 ring-2 ring-success" data-testid="viewed-overlay" />
-          <span className="pointer-events-none absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-success px-2 py-0.5 text-[11px] font-semibold text-background">
-            <CheckCircle2 className="size-3" /> Viewed
-          </span>
+          <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl bg-success/10 ring-1 ring-success" data-testid="viewed-overlay" />
         </>
       )}
     </motion.div>

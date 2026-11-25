@@ -18,7 +18,7 @@ import { LEVELS, countWords, minReadSeconds, type Level } from "@/lib/cards/spec
 import { getModuleNames } from "@/lib/deck";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Browse" };
+export const metadata: Metadata = { title: "Browse cards" };
 
 const PAGE = 24;
 

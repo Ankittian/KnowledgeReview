@@ -53,7 +53,7 @@ const STEPS: Step[] = [
   },
   {
     icon: Search,
-    title: "Browse: study any card",
+    title: "Browse cards: study any card",
     href: "/browse",
     body: "Search every card in the knowledge base and study the topics you care about, any time.",
     tips: ["Search by keyword and filter the list", "Answering a card here earns its points too"],

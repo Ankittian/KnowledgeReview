@@ -26,7 +26,7 @@ export const MAIN_NAV: NavItem[] = [
   { href: "/today", label: "Today", icon: Layers, description: "Review today’s flashcards" },
   { href: "/progress", label: "Progress", icon: BarChart3, description: "Your streak and knowledge by area" },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy, description: "Points from correct answers" },
-  { href: "/browse", label: "Browse", icon: Search, description: "Search and study every card" },
+  { href: "/browse", label: "Browse cards", icon: Search, description: "Search and study every card" },
 ];
 
 /** Admin + reviewer sections. `adminOnly` items are hidden from reviewers. */

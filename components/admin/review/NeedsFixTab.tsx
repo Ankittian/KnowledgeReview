@@ -141,7 +141,7 @@ export async function NeedsFixTab({ status, card, module }: { status: string; ca
       )}
       {all.length === 0 ? (
         <Empty title={status === "open" ? "No open suggestions" : `No ${status === "all" ? "" : status} suggestions`} icon={<MessageSquareQuote />}>
-          Cards marked “Needs fix” and suggestions from the daily decks and Browse show up here, worst first.
+          Cards marked “Needs fix” and suggestions from the daily decks and Browse cards show up here, worst first.
         </Empty>
       ) : (
         <Stagger as="ul" className="space-y-3">
