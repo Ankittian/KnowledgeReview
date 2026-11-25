@@ -27,6 +27,7 @@ export function AppSidebar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: bo
       <SidebarMenuItem key={i.href}>
         <SidebarMenuButton
           isActive={isActive(path, i.href)}
+          className="data-active:text-success"
           tooltip={i.label}
           render={<Link href={i.href} data-tour={i.href} onClick={() => setOpenMobile(false)} aria-current={isActive(path, i.href) ? "page" : undefined} />}
         >

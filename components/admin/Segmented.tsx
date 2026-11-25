@@ -26,7 +26,7 @@ export function Segmented({ id, items, active, className }: { id: string; items:
               aria-selected={on}
               className={cn(
                 "relative inline-flex h-7 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium whitespace-nowrap capitalize transition-colors",
-                on ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                on ? "text-success" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {on && (

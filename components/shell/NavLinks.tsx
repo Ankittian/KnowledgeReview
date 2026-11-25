@@ -26,7 +26,7 @@ export function MobileTabBar({ isStaff }: { isStaff: boolean }) {
                 aria-current={on ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-lg py-1 text-[11px] font-medium transition-colors",
-                  on ? "text-foreground" : "text-muted-foreground",
+                  on ? "text-success" : "text-muted-foreground",
                 )}
               >
                 <span className="relative flex h-7 w-12 items-center justify-center">
@@ -37,7 +37,7 @@ export function MobileTabBar({ isStaff }: { isStaff: boolean }) {
                       transition={{ type: "spring", stiffness: 500, damping: 38 }}
                     />
                   )}
-                  <Icon className={cn("relative size-[18px]", on && "text-primary")} />
+                  <Icon className={cn("relative size-[18px]", on && "text-success")} />
                 </span>
                 {label}
               </Link>

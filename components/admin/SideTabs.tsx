@@ -31,11 +31,11 @@ export function SideTabs({ title, items, active, children, className }: { title?
                   aria-current={on ? "page" : undefined}
                   className={cn(
                     "relative flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors [&_svg]:size-4 [&_svg]:shrink-0",
-                    on ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
+                    on ? "bg-accent text-success" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
                   )}
                 >
-                  {on && <span aria-hidden className="absolute top-1.5 bottom-1.5 left-0 hidden w-0.5 rounded-full bg-primary md:block" />}
-                  <span className={cn(on ? "text-primary" : "opacity-70")}>{i.icon}</span>
+                  {on && <span aria-hidden className="absolute top-1.5 bottom-1.5 left-0 hidden w-0.5 rounded-full bg-success md:block" />}
+                  <span className={cn(on ? "text-success" : "opacity-70")}>{i.icon}</span>
                   <span className="flex-1">{i.label}</span>
                   {i.count != null && i.count > 0 && <span className="rounded-full bg-primary/10 px-1.5 font-mono text-[11px] text-primary tabular-nums">{i.count}</span>}
                 </Link>
