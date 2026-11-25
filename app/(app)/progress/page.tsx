@@ -77,7 +77,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
   const activeDays = [...daily.entries()].filter(([d, c]) => d >= from && c.n > 0).length;
 
   return (
-    <div className="w-full space-y-6 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
+    <div className="flex w-full flex-col gap-4 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8 md:-mb-10 md:h-[calc(100dvh-3.5rem)] md:pb-6">
       <PageHeader
         title="Your progress"
         description="Knowledge is weighted toward your recent answers."
@@ -116,7 +116,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
         </StaggerItem>
       </Stagger>
 
-      <Card className="shadow-card">
+      <Card className="shrink-0 shadow-card">
         <CardHeader>
           <CardTitle>{RANGES[range].title}</CardTitle>
           <CardDescription>
@@ -143,12 +143,12 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
         </CardContent>
       </Card>
 
-      <Card className="shadow-card">
+      <Card className="shadow-card md:min-h-0 md:flex-1">
         <CardHeader>
           <CardTitle>Knowledge by area</CardTitle>
           <CardDescription>The bar shows how much of each module you have mastered: the share of its cards you have seen and knew.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="thin-scroll md:min-h-0 md:flex-1 md:overflow-y-auto">
           {modules.length === 0 ? (
             <Empty className="border border-dashed py-10">
               <EmptyHeader>
@@ -163,7 +163,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
               </Link>
             </Empty>
           ) : (
-            <ul className="grid gap-x-10 gap-y-5 md:grid-cols-2">
+            <ul className="grid gap-x-10 gap-y-5 md:grid-cols-2 xl:grid-cols-3">
               {modules.map((m, i) => {
                 const acc = Number(m.knowledge);
                 const k = acc * Number(m.coverage); // mastery: accuracy on what you saw × how much of the module you saw
