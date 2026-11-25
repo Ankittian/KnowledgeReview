@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,20 +23,25 @@ export function AppSidebar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: bo
   const path = usePathname();
   const { setOpenMobile } = useSidebar();
 
+  // The highlight behind the open page is one shared element: opening another page slides it from the old item to the new one.
   const renderItems = (items: NavItem[]) =>
-    items.map((i) => (
-      <SidebarMenuItem key={i.href}>
-        <SidebarMenuButton
-          isActive={isActive(path, i.href)}
-          className="data-active:text-success"
-          tooltip={i.label}
-          render={<Link href={i.href} data-tour={i.href} onClick={() => setOpenMobile(false)} aria-current={isActive(path, i.href) ? "page" : undefined} />}
-        >
-          <i.icon />
-          <span>{i.label}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    ));
+    items.map((i) => {
+      const active = isActive(path, i.href);
+      return (
+        <SidebarMenuItem key={i.href}>
+          <SidebarMenuButton
+            isActive={active}
+            className="relative data-active:bg-transparent data-active:text-success"
+            tooltip={i.label}
+            render={<Link href={i.href} data-tour={i.href} onClick={() => setOpenMobile(false)} aria-current={active ? "page" : undefined} />}
+          >
+            {active && <motion.span layoutId="sidebar-active-pill" className="absolute inset-0 rounded-md bg-sidebar-accent" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
+            <i.icon className="relative" />
+            <span className="relative">{i.label}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      );
+    });
 
   return (
     <Sidebar collapsible="icon" variant="sidebar">
