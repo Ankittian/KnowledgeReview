@@ -154,7 +154,7 @@ export function BrowseCardPreview({
       )}
       {viewed && (
         <>
-          <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl bg-success/10 ring-1 ring-success" data-testid="viewed-overlay" />
+          <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl bg-success/[0.06] ring-1 ring-success/45" data-testid="viewed-overlay" />
         </>
       )}
     </motion.div>
