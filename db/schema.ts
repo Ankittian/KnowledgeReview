@@ -403,7 +403,7 @@ export const chatMessages = pgTable(
     content: text("content").notNull().default(""),
     status: chatMessageStatus("status").notNull().default("ok"),
     errorCode: text("error_code"), // timeout | usage_limit | kb_unavailable | claude_unavailable | error
-    /** Set when the intent classifier refused the question: sql_injection | jailbreak | out_of_domain | restricted_object | classifier_error. */
+    /** Set when the intent classifier refused the question: jailbreak | out_of_domain | restricted_object | classifier_error. */
     blockedCategory: text("blocked_category"),
     tokensIn: integer("tokens_in"),
     tokensOut: integer("tokens_out"),

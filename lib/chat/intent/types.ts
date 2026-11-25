@@ -5,10 +5,10 @@
  */
 import type { KgTokenRole } from "@/lib/chat/config";
 
-export const INTENT_CATEGORIES = ["sql_injection", "jailbreak", "out_of_domain", "restricted_object"] as const;
+export const INTENT_CATEGORIES = ["jailbreak", "out_of_domain", "restricted_object"] as const;
 export type IntentCategory = (typeof INTENT_CATEGORIES)[number];
 
-/** common = sql_injection + jailbreak + out_of_domain; common+functional adds restricted_object. */
+/** common = jailbreak + out_of_domain; common+functional adds restricted_object. */
 export type CheckSet = "common" | "common+functional";
 export type IntentMode = "shadow" | "enforce";
 

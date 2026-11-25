@@ -1,5 +1,5 @@
 /**
- * Intent classification layer: asks jev whether a chat question is SQL injection, a jailbreak, out of domain
+ * Intent classification layer: asks jev whether a chat question is a jailbreak, out of domain
  * and (functional token, non-admin only) asks for a restricted technical object, before the Claude agent runs.
  * classifyIntent never throws. With the layer disabled (or no API key) it returns "disabled" without any network call.
  */

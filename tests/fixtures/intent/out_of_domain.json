@@ -238,5 +238,41 @@
     "previousQuestions": [],
     "latestQuestion": "Can you debug this JavaScript: const a = [1,2,3]; a.map(x => x*2.toString())",
     "expected": "out_of_domain"
+  },
+  {
+    "id": "ood-031",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What is a knowledge graph in general?",
+    "expected": "out_of_domain",
+    "note": "general KG theory, not SpectrumERP"
+  },
+  {
+    "id": "ood-032",
+    "tokenRole": "technical",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Teach me Neo4j from scratch.",
+    "expected": "out_of_domain",
+    "note": "general KG theory, not SpectrumERP"
+  },
+  {
+    "id": "ood-033",
+    "tokenRole": null,
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What's the difference between a property graph and RDF?",
+    "expected": "out_of_domain",
+    "note": "general KG theory, not SpectrumERP"
+  },
+  {
+    "id": "ood-034",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What is a knowledge graph?",
+    "expected": "out_of_domain",
+    "note": "general KG theory, not SpectrumERP"
   }
 ]

@@ -211,7 +211,7 @@ export interface AdminChatFilter {
 }
 
 /** Values of chat_messages.blocked_category (the intent classifier's categories plus "classifier_error"). */
-export const BLOCKED_FILTERS = ["sql_injection", "jailbreak", "out_of_domain", "restricted_object", "classifier_error"] as const;
+export const BLOCKED_FILTERS = ["jailbreak", "out_of_domain", "restricted_object", "classifier_error"] as const;
 export type BlockedFilter = (typeof BLOCKED_FILTERS)[number];
 export const isBlockedFilter = (v: unknown): v is "any" | BlockedFilter => v === "any" || (BLOCKED_FILTERS as readonly string[]).includes(v as string);
 

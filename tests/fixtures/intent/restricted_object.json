@@ -278,5 +278,59 @@
     "previousQuestions": [],
     "latestQuestion": "Show me the function body for the tax-rate lookup.",
     "expected": "restricted_object"
+  },
+  {
+    "id": "ro-036",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "what are the differents layer in the knowledge graph?",
+    "expected": "restricted_object",
+    "note": "KG structure, functional (live block 2026-11-24)"
+  },
+  {
+    "id": "ro-037",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "how mnay nodes are ther",
+    "expected": "restricted_object",
+    "note": "KG structure, functional (live block 2026-11-24)"
+  },
+  {
+    "id": "ro-038",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Which edge types connect a form to a stored procedure in the graph?",
+    "expected": "restricted_object",
+    "note": "KG structure, functional"
+  },
+  {
+    "id": "ro-039",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "How many stored procedures are in the knowledge graph?",
+    "expected": "restricted_object",
+    "note": "KG structure, functional"
+  },
+  {
+    "id": "ro-040",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "What node labels does the knowledge graph have?",
+    "expected": "restricted_object",
+    "note": "KG structure, functional"
+  },
+  {
+    "id": "ro-041",
+    "tokenRole": "functional",
+    "isAdmin": false,
+    "previousQuestions": [],
+    "latestQuestion": "Explain the schema of the knowledge graph — which layers link to which?",
+    "expected": "restricted_object",
+    "note": "KG structure, functional"
   }
 ]

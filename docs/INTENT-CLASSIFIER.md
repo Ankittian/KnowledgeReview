@@ -15,21 +15,28 @@ at or above its threshold (default 0.5). The blocked category is the flagged che
 
 | Check (category) | jev question key | Flags |
 |---|---|---|
-| `sql_injection` | `is_sql_injection` | Injection payloads (`' OR 1=1--`, `UNION SELECT`, `; DROP`) and requests to run arbitrary or bulk-dump queries ("run this cypher…", "dump all nodes/users"). A technical user asking what a SQL snippet does, or how to query a SpectrumERP table, is allowed. |
-| `jailbreak` | `is_jailbreak` | Instruction overrides, personas or role-play to drop the rules, system-prompt extraction, asking to switch tokens or roles, multi-turn set-ups. |
-| `out_of_domain` | `is_out_of_domain` | Anything that is not SpectrumERP. Allowed: SpectrumERP itself, general ERP / accounting / business-process concepts ("what is a GRN?"), greetings, "what can you do", how to use the chat, and general SQL/.NET only when tied to SpectrumERP. |
-| `restricted_object` | `asks_restricted_object` | The question *directly* asks for a table, stored procedure, function, trigger, view, column, code block, SQL/query, or file path/folder. Business questions pass ("why did my GRN posting fail?"). |
+| `jailbreak` | `is_jailbreak` | Overriding, replacing or ignoring the instructions or system prompt ("ignore previous instructions", "your new system prompt is…", DAN, "no restrictions"), revealing the system prompt, tools or configuration, steering the assistant away from SpectrumERP, and multi-turn set-ups for any of these. Allowed: assigning a role or persona, or claiming a role or permission, while staying on SpectrumERP ("act as a SpectrumERP consultant", "act as admin", "use the technical token"). The token and answer role are fixed per conversation on the server, so a role claim cannot change what the user can see. |
+| `out_of_domain` | `is_out_of_domain` | Anything that is not SpectrumERP. Allowed: SpectrumERP itself, general ERP / accounting / business-process concepts ("what is a GRN?"), the SpectrumERP knowledge graph itself (its layers, nodes, edges, schema and counts — "what are the layers in the knowledge graph?", "how many nodes are there?"), greetings, "what can you do", how to use the chat, a technical user asking what a SQL snippet does or how to query a SpectrumERP table or the knowledge graph, and general SQL/.NET only when tied to SpectrumERP. General knowledge-graph or graph-database theory ("what is a knowledge graph?") is out of domain. |
+| `restricted_object` | `asks_restricted_object` | The question *directly* asks for a table, stored procedure, function, trigger, view, column, code block, SQL/query, or file path/folder, or about the knowledge graph's structure (layers, node/edge types, schema, counts). Business questions pass ("why did my GRN posting fail?"). |
 
 Which checks run depends on the conversation:
 
 | Conversation | Check set | Checks |
 |---|---|---|
-| **Functional** answer role on either KB (SpectrumERP-new: the functional MCP token), user is **not an admin** | `common+functional` | sql_injection, jailbreak, out_of_domain, restricted_object |
-| Everything else: technical and product answer roles, and admins | `common` | sql_injection, jailbreak, out_of_domain |
+| **Functional** answer role on either KB (SpectrumERP-new: the functional MCP token), user is **not an admin** | `common+functional` | jailbreak, out_of_domain, restricted_object |
+| Everything else: technical and product answer roles, and admins | `common` | jailbreak, out_of_domain |
 
 The check role comes from `tokenRoleFor(role)` in `lib/chat/config.ts`: the token role on SpectrumERP-new, and the same mapping
 for the old single-token SpectrumERP KB (functional stays functional; technical and product count as technical). `restricted_object` only exists to protect
 functional users, so technical users and admins can ask for technical detail.
+
+Knowledge-graph structure questions ("what are the different layers in the knowledge graph?", "how many nodes are there?")
+are in domain for everyone, so `out_of_domain` does not fire on them. Technical and product users and admins get them
+answered. Functional users are refused by `restricted_object` with the "technical detail … for your role" message.
+
+There is **no SQL-injection check** (removed 2026-11-24). Injection payloads and "run this query / dump everything"
+requests are not refused by the classifier as such; most are still caught by `out_of_domain` or (functional users)
+`restricted_object`. What the agent can actually execute is decided by the knowledge-base MCP tools it is allowed to call.
 
 **Input to jev:** the latest question plus the two previous *user* questions (no assistant turns). Each earlier question is
 cut to 1000 characters, the latest to 4000.
@@ -40,7 +47,7 @@ cut to 1000 characters, the latest to 4000.
 |---|---|
 | `out_of_domain` | I can only help with SpectrumERP — for example processes, screens, reports and how things are calculated. |
 | `restricted_object` | That's technical detail I can't share for your role. Try asking about the business process instead, or ask a technical colleague. |
-| `sql_injection`, `jailbreak` | I can't help with that. |
+| `jailbreak` | I can't help with that. |
 | classifier failure in `enforce` mode | I couldn't check that message — please try again. |
 
 A refused turn is saved like any other: the user row, plus an assistant row that completes with the refusal text and
@@ -59,7 +66,7 @@ All in the environment (`.env`; see `.env.example`). Changing them needs an app 
 | `CLASSIFIER_MODEL` | `jev-1.14.0` | jev model name. |
 | `CLASSIFIER_BASE_URL` | `https://api.typesafe.ai/v1/systemone` | API base URL. |
 | `CLASSIFIER_TIMEOUT_MS` | `3000` | Time allowed for one classification. A timeout is a classifier failure. |
-| `CLASSIFIER_THRESHOLDS` | empty (0.5 each) | JSON map of per-check thresholds, e.g. `{"jailbreak":0.4,"out_of_domain":0.7}`. Keys: `sql_injection`, `jailbreak`, `out_of_domain`, `restricted_object`. |
+| `CLASSIFIER_THRESHOLDS` | empty (0.5 each) | JSON map of per-check thresholds, e.g. `{"jailbreak":0.4,"out_of_domain":0.7}`. Keys: `jailbreak`, `out_of_domain`, `restricted_object`. |
 
 ## Rollout: shadow, then enforce
 
@@ -78,7 +85,7 @@ Every classification, except outcome `disabled`, writes one `activity_log` row w
 
 ```json
 { "conversationId": "…", "messageId": 123, "tokenRole": "functional", "checkSet": "common+functional",
-  "category": null, "scores": { "sql_injection": 0.01, "jailbreak": 0.02, "out_of_domain": 0.03, "restricted_object": 0.04 },
+  "category": null, "scores": { "jailbreak": 0.02, "out_of_domain": 0.03, "restricted_object": 0.04 },
   "model": "jev-1.14.0", "latencyMs": 412, "mode": "shadow", "outcome": "allowed" }
 ```
 
@@ -105,7 +112,7 @@ check definitions or the model version, and before moving from shadow to enforce
 
 ## Database
 
-`chat_messages.blocked_category` (nullable text): `sql_injection`, `jailbreak`, `out_of_domain`, `restricted_object`,
+`chat_messages.blocked_category` (nullable text): `jailbreak`, `out_of_domain`, `restricted_object`,
 `classifier_error`, or NULL for an answered question. Added by `db/migrations.sql` (idempotent) and `db/schema.sql`.
 
 ## Disabling
