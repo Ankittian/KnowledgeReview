@@ -4,24 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
-import { ArrowRight, BarChart3, Check, CheckCircle2, CloudOff, Flame, HelpCircle, Inbox, PencilLine, Search, SkipForward, X } from "lucide-react";
-import type { ClientCard } from "@/lib/deck";
+import { ArrowRight, BarChart3, ChevronLeft, ChevronRight, CloudOff, Flame, Inbox, Search } from "lucide-react";
+import type { ClientCard, DeckAnswer } from "@/lib/deck";
 import { deviceInfo, enqueue, onPendingChange, startOutbox, trackEvent, uid } from "@/lib/client/outbox";
 import { AnimatedNumber } from "@/components/common/AnimatedNumber";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Flashcard } from "./Flashcard";
 import { FeedbackSheet, type FeedbackValue } from "./FeedbackSheet";
 import { READ_LOCK_ENABLED } from "@/lib/cards/spec";
 import { StatementActions, StatementCard, type StatementAnswer } from "./StatementCard";
-
-type Phase = "front" | "back";
-type Verdict = "correct" | "needs_improvement" | "unsure";
 
 interface Props {
   deckId: number | null;
@@ -29,6 +24,8 @@ interface Props {
   dateLabel: string;
   cards: ClientCard[];
   answered: number[];
+  /** the latest answer to each answered card (version id): shown on the card and open to change */
+  answers: Record<number, DeckAnswer>;
   /** answers given today across all sign-ins (including this deck's) */
   answeredTodayTotal: number;
   dailyLimit: number;
@@ -36,39 +33,48 @@ interface Props {
   answeredToday: boolean;
 }
 
-export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAnswered, answeredTodayTotal, dailyLimit, streak, answeredToday }: Props) {
-  const [answered, setAnswered] = useState(() => new Set(initialAnswered));
-  // skipped cards (version ids, oldest skip first) go to the back of today's queue; nothing is recorded for them
-  const [skipped, setSkipped] = useState<number[]>([]);
-  const queue = useMemo(() => {
-    const open = cards.filter((c) => !answered.has(c.v));
-    const fresh = open.filter((c) => !skipped.includes(c.v));
-    const later = skipped.map((v) => open.find((c) => c.v === v)).filter((c): c is ClientCard => !!c);
-    return [...fresh, ...later];
-  }, [cards, answered, skipped]);
-  const current = queue[0] as ClientCard | undefined;
-  const doneCount = cards.length - queue.length;
-  // progress counts the whole day: answers from earlier sign-ins + this sign-in's random set
-  const earlier = Math.max(0, answeredTodayTotal - initialAnswered.length);
-  const dayDone = earlier + doneCount;
-  const dayTotal = earlier + cards.length;
-  const limitReached = dayTotal >= dailyLimit;
+/** Where the cards sit in the stack: the open card in front, its neighbours behind, smaller, faded and blurred. */
+const SLOT = {
+  "-1": { x: "-34%", y: 14, scale: 0.86, opacity: 0.5, filter: "blur(3px)" },
+  "0": { x: "0%", y: 0, scale: 1, opacity: 1, filter: "blur(0px)" },
+  "1": { x: "34%", y: 14, scale: 0.86, opacity: 0.5, filter: "blur(3px)" },
+} as const;
+type Offset = -1 | 0 | 1;
 
-  const [phase, setPhase] = useState<Phase>("front");
-  const [knew, setKnew] = useState<boolean | null>(null);
+export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAnswered, answers: initialAnswers, answeredTodayTotal, dailyLimit, streak, answeredToday }: Props) {
+  const [answers, setAnswers] = useState<Record<number, StatementAnswer>>(() => ({ ...initialAnswers }));
+  // the deck is a row of cards you move along; it opens on the first card that has no answer yet
+  const [index, setIndex] = useState(() => Math.max(0, cards.findIndex((c) => !initialAnswers[c.v])));
+  // cards whose description side is showing (answered cards always are)
+  const [flipped, setFlipped] = useState<Set<number>>(() => new Set(initialAnswered));
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [exitDir, setExitDir] = useState(1);
-  const [stats, setStats] = useState({ knew: 0, missed: 0, flagged: 0 });
   const [pending, setPending] = useState(0);
   const [slowSave, setSlowSave] = useState(false);
   const [online, setOnline] = useState(true);
-  const shownAt = useRef<string | null>(null);
-  const flippedAt = useRef<string | null>(null);
-  // read-time lock (statement cards): attended time since the card was shown, without hidden-tab and idle time
-  const activeMs = useRef(0);
+
+  const current = cards[index] as ClientCard | undefined;
+  const answeredCount = cards.filter((c) => answers[c.v]).length;
+  const allDone = cards.length > 0 && answeredCount === cards.length;
+  /** the open card already has an answer: it is being looked at again or changed, so there is no read timer */
+  const editing = !!current && !!answers[current.v];
+  const revealed = useCallback((c: ClientCard) => flipped.has(c.v) || !!answers[c.v], [flipped, answers]);
+  // progress counts the whole day: answers from earlier sign-ins + this sign-in's set
+  const earlier = Math.max(0, answeredTodayTotal - initialAnswered.length);
+  const dayDone = earlier + answeredCount;
+  const dayTotal = earlier + cards.length;
+  const limitReached = dayTotal >= dailyLimit;
+  const stats = useMemo(() => {
+    const given = cards.map((c) => answers[c.v]).filter(Boolean);
+    return { knew: given.filter((a) => a !== "new").length, missed: given.filter((a) => a === "new").length, flagged: given.filter((a) => a === "incorrect").length };
+  }, [cards, answers]);
+
+  // per card, kept while you move around the deck: when it was first shown and how long it has been attended to
+  const shownAt = useRef(new Map<number, string>());
+  const activeMs = useRef(new Map<number, number>());
   const lastActivity = useRef(0);
   const [remainingMs, setRemainingMs] = useState(0);
   const startedRef = useRef(false);
+  const shownTracked = useRef(new Set<number>());
   const summaryRef = useRef(false);
 
   useEffect(() => {
@@ -95,26 +101,31 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
     return () => clearTimeout(t);
   }, [pending]);
 
-  // a new card is on screen
+  // a card comes to the front
   useEffect(() => {
     if (!current) return;
-    shownAt.current = new Date().toISOString();
-    flippedAt.current = null;
-    activeMs.current = 0;
+    if (!shownAt.current.has(current.v)) shownAt.current.set(current.v, new Date().toISOString());
     lastActivity.current = Date.now();
-    setRemainingMs(current.statement && READ_LOCK_ENABLED ? current.minRead * 1000 : 0);
-    setPhase("front");
-    setKnew(null);
-    if (!startedRef.current && doneCount === 0)
+    setRemainingMs(!answers[current.v] && READ_LOCK_ENABLED ? Math.max(0, current.minRead * 1000 - (activeMs.current.get(current.v) ?? 0)) : 0);
+    if (!startedRef.current && answeredCount === 0)
       trackEvent("deck_started", null, { size: cards.length, deck_id: deckId, deck_date: date, answered_earlier_today: earlier, daily_limit: dailyLimit });
     startedRef.current = true;
-    trackEvent("card_shown", current.v, { position: dayDone + 1, of: dayTotal, deck_id: deckId });
+    if (!shownTracked.current.has(current.v)) {
+      shownTracked.current.add(current.v);
+      trackEvent("card_shown", current.v, { position: index + 1, of: cards.length, deck_id: deckId, revisit: !!answers[current.v] });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current?.v]);
 
-  // the read-time clock: runs only while the tab is visible and the user is active (input in the last 60 s)
+  // once a card has an answer there is no timer any more
   useEffect(() => {
-    if (!current?.statement) return;
+    if (editing) setRemainingMs(0);
+  }, [editing]);
+
+  // the read-time clock (cards without an answer yet): runs only while the tab is visible and the user is active (input in the last 60 s)
+  useEffect(() => {
+    if (!current || editing) return;
+    const v = current.v;
     const need = current.minRead * 1000;
     const bump = () => {
       lastActivity.current = Date.now();
@@ -127,63 +138,47 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
       const d = Math.min(now - last, 1000);
       last = now;
       if (document.visibilityState === "visible" && now - lastActivity.current <= 60_000) {
-        activeMs.current += d;
-        if (READ_LOCK_ENABLED) setRemainingMs(Math.max(0, need - activeMs.current));
+        const total = (activeMs.current.get(v) ?? 0) + d;
+        activeMs.current.set(v, total);
+        if (READ_LOCK_ENABLED) setRemainingMs(Math.max(0, need - total));
       }
     }, 250);
     return () => {
       clearInterval(t);
       evs.forEach((e) => window.removeEventListener(e, bump));
     };
-  }, [current?.v, current?.statement, current?.minRead]);
+  }, [current?.v, current?.minRead, editing]);
 
   useEffect(() => {
-    if (!current && cards.length && !summaryRef.current) {
+    if (allDone && !summaryRef.current) {
       summaryRef.current = true;
       trackEvent("deck_summary_viewed", null, { deck_date: date, ...stats });
     }
-  }, [current, cards.length, date, stats]);
+  }, [allDone, date, stats]);
+
+  const summaryEl = useRef<HTMLDivElement>(null);
+  const wasDone = useRef(allDone);
+  useEffect(() => {
+    if (allDone && !wasDone.current) summaryEl.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    wasDone.current = allDone;
+  }, [allDone]);
+
+  const go = useCallback(
+    (delta: number) => {
+      if (sheetOpen) return;
+      setIndex((i) => Math.min(cards.length - 1, Math.max(0, i + delta)));
+    },
+    [cards.length, sheetOpen],
+  );
 
   const flip = useCallback(() => {
-    if (!current || phase !== "front") return;
-    flippedAt.current = new Date().toISOString();
-    setPhase("back");
-    trackEvent("card_flipped", current.v, { ms: shownAt.current ? Date.now() - Date.parse(shownAt.current) : null });
-  }, [current, phase]);
+    if (!current || revealed(current)) return;
+    setFlipped((prev) => new Set(prev).add(current.v));
+    const shown = shownAt.current.get(current.v);
+    trackEvent("card_flipped", current.v, { ms: shown ? Date.now() - Date.parse(shown) : null });
+  }, [current, revealed]);
 
-  const answerKnew = useCallback(
-    (k: boolean) => {
-      if (!current || phase !== "back") return;
-      setKnew(k);
-      trackEvent("knew_answered", current.v, { knew_it: k });
-    },
-    [current, phase],
-  );
-
-  const submit = useCallback(
-    (verdict: Verdict, fb?: FeedbackValue) => {
-      if (!current || knew === null) return;
-      enqueue("/api/reviews", {
-        clientEventId: uid(),
-        versionId: current.v,
-        deckDate: date,
-        deckId,
-        knewIt: knew,
-        verdict,
-        shownAt: shownAt.current,
-        flippedAt: flippedAt.current,
-        answeredAt: new Date().toISOString(),
-        device: deviceInfo(),
-        feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
-      });
-      setStats((s) => ({ knew: s.knew + (knew ? 1 : 0), missed: s.missed + (knew ? 0 : 1), flagged: s.flagged + (verdict === "needs_improvement" ? 1 : 0) }));
-      setExitDir(knew ? 1 : -1);
-      setAnswered((prev) => new Set(prev).add(current.v));
-    },
-    [current, knew, date, deckId],
-  );
-
-  /** Statement cards: Known / New earn the card weight; Incorrect or incomplete needs a reason, goes to review and earns double. */
+  /** Known / New earn the card weight; Incorrect or incomplete needs a reason, goes to review and earns double. Changing an answer sends it as an edit. */
   const submitStatement = useCallback(
     (kind: StatementAnswer, fb?: FeedbackValue) => {
       if (!current) return;
@@ -194,24 +189,34 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
         deckId,
         knewIt: kind !== "new",
         verdict: kind === "incorrect" ? "needs_improvement" : "correct",
-        shownAt: shownAt.current,
+        shownAt: shownAt.current.get(current.v) ?? null,
         flippedAt: null,
         answeredAt: new Date().toISOString(),
-        activeMs: Math.round(activeMs.current),
+        activeMs: Math.round(activeMs.current.get(current.v) ?? 0),
         device: deviceInfo(),
         feedback: fb ? { category: fb.category, suggestedText: fb.suggestedText || null, comment: fb.comment || null } : null,
+        ...(editing ? { edit: true } : {}),
       });
-      setStats((s) => ({ knew: s.knew + (kind === "new" ? 0 : 1), missed: s.missed + (kind === "new" ? 1 : 0), flagged: s.flagged + (kind === "incorrect" ? 1 : 0) }));
-      setExitDir(kind === "new" ? -1 : 1);
-      setAnswered((prev) => new Set(prev).add(current.v));
+      setAnswers((prev) => ({ ...prev, [current.v]: kind }));
+      if (editing) {
+        toast.success("Answer updated", { description: current.context });
+        return;
+      }
+      // a first answer moves on to the next card that has none (after this one, else any other)
+      const next = cards.findIndex((c, i) => i > index && !answers[c.v]);
+      const other = cards.findIndex((c) => c.v !== current.v && !answers[c.v]);
+      const target = next >= 0 ? next : other;
+      if (target >= 0) setIndex(target);
     },
-    [current, date, deckId],
+    [current, date, deckId, editing, cards, index, answers],
   );
 
   const answerStatement = useCallback(
     (kind: StatementAnswer) => {
-      if (!current?.statement || remainingMs > 0) return; // locked until the read time has passed
-      trackEvent("statement_answered", current.v, { answer: kind, active_ms: Math.round(activeMs.current) });
+      if (!current || !revealed(current)) return;
+      if (!editing && remainingMs > 0) return; // locked until the read time has passed (first answers only)
+      if (editing && answers[current.v] === kind && kind !== "incorrect") return; // already the answer
+      trackEvent("statement_answered", current.v, { answer: kind, active_ms: Math.round(activeMs.current.get(current.v) ?? 0), edit: editing });
       if (kind === "incorrect") {
         setSheetOpen(true);
         trackEvent("feedback_opened", current.v);
@@ -219,362 +224,205 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
       }
       submitStatement(kind);
     },
-    [current, remainingMs, submitStatement],
+    [current, revealed, editing, remainingMs, answers, submitStatement],
   );
 
-  /** Skip for now: the card moves to the back of the queue and no answer or score is saved. */
-  const canSkip = !!current && queue.length > 1 && knew === null && !sheetOpen;
-  const skip = useCallback(() => {
-    if (!current || queue.length < 2) return;
-    trackEvent("card_skipped", current.v, { phase, position: dayDone + 1, of: dayTotal, deck_id: deckId });
-    setExitDir(-1);
-    setSkipped((prev) => [...prev.filter((v) => v !== current.v), current.v]);
-  }, [current, queue.length, phase, dayDone, dayTotal, deckId]);
-
-  const openSheet = useCallback(() => {
-    if (!current || knew === null) return;
-    setSheetOpen(true);
-    trackEvent("feedback_opened", current.v);
-  }, [current, knew]);
   const cancelSheet = useCallback(() => {
     setSheetOpen(false);
     if (current) trackEvent("feedback_cancelled", current.v);
   }, [current]);
 
-  // keyboard shortcuts
+  // keyboard: Space reveals, 1 / 2 / 3 answer, ← → move along the deck
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (sheetOpen || e.metaKey || e.ctrlKey || e.altKey) return;
       const t = e.target as HTMLElement;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
       const k = e.key.toLowerCase();
-      if (k === "s" && canSkip) {
+      if (k === "arrowleft") {
         e.preventDefault();
-        skip();
+        go(-1);
         return;
       }
-      if (current?.statement) {
-        if (phase === "front" && (k === " " || k === "enter")) {
+      if (k === "arrowright") {
+        e.preventDefault();
+        go(1);
+        return;
+      }
+      if (!current) return;
+      if (!revealed(current)) {
+        if (k === " " || k === "enter") {
           e.preventDefault();
           flip();
-        } else if (phase === "back") {
-          if (k === "1") answerStatement("known");
-          else if (k === "2") answerStatement("new");
-          else if (k === "3") answerStatement("incorrect");
         }
-        return;
-      }
-      if (phase === "front" && (k === " " || k === "enter")) {
-        e.preventDefault();
-        flip();
-      } else if (phase === "back") {
-        if (k === "arrowright" || k === "y" || k === "1") answerKnew(true);
-        else if (k === "arrowleft" || k === "n" || k === "2") answerKnew(false);
-        else if (knew !== null && k === "c") submit("correct");
-        else if (knew !== null && k === "u") submit("unsure");
-        else if (knew !== null && k === "i") openSheet();
-      }
+      } else if (k === "1") answerStatement("known");
+      else if (k === "2") answerStatement("new");
+      else if (k === "3") answerStatement("incorrect");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [phase, knew, sheetOpen, flip, answerKnew, submit, openSheet, current, answerStatement, canSkip, skip]);
+  }, [sheetOpen, current, revealed, flip, go, answerStatement]);
 
   const progress = dayTotal ? (dayDone / dayTotal) * 100 : 0;
+  // the open card and its neighbours, drawn as a stack
+  const slots = ([-1, 0, 1] as Offset[]).map((off) => ({ off, card: cards[index + off] as ClientCard | undefined })).filter((s): s is { off: Offset; card: ClientCard } => !!s.card);
 
   return (
-    <div className="mx-auto w-full max-w-xl px-4 pt-3 sm:pt-4">
-      {/* header */}
-      <div className="mb-3 flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs font-medium text-muted-foreground">{dateLabel}</p>
-          <h1 className="text-xl font-semibold tracking-tight">Today’s cards</h1>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <AnimatePresence>
-            {(!online || slowSave) && (
-              <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
-                <Tooltip>
-                  <TooltipTrigger
-                    render={<Badge variant="outline" className={cn("h-6 gap-1.5 px-2", !online && "border-warning/30 bg-warning/10 text-warning")} />}
-                  >
-                    {online ? <Spinner className="size-3" /> : <CloudOff />}
-                    {online ? "Saving" : "Offline"}
-                  </TooltipTrigger>
-                  <TooltipContent>{online ? "Saving your answers" : "Offline: answers are saved on this device and sent when you reconnect"}</TooltipContent>
-                </Tooltip>
-              </motion.span>
-            )}
-          </AnimatePresence>
-          <Tooltip>
-            <TooltipTrigger render={<Badge variant="outline" className="h-6 gap-1 px-2 font-semibold tabular-nums" />}>
-              <Flame className="text-warning" />
-              <AnimatedNumber value={streak + (!answeredToday && doneCount > 0 ? 1 : 0)} />
-            </TooltipTrigger>
-            <TooltipContent>Daily streak</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
-      {dayTotal > 0 && (
-        <div className="mb-3 flex items-center gap-3">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={dayDone} aria-valuemin={0} aria-valuemax={dayTotal}>
-            <motion.div
-              className="h-full rounded-full bg-primary"
-              initial={false}
-              animate={{ width: `${progress}%` }}
-              transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            />
+    <div className="mx-auto flex h-[calc(100dvh-3.5rem-6rem)] w-full max-w-4xl flex-col px-4 pt-3 [--card-h:clamp(288px,calc((100dvh_-_31.5rem)_/_1.18),456px)] sm:pt-4 md:-mb-10 md:h-[calc(100dvh-3.5rem)] md:[--card-h:clamp(288px,calc((100dvh_-_22rem)_/_1.18),504px)]">
+      <div className="mx-auto w-full max-w-xl shrink-0">
+        {/* header */}
+        <div className="mb-2 flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-muted-foreground">{dateLabel}</p>
+            <h1 className="text-xl font-semibold tracking-tight">Today’s cards</h1>
           </div>
-          <span className="font-mono text-xs font-medium text-muted-foreground tabular-nums">
-            {dayDone}/{dayTotal}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <AnimatePresence>
+              {(!online || slowSave) && (
+                <motion.span initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
+                  <Tooltip>
+                    <TooltipTrigger render={<Badge variant="outline" className={cn("h-6 gap-1.5 px-2", !online && "border-warning/30 bg-warning/10 text-warning")} />}>
+                      {online ? <Spinner className="size-3" /> : <CloudOff />}
+                      {online ? "Saving" : "Offline"}
+                    </TooltipTrigger>
+                    <TooltipContent>{online ? "Saving your answers" : "Offline: answers are saved on this device and sent when you reconnect"}</TooltipContent>
+                  </Tooltip>
+                </motion.span>
+              )}
+            </AnimatePresence>
+            <Tooltip>
+              <TooltipTrigger render={<Badge variant="outline" className="h-6 gap-1 px-2 font-semibold tabular-nums" />}>
+                <Flame className="text-warning" />
+                <AnimatedNumber value={streak + (!answeredToday && answeredCount > 0 ? 1 : 0)} />
+              </TooltipTrigger>
+              <TooltipContent>Daily streak</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
-      )}
+        {dayTotal > 0 && (
+          <div className="mb-2 flex items-center gap-3">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={dayDone} aria-valuemin={0} aria-valuemax={dayTotal}>
+              <motion.div className="h-full rounded-full bg-primary" initial={false} animate={{ width: `${progress}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
+            </div>
+            <span className="font-mono text-xs font-medium text-muted-foreground tabular-nums">
+              {dayDone}/{dayTotal}
+            </span>
+          </div>
+        )}
+      </div>
 
-      {cards.length === 0 ? (
-        answeredTodayTotal >= dailyLimit ? <Summary total={dailyLimit} stats={stats} resumed limitReached /> : <EmptyState />
-      ) : !current ? (
-        <Summary total={dayTotal} stats={stats} resumed={initialAnswered.length > 0} limitReached={limitReached} />
+      {cards.length === 0 || !current ? (
+        <div className="thin-scroll min-h-0 flex-1 overflow-y-auto pb-4">
+          <div className="mx-auto max-w-xl">{answeredTodayTotal >= dailyLimit ? <Summary total={dailyLimit} stats={stats} resumed limitReached /> : <EmptyState />}</div>
+        </div>
       ) : (
         <>
-          <div className="flex items-center gap-2 sm:gap-3">
-          <div className="relative min-w-0 flex-1">
-            {queue.length > 1 && (
-              <div aria-hidden className="absolute inset-x-4 -bottom-2 h-full rounded-2xl bg-card/80 shadow-card ring-1 ring-foreground/[0.06]" />
-            )}
-            {queue.length > 2 && <div aria-hidden className="absolute inset-x-8 -bottom-4 h-full rounded-2xl bg-card/50 ring-1 ring-foreground/[0.05]" />}
-            <AnimatePresence mode="popLayout" initial={false} custom={exitDir}>
-              <motion.div
-                key={current.v}
-                custom={exitDir}
-                variants={{
-                  enter: { opacity: 0, y: 28, scale: 0.96 },
-                  center: { opacity: 1, y: 0, scale: 1 },
-                  exit: (d: number) => ({ opacity: 0, x: d * 360, rotate: d * 10, transition: { duration: 0.32 } }),
-                }}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="relative"
-              >
-                {current.statement ? (
-                  <StatementCard card={current} position={dayDone + 1} total={dayTotal} remainingMs={remainingMs} flipped={phase === "back"} onFlip={flip} />
-                ) : (
-                  <Flashcard
-                    card={current}
-                    flipped={phase === "back"}
-                    canSwipe={phase === "back"}
-                    onFlip={flip}
-                    onSwipe={answerKnew}
-                    position={dayDone + 1}
-                    total={dayTotal}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
+          {/* the deck: the open card in front, the cards either side of it behind, faded and blurred */}
+          <div className="thin-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+          <div className="flex min-h-full flex-col justify-center py-2" data-testid="deck-stack">
+          <div className="relative">
+            <div className="grid items-start">
+              <AnimatePresence initial={false}>
+                {slots.map(({ off, card }) => (
+                  <motion.div
+                    key={card.v}
+                    className={cn("mx-auto w-full max-w-xl [grid-area:1/1]", off !== 0 && "cursor-pointer")}
+                    style={{ zIndex: off === 0 ? 20 : 10 }}
+                    initial={{ opacity: 0, x: `${off * 55}%`, y: 14, scale: off === 0 ? 0.92 : 0.8, filter: "blur(6px)" }}
+                    animate={SLOT[String(off) as "-1" | "0" | "1"]}
+                    exit={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
+                    transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                    onClick={off !== 0 ? () => go(off) : undefined}
+                    aria-hidden={off !== 0 || undefined}
+                    data-testid={off !== 0 ? (off < 0 ? "deck-side-prev" : "deck-side-next") : "deck-current"}
+                  >
+                    {off === 0 ? (
+                      <StatementCard card={card} position={index + 1} total={cards.length} remainingMs={remainingMs} flipped={revealed(card)} onFlip={flip} noTimer={editing} />
+                    ) : (
+                      <StatementCard card={card} preview noTimer position={index + off + 1} total={cards.length} remainingMs={0} flipped={revealed(card)} onFlip={() => {}} />
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* move along the deck (on wide screens the arrows sit over the faded side cards) */}
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              disabled={index === 0}
+              aria-label="Previous card"
+              data-testid="card-prev"
+              className="absolute top-1/2 left-2 z-30 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full border bg-card text-foreground shadow-card transition-colors outline-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-30 lg:flex [&_svg]:size-5"
+            >
+              <ChevronLeft />
+            </button>
+            <button
+              type="button"
+              onClick={() => go(1)}
+              disabled={index === cards.length - 1}
+              aria-label="Next card"
+              data-testid="card-next"
+              className="absolute top-1/2 right-2 z-30 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full border bg-card text-foreground shadow-card transition-colors outline-none hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-30 lg:flex [&_svg]:size-5"
+            >
+              <ChevronRight />
+            </button>
           </div>
-          <SkipSide enabled={canSkip} onClick={skip} />
+          </div>
+          {allDone && (
+            <div ref={summaryEl} className="mx-auto max-w-xl pt-4 pb-4">
+              <Summary total={dayTotal} stats={stats} resumed={initialAnswered.length > 0} limitReached={limitReached} />
+            </div>
+          )}
           </div>
 
-          {/* actions */}
-          {/* right margin = skip button + gap, so the buttons line up with the card width */}
-          <div className="mt-4 mr-11 sm:mr-[3.25rem]">
-            {current.statement && phase === "back" ? (
-              <StatementActions locked={remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} weight={current.weight} />
+          <div className="mx-auto min-h-[8.5rem] w-full max-w-xl shrink-0 pt-2 pb-2 mb-[calc(var(--card-h)_*_0.18)] lg:pt-4">
+            <div className="mb-3 flex items-center justify-center gap-6 lg:hidden">
+              <button
+                type="button"
+                onClick={() => go(-1)}
+                disabled={index === 0}
+                aria-label="Previous card"
+                className="flex size-9 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-card transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-30 lg:hidden [&_svg]:size-4"
+              >
+                <ChevronLeft />
+              </button>
+              <button
+                type="button"
+                onClick={() => go(1)}
+                disabled={index === cards.length - 1}
+                aria-label="Next card"
+                className="flex size-9 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-card transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-30 lg:hidden [&_svg]:size-4"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+
+            {/* actions */}
+            {!revealed(current) ? (
+              <Button size="lg" className="mt-8 h-11 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
+              Reveal answer
+            </Button>
             ) : (
-              <AnimatePresence mode="wait" initial={false}>
-                {phase === "front" ? (
-                  <motion.div key="reveal" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                    <Button size="lg" className="h-11 w-full text-[15px] shadow-sm" onClick={flip} data-testid="reveal">
-                      Reveal answer
-                      <Kbd className="hide-touch ml-1 bg-primary-foreground/15 text-primary-foreground">Space</Kbd>
-                    </Button>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="answer"
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-3"
-                  >
-                    <section aria-labelledby="q-knew">
-                      <StepHeading id="q-knew" step={1} title="Did you know it?">
-                        <span className="hide-touch">
-                          <KbdGroup>
-                            <Kbd>←</Kbd>
-                            <Kbd>→</Kbd>
-                          </KbdGroup>
-                        </span>
-                        <span className="hide-mouse">or swipe the card</span>
-                      </StepHeading>
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <ChoiceButton active={knew === false} tone="danger" onClick={() => answerKnew(false)} testId="knew-no">
-                          <X /> Not yet
-                        </ChoiceButton>
-                        <ChoiceButton active={knew === true} tone="success" onClick={() => answerKnew(true)} testId="knew-yes">
-                          <Check /> Knew it
-                        </ChoiceButton>
-                      </div>
-                    </section>
-                    <AnimatePresence>
-                      {knew !== null && (
-                        <motion.section
-                          aria-labelledby="q-verdict"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <StepHeading id="q-verdict" step={2} title="Is the card content correct?">
-                            <span className="hide-touch">
-                              <KbdGroup>
-                                <Kbd>C</Kbd>
-                                <Kbd>I</Kbd>
-                                <Kbd>U</Kbd>
-                              </KbdGroup>
-                            </span>
-                          </StepHeading>
-                          <div className="grid grid-cols-3 gap-2">
-                            <VerdictButton tone="success" onClick={() => submit("correct")} testId="verdict-correct" icon={<CheckCircle2 />}>
-                              Correct
-                            </VerdictButton>
-                            <VerdictButton tone="warning" onClick={openSheet} testId="verdict-improve" icon={<PencilLine />}>
-                              Needs fix
-                            </VerdictButton>
-                            <VerdictButton tone="neutral" onClick={() => submit("unsure")} testId="verdict-unsure" icon={<HelpCircle />}>
-                              Not sure
-                            </VerdictButton>
-                          </div>
-                        </motion.section>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <>
+                <StatementActions locked={!editing && remainingMs > 0} remainingMs={remainingMs} onAnswer={answerStatement} selected={answers[current.v] ?? null} weight={current.weight} />
+              </>
             )}
           </div>
+
           <FeedbackSheet
             open={sheetOpen}
             originalText={current.back}
             onCancel={cancelSheet}
             onSubmit={(v) => {
               setSheetOpen(false);
-              if (current.statement) submitStatement("incorrect", v);
-              else submit("needs_improvement", v);
+              submitStatement("incorrect", v);
               toast.success("Suggestion sent", { description: "Reviewers will see it in their triage queue." });
             }}
           />
         </>
       )}
     </div>
-  );
-}
-
-/** Skip-for-now arrow shown on both sides of the card (same action; hidden but space-keeping when skipping is not possible). */
-function SkipSide({ enabled, onClick }: { enabled: boolean; onClick: () => void }) {
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <button
-            type="button"
-            onClick={onClick}
-            disabled={!enabled}
-            aria-label="Skip for now"
-            data-testid="skip-card"
-            className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-card transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 sm:size-10 [&_svg]:size-4",
-              !enabled && "pointer-events-none invisible",
-            )}
-          />
-        }
-      >
-        <SkipForward />
-      </TooltipTrigger>
-      <TooltipContent className="text-xs">Skip for now (S)</TooltipContent>
-    </Tooltip>
-  );
-}
-
-function StepHeading({ id, step, title, children }: { id: string; step: number; title: string; children?: React.ReactNode }) {
-  return (
-    <div className="mb-2 flex items-center justify-between gap-2">
-      <h2 id={id} className="flex items-center gap-2 text-sm font-medium">
-        <span className="inline-flex size-5 items-center justify-center rounded-full bg-muted font-mono text-[11px] text-muted-foreground">{step}</span>
-        {title}
-      </h2>
-      <span className="text-xs text-muted-foreground">{children}</span>
-    </div>
-  );
-}
-
-function ChoiceButton({
-  active,
-  tone,
-  onClick,
-  children,
-  testId,
-}: {
-  active: boolean;
-  tone: "success" | "danger";
-  onClick: () => void;
-  children: React.ReactNode;
-  testId: string;
-}) {
-  const idle =
-    tone === "success"
-      ? "border-success/40 bg-success/[0.10] text-success hover:border-success hover:bg-success/20 [&_svg]:text-success"
-      : "border-destructive/40 bg-destructive/[0.10] text-destructive hover:border-destructive hover:bg-destructive/20 [&_svg]:text-destructive";
-  const on = tone === "success" ? "border-success bg-success text-background" : "border-destructive bg-destructive text-background";
-  return (
-    <motion.button
-      whileTap={{ scale: 0.97 }}
-      className={cn(
-        "inline-flex h-11 items-center justify-center gap-2 rounded-lg border text-[15px] font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-[18px]",
-        active ? on : idle,
-      )}
-      onClick={onClick}
-      aria-pressed={active}
-      data-testid={testId}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-function VerdictButton({
-  tone,
-  onClick,
-  icon,
-  children,
-  testId,
-}: {
-  tone: "success" | "warning" | "neutral";
-  onClick: () => void;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  testId: string;
-}) {
-  const t = {
-    success: "border-success/40 bg-success/[0.10] text-success hover:border-success hover:bg-success/20 [&_svg]:text-success",
-    warning: "border-warning/50 bg-warning/[0.12] text-warning hover:border-warning hover:bg-warning/25 [&_svg]:text-warning",
-    neutral: "border-foreground/25 bg-foreground/[0.06] text-foreground/80 hover:border-foreground/40 hover:bg-foreground/[0.12] [&_svg]:text-muted-foreground",
-  }[tone];
-  return (
-    <motion.button
-      whileTap={{ scale: 0.97 }}
-      className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-1.5 py-2 text-sm font-medium shadow-card transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:size-[18px]",
-        t,
-      )}
-      onClick={onClick}
-      data-testid={testId}
-    >
-      {icon}
-      <span className="leading-tight">{children}</span>
-    </motion.button>
   );
 }
 
@@ -622,6 +470,7 @@ function Summary({
         {limitReached
           ? `You’ve reached today’s limit of ${total} card${total === 1 ? "" : "s"}. Sign in tomorrow for a new random set.`
           : "No more cards are available right now. Check back later."}
+        {answeredNow > 0 && " You can still move back through the cards above to change an answer."}
       </p>
       {answeredNow > 0 && (
         <dl className="mt-6 grid grid-cols-3 divide-x rounded-xl bg-muted/50 py-3 ring-1 ring-foreground/[0.05]">

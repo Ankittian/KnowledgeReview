@@ -34,6 +34,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
         dateLabel={dateLabel}
         cards={deck.cards}
         answered={deck.answered}
+        answers={deck.answers}
         answeredTodayTotal={deck.answeredToday}
         dailyLimit={deck.dailyLimit}
         streak={streak}

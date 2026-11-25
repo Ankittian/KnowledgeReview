@@ -28,6 +28,8 @@ export function StatementCard({
   remainingMs,
   flipped: revealed,
   onFlip,
+  noTimer = false,
+  preview = false,
 }: {
   card: ClientCard;
   position?: number;
@@ -35,6 +37,10 @@ export function StatementCard({
   remainingMs: number;
   flipped: boolean;
   onFlip: () => void;
+  /** the card was already answered (it is being looked at or changed): no read timer */
+  noTimer?: boolean;
+  /** a neighbouring card in the deck: shown, not interactive */
+  preview?: boolean;
 }) {
   const reduce = useReducedMotion();
   // After the reveal, clicking the card turns it back to the question and again to the description. Purely visual:
@@ -56,7 +62,7 @@ export function StatementCard({
           {position}/{total}
         </span>
       )}
-      {timer && READ_LOCK_ENABLED && (
+      {timer && READ_LOCK_ENABLED && !noTimer && (
         <svg viewBox="0 0 24 24" className={cn("size-6 shrink-0 -rotate-90", position === undefined && "ml-auto")} role="progressbar" aria-label="Read time" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(done * 100)} data-testid="read-timer">
           <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" className="stroke-muted" />
           <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-primary transition-[stroke-dashoffset] duration-200" strokeDasharray={2 * Math.PI * 9} strokeDashoffset={2 * Math.PI * 9 * (1 - done)} />
@@ -66,7 +72,7 @@ export function StatementCard({
   );
 
   return (
-    <div className="perspective" data-testid="flashcard" data-statement="true">
+    <div className={cn("perspective", preview && "pointer-events-none select-none")} data-testid={preview ? undefined : "flashcard"} data-statement="true" aria-hidden={preview || undefined}>
       <motion.div
         className="preserve-3d grid cursor-pointer grid-cols-[minmax(0,1fr)]"
         animate={reduce ? undefined : { rotateY: flipped ? 180 : 0 }}
