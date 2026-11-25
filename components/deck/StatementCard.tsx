@@ -15,7 +15,7 @@ import { RichText } from "./RichText";
 export type StatementAnswer = "known" | "new" | "incorrect";
 
 const face =
-  "backface-hidden [grid-area:1/1] flex min-h-[320px] flex-col rounded-2xl bg-card p-5 shadow-float ring-1 ring-foreground/[0.08] sm:min-h-[340px] sm:p-7";
+  "backface-hidden relative [grid-area:1/1] flex h-[var(--card-h,380px)] flex-col overflow-hidden rounded-2xl bg-card p-5 shadow-float ring-1 ring-foreground/[0.08] sm:p-7 ";
 
 /**
  * A generated card: the question (statement title) on the front. Tap or press Space to flip it and read the
@@ -52,20 +52,19 @@ export function StatementCard({
   const done = need > 0 ? Math.min(1, 1 - remainingMs / need) : 1;
 
   const Meta = ({ timer = false }: { timer?: boolean }) => (
-    <div className="flex flex-wrap items-center gap-1.5">
-      <Badge variant="secondary" className="h-auto min-w-0 max-w-full py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
-        {card.context}
-      </Badge>
+    <div className={cn("flex flex-col items-start gap-1.5", timer && READ_LOCK_ENABLED && !noTimer && "pr-9")}>
+      {/* topic title on the first line, the difficulty under it */}
+      <div className="flex w-full flex-wrap items-center gap-1.5">
+        <Badge variant="secondary" className="h-auto min-w-0 max-w-full rounded-lg py-0.5 leading-snug break-words whitespace-normal" title={card.context}>
+          {card.context}
+        </Badge>
+      </div>
       {card.level && <LevelChip level={card.level} weight={card.weight} />}
-      {position !== undefined && total !== undefined && (
-        <span className="ml-auto text-xs font-medium text-muted-foreground tabular-nums">
-          {position}/{total}
-        </span>
-      )}
       {timer && READ_LOCK_ENABLED && !noTimer && (
-        <svg viewBox="0 0 24 24" className={cn("size-6 shrink-0 -rotate-90", position === undefined && "ml-auto")} role="progressbar" aria-label="Read time" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(done * 100)} data-testid="read-timer">
-          <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" className="stroke-muted" />
-          <circle cx="12" cy="12" r="9" fill="none" strokeWidth="3" strokeLinecap="round" className="stroke-primary transition-[stroke-dashoffset] duration-200" strokeDasharray={2 * Math.PI * 9} strokeDashoffset={2 * Math.PI * 9 * (1 - done)} />
+        <svg viewBox="0 0 24 24" className="absolute top-5 right-5 size-6 -rotate-90 sm:top-7 sm:right-7" role="progressbar" aria-label="Read time" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(done * 100)} data-testid="read-timer">
+          {/* a solid blue disc that fills clockwise as the read time passes */}
+          <circle cx="12" cy="12" r="11" className="fill-primary/15" />
+          <circle cx="12" cy="12" r="5.5" fill="none" strokeWidth="11" className="stroke-primary transition-[stroke-dashoffset] duration-200" strokeDasharray={2 * Math.PI * 5.5} strokeDashoffset={2 * Math.PI * 5.5 * (1 - done)} />
         </svg>
       )}
     </div>
@@ -84,8 +83,8 @@ export function StatementCard({
       >
         {/* front: the question */}
         <div className={`${face} group`} style={reduce ? { visibility: flipped ? "hidden" : "visible" } : undefined} aria-hidden={flipped}>
-          <Meta />
-          <div className="flex flex-1 items-center py-6">
+          <Meta timer />
+          <div className="thin-scroll flex min-h-0 flex-1 items-center overflow-y-auto py-6">
             <h2 className="text-lg leading-snug font-bold tracking-tight whitespace-pre-line text-balance sm:text-xl" data-testid="statement-title">
               {card.front}
             </h2>
@@ -106,7 +105,7 @@ export function StatementCard({
           <p className="mt-4 text-[11px] font-medium tracking-wider text-primary uppercase">Description</p>
           <RichText
             text={card.back}
-            className="mt-2 max-h-[42dvh] flex-1 space-y-2 overflow-y-auto pr-1 text-[15px] leading-relaxed sm:max-h-[44vh] sm:text-base"
+            className="thin-scroll mt-2 min-h-0 flex-1 space-y-2 overflow-y-auto pr-1 pb-6 text-[15px] leading-relaxed sm:text-base [mask-image:linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]"
             testId="statement-body"
           />
         </div>
@@ -146,7 +145,7 @@ export function StatementActions({
           </KbdGroup>
         </span>
       </div>
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2">
         <Button
           variant="outline"
           className={cn("h-auto flex-col gap-1 py-2.5 hover:border-success/40 hover:bg-success/[0.06] [&_svg]:text-success", selected === "known" && "border-success bg-success/10")}
@@ -177,7 +176,6 @@ export function StatementActions({
           {weight > 0 && <span className="text-[11px] font-normal text-muted-foreground">{weight * FLAG_POINTS_MULTIPLIER} points</span>}
         </Button>
       </div>
-      {locked && <p className="mt-2 text-center text-xs text-muted-foreground">The answers unlock after the read time so every card is actually read.</p>}
     </section>
   );
 }
