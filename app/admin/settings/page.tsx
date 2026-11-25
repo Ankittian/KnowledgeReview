@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Download, Gauge, Megaphone, PackageOpen } from "lucide-react";
+import { Download, Gauge, Mail, Megaphone, PackageOpen, SlidersHorizontal } from "lucide-react";
 import { getDb } from "@/db/client";
 import { saveAnnouncement, saveDailyCardLimit } from "@/app/actions/admin";
 import { surface } from "@/components/admin/bits";
+import { SideTabs } from "@/components/admin/SideTabs";
 import { Stagger, StaggerItem } from "@/components/common/motion";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,68 +43,86 @@ function CardHead({ icon, title, children, tone = "default" }: { icon: React.Rea
   );
 }
 
-export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ edit?: string; saved?: string }> }) {
+const TABS = [
+  { key: "general", label: "General", icon: <SlidersHorizontal /> },
+  { key: "email", label: "Email", icon: <Mail /> },
+  { key: "exports", label: "Exports", icon: <PackageOpen /> },
+] as const;
+type Tab = (typeof TABS)[number]["key"];
+
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string; edit?: string; saved?: string }> }) {
   const { user } = await requireRole(["admin"]);
-  const { edit, saved } = await searchParams;
+  const { tab: rawTab, edit, saved } = await searchParams;
+  // Old links (?edit=, ?saved=, #email) predate the tabs and always meant the email section.
+  const tab: Tab = TABS.find((t) => t.key === rawTab)?.key ?? (edit || saved ? "email" : "general");
   const db = await getDb();
   const dailyLimit = await getDailyCardLimit(db);
   const announcement = await getAnnouncement(db);
 
   return (
-    <Stagger className="grid gap-4 lg:grid-cols-2">
-      <StaggerItem className={cn(surface, "flex flex-col p-5")}>
-        <CardHead icon={<Gauge />} title="Cards per day">
-          Each sign-in gets a new random set of cards. This is the most cards an employee is shown in one day, across all their sign-ins. It applies right away; cards
-          already answered today count toward it.
-        </CardHead>
-        <form action={saveDailyCardLimit} className="mt-5 flex items-end gap-2 border-t pt-4">
-          <div className="grid gap-1.5">
-            <Label htmlFor="dailyLimit">Cards per day</Label>
-            <Input id="dailyLimit" name="dailyLimit" type="number" min={DAILY_LIMIT_MIN} max={DAILY_LIMIT_MAX} defaultValue={dailyLimit} className="w-28 tabular-nums" required />
-          </div>
-          <button className={buttonVariants()} data-testid="save-daily-limit">
-            Save
-          </button>
-          <span className="mb-2 ml-auto text-xs text-muted-foreground tabular-nums">
-            {DAILY_LIMIT_MIN}–{DAILY_LIMIT_MAX}
-          </span>
-        </form>
-      </StaggerItem>
+    <SideTabs title="Settings" active={tab} items={TABS.map((t) => ({ key: t.key, label: t.label, icon: t.icon, href: `/admin/settings?tab=${t.key}` }))}>
+      {tab === "general" && (
+        <Stagger key="general" className="grid gap-4 xl:grid-cols-2">
+        <StaggerItem className={cn(surface, "flex flex-col p-5")}>
+          <CardHead icon={<Gauge />} title="Cards per day">
+            Each sign-in gets a new random set of cards. This is the most cards an employee is shown in one day, across all their sign-ins. It applies right away; cards
+            already answered today count toward it.
+          </CardHead>
+          <form action={saveDailyCardLimit} className="mt-5 flex items-end gap-2 border-t pt-4">
+            <div className="grid gap-1.5">
+              <Label htmlFor="dailyLimit">Cards per day</Label>
+              <Input id="dailyLimit" name="dailyLimit" type="number" min={DAILY_LIMIT_MIN} max={DAILY_LIMIT_MAX} defaultValue={dailyLimit} className="w-28 tabular-nums" required />
+            </div>
+            <button className={buttonVariants()} data-testid="save-daily-limit">
+              Save
+            </button>
+            <span className="mb-2 ml-auto text-xs text-muted-foreground tabular-nums">
+              {DAILY_LIMIT_MIN}–{DAILY_LIMIT_MAX}
+            </span>
+          </form>
+        </StaggerItem>
 
-      <StaggerItem className={cn(surface, "flex flex-col p-5")}>
-        <CardHead icon={<Megaphone />} title="Announcement banner">
-          Shows a message at the top of every page for all signed-in users. They can dismiss it; saving again shows it to everyone anew.
-          {announcement?.active ? " A banner is live right now." : " No banner is live."}
-        </CardHead>
-        <AnnouncementForm announcement={announcement} action={saveAnnouncement} />
-      </StaggerItem>
+        <StaggerItem className={cn(surface, "flex flex-col p-5")}>
+          <CardHead icon={<Megaphone />} title="Announcement banner">
+            Shows a message at the top of every page for all signed-in users. They can dismiss it; saving again shows it to everyone anew.
+            {announcement?.active ? " A banner is live right now." : " No banner is live."}
+          </CardHead>
+          <AnnouncementForm announcement={announcement} action={saveAnnouncement} />
+        </StaggerItem>
 
-      <div className="min-w-0 lg:col-span-2">
-        <MailSettingsSection userId={user.id} edit={edit} saved={saved} />
-      </div>
-
-      <StaggerItem className={cn(surface, "p-5 lg:col-span-2")}>
-        <CardHead icon={<PackageOpen />} title="Exports">
-          Every export is keyed to the source YAML (file, key, field), so it can be applied straight back to the knowledge base.
-        </CardHead>
-        <ul className="mt-4 divide-y border-t">
-          {EXPORTS.map((e) => (
-            <li key={e.name} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{e.label}</p>
-                <p className="text-xs text-muted-foreground">{e.desc}</p>
-              </div>
-              <div className="flex gap-1.5">
-                {e.formats.map((f) => (
-                  <a key={f} href={`/api/admin/export/${e.name}?format=${f}`} className={cn(buttonVariants({ variant: "outline", size: "xs" }), "font-mono uppercase")}>
-                    <Download /> {f}
-                  </a>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </StaggerItem>
-    </Stagger>
+        </Stagger>
+      )}
+      {tab === "email" && (
+        <div key="email" className="min-w-0">
+          <MailSettingsSection userId={user.id} edit={edit} saved={saved} />
+        </div>
+      )}
+      {tab === "exports" && (
+        <Stagger key="exports" className="grid gap-4">
+        <StaggerItem className={cn(surface, "p-5")}>
+          <CardHead icon={<PackageOpen />} title="Exports">
+            Every export is keyed to the source YAML (file, key, field), so it can be applied straight back to the knowledge base.
+          </CardHead>
+          <ul className="mt-4 divide-y border-t">
+            {EXPORTS.map((e) => (
+              <li key={e.name} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">{e.label}</p>
+                  <p className="text-xs text-muted-foreground">{e.desc}</p>
+                </div>
+                <div className="flex gap-1.5">
+                  {e.formats.map((f) => (
+                    <a key={f} href={`/api/admin/export/${e.name}?format=${f}`} className={cn(buttonVariants({ variant: "outline", size: "xs" }), "font-mono uppercase")}>
+                      <Download /> {f}
+                    </a>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </StaggerItem>
+        </Stagger>
+      )}
+    </SideTabs>
   );
 }

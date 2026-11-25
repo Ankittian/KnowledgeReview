@@ -50,7 +50,7 @@ export async function saveMailConnectionAction(_prev: FormState, fd: FormData): 
     passwordChanged: !!d.password,
   }); // the password itself is never logged
   revalidatePath("/admin/settings");
-  redirect(`/admin/settings?saved=${result.id}#email`);
+  redirect(`/admin/settings?tab=email&saved=${result.id}`);
 }
 
 /** Make a saved connection the one that sends. */

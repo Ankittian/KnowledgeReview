@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Info, Save } from "lucide-react";
+import { ChevronRight, Info, Save } from "lucide-react";
 import type { FormState } from "@/app/actions/auth";
 import { saveMailConnectionAction } from "@/app/actions/mail-admin";
 import { FieldError, FormAlert, SubmitButton } from "@/components/auth/FormBits";
@@ -26,6 +26,8 @@ const PRESETS = [
   { label: "Gmail", host: "smtp.gmail.com", port: "587", security: "starttls", name: "Gmail" },
   { label: "Outlook / Microsoft 365", host: "smtp.office365.com", port: "587", security: "starttls", name: "Outlook" },
 ] as const;
+
+const ADVANCED_FIELDS = ["name", "host", "port", "security", "user", "fromName"];
 
 /** What the admin must know before the chosen provider will accept the login. Shown from the host that is typed or picked. */
 function providerHint(host: string): { tone: "info" | "warning"; title: string; body: string } | null {
@@ -62,7 +64,11 @@ function Field({ id, label, error, hint, children }: { id: string; label: string
   );
 }
 
-/** Add a connection, or edit one (`connection` given). The saved password is never sent to the browser. */
+/**
+ * Add a connection, or edit one (`connection` given). The saved password is never sent to the browser.
+ * Minimal on purpose: pick a provider, give the mailbox address and password. Everything technical (name, server,
+ * port, security, login, sender name) sits under "Server settings" and is filled in for Gmail and Microsoft 365.
+ */
 export function MailConnectionForm({ connection, firstOne }: { connection?: ConnectionDefaults; firstOne: boolean }) {
   const [state, action] = useActionState<FormState, FormData>(saveMailConnectionAction, {});
   const v = state.values ?? {};
@@ -71,22 +77,31 @@ export function MailConnectionForm({ connection, firstOne }: { connection?: Conn
   const [port, setPort] = useState(v.port ?? String(connection?.port ?? 587));
   const [security, setSecurity] = useState(v.security ?? connection?.security ?? "starttls");
   const [name, setName] = useState(v.name ?? connection?.name ?? "");
+  const [email, setEmail] = useState(v.fromEmail ?? connection?.fromEmail ?? "");
+  const [login, setLogin] = useState<string | null>(v.user ?? (connection ? connection.username : null)); // null = same as the email address
+  const [open, setOpen] = useState(false);
   const editing = !!connection?.id;
   const hint = providerHint(host);
+  const preset = PRESETS.find((p) => p.host === host.trim().toLowerCase());
+  const advancedError = ADVANCED_FIELDS.some((k) => fe[k]);
+  const showAdvanced = open || advancedError;
+  const chip = (on: boolean) =>
+    `rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${on ? "border-primary bg-primary/10 text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`;
 
   return (
     <form action={action} className="space-y-4" noValidate data-testid="mail-form">
       {connection?.id && <input type="hidden" name="id" value={connection.id} />}
       <FormAlert message={state.error} />
 
-      {!editing && (
-        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-          <span>Start from:</span>
+      <div className="space-y-1.5">
+        <Label>Provider</Label>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Provider">
           {PRESETS.map((p) => (
             <button
               key={p.label}
               type="button"
-              className="rounded-md border px-2 py-1 font-medium text-foreground hover:bg-muted"
+              aria-pressed={preset?.label === p.label}
+              className={chip(preset?.label === p.label)}
               onClick={() => {
                 setHost(p.host);
                 setPort(p.port);
@@ -97,8 +112,11 @@ export function MailConnectionForm({ connection, firstOne }: { connection?: Conn
               {p.label}
             </button>
           ))}
+          <button type="button" aria-pressed={!preset && showAdvanced} className={chip(!preset && showAdvanced)} onClick={() => setOpen(true)}>
+            Other
+          </button>
         </div>
-      )}
+      </div>
 
       {hint && (
         <div
@@ -114,46 +132,53 @@ export function MailConnectionForm({ connection, firstOne }: { connection?: Conn
         </div>
       )}
 
-      <Field id="mc-name" label="Name" error={fe.name} hint="Only for you, to tell connections apart (for example Gmail testing).">
-        <Input id="mc-name" name="name" className="h-10" value={name} onChange={(e) => setName(e.target.value)} required aria-invalid={!!fe.name || undefined} />
-      </Field>
-
-      <div className="grid gap-4 sm:grid-cols-[1fr_7rem_11rem]">
-        <Field id="mc-host" label="Host" error={fe.host}>
-          <Input id="mc-host" name="host" className="h-10" placeholder="smtp.gmail.com" autoCapitalize="none" spellCheck={false} value={host} onChange={(e) => setHost(e.target.value)} required aria-invalid={!!fe.host || undefined} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="mc-fromemail" label="Email address" error={fe.fromEmail}>
+          <Input id="mc-fromemail" name="fromEmail" type="email" className="h-10" autoCapitalize="none" spellCheck={false} value={email} onChange={(e) => setEmail(e.target.value)} required aria-invalid={!!fe.fromEmail || undefined} />
         </Field>
-        <Field id="mc-port" label="Port" error={fe.port}>
-          <Input id="mc-port" name="port" type="number" min={1} max={65535} className="h-10 tabular-nums" value={port} onChange={(e) => setPort(e.target.value)} required aria-invalid={!!fe.port || undefined} />
-        </Field>
-        <Field id="mc-security" label="Security" error={fe.security}>
-          <NativeSelect id="mc-security" name="security" value={security} onChange={(e) => setSecurity(e.target.value)} className="w-full">
-            <NativeSelectOption value="starttls">STARTTLS (587)</NativeSelectOption>
-            <NativeSelectOption value="ssl">SSL/TLS (465)</NativeSelectOption>
-          </NativeSelect>
+        <Field id="mc-password" label="Password" error={fe.password} hint={editing && connection?.hasPassword ? "A password is saved. Leave blank to keep it." : undefined}>
+          <Input id="mc-password" name="password" type="password" className="h-10" autoComplete="new-password" placeholder={editing && connection?.hasPassword ? "••••••••••••" : ""} aria-invalid={!!fe.password || undefined} />
         </Field>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="mc-user" label="Username" error={fe.user} hint="Usually the full email address of the mailbox.">
-          <Input id="mc-user" name="user" className="h-10" autoComplete="off" autoCapitalize="none" spellCheck={false} defaultValue={v.user ?? connection?.username ?? ""} aria-invalid={!!fe.user || undefined} />
-        </Field>
-        <Field
-          id="mc-password"
-          label="Password"
-          error={fe.password}
-          hint={editing && connection?.hasPassword ? "A password is saved. Leave blank to keep it." : "Gmail needs an app password. Stored encrypted."}
-        >
-          <Input id="mc-password" name="password" type="password" className="h-10" autoComplete="new-password" placeholder={editing && connection?.hasPassword ? "••••••••••••••••" : ""} aria-invalid={!!fe.password || undefined} />
-        </Field>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="mc-fromname" label="Sender name" error={fe.fromName}>
-          <Input id="mc-fromname" name="fromName" className="h-10" placeholder="Knowledge Review" defaultValue={v.fromName ?? connection?.fromName ?? "Knowledge Review"} aria-invalid={!!fe.fromName || undefined} />
-        </Field>
-        <Field id="mc-fromemail" label="Sender email" error={fe.fromEmail} hint="Gmail and Microsoft 365 only send as the mailbox you log in with.">
-          <Input id="mc-fromemail" name="fromEmail" type="email" className="h-10" autoCapitalize="none" spellCheck={false} defaultValue={v.fromEmail ?? connection?.fromEmail ?? ""} required aria-invalid={!!fe.fromEmail || undefined} />
-        </Field>
+      <div>
+        <button type="button" aria-expanded={showAdvanced} onClick={() => setOpen((o) => !o)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <ChevronRight className={`size-4 transition-transform ${showAdvanced ? "rotate-90" : ""}`} />
+          Server settings
+          {!showAdvanced && host && (
+            <span className="ml-1 font-mono text-xs">
+              {host}:{port}
+            </span>
+          )}
+        </button>
+        {/* always rendered, only hidden, so the values are still submitted */}
+        <div className={`mt-3 space-y-4 ${showAdvanced ? "" : "hidden"}`}>
+          <Field id="mc-name" label="Name" error={fe.name} hint="Only to tell connections apart.">
+            <Input id="mc-name" name="name" className="h-10" value={name || preset?.name || host} onChange={(e) => setName(e.target.value)} required aria-invalid={!!fe.name || undefined} />
+          </Field>
+          <div className="grid gap-4 sm:grid-cols-[1fr_7rem_11rem]">
+            <Field id="mc-host" label="Host" error={fe.host}>
+              <Input id="mc-host" name="host" className="h-10" placeholder="smtp.example.com" autoCapitalize="none" spellCheck={false} value={host} onChange={(e) => setHost(e.target.value)} required aria-invalid={!!fe.host || undefined} />
+            </Field>
+            <Field id="mc-port" label="Port" error={fe.port}>
+              <Input id="mc-port" name="port" type="number" min={1} max={65535} className="h-10 tabular-nums" value={port} onChange={(e) => setPort(e.target.value)} required aria-invalid={!!fe.port || undefined} />
+            </Field>
+            <Field id="mc-security" label="Security" error={fe.security}>
+              <NativeSelect id="mc-security" name="security" value={security} onChange={(e) => setSecurity(e.target.value)} className="w-full">
+                <NativeSelectOption value="starttls">STARTTLS (587)</NativeSelectOption>
+                <NativeSelectOption value="ssl">SSL/TLS (465)</NativeSelectOption>
+              </NativeSelect>
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field id="mc-user" label="Username" error={fe.user} hint="Same as the email address unless your provider says otherwise.">
+              <Input id="mc-user" name="user" className="h-10" autoComplete="off" autoCapitalize="none" spellCheck={false} value={login ?? email} onChange={(e) => setLogin(e.target.value)} aria-invalid={!!fe.user || undefined} />
+            </Field>
+            <Field id="mc-fromname" label="Sender name" error={fe.fromName}>
+              <Input id="mc-fromname" name="fromName" className="h-10" placeholder="Knowledge Review" defaultValue={v.fromName ?? connection?.fromName ?? "Knowledge Review"} aria-invalid={!!fe.fromName || undefined} />
+            </Field>
+          </div>
+        </div>
       </div>
 
       <label className="flex items-center gap-2 text-sm">
@@ -166,7 +191,7 @@ export function MailConnectionForm({ connection, firstOne }: { connection?: Conn
           {editing ? "Save changes" : "Save connection"}
         </SubmitButton>
         {editing && (
-          <Link href="/admin/settings#email" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+          <Link href="/admin/settings?tab=email" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
             Cancel
           </Link>
         )}
