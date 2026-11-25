@@ -127,12 +127,17 @@ export interface ClientCard {
   minRead: number;
 }
 
+/** How a statement card was answered: Known and correct, New to me, or Incorrect or incomplete (a report). */
+export type DeckAnswer = "known" | "new" | "incorrect";
+
 export interface TodayDeck {
   deckId: number | null;
   date: string;
   cards: ClientCard[];
   /** version ids of this deck's cards already answered */
   answered: number[];
+  /** the latest answer to each answered card (version id), so it can be shown and changed */
+  answers: Record<number, DeckAnswer>;
   /** answers given today across all decks (sign-ins) */
   answeredToday: number;
   dailyLimit: number;
@@ -152,12 +157,15 @@ export async function getOrCreateDeck(
 ): Promise<TodayDeck> {
   const dailyLimit = await getDailyCardLimit(db);
   const answeredRows = await db
-    .select({ cardId: cardVersions.cardId })
+    .select({ cardId: cardVersions.cardId, knewIt: cardReviews.knewIt, verdict: cardReviews.verdict })
     .from(cardReviews)
     .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
     .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
-    .where(and(eq(cardReviews.userId, user.id), eq(dailyDecks.deckDate, today)));
+    .where(and(eq(cardReviews.userId, user.id), eq(dailyDecks.deckDate, today)))
+    .orderBy(cardReviews.createdAt, cardReviews.id);
   const answeredCards = new Set(answeredRows.map((r) => r.cardId));
+  const lastAnswer = new Map<string, DeckAnswer>(); // the latest one wins
+  for (const r of answeredRows) lastAnswer.set(r.cardId, r.verdict === "needs_improvement" ? "incorrect" : r.knewIt ? "known" : "new");
   const answeredToday = answeredCards.size;
 
   let [deck] = await db
@@ -215,7 +223,7 @@ export async function getOrCreateDeck(
       });
     }
   }
-  if (!deck) return { deckId: null, date: today, cards: [], answered: [], answeredToday, dailyLimit };
+  if (!deck) return { deckId: null, date: today, cards: [], answered: [], answers: {}, answeredToday, dailyLimit };
 
   const rows = await db
     .select({ cardId: cards.id, v: cardVersions.id, context: cardVersions.context, front: cardVersions.front, back: cardVersions.back, module: kbItems.module, status: cards.status, audience: cards.audience, level: cards.level })
@@ -228,6 +236,7 @@ export async function getOrCreateDeck(
 
   const out: ClientCard[] = [];
   const answered: number[] = [];
+  const answers: Record<number, DeckAnswer> = {};
   // answers from this deck, plus at most `remaining` open cards (the admin may have lowered the limit meanwhile)
   let open = Math.max(0, remaining);
   for (const id of deckCardIds) {
@@ -246,9 +255,12 @@ export async function getOrCreateDeck(
       weight: r.level ? LEVELS[r.level].weight : 0,
       minRead: minReadSeconds(countWords(r.back), r.level),
     });
-    if (isAnswered) answered.push(r.v);
+    if (isAnswered) {
+      answered.push(r.v);
+      answers[r.v] = lastAnswer.get(id) ?? "known";
+    }
   }
-  return { deckId: deck.id, date: today, cards: out, answered, answeredToday, dailyLimit };
+  return { deckId: deck.id, date: today, cards: out, answered, answers, answeredToday, dailyLimit };
 }
 
 async function loadDeckCardIds(db: DB, deckId: number): Promise<string[]> {

@@ -71,9 +71,10 @@ export async function recordReview(
   // hard daily limit (all sign-ins together)
   const dailyLimit = await getDailyCardLimit(db);
   const [{ n: answeredBefore }] = await db
-    .select({ n: sql<number>`count(*)::int` })
+    .select({ n: sql<number>`count(DISTINCT ${cardVersions.cardId})::int` })
     .from(cardReviews)
     .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
+    .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
     .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, deckDate)));
   const [already] = await db
     .select({ id: cardReviews.id })
@@ -81,7 +82,8 @@ export async function recordReview(
     .innerJoin(dailyDecks, eq(dailyDecks.id, cardReviews.deckId))
     .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
     .where(and(eq(cardReviews.userId, userId), eq(dailyDecks.deckDate, deckDate), eq(cardVersions.cardId, ver.cardId)));
-  if (already) return { ok: true, duplicate: true, deckCompleted: false };
+  if (already && !input.edit) return { ok: true, duplicate: true, deckCompleted: false };
+  if (already && input.edit) return editReview(db, userId, input, meta, { reviewId: already.id, versionId: ver.versionId, cardId: ver.cardId, deckId: deck.id, deckDate });
   if (answeredBefore >= dailyLimit) return { ok: false, status: 409, error: "Daily card limit reached." };
 
   const shownAt = toDate(input.shownAt);
@@ -248,6 +250,44 @@ export async function recordClientEvents(db: DB, userId: string, input: EventsIn
       ...meta,
     })),
   );
+}
+
+/**
+ * Changes the answer already given to a card in today's deck. The card keeps its one review row (so it still counts once
+ * toward the daily limit, the schedule and the deck); only the answer changes. No read-time lock: the card was read
+ * when it was first answered. Points follow the answer the card now has. A new "needs fix" report is saved as a suggestion.
+ */
+async function editReview(
+  db: DB,
+  userId: string,
+  input: ReviewInput,
+  meta: Meta,
+  t: { reviewId: number; versionId: number; cardId: string; deckId: number; deckDate: string },
+): Promise<Result> {
+  const editKey = `srv:edit:${input.clientEventId}`;
+  const [seen] = await db.select({ id: activityLog.id }).from(activityLog).where(eq(activityLog.clientEventId, editKey)).limit(1);
+  if (seen) return { ok: true, duplicate: true, deckCompleted: false }; // a client retry
+  const now = Date.now();
+  const at = toDate(input.answeredAt);
+  const answeredAt = at && at.getTime() <= now + 60_000 ? at : new Date(now);
+  await db.transaction(async (tx) => {
+    await tx.update(cardReviews).set({ knewIt: input.knewIt, verdict: input.verdict, answeredAt }).where(eq(cardReviews.id, t.reviewId));
+    const events: EventInput[] = [
+      {
+        userId,
+        cardId: t.cardId,
+        type: "review_edited",
+        payload: { review_id: t.reviewId, version_id: t.versionId, knew_it: input.knewIt, verdict: input.verdict, deck_date: t.deckDate, deck_id: t.deckId },
+        clientEventId: editKey,
+        occurredAt: answeredAt,
+        ...meta,
+      },
+    ];
+    if (input.verdict === "needs_improvement" && input.feedback)
+      events.push(await saveFeedback(tx as unknown as DB, { reviewId: t.reviewId, userId, versionId: t.versionId, cardId: t.cardId, input, answeredAt, meta }));
+    await logEvents(tx as unknown as DB, events);
+  });
+  return { ok: true, duplicate: false, deckCompleted: false };
 }
 
 /** Saves a suggestion ("needs fix" report) and returns the log event for it. Same rows the daily deck writes. */

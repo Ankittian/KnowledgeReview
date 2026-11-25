@@ -78,6 +78,8 @@ export const reviewSchema = z
     flippedAt: isoDate,
     answeredAt: isoDate,
     device: z.string().max(40).optional().nullable(),
+    /** true when this changes the answer already given to the card in today's deck (no read-time lock, no new answer counted) */
+    edit: z.boolean().optional(),
     /** time the card was actually on screen and attended to (hidden tab / idle time already removed) */
     activeMs: z.number().int().min(0).max(3_600_000).optional().nullable(),
     feedback: z
