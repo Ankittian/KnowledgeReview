@@ -20,6 +20,17 @@ const PERIODS: { value: LeaderboardPeriod; label: string }[] = [
   { value: "all", label: "All time" },
 ];
 
+/** "● 2": the card colour (as on the Browse cards) and the points it is worth. */
+function PointsKey({ dot, label, points }: { dot: string; label: string; points: number }) {
+  return (
+    <span className="inline-flex items-center gap-1 font-medium whitespace-nowrap text-foreground" title={`${label} cards`}>
+      <span className={`size-2.5 rounded-full ${dot}`} aria-hidden />
+      {points}
+      <span className="sr-only"> for {label} cards</span>
+    </span>
+  );
+}
+
 export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ period?: string; module?: string }> }) {
   const { user } = await requireUser();
   const sp = await searchParams;
@@ -30,7 +41,6 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
   const rows = await getLeaderboard(db, period, user.id, module);
   const me = rows.find((r) => r.isMe);
   const areaName = module ? (moduleNames.get(module) ?? module) : "All areas";
-  const pointsLine = `${LEVELS.easy.weight} for easy, ${LEVELS.medium.weight} for medium, ${LEVELS.hard.weight} for hard`;
 
   /** Builds a link that keeps the other filter. */
   const href = (p: LeaderboardPeriod, m: string | null) => {
@@ -44,8 +54,18 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
     cn("rounded-md px-3 py-1.5 text-sm font-medium transition-colors", active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground");
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 px-4 pt-6 sm:px-6 sm:pt-8">
-      <PageHeader title="Leaderboard" description={`Points per card: ${pointsLine}. Reporting a card as incorrect or incomplete earns ${FLAG_POINTS_MULTIPLIER}× its points. Each card scores once, from your first answer.`} />
+    <div className="w-full space-y-6 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
+      <PageHeader
+        title="Leaderboard"
+        description={
+          <>
+            Points per card: <PointsKey dot="bg-success" label="easy" points={LEVELS.easy.weight} />,{" "}
+            <PointsKey dot="bg-yellow-400" label="medium" points={LEVELS.medium.weight} />,{" "}
+            <PointsKey dot="bg-destructive" label="hard" points={LEVELS.hard.weight} />. Reporting a card as incorrect or incomplete earns {FLAG_POINTS_MULTIPLIER}× its points.
+            Each card scores once, from your first answer.
+          </>
+        }
+      />
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -56,7 +76,6 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
               </Link>
             ))}
           </nav>
-          <p className="text-xs text-muted-foreground">Admins are not ranked.</p>
         </div>
         <nav className="flex flex-wrap gap-1.5" aria-label="Area">
           <Link href={href(period, null)} aria-current={!module ? "page" : undefined} className={cn(buttonVariants({ variant: module ? "outline" : "default", size: "sm" }), "h-7 px-2.5 text-xs")}>
@@ -98,7 +117,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
             {period === "week" ? "This week" : "All time"} · {areaName}
           </CardTitle>
           <CardDescription>
-            {rows.length} player{rows.length === 1 ? "" : "s"} with points
+            {rows.length} player{rows.length === 1 ? "" : "s"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -117,26 +136,33 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
             </Empty>
           ) : (
             <ol className="divide-y" data-testid="leaderboard">
-              {rows.map((r) => (
+              {rows.map((r) => {
+                const top = r.rank === 1 && r.points > 0; // the leader: a golden row that sits a little proud of the list
+                return (
                 <li
                   key={r.userId}
-                  className={cn("flex items-center gap-3 py-2.5", r.isMe && "-mx-2 rounded-lg bg-primary/8 px-2")}
-                  data-testid={r.isMe ? "leaderboard-me" : "leaderboard-row"}
+                  className={cn(
+                    "flex items-center gap-3 py-2.5",
+                    r.isMe && !top && "-mx-2 rounded-xl bg-primary/8 px-2",
+                    top && "-mx-2 my-0.5 rounded-xl bg-[#f2c200]/20 px-2 py-3 ring-1 ring-[#f2c200]/45",
+                  )}
+                  data-testid={r.isMe ? "leaderboard-me" : top ? "leaderboard-top" : "leaderboard-row"}
                 >
-                  <span className={cn("w-8 shrink-0 text-center font-mono text-sm font-semibold tabular-nums", r.rank <= 3 ? "text-warning" : "text-muted-foreground")}>
+                  <span className={cn("w-8 shrink-0 text-center font-mono text-sm font-semibold tabular-nums", top ? "text-[#8a6a00] dark:text-[#f0cf3d]" : r.rank <= 3 ? "text-warning" : "text-muted-foreground")}>
                     {r.rank}
                   </span>
                   <UserRound className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                  <span className={cn("min-w-0 flex-1 truncate text-sm font-medium", top && "font-semibold")}>
                     {r.name}
                     {r.isMe && <span className="ml-1.5 text-xs font-normal text-primary">(you)</span>}
                   </span>
                   <span className="hidden text-xs text-muted-foreground tabular-nums sm:inline">
                     {r.cards} card{r.cards === 1 ? "" : "s"}
                   </span>
-                  <span className="w-16 text-right text-sm font-semibold tabular-nums">{r.points} pts</span>
+                  <span className={cn("w-16 text-right text-sm font-semibold tabular-nums", top && "text-[#8a6a00] dark:text-[#f0cf3d]")}>{r.points} pts</span>
                 </li>
-              ))}
+                );
+              })}
             </ol>
           )}
         </CardContent>

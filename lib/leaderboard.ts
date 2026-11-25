@@ -24,13 +24,15 @@ const pointsCase = sql.join(
  * Known and correct / New to me earn the card's level points; reporting the card as incorrect or incomplete earns
  * FLAG_POINTS_MULTIPLIER (2) times that. "This week" counts only cards whose first scoring answer fell in the
  * current week. `module` (a module code) limits the board to that area's cards.
- * Admins are ranked like everyone else; only active users are listed. Ties go to whoever reached their score first.
+ * Admins are ranked like everyone else. Every active user is listed, those with no points (yet, this week, or in this
+ * area) included, at 0 and sharing the last rank. Ties go to whoever reached their score first.
  */
 export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: string, module: string | null = null): Promise<LeaderRow[]> {
   const conds: SQL[] = [];
   if (period === "week") conds.push(sql`f.answered_at >= date_trunc('week', now())`);
   if (module) conds.push(sql`f.module = ${module}`);
-  const where = conds.length ? sql`WHERE ${sql.join(conds, sql` AND `)}` : sql``;
+  // the period / area limits sit in the JOIN, so people with no matching answers stay in the list with 0 points
+  const joinOn = conds.length ? sql` AND ${sql.join(conds, sql` AND `)}` : sql``;
   const rows = await query<{ user_id: string; name: string; points: number; cards: number }>(
     db,
     sql`WITH first_correct AS (
@@ -44,17 +46,19 @@ export async function getLeaderboard(db: DB, period: LeaderboardPeriod, meId: st
           WHERE r.verdict IN ('correct', 'needs_improvement') AND c.level IS NOT NULL
           ORDER BY r.user_id, c.id, coalesce(r.answered_at, r.created_at)
         )
-        SELECT f.user_id, u.display_name AS name,
+        SELECT u.id AS user_id, u.display_name AS name,
                coalesce(sum((CASE f.level ${pointsCase} END) * (CASE WHEN f.verdict = 'needs_improvement' THEN ${FLAG_POINTS_MULTIPLIER}::int ELSE 1 END)), 0)::int AS points,
-               count(*)::int AS cards
-        FROM first_correct f
-        JOIN users u ON u.id = f.user_id AND u.status = 'active'
-        ${where}
-        GROUP BY f.user_id, u.display_name
-        ORDER BY points DESC, max(f.answered_at) ASC`,
+               count(f.card_id)::int AS cards
+        FROM users u
+        LEFT JOIN first_correct f ON f.user_id = u.id${joinOn}
+        WHERE u.status = 'active'
+        GROUP BY u.id, u.display_name
+        ORDER BY points DESC, max(f.answered_at) ASC NULLS LAST, u.display_name`,
   );
+  const firstZero = rows.findIndex((r) => Number(r.points) === 0);
   return rows.map((r, i) => ({
-    rank: i + 1,
+    // everyone on 0 points shares the rank right after the last scorer
+    rank: Number(r.points) === 0 ? firstZero + 1 : i + 1,
     userId: r.user_id,
     name: r.name,
     points: Number(r.points),
