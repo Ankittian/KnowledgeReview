@@ -68,6 +68,98 @@ export function composeDeck(p: DeckPools, size: number, seed = ""): string[] {
   return seed ? seededShuffle(out, seed) : out;
 }
 
+/** Share of the deck taken from the user's main module (the rest are outlier blocks from other modules). */
+export const PRIMARY_SHARE = 0.5;
+/** Max cards in one outlier block (one other module). */
+export const OUTLIER_BLOCK = 5;
+
+export interface GroupMeta {
+  module: string | null;
+  /** kb item (form / rule / concept ...) the card belongs to */
+  item: number;
+}
+
+/** Stable regroup: cards of the same kb item (e.g. the same form) sit next to each other, first-seen order kept. */
+function clusterByItem(ids: string[], meta: Map<string, GroupMeta>): string[] {
+  const first = new Map<number, number>();
+  ids.forEach((id, i) => {
+    const it = meta.get(id)?.item ?? -1;
+    if (!first.has(it)) first.set(it, i);
+  });
+  return ids
+    .map((id, i) => ({ id, i, f: first.get(meta.get(id)?.item ?? -1)! }))
+    .sort((a, b) => a.f - b.f || a.i - b.i)
+    .map((x) => x.id);
+}
+
+/**
+ * Turn a ranked candidate list into a grouped deck: one main-module block (PRIMARY_SHARE of the deck, the user's module
+ * if it has candidates, else the module with the most), then outlier blocks of up to OUTLIER_BLOCK cards from other
+ * modules. Within a block, cards of the same kb item are adjacent. Any shortfall is topped up into existing blocks.
+ * Candidates are taken in rank order, so due / priority cards still come first within each module.
+ */
+export function groupDeck(ranked: string[], meta: Map<string, GroupMeta>, size: number, primary: string | null, seed: string): string[] {
+  const byMod = new Map<string, string[]>();
+  for (const id of ranked) {
+    const m = meta.get(id);
+    if (!m) continue;
+    const k = m.module ?? "-";
+    if (!byMod.has(k)) byMod.set(k, []);
+    byMod.get(k)!.push(id);
+  }
+  if (!byMod.size || size <= 0) return [];
+
+  const main =
+    primary && byMod.has(primary)
+      ? primary
+      : [...byMod.entries()].sort((a, b) => b[1].length - a[1].length || (a[0] < b[0] ? -1 : 1))[0][0];
+  // outliers: modules that can fill a whole block first, then by seeded order (varies per user per day)
+  const others = seededShuffle([...byMod.keys()].filter((k) => k !== main), seed).sort(
+    (a, b) => Math.min(byMod.get(b)!.length, OUTLIER_BLOCK) - Math.min(byMod.get(a)!.length, OUTLIER_BLOCK),
+  );
+
+  const blocks: { key: string; ids: string[] }[] = [];
+  let left = size;
+  const take = (key: string, n: number) => {
+    const ids = byMod.get(key)!.splice(0, Math.max(0, n));
+    if (!ids.length) return;
+    const b = blocks.find((x) => x.key === key);
+    if (b) b.ids.push(...ids);
+    else blocks.push({ key, ids });
+    left -= ids.length;
+  };
+  take(main, Math.min(left, Math.ceil(size * PRIMARY_SHARE)));
+  for (const k of others) {
+    if (left <= 0) break;
+    take(k, Math.min(left, OUTLIER_BLOCK));
+  }
+  for (const k of [main, ...others]) {
+    if (left <= 0) break;
+    take(k, left);
+  }
+  return blocks.flatMap((b) => clusterByItem(b.ids, meta));
+}
+
+/** Rank candidates with the due / priority / fresh mix, then regroup them by module (see groupDeck). */
+async function composeGroupedDeck(
+  db: DB,
+  pools: DeckPools,
+  size: number,
+  primary: string | null,
+  seed: string,
+  exclude: Set<string>,
+): Promise<string[]> {
+  const ranked = composeDeck(pools, size * 4 + exclude.size).filter((id) => !exclude.has(id)); // unshuffled = rank order
+  if (!ranked.length) return [];
+  const rows = await db
+    .select({ id: cards.id, module: kbItems.module, item: cards.kbItemId })
+    .from(cards)
+    .innerJoin(kbItems, eq(kbItems.id, cards.kbItemId))
+    .where(inArray(cards.id, ranked));
+  const meta = new Map<string, GroupMeta>(rows.map((r) => [r.id, { module: r.module, item: r.item }]));
+  return groupDeck(ranked, meta, size, primary, seed);
+}
+
 export async function loadDeckPools(
   db: DB,
   userId: string,
@@ -96,18 +188,18 @@ export async function loadDeckPools(
           ${module ? sql`AND ch.module = ${module}` : sql``}
         ORDER BY ${moduleFirst} ch.conflicting DESC, ch.reviewers DESC, md5(ch.card_id || ${seed}) LIMIT ${lim}`,
   );
-  const fresh = await query<{ card_id: string }>(
-    db,
-    sql`SELECT ch.card_id FROM card_health ch
-        WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ch.reviewers = 0 AND ${unseen}
-        ORDER BY ${moduleFirst} md5(ch.card_id || ${seed}) LIMIT ${lim}`,
-  );
-  const fallback = await query<{ card_id: string }>(
-    db,
-    sql`SELECT ch.card_id FROM card_health ch
-        WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ${unseen}
-        ORDER BY ${moduleFirst} md5(ch.card_id || ${seed}) LIMIT ${lim}`,
-  );
+  // Capped per module (not one global LIMIT) so the main module cannot crowd out the other modules' outlier blocks.
+  const perModule = (extra: ReturnType<typeof sql>) => sql`
+    SELECT t.card_id FROM (
+      SELECT ch.card_id, ch.module,
+             row_number() OVER (PARTITION BY ch.module ORDER BY md5(ch.card_id || ${seed})) AS rn
+      FROM card_health ch
+      WHERE ch.status = 'active' AND ${audienceIn(sql`ch.audience`, audiences)} AND ${extra} AND ${unseen}
+    ) t
+    WHERE t.rn <= CASE WHEN ${module}::text IS NOT NULL AND t.module = ${module} THEN ${lim} ELSE ${OUTLIER_BLOCK * 2} END
+    ORDER BY coalesce(t.module = ${module}::text, false) DESC, t.rn, md5(t.card_id || ${seed})`;
+  const fresh = await query<{ card_id: string }>(db, perModule(sql`ch.reviewers = 0`));
+  const fallback = await query<{ card_id: string }>(db, perModule(sql`true`));
   return { due: ids(due), priority: ids(priority), fresh: ids(fresh), fallback: ids(fallback) };
 }
 
@@ -175,7 +267,7 @@ export async function getOrCreateDeck(
   const seed = `${user.id}:${today}`;
   if ((!deck || activeOpen === 0) && remaining > 0) {
     const pools = await loadDeckPools(db, user.id, user.primaryModule, today, remaining, seed, audiences);
-    const cardIds = composeDeck(pools, remaining, seed).filter((id) => !answeredCards.has(id));
+    const cardIds = await composeGroupedDeck(db, pools, remaining, user.primaryModule, seed, answeredCards);
     if (cardIds.length) {
       const [{ dropped }] = await query<{ dropped: number }>(
         db,
@@ -202,9 +294,7 @@ export async function getOrCreateDeck(
     const need = remaining - activeOpen;
     const inDeck = new Set(deckCardIds);
     const pools = await loadDeckPools(db, user.id, user.primaryModule, today, need + inDeck.size, seed, audiences);
-    const extra = composeDeck(pools, need + inDeck.size, seed)
-      .filter((id) => !answeredCards.has(id) && !inDeck.has(id))
-      .slice(0, need);
+    const extra = await composeGroupedDeck(db, pools, need, user.primaryModule, seed, new Set([...answeredCards, ...inDeck]));
     if (extra.length) {
       await db.insert(deckCards).values(extra.map((cardId, i) => ({ deckId: deck.id, cardId, position: deckCardIds.length + i })));
       deckCardIds = [...deckCardIds, ...extra];
