@@ -63,7 +63,7 @@ const STATUS_TONE: Record<string, "neutral" | "primary" | "success" | "warning" 
 const href = (status: string, card?: string) => `/admin/review?tab=fix&status=${status}${card ? `&card=${encodeURIComponent(card)}` : ""}`;
 
 /**
- * Review cards > Suggestions: one row per card that employees flagged or wrote a suggestion for. It shows the votes, the
+ * Card Feedbacks > Suggestions: one row per card that employees flagged or wrote a suggestion for. It shows the votes, the
  * current text and every suggestion on the card, with Accept / Reject right there.
  */
 export async function NeedsFixTab({ status, card, module }: { status: string; card?: string; module: string }) {

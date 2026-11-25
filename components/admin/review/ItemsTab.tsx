@@ -28,7 +28,7 @@ interface RollupRow {
   needs_change_score: string;
 }
 
-/** Review cards > By item: one row per form, process, rule or concept, with the verdicts of all its cards. */
+/** Card Feedbacks > By item: one row per form, process, rule or concept, with the verdicts of all its cards. */
 export async function ItemsTab({ type, module }: { type: ItemType; module: string }) {
   const db = await getDb();
   const types = { forms: sql`type IN ('form','usercontrol')`, processes: sql`type = 'process'`, rules: sql`type = 'rule'`, concepts: sql`type = 'concept'` }[type];

@@ -275,7 +275,7 @@ async function saveFeedback(
 /**
  * An answer given while browsing. It scores like a daily answer (the card's level points for a correct answer), but
  * only the first answer to a card counts, and it does not touch the daily deck, the daily limit or spaced repetition.
- * Like the daily deck, a "needs fix" report always saves its suggestion for the admins (Review cards > Suggestions).
+ * Like the daily deck, a "needs fix" report always saves its suggestion for the admins (Card Feedbacks > Suggestions).
  */
 async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, meta: Meta, enforceReadTime: boolean): Promise<Result> {
   const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));

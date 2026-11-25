@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** "What needs change" is now Admin > Review cards. Old links and bookmarks land there. */
+/** "What needs change" is now Admin > Card Feedbacks. Old links and bookmarks land there. */
 export default async function HealthPage({ searchParams }: { searchParams: Promise<{ view?: string; module?: string }> }) {
   const { view, module } = await searchParams;
   const p = new URLSearchParams();

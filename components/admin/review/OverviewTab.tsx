@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const n = (s: string | number | undefined) => Number(s ?? 0);
 
-/** Review cards > Overview: how much of the knowledge base has been checked, and by area. */
+/** Card Feedbacks > Overview: how much of the knowledge base has been checked, and by area. */
 export async function OverviewTab({ module }: { module: string }) {
   const db = await getDb();
   const moduleNames = await getModuleNames(db);

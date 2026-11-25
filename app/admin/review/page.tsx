@@ -12,7 +12,7 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { getModuleNames } from "@/lib/deck";
 import { requireRole } from "@/lib/auth/session";
 
-export const metadata: Metadata = { title: "Review cards" };
+export const metadata: Metadata = { title: "Card Feedbacks" };
 
 const TABS = ["overview", "fix"] as const;
 type Tab = (typeof TABS)[number];
@@ -32,7 +32,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: Promi
 
   return (
     <SideTabs
-      title="Review cards"
+      title="Card Feedbacks"
       active={tab}
       items={[
         { key: "overview", label: "Overview", icon: <ShieldCheck />, href: "/admin/review?tab=overview" },

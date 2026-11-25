@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** Feedback is now Admin > Review cards > Suggestions. Old links and bookmarks land there. */
+/** Feedback is now Admin > Card Feedbacks > Suggestions. Old links and bookmarks land there. */
 export default async function FeedbackPage({ searchParams }: { searchParams: Promise<{ status?: string; card?: string }> }) {
   const { status, card } = await searchParams;
   const p = new URLSearchParams({ tab: "fix" });
