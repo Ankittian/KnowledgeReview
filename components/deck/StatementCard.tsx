@@ -84,12 +84,9 @@ export function StatementCard({
               {card.front}
             </h2>
           </div>
-          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          <p className="hide-mouse flex items-center gap-2 text-xs text-muted-foreground">
             <MousePointerClick className="size-3.5 transition-transform group-hover:-rotate-12" />
-            <span className="hide-mouse">Tap the card to read the description</span>
-            <span className="hide-touch inline-flex items-center gap-1.5">
-              Click or press <Kbd>Space</Kbd> to reveal
-            </span>
+            <span>Tap the card to read the description</span>
           </p>
         </div>
 

@@ -6,7 +6,6 @@ import { Check, MousePointerClick, X } from "lucide-react";
 import type { ClientCard } from "@/lib/deck";
 import { RichText } from "./RichText";
 import { Badge } from "@/components/ui/badge";
-import { Kbd } from "@/components/ui/kbd";
 
 interface Props {
   card: ClientCard;
@@ -94,12 +93,9 @@ export function Flashcard({ card, flipped: revealed, canSwipe, onFlip, onSwipe, 
             <div className="flex flex-1 items-center py-3">
               <p className="text-xl leading-snug font-semibold tracking-tight whitespace-pre-line text-balance sm:text-[1.6rem] sm:leading-[1.3]">{card.front}</p>
             </div>
-            <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <p className="hide-mouse flex items-center gap-2 text-xs text-muted-foreground">
               <MousePointerClick className="size-3.5 transition-transform group-hover:-rotate-12" />
-              <span className="hide-mouse">Tap the card to reveal the answer</span>
-              <span className="hide-touch inline-flex items-center gap-1.5">
-                Click or press <Kbd>Space</Kbd> to reveal
-              </span>
+              <span>Tap the card to reveal the answer</span>
             </p>
           </div>
           {/* back */}
