@@ -1,4 +1,4 @@
-import { chatConfig, KG_SERVER_NAME } from "@/lib/chat/config";
+import { chatConfig, kbServer } from "@/lib/chat/config";
 import { codeForAssistantError, codeForMessage } from "@/lib/chat/errors";
 import { DENIED_TOOLS, isToolAllowed } from "@/lib/chat/policy";
 import { harnessEnv, kgHeaders } from "@/lib/chat/runner";
@@ -48,7 +48,9 @@ export class SdkGenClient implements GenClient {
   async generate(req: GenerateRequest): Promise<GenerateResult> {
     const cfg = chatConfig();
     const out: GenerateResult = { ok: false, text: "", tokensIn: 0, tokensOut: 0 };
-    if (!cfg.kgMcpUrl) return { ...out, error: "KG_MCP_URL is not configured" };
+    // Card generation reads the SpectrumERP graph (spectrum-kg). kbServer() is the same resolver the chat uses for both knowledge bases.
+    const kb = kbServer("spectrumerp", "functional", cfg);
+    if (!kb.configured) return { ...out, error: "KG_MCP_URL is not configured" };
     const { query } = await import("@anthropic-ai/claude-agent-sdk");
 
     const abort = new AbortController();
@@ -79,7 +81,7 @@ export class SdkGenClient implements GenClient {
           skills: [],
           strictMcpConfig: true,
           mcpServers: {
-            [KG_SERVER_NAME]: { type: "http", url: cfg.kgMcpUrl, headers: kgHeaders(cfg, req.user, "functional"), alwaysLoad: true },
+            [kb.serverName]: { type: "http", url: kb.url, headers: kgHeaders(kb, req.user, "functional"), alwaysLoad: true },
           },
           maxTurns: Math.max(5, Number(process.env.CARDS_MAX_TURNS) || 60),
           persistSession: false,
@@ -94,7 +96,7 @@ export class SdkGenClient implements GenClient {
       for await (const m of q) {
         if (m.type === "system" && m.subtype === "init") {
           out.model = m.model;
-          const kg = m.mcp_servers.find((s) => s.name === KG_SERVER_NAME);
+          const kg = m.mcp_servers.find((s) => s.name === kb.serverName);
           if (!kg || ["failed", "needs-auth", "disabled"].includes(kg.status)) {
             pendingError = `The knowledge graph is not reachable (status: ${kg?.status ?? "missing"})`;
             abort.abort("kb_unavailable");
