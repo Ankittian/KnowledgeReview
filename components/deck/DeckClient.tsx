@@ -300,7 +300,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
           </div>
         </div>
         {dayTotal > 0 && (
-          <div className="mb-2 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={dayDone} aria-valuemin={0} aria-valuemax={dayTotal}>
               <motion.div className="h-full rounded-full bg-primary" initial={false} animate={{ width: `${progress}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
             </div>
@@ -376,7 +376,7 @@ export function DeckClient({ deckId, date, dateLabel, cards, answered: initialAn
           )}
           </div>
 
-          <div className="mx-auto min-h-[8.5rem] w-full max-w-xl shrink-0 pt-2 pb-2 mb-[calc(var(--card-h)_*_0.18)] lg:pt-4">
+          <div className="mx-auto min-h-[8.5rem] w-full max-w-xl shrink-0 pt-0 pb-2 mb-[calc(var(--card-h)_*_0.18)]">
             <div className="mb-3 flex items-center justify-center gap-6 lg:hidden">
               <button
                 type="button"
