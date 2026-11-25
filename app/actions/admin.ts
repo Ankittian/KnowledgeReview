@@ -9,6 +9,7 @@ import { getDb } from "@/db/client";
 import { cardFeedback, roleIdOf, roles, users } from "@/db/schema";
 import { requireRole, revokeUserSessions } from "@/lib/auth/session";
 import { audit } from "@/lib/events";
+import { loadFlaggers } from "@/lib/reports";
 import { ANNOUNCEMENT_MAX_LENGTH, ANNOUNCEMENT_TONES, DAILY_LIMIT_MAX, DAILY_LIMIT_MIN, getAnnouncement, setAnnouncement, setDailyCardLimit } from "@/lib/settings";
 import { ANSWER_ROLES } from "@/lib/chat/config";
 import { setAnswerRole, setCanUseKgNew } from "@/lib/chat/service";
@@ -162,8 +163,27 @@ export async function resolveFeedback(fd: FormData) {
     })
     .where(eq(cardFeedback.id, id));
   await audit(db, actor.id, "feedback_resolved", "feedback", String(id), { status, note, commit });
-  revalidatePath("/admin/feedback");
-  revalidatePath("/admin/health");
+  revalidatePath("/admin/review", "layout");
+}
+
+/**
+ * Accept or reject a card that was marked "Needs fix" without a written suggestion. There is no row to update, so one is
+ * recorded for each flagging answer (category "other", no text), already resolved. The card then leaves the open list.
+ */
+export async function resolveFlag(fd: FormData) {
+  const { user: actor } = await requireRole(["admin"]);
+  const cardId = z.string().min(1).max(200).parse(fd.get("cardId"));
+  const status = z.enum(["accepted", "rejected"]).parse(fd.get("status"));
+  const note = z.string().max(2000).optional().parse((fd.get("note") as string) || undefined);
+  const db = await getDb();
+  const pending = (await loadFlaggers(db, [cardId])).filter((f) => !f.has_feedback);
+  if (pending.length) {
+    await db.insert(cardFeedback).values(
+      pending.map((f) => ({ reviewId: f.review_id, userId: f.user_id, cardVersionId: f.version_id, category: "other" as const, status, resolutionNote: note ?? null, resolvedBy: actor.id, resolvedAt: new Date() })),
+    );
+  }
+  await audit(db, actor.id, "flag_resolved", "card", cardId, { status, note, flaggers: pending.length });
+  revalidatePath("/admin/review", "layout");
 }
 
 export async function saveDailyCardLimit(fd: FormData) {

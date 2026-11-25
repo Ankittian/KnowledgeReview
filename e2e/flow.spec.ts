@@ -129,7 +129,7 @@ test("sign-up → approval → daily deck → feedback → traceable 'needs chan
     await page.goto(p);
     assertNoTraceability(await page.content());
   }
-  await page.goto("/admin/health");
+  await page.goto("/admin/review");
   await expect(page).toHaveURL(/\/today/); // employees can't open admin
 
   // 5. admin sees it, traceable to YAML file + key + field
@@ -145,18 +145,18 @@ test("sign-up → approval → daily deck → feedback → traceable 'needs chan
   expect(["rule", "concept", "process"]).toContain(mine.entity_type); // only business-level cards are issued
   if (mine.entity_type !== "concept") expect(mine.linked_forms.length + mine.linked_processes.length).toBeGreaterThan(0);
 
-  await admin.goto("/admin/health");
+  await admin.goto("/admin/review?tab=fix");
   await expect(admin.getByText(mine.entity_name).first()).toBeVisible();
-  await admin.goto("/admin/feedback");
+  await admin.goto("/admin/review?tab=fix");
   const item = admin.getByTestId("feedback-item").filter({ hasText: comment });
   await expect(item).toContainText(mine.yaml_file);
   await expect(item).toContainText("E2E corrected text for this card.");
   await item.getByRole("button", { name: "Accept" }).click();
-  await admin.goto("/admin/feedback?status=accepted");
+  await admin.goto("/admin/review?tab=fix&status=accepted");
   await expect(admin.getByTestId("feedback-item").filter({ hasText: comment })).toBeVisible();
 
   // drill-down page for the flagged entity
-  await admin.goto(`/admin/health/${mine.entity_type === "usercontrol" ? "form" : mine.entity_type}/${encodeURIComponent(mine.entity_key)}`);
+  await admin.goto(`/admin/review/${mine.entity_type === "usercontrol" ? "form" : mine.entity_type}/${encodeURIComponent(mine.entity_key)}`);
   await expect(admin.getByText(mine.yaml_file, { exact: false }).first()).toBeVisible();
 
   // 6. every interaction was logged

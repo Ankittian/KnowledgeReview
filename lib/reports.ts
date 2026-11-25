@@ -214,3 +214,36 @@ export function toCsv(rows: Record<string, unknown>[]): string {
 }
 
 export const toJsonl = (rows: unknown[]) => rows.map((r) => JSON.stringify(r)).join("\n") + (rows.length ? "\n" : "");
+
+export interface Flagger {
+  card_id: string;
+  review_id: number;
+  user_id: string;
+  version_id: number;
+  display_name: string;
+  username: string;
+  created_at: Date;
+  /** a suggestion was written with this "needs fix" answer */
+  has_feedback: boolean;
+}
+
+/** Who currently has a card marked "Needs fix": each user's latest answer on the current version, when it is a flag. */
+export async function loadFlaggers(db: DB, cardIds: string[]): Promise<Flagger[]> {
+  if (!cardIds.length) return [];
+  return query<Flagger>(
+    db,
+    sql`WITH latest AS (
+          SELECT DISTINCT ON (r.user_id, cv.card_id) r.id AS review_id, r.user_id, cv.card_id, cv.id AS version_id, r.verdict, r.created_at
+          FROM card_reviews r
+          JOIN card_versions cv ON cv.id = r.card_version_id
+          JOIN cards c ON c.id = cv.card_id AND cv.id = c.current_version_id
+          WHERE cv.card_id IN (${sql.join(cardIds.map((id) => sql`${id}`), sql`, `)})
+          ORDER BY r.user_id, cv.card_id, r.created_at DESC, r.id DESC
+        )
+        SELECT l.card_id, l.review_id, l.user_id, l.version_id, u.display_name, u.username, l.created_at,
+               EXISTS (SELECT 1 FROM card_feedback f WHERE f.review_id = l.review_id) AS has_feedback
+        FROM latest l JOIN users u ON u.id = l.user_id
+        WHERE l.verdict = 'needs_improvement'
+        ORDER BY l.created_at`,
+  );
+}

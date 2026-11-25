@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { GrowBar } from "@/components/common/motion";
 
-export const entityHref = (type: string, key: string) => `/admin/health/${type === "usercontrol" ? "form" : type}/${encodeURIComponent(key)}`;
+export const entityHref = (type: string, key: string) => `/admin/review/${type === "usercontrol" ? "form" : type}/${encodeURIComponent(key)}`;
 export const pct = (n: number | null | undefined) =>
   n == null || Number.isNaN(n) ? "–" : n > 0 && n < 0.1 ? `${(n * 100).toFixed(1)}%` : `${Math.round(n * 100)}%`;
 
