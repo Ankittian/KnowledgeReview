@@ -7,7 +7,7 @@ import {
   Search,
   Settings2,
   ShieldCheck,
-  CreditCard,
+  GalleryHorizontalEnd,
   Trophy,
   Users,
   type LucideIcon,
@@ -32,9 +32,9 @@ export const MAIN_NAV: NavItem[] = [
 /** Admin + reviewer sections. `adminOnly` items are hidden from reviewers. */
 export const ADMIN_NAV: (NavItem & { adminOnly?: boolean })[] = [
   { href: "/admin/people", label: "People", icon: Users, adminOnly: true, description: "Accounts, roles and what each employee knows" },
-  { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
   { href: "/admin/chats", label: "All chats", icon: MessagesSquare, adminOnly: true, description: "Every assistant conversation" },
-  { href: "/admin/review", label: "Card Feedbacks", icon: CreditCard, description: "Flagged cards and suggested corrections, worst first" },
+  { href: "/admin/review", label: "Card Feedbacks", icon: GalleryHorizontalEnd, description: "Flagged cards and suggested corrections, worst first" },
+  { href: "/admin/graph", label: "Knowledge graph", icon: Network, adminOnly: true, description: "Explore the Neo4j knowledge graph" },
   { href: "/admin/settings", label: "Settings", icon: Settings2, adminOnly: true, description: "Daily limit, banner, email and exports" },
 ];
 
