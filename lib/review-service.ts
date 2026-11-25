@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { z } from "zod";
 import type { DB } from "@/db/client";
-import { cardFeedback, cardReviews, cards, cardVersions, dailyDecks, deckCards, reviewSchedule, roles, users } from "@/db/schema";
+import { activityLog, cardFeedback, cardReviews, cards, cardVersions, dailyDecks, deckCards, reviewSchedule, roles, users } from "@/db/schema";
 import type { Role } from "@/lib/auth/types";
 import { audiencesFor } from "./cards/audience";
 import { READ_LOCK_ENABLED, countWords, minReadSeconds } from "./cards/spec";
@@ -250,9 +250,32 @@ export async function recordClientEvents(db: DB, userId: string, input: EventsIn
   );
 }
 
+/** Saves a suggestion ("needs fix" report) and returns the log event for it. Same rows the daily deck writes. */
+async function saveFeedback(
+  db: DB,
+  a: { reviewId: number | null; userId: string; versionId: number; cardId: string; input: ReviewInput; answeredAt: Date; meta: Meta },
+): Promise<EventInput> {
+  const fb = a.input.feedback!;
+  const suggested = fb.suggestedText?.trim() || null;
+  const [row] = await db
+    .insert(cardFeedback)
+    .values({ reviewId: a.reviewId, userId: a.userId, cardVersionId: a.versionId, category: fb.category, suggestedText: suggested, comment: fb.comment?.trim() || null })
+    .returning({ id: cardFeedback.id });
+  return {
+    userId: a.userId,
+    cardId: a.cardId,
+    type: "feedback_submitted",
+    payload: { feedback_id: row.id, review_id: a.reviewId, category: fb.category, has_suggestion: !!suggested },
+    clientEventId: `srv:feedback:${a.input.clientEventId}`,
+    occurredAt: a.answeredAt,
+    ...a.meta,
+  };
+}
+
 /**
  * An answer given while browsing. It scores like a daily answer (the card's level points for a correct answer), but
  * only the first answer to a card counts, and it does not touch the daily deck, the daily limit or spaced repetition.
+ * Like the daily deck, a "needs fix" report always saves its suggestion for the admins (Review cards > Suggestions).
  */
 async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, meta: Meta, enforceReadTime: boolean): Promise<Result> {
   const [who] = await db.select({ role: roles.name }).from(users).innerJoin(roles, eq(roles.id, users.roleId)).where(eq(users.id, userId));
@@ -270,9 +293,20 @@ async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, me
     .innerJoin(cardVersions, eq(cardVersions.id, cardReviews.cardVersionId))
     .where(and(eq(cardReviews.userId, userId), eq(cardVersions.cardId, ver.cardId)))
     .limit(1);
-  if (prior) return { ok: true, duplicate: true, deckCompleted: false };
-
   const answeredAt = toDate(input.answeredAt) ?? new Date();
+  const wantsFeedback = input.verdict === "needs_improvement" && !!input.feedback;
+  if (prior) {
+    if (!wantsFeedback) return { ok: true, duplicate: true, deckCompleted: false };
+    // The answer already counted (and scored) once. A report on the card must not be lost: save the suggestion only.
+    const [seen] = await db.select({ id: activityLog.id }).from(activityLog).where(eq(activityLog.clientEventId, `srv:feedback:${input.clientEventId}`)).limit(1);
+    if (seen) return { ok: true, duplicate: true, deckCompleted: false }; // a client retry
+    await db.transaction(async (tx) => {
+      const ev = await saveFeedback(tx as unknown as DB, { reviewId: null, userId, versionId: ver.versionId, cardId: ver.cardId, input, answeredAt, meta });
+      await logEvents(tx as unknown as DB, [ev]);
+    });
+    return { ok: true, duplicate: false, deckCompleted: false };
+  }
+
   return db.transaction(async (tx) => {
     const inserted = await tx
       .insert(cardReviews)
@@ -291,7 +325,7 @@ async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, me
       .onConflictDoNothing()
       .returning({ id: cardReviews.id });
     if (!inserted.length) return { ok: true as const, duplicate: true, deckCompleted: false };
-    await logEvents(tx as unknown as DB, [
+    const events: EventInput[] = [
       {
         userId,
         cardId: ver.cardId,
@@ -301,7 +335,9 @@ async function recordBrowseReview(db: DB, userId: string, input: ReviewInput, me
         occurredAt: answeredAt,
         ...meta,
       },
-    ]);
+    ];
+    if (wantsFeedback) events.push(await saveFeedback(tx as unknown as DB, { reviewId: inserted[0].id, userId, versionId: ver.versionId, cardId: ver.cardId, input, answeredAt, meta }));
+    await logEvents(tx as unknown as DB, events);
     return { ok: true as const, duplicate: false, deckCompleted: false };
   });
 }
