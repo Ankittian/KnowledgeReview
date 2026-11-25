@@ -167,6 +167,7 @@ export default async function UsersPage() {
                       <form action={setUserAnswerRole} className="flex gap-1.5">
                         <input type="hidden" name="userId" value={u.id} />
                         <NativeSelect
+                          key={`${u.id}:${u.answerRole ?? defaultAnswerRole(u.role)}`} // remount so the saved value shows after the form resets
                           name="answerRole"
                           defaultValue={u.answerRole ?? defaultAnswerRole(u.role)}
                           size="sm"

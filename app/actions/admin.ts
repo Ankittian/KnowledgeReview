@@ -53,7 +53,11 @@ export async function setUserRole(fd: FormData) {
   const role = z.enum(["admin", "functional", "technical"]).parse(fd.get("role"));
   if (id === actor.id) throw new Error("You can't change your own role.");
   const db = await getDb();
-  await db.update(users).set({ roleId: roleIdOf(role), answerRole: null }).where(eq(users.id, id)); // answer style follows the new role again
+  // answer style follows the new role again
+  await db
+    .update(users)
+    .set({ roleId: roleIdOf(role), answerRole: null })
+    .where(eq(users.id, id));
   await revokeUserSessions(id); // new permissions on next sign-in
   await audit(db, actor.id, "user_role_changed", "user", id, { role });
   revalidatePath("/admin/users");
