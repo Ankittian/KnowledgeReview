@@ -572,11 +572,6 @@ export function ChatApp({ conversations: initialConvs, active: initialActive, me
                 {isAdmin ? "" : `, written in the ${roleLabel(myRole)} style`}.{" "}
                 {isAdmin && "Pick the answer style above; it stays fixed for this chat."}
               </p>
-              {kgNewOk && (
-                <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground" data-testid="kb-hint">
-                  The knowledge base is fixed once you send the first message. To use a different one later, start a new chat.
-                </p>
-              )}
               <div className="mt-7 grid gap-2 text-left sm:grid-cols-2">
                 {SUGGESTIONS.map(({ q, icon: Icon }, i) => (
                   <motion.button
