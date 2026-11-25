@@ -77,7 +77,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
   const activeDays = [...daily.entries()].filter(([d, c]) => d >= from && c.n > 0).length;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 pt-6 sm:px-6 sm:pt-8">
+    <div className="w-full space-y-6 px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
       <PageHeader
         title="Your progress"
         description="Knowledge is weighted toward your recent answers."
