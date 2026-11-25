@@ -29,15 +29,16 @@ export function AppSidebar({ isStaff, isAdmin }: { isStaff: boolean; isAdmin: bo
       const active = isActive(path, i.href);
       return (
         <SidebarMenuItem key={i.href}>
+          {/* the highlight lives on the list item, not inside the button: the button clips anything that overflows it, which would hide the slide */}
+          {active && <motion.span layoutId="sidebar-active-pill" className="absolute inset-0 rounded-md bg-sidebar-accent" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
           <SidebarMenuButton
             isActive={active}
             className="relative data-active:bg-transparent data-active:text-success"
             tooltip={i.label}
             render={<Link href={i.href} data-tour={i.href} onClick={() => setOpenMobile(false)} aria-current={active ? "page" : undefined} />}
           >
-            {active && <motion.span layoutId="sidebar-active-pill" className="absolute inset-0 rounded-md bg-sidebar-accent" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
-            <i.icon className="relative" />
-            <span className="relative">{i.label}</span>
+            <i.icon />
+            <span>{i.label}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       );
