@@ -2,20 +2,18 @@ import type { Metadata } from "next";
 import { APP_TZ } from "@/lib/dates";
 import Link from "next/link";
 import { asc } from "drizzle-orm";
-import { Coins, Cpu, MessagesSquare, MessageCircleQuestion, ShieldAlert, SlidersHorizontal, ThumbsDown, ThumbsUp } from "lucide-react";
+import { MessagesSquare, Search, ShieldAlert, SlidersHorizontal, ThumbsDown, ThumbsUp } from "lucide-react";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { Empty, TableCard, Tag, surface, tcell, thead } from "@/components/admin/bits";
-import { Stagger, StaggerItem } from "@/components/common/motion";
-import { StatCard } from "@/components/common/StatCard";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth/session";
 import { ANSWER_ROLES, KB_LABELS, KB_SOURCES, isKbSource, type AnswerRole } from "@/lib/chat/config";
-import { queueStats } from "@/lib/chat/live";
 import { adminListChats, BLOCKED_FILTERS, isBlockedFilter, type AdminChatFilter } from "@/lib/chat/service";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +31,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
   const kb = one(sp.kb);
   const blocked = one(sp.blocked);
   const filter: AdminChatFilter = {
+    q: one(sp.q)?.trim().slice(0, 100) || undefined,
     userId: one(sp.user),
     role: (ANSWER_ROLES as readonly string[]).includes(role ?? "") ? (role as AnswerRole) : undefined,
     kb: isKbSource(kb) ? kb : undefined,
@@ -47,40 +46,35 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
     adminListChats(db, filter),
     db.select({ id: users.id, displayName: users.displayName, username: users.username }).from(users).orderBy(asc(users.displayName)),
   ]);
-  const q = queueStats();
-  const totals = rows.reduce((a, r) => ({ questions: a.questions + r.questions, ups: a.ups + r.ups, downs: a.downs + r.downs, tokens: a.tokens + r.tokens }), {
-    questions: 0,
-    ups: 0,
-    downs: 0,
-    tokens: 0,
-  });
+  const totals = rows.reduce((a, r) => ({ questions: a.questions + r.questions, ups: a.ups + r.ups, downs: a.downs + r.downs, tokens: a.tokens + r.tokens }), { questions: 0, ups: 0, downs: 0, tokens: 0 });
 
   return (
     <div className="space-y-6">
-      <Stagger className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <StaggerItem>
-          <StatCard label="Chats shown" value={rows.length} icon={<MessagesSquare />} />
-        </StaggerItem>
-        <StaggerItem>
-          <StatCard label="Questions" value={totals.questions} icon={<MessageCircleQuestion />} tone="primary" />
-        </StaggerItem>
-        <StaggerItem>
-          <StatCard
-            label="Thumbs up / down"
-            value={`${totals.ups} / ${totals.downs}`}
-            icon={<ThumbsUp />}
-            tone="success"
-          />
-        </StaggerItem>
-        <StaggerItem>
-          <StatCard label="Tokens" value={totals.tokens} icon={<Coins />} />
-        </StaggerItem>
-        <StaggerItem className="col-span-2 md:col-span-1">
-          <StatCard label="Claude slots" value={`${q.running} / ${q.limit}`} sub={`${q.waiting} waiting`} icon={<Cpu />} tone={q.running >= q.limit ? "warning" : "default"} />
-        </StaggerItem>
-      </Stagger>
+      <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span>
+          <span className="font-semibold text-foreground tabular-nums">{rows.length}</span> chats
+        </span>
+        <span>
+          <span className="font-semibold text-foreground tabular-nums">{totals.questions}</span> questions
+        </span>
+        <span>
+          <span className="font-semibold text-foreground tabular-nums">{totals.tokens.toLocaleString()}</span> tokens
+        </span>
+        <span className="inline-flex items-center gap-1 tabular-nums">
+          <ThumbsUp className="size-3.5 text-success" /> {totals.ups}
+          <ThumbsDown className="ml-2 size-3.5 text-destructive" /> {totals.downs}
+        </span>
+      </p>
 
-      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-8")} method="get">
+      <form className={cn(surface, "grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-7")} method="get" role="search">
+        <div className="sm:col-span-2 lg:col-span-7">
+          <InputGroup className="h-10">
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupInput name="q" defaultValue={filter.q ?? ""} placeholder="Search chats by title, question, answer or user…" aria-label="Search chats" maxLength={100} />
+          </InputGroup>
+        </div>
         <div className="grid gap-1.5 lg:col-span-2">
           <Label htmlFor="f-user">User</Label>
           <NativeSelect id="f-user" name="user" defaultValue={filter.userId ?? ""} className="w-full">
@@ -93,18 +87,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           </NativeSelect>
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="f-role">Role</Label>
-          <NativeSelect id="f-role" name="role" defaultValue={filter.role ?? ""} className="w-full">
-            <NativeSelectOption value="">Any</NativeSelectOption>
-            {ANSWER_ROLES.map((r) => (
-              <NativeSelectOption key={r} value={r} className="capitalize">
-                {r}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="f-kb">KB</Label>
+          <Label htmlFor="f-kb">Knowledge base</Label>
           <NativeSelect id="f-kb" name="kb" defaultValue={filter.kb ?? ""} className="w-full">
             <NativeSelectOption value="">Any</NativeSelectOption>
             {KB_SOURCES.map((k) => (
@@ -144,7 +127,7 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
           <Label htmlFor="f-to">To</Label>
           <Input id="f-to" type="date" name="to" defaultValue={filter.to ?? ""} />
         </div>
-        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-8">
+        <div className="flex flex-wrap items-center gap-3 border-t pt-3 sm:col-span-2 lg:col-span-7">
           <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input type="checkbox" name="deleted" value="1" defaultChecked={filter.includeDeleted} className="size-4 rounded border-input accent-primary" /> Include deleted chats
           </label>
@@ -163,20 +146,19 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
         <Empty title="No chats match these filters" icon={<MessagesSquare />} />
       ) : (
         <TableCard>
-          <Table className="min-w-[940px]" data-testid="all-chats">
+          <Table className="min-w-[820px]" data-testid="all-chats">
             <TableHeader className={thead}>
               <TableRow className="hover:bg-transparent">
                 <TableHead>Chat</TableHead>
                 <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>KB</TableHead>
+                <TableHead>Answer style</TableHead>
+                <TableHead>Knowledge base</TableHead>
                 <TableHead className="text-right">Questions</TableHead>
                 <TableHead className="text-right">
                   <span className="inline-flex items-center gap-1" aria-label="Thumbs up / down">
                     <ThumbsUp className="size-3.5" /> / <ThumbsDown className="size-3.5" />
                   </span>
                 </TableHead>
-                <TableHead className="text-right">Errors</TableHead>
                 <TableHead className="text-right">Tokens</TableHead>
                 <TableHead>Last activity</TableHead>
               </TableRow>
@@ -199,9 +181,6 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
                         {r.blocked} blocked
                       </Tag>
                     )}
-                    {r.blocked > 0 && (
-                      <p className="mt-1 text-xs text-destructive/80">{r.blockedCategories.map((c) => c.replace(/_/g, " ")).join(", ")}</p>
-                    )}
                   </TableCell>
                   <TableCell className={tcell}>
                     <p className="font-medium">{r.displayName}</p>
@@ -221,7 +200,6 @@ export default async function AllChatsPage({ searchParams }: { searchParams: Pro
                   <TableCell className={cn(tcell, "text-right tabular-nums")}>
                     <span className="text-success">{r.ups}</span> <span className="text-muted-foreground/50">/</span> <span className="text-destructive">{r.downs}</span>
                   </TableCell>
-                  <TableCell className={cn(tcell, "text-right tabular-nums", r.errors ? "font-medium text-warning" : "text-muted-foreground")}>{r.errors}</TableCell>
                   <TableCell className={cn(tcell, "text-right font-mono text-xs tabular-nums")}>{r.tokens.toLocaleString()}</TableCell>
                   <TableCell className={cn(tcell, "text-xs whitespace-nowrap text-muted-foreground")}>{fmt(r.updatedAt)}</TableCell>
                 </TableRow>

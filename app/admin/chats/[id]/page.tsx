@@ -6,6 +6,7 @@ import { ArrowLeft, Bot, ChevronRight, Clock, ShieldAlert, ThumbsDown, ThumbsUp,
 import { getDb } from "@/db/client";
 import { Markdown } from "@/components/chat/Markdown";
 import { Tag, surface } from "@/components/admin/bits";
+import { CopyButton } from "@/components/admin/CopyButton";
 import { FadeIn, Stagger, StaggerItem } from "@/components/common/motion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { requireRole } from "@/lib/auth/session";
@@ -91,6 +92,7 @@ export default async function AdminChatPage({ params }: { params: Promise<{ id: 
                   <span className="inline-flex items-center gap-1">
                     <Clock className="size-3" /> {fmt(m.createdAt)}
                   </span>
+                  {isUser && m.content && <CopyButton text={m.content} label="Copy query" />}
                   {!isUser && (
                     <>
                       <Tag tone={m.status === "ok" ? "success" : m.status === "error" ? "destructive" : "neutral"}>{m.status}</Tag>

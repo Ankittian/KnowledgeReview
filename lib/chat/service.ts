@@ -199,6 +199,8 @@ export async function insertToolCalls(db: DB, rows: (typeof chatToolCalls.$infer
 // ---------------------------------------------------------------- admin: all chats (REQ-CHAT-06)
 
 export interface AdminChatFilter {
+  /** Free-text search over the chat title, the message text and the user's name or username. */
+  q?: string;
   userId?: string;
   role?: AnswerRole;
   kb?: KbSource;
@@ -238,6 +240,12 @@ export interface AdminChatRow {
 export async function adminListChats(db: DB, f: AdminChatFilter): Promise<AdminChatRow[]> {
   const conds = [sql`true`];
   if (f.userId && isUuid(f.userId)) conds.push(sql`c.user_id = ${f.userId}`);
+  const q = f.q?.trim().slice(0, 100);
+  if (q) {
+    const like = `%${q.replace(/[\\%_]/g, (m) => `\\${m}`)}%`;
+    conds.push(sql`(c.title ILIKE ${like} OR u.display_name ILIKE ${like} OR u.username ILIKE ${like}
+                    OR EXISTS (SELECT 1 FROM chat_messages s WHERE s.conversation_id = c.id AND s.content ILIKE ${like}))`);
+  }
   if (f.role) conds.push(sql`c.role_used = ${f.role}`);
   if (f.kb) conds.push(sql`c.kb_source = ${f.kb}`);
   if (f.from && /^\d{4}-\d{2}-\d{2}$/.test(f.from)) conds.push(sql`c.updated_at >= ${f.from}::date`);
