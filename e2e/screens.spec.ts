@@ -32,7 +32,7 @@ for (const scheme of ["light", "dark"] as const) {
       await shot("today-feedback");
       await page.keyboard.press("Escape");
     }
-    for (const p of ["progress", "browse", "admin/health", "admin/health?view=forms", "admin/feedback", "admin/team", "admin/users", "admin/settings"]) {
+    for (const p of ["progress", "browse", "admin/health", "admin/health?view=forms", "admin/feedback", "admin/people", "admin/people?tab=knowledge", "admin/settings"]) {
       await page.goto(`/${p}`);
       await page.waitForTimeout(250);
       await shot(p.replace(/[/?=]/g, "_"));

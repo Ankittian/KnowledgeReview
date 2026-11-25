@@ -27,12 +27,12 @@ export async function approveUser(fd: FormData) {
     .where(and(eq(users.id, id), eq(users.status, "pending")))
     .returning({ id: users.id });
   if (!approved.length) {
-    revalidatePath("/admin/users");
+    revalidatePath("/admin/people");
     return;
   }
   await revokeUserSessions(id); // nothing from before the approval stays valid
   await audit(db, actor.id, "user_approved", "user", id, { role });
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 export async function setUserStatus(fd: FormData) {
@@ -44,7 +44,7 @@ export async function setUserStatus(fd: FormData) {
   await db.update(users).set({ status }).where(eq(users.id, id));
   if (status === "disabled") await revokeUserSessions(id);
   await audit(db, actor.id, status === "disabled" ? "user_disabled" : "user_enabled", "user", id);
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 export async function setUserRole(fd: FormData) {
@@ -60,7 +60,7 @@ export async function setUserRole(fd: FormData) {
     .where(eq(users.id, id));
   await revokeUserSessions(id); // new permissions on next sign-in
   await audit(db, actor.id, "user_role_changed", "user", id, { role });
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 /**
@@ -88,7 +88,7 @@ export async function deleteUser(fd: FormData) {
     await tx.delete(users).where(eq(users.id, id)); // cascades: decks, review schedule, sessions
   });
   await audit(db, actor.id, "user_deleted", "user", id, { username: target.username, displayName: target.displayName });
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 /**
@@ -107,7 +107,7 @@ export async function resetUserPassword(fd: FormData): Promise<{ password?: stri
   await db.update(users).set({ passwordHash: await hashPassword(password) }).where(eq(users.id, id));
   await revokeUserSessions(id);
   await audit(db, actor.id, "admin_password_reset", "user", id);
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
   return { password };
 }
 
@@ -119,7 +119,7 @@ export async function setUserAnswerRole(fd: FormData) {
   const db = await getDb();
   await setAnswerRole(db, id, role);
   await audit(db, actor.id, "user_answer_role_changed", "user", id, { answerRole: role });
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 /**
@@ -137,7 +137,7 @@ export async function setUserKgNewAccess(fd: FormData) {
     await setCanUseKgNew(db, id, allowed);
     await audit(db, actor.id, "user_kg_new_access_changed", "user", id, { old: target.was, new: allowed });
   }
-  revalidatePath("/admin/users");
+  revalidatePath("/admin/people");
 }
 
 export async function resolveFeedback(fd: FormData) {
