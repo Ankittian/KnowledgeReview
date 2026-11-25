@@ -8,10 +8,9 @@ import { addDays, todayStr } from "@/lib/dates";
 import { getModuleNames } from "@/lib/deck";
 import { getDailyCounts, getStreak, getUserSummary } from "@/lib/stats";
 import { GrowBar, Stagger, StaggerItem } from "@/components/common/motion";
-import { PageHeader, SectionTitle } from "@/components/common/PageHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 import { StatCard } from "@/components/common/StatCard";
 import { ActivityChart, type DayPoint } from "@/components/progress/ActivityChart";
-import { RevisitCard } from "@/components/progress/RevisitCard";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -41,7 +40,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
     return d.toISOString().slice(0, 10);
   })();
   const from = range === "week" ? addDays(today, -6) : range === "month" ? addDays(today, -29) : monthStart;
-  const [summary, { streak }, daily, moduleNames, modules, revisit] = await Promise.all([
+  const [summary, { streak }, daily, moduleNames, modules] = await Promise.all([
     getUserSummary(db, user.id),
     getStreak(db, user.id, today),
     getDailyCounts(db, user.id, from),
@@ -50,17 +49,6 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
       db,
       sql`SELECT scope_key AS module, reviews, cards_seen, total_cards, coverage, knowledge FROM user_knowledge
           WHERE user_id = ${user.id} AND scope = 'module' ORDER BY reviews DESC`,
-    ),
-    query<{ v: number; context: string; front: string; back: string }>(
-      db,
-      sql`SELECT DISTINCT ON (c.id) cv.id AS v, cv.context, cv.front, cv.back
-          FROM card_reviews r JOIN card_versions rv ON rv.id = r.card_version_id
-          JOIN cards c ON c.id = rv.card_id AND c.status = 'active'
-          JOIN card_versions cv ON cv.id = c.current_version_id
-          WHERE r.user_id = ${user.id} AND NOT r.knew_it
-            AND NOT EXISTS (SELECT 1 FROM card_reviews r2 JOIN card_versions v2 ON v2.id = r2.card_version_id
-                            WHERE r2.user_id = r.user_id AND v2.card_id = c.id AND r2.knew_it AND r2.created_at > r.created_at)
-          ORDER BY c.id, r.created_at DESC LIMIT 6`,
     ),
   ]);
   const knewRate = summary.reviews ? summary.knew / summary.reviews : null;
@@ -199,18 +187,6 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
         </CardContent>
       </Card>
 
-      {revisit.length > 0 && (
-        <section>
-          <SectionTitle title="Worth revisiting" description="Cards you didn’t know yet. They come back in your deck automatically." />
-          <Stagger as="ul" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {revisit.map((c) => (
-              <StaggerItem as="li" key={c.v}>
-                <RevisitCard context={c.context} front={c.front} back={c.back} />
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </section>
-      )}
     </div>
   );
 }

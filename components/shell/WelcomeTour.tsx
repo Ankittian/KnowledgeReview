@@ -42,7 +42,7 @@ const STEPS: Step[] = [
     title: "Progress: see what you know",
     href: "/progress",
     body: "Your streak, activity and knowledge by area, weighted toward your recent answers.",
-    tips: ["Switch between 7 days, 30 days and months", "Revisit cards you missed to turn them around"],
+    tips: ["Switch between 7 days, 30 days and months", "Watch your knowledge grow in each area"],
   },
   {
     icon: Trophy,
