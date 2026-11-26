@@ -54,7 +54,8 @@ Allowed: assigning the assistant a role or persona, or claiming a role or permis
 const POLICY_RESTRICTED_OBJECT = `
 RESTRICTED OBJECT (blocked for this user): the question DIRECTLY asks for a technical artifact: a database table or its structure, a stored procedure, function, trigger or view, a column name, a code block or source code, a SQL query, or a file path or folder; or the structure of the knowledge graph itself — its layers, node types or labels, edge or relationship types, schema, or node and edge counts.
 Examples of blocked: "show me the stored procedure that posts a GRN", "which table stores purchase orders?", "what columns does the ledger table have?", "give me the SQL for stock valuation", "what is the file path of the invoice module?", "what are the different layers in the knowledge graph?", "how many nodes are there?", "which edge types connect a form to a stored procedure?".
-Allowed: business questions whose answer happens to depend on technical details, such as "why did my GRN posting fail?", "how is stock valuation calculated?", "what does the Approve button do?". The user is not asking for the artifact itself, so these pass.`;
+Allowed: business questions whose answer happens to depend on technical details, such as "why did my GRN posting fail?", "how is stock valuation calculated?", "what does the Approve button do?". The user is not asking for the artifact itself, so these pass.
+Also allowed (functional use case): which tables, master or setting data a SpectrumERP screen or form shows or lets the user pick, edit or configure, because that list is visible on the screen itself ("which global data tables are visible in the GDCF form?", "which tables can I configure in the Config screen?", "which setting tables does this screen list?"). Naming those tables as screen content is allowed. Still blocked: their columns or structure, the stored procedures, code or SQL behind the screen, file paths`;
 
 /** The policy text sent as `state.policy`. The restricted-object section is only included when that check is asked. */
 export function policyFor(checkSet: CheckSet): string {
@@ -86,7 +87,7 @@ export const QUESTION_PROMPTS: Record<IntentCategory, NoulQuestion> = {
       "Does the latest user question DIRECTLY ask for a table, stored procedure, function, trigger, view, column, code block, SQL query, file path or folder, or the structure of the knowledge graph (its layers, node or edge types, schema or counts), as defined in the RESTRICTED OBJECT section of the policy?",
     criteria: {
       true: "Directly asks to see or name one of those technical artifacts, or about the knowledge graph's structure.",
-      false: "A business question, even if answering it would involve technical details.",
+      false: "A business question, even if answering it would involve technical details, or a question about which tables, master or setting data a screen or form shows or lets the user select, edit or configure (visible on the screen itself).",
     },
   },
 };
