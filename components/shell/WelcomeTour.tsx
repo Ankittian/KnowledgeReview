@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, BarChart3, X, Layers, MessageSquare, Search, Sparkles, Trophy, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, BarChart3, X, Layers, MessageSquare, MousePointer2, Search, Sparkles, Trophy, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,18 @@ const STEPS: Step[] = [
     title: "Welcome to Knowledge Review",
     body: "A quick tour of every page in the app. The tour takes you to each one. It takes about a minute, and you can replay it any time from the help button in the top bar.",
     tips: ["Daily flashcards keep your SpectrumERP knowledge fresh", "Progress and the leaderboard show how you're doing", "Chat answers questions about SpectrumERP"],
+  },
+  {
+    icon: MessageSquare,
+    title: "Chat: ask anything",
+    body: "Ask questions about SpectrumERP in plain language and get answers grounded in the knowledge base.",
+    tips: [
+      "Start from a suggested question or type your own",
+      "Copy your prompt or the answer with the copy buttons",
+      "Rate answers with thumbs up or down, and regenerate if needed",
+      "Past conversations are in the sidebar, where you can rename or delete them",
+    ],
+    href: "/chat",
   },
   {
     icon: Layers,
@@ -57,18 +69,6 @@ const STEPS: Step[] = [
     href: "/browse",
     body: "Search every card in the knowledge base and study the topics you care about, any time.",
     tips: ["Search by keyword and filter the list", "Answering a card here earns its points too"],
-  },
-  {
-    icon: MessageSquare,
-    title: "Chat: ask anything",
-    body: "Ask questions about SpectrumERP in plain language and get answers grounded in the knowledge base.",
-    tips: [
-      "Start from a suggested question or type your own",
-      "Copy your prompt or the answer with the copy buttons",
-      "Rate answers with thumbs up or down, and regenerate if needed",
-      "Past conversations are in the sidebar, where you can rename or delete them",
-    ],
-    href: "/chat",
   },
 ];
 
@@ -147,10 +147,17 @@ export function WelcomeTour({ userId, name }: { userId: string; name: string }) 
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowRight" || e.key === "Enter") {
+        e.preventDefault();
+        if (i === STEPS.length - 1) close();
+        else go(i + 1);
+      } else if (e.key === "ArrowLeft" && i > 0) go(i - 1);
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, close]);
+  }, [open, close, go, i]);
 
   return (
     <AnimatePresence>
@@ -174,15 +181,32 @@ export function WelcomeTour({ userId, name }: { userId: string; name: string }) 
             transition={{ type: "spring", stiffness: 400, damping: 36 }}
           />
         )}
+        {anchor && (
+          <motion.div
+            aria-hidden
+            className="pointer-events-none fixed top-0 left-0 z-[60]"
+            initial={{ opacity: 0, x: anchor.rect.left + anchor.rect.width * 0.6 + 40, y: anchor.rect.top + anchor.rect.height * 0.5 + 40 }}
+            animate={{ opacity: 1, x: anchor.rect.left + anchor.rect.width * 0.6, y: anchor.rect.top + anchor.rect.height * 0.5 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+          >
+            <motion.span
+              key={i}
+              className="absolute -top-3 -left-3 size-6 rounded-full bg-success/40"
+              initial={{ scale: 0.3, opacity: 0.9 }}
+              animate={{ scale: 1.8, opacity: 0 }}
+              transition={{ delay: 0.45, duration: 0.6 }}
+            />
+            <MousePointer2 className="size-6 fill-foreground text-background drop-shadow-md" />
+          </motion.div>
+        )}
         <motion.div
           ref={cardRef}
           role="dialog"
           aria-label="App walkthrough"
           initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0, ...(i > 0 && anchor?.desktop ? { top: anchor.top, left: anchor.rect.right + 16 } : {}) }}
           exit={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.2 }}
-          style={i > 0 && anchor?.desktop ? { top: anchor.top, left: anchor.rect.right + 16 } : undefined}
+          transition={{ duration: 0.2, top: { type: "spring", stiffness: 400, damping: 36 }, left: { type: "spring", stiffness: 400, damping: 36 } }}
           className={cn(
             "fixed z-50 rounded-xl bg-popover text-sm text-popover-foreground shadow-2xl ring-1 ring-foreground/10",
             i === 0
